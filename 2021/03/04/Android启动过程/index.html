@@ -319,7 +319,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span>1.6k</span>
+              <span>2.6k</span>
             </span>
           
             <span class="post-meta-item" title="阅读时长">
@@ -329,7 +329,7 @@
               
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
               
-              <span>3 分钟</span>
+              <span>5 分钟</span>
             </span>
           
 
@@ -345,7 +345,7 @@
         <h2 id="Android启动过程"><a href="#Android启动过程" class="headerlink" title="Android启动过程"></a>Android启动过程</h2><p>从Zygote启动过程开始，省略掉了前面的解析.rc文件等步骤</p>
 <a id="more"></a>
 
-<h4 id="Zygote-启动过程"><a href="#Zygote-启动过程" class="headerlink" title="Zygote 启动过程"></a>Zygote 启动过程</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">title:Zygote启动过程</span><br><span class="line">participant App_main.cpp</span><br><span class="line">participant AndroidRuntime.cpp</span><br><span class="line">participant ZygoteInit.java</span><br><span class="line">participant ZygoteConnection.java</span><br><span class="line">participant Zygote.java</span><br><span class="line"></span><br><span class="line">App_main.cpp -&gt; App_main.cpp : 1:main</span><br><span class="line">App_main.cpp -&gt; AndroidRuntime.cpp: 2:start</span><br><span class="line">AndroidRuntime.cpp -&gt; AndroidRuntime.cpp:3:startVM</span><br><span class="line">AndroidRuntime.cpp -&gt; AndroidRuntime.cpp: 4:startReg</span><br><span class="line">AndroidRuntime.cpp -&gt; ZygoteInit.java: 5:main</span><br><span class="line">ZygoteInit.java -&gt; ZygoteInit.java : 6:registerZygoteSocket</span><br><span class="line">ZygoteInit.java -&gt; ZygoteInit.java : 7:preload</span><br><span class="line">ZygoteInit.java -&gt; ZygoteInit.java : 8:startSystemServer</span><br><span class="line">ZygoteInit.java -&gt; Zygote.java : 9:forkSystemServer</span><br><span class="line">ZygoteInit.java -&gt; ZygoteInit.java : 10:runSelectLoop</span><br><span class="line">ZygoteInit.java -&gt; ZygoteConnection.java: 11:runOnce</span><br><span class="line">ZygoteConnection.java -&gt; Zygote.java: 12:forkAndSpecialize</span><br></pre></td></tr></table></figure>
+<h4 id="Zygote-启动过程"><a href="#Zygote-启动过程" class="headerlink" title="Zygote 启动过程"></a>Zygote 启动过程</h4><div id="sequence-0"></div>
 
 <p>解释一下：</p>
 <ol>
@@ -426,7 +426,25 @@
 </blockquote>
 </li>
 </ul>
-<p>SystemServer 启动各种服务中最后的一个环节便是 AMS.systemReady()，到此, System_server 主线程的启动工作总算完成, 进入 Looper.loop()状态,等待 其他线程通过 handler 发送消息到主线再处理。</p>
+<p>SystemServer 启动各种服务中最后的一个环节便是 AMS.systemReady()，到此, System_server 主线程的启动工作总算完成, 进入 Looper.loop()状态,等待 其他线程通过 handler 发送消息到主线再处理。<script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.27/webfontloader.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg-min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script><textarea id="sequence-0-code" style="display: none">title:Zygote启动过程
+participant App_main.cpp
+participant AndroidRuntime.cpp
+participant ZygoteInit.java
+participant ZygoteConnection.java
+participant Zygote.java
+
+App_main.cpp -> App_main.cpp : 1:main
+App_main.cpp -> AndroidRuntime.cpp: 2:start
+AndroidRuntime.cpp -> AndroidRuntime.cpp:3:startVM
+AndroidRuntime.cpp -> AndroidRuntime.cpp: 4:startReg
+AndroidRuntime.cpp -> ZygoteInit.java: 5:main
+ZygoteInit.java -> ZygoteInit.java : 6:registerZygoteSocket
+ZygoteInit.java -> ZygoteInit.java : 7:preload
+ZygoteInit.java -> ZygoteInit.java : 8:startSystemServer
+ZygoteInit.java -> Zygote.java : 9:forkSystemServer
+ZygoteInit.java -> ZygoteInit.java : 10:runSelectLoop
+ZygoteInit.java -> ZygoteConnection.java: 11:runOnce
+ZygoteConnection.java -> Zygote.java: 12:forkAndSpecialize</textarea><textarea id="sequence-0-options" style="display: none">{"theme":"simple"}</textarea><script>  var code = document.getElementById("sequence-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("sequence-0-options").value));  var diagram = Diagram.parse(code);  diagram.drawSVG("sequence-0", options);</script></p>
 
     </div>
 
@@ -709,14 +727,14 @@
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
     
-    <span title="站点总字数">276k</span>
+    <span title="站点总字数">277k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
     
-    <span title="站点阅读时长">8:21</span>
+    <span title="站点阅读时长">8:23</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
   <span class="post-meta-divider">|</span>
