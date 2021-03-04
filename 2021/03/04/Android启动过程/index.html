@@ -65,12 +65,13 @@
 <meta property="og:site_name" content="放码过来">
 <meta property="og:description" content="Android启动过程从Zygote启动过程开始，省略掉了前面的解析.rc文件等步骤">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://blog.huangyuanlove.com/image/Android/aosp/zygote_start.png">
 <meta property="og:image" content="http://blog.huangyuanlove.com/image/Android/aosp/start_system_server.png">
-<meta property="og:updated_time" content="2021-03-04T06:03:23.904Z">
+<meta property="og:updated_time" content="2021-03-04T07:15:08.979Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android启动过程">
 <meta name="twitter:description" content="Android启动过程从Zygote启动过程开始，省略掉了前面的解析.rc文件等步骤">
-<meta name="twitter:image" content="http://blog.huangyuanlove.com/image/Android/aosp/start_system_server.png">
+<meta name="twitter:image" content="http://blog.huangyuanlove.com/image/Android/aosp/zygote_start.png">
   <link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
   <link rel="canonical" href="http://blog.huangyuanlove.com/2021/03/04/Android启动过程/">
 
@@ -302,7 +303,7 @@
                 
               
 
-              <time title="创建时间：2021年03月04日 12:12:36 / 修改时间：14:03:23" itemprop="dateCreated datePublished" datetime="2021-03-04T12:12:36+08:00">2021年03月04日</time>
+              <time title="创建时间：2021年03月04日 12:12:36 / 修改时间：15:15:08" itemprop="dateCreated datePublished" datetime="2021-03-04T12:12:36+08:00">2021年03月04日</time>
             </span>
           
             
@@ -347,6 +348,7 @@
 
 <h4 id="Zygote-启动过程"><a href="#Zygote-启动过程" class="headerlink" title="Zygote 启动过程"></a>Zygote 启动过程</h4><div id="sequence-0"></div>
 
+<p><img src="/image/Android/aosp/zygote_start.png" alt="zygote_startr"></p>
 <p>解释一下：</p>
 <ol>
 <li>解析init.zygote.rc中的参数，创建AppRuntime并调用AppRuntime.start()方法</li>
