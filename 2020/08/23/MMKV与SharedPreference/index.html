@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=7.4.0">
+  <link rel="mask-icon" href="/favicon.ico?v=7.4.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: 'LO7AODH922',
+      apiKey: 'eef0d8a75f8bcbfe584416f372bf56e7',
+      indexName: 'blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="鉴于SP的”种种问题”,萌发了想要使用写文件的方式替换掉sp的想法，发现腾讯开源MMKV是个不错的选择。">
+<meta name="keywords" content="MMKV,SP,SharedPreference">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MMKV与SharedPreference">
+<meta property="og:url" content="http://blog.huangyuanlove.com/2020/08/23/MMKV与SharedPreference/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="鉴于SP的”种种问题”,萌发了想要使用写文件的方式替换掉sp的想法，发现腾讯开源MMKV是个不错的选择。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://blog.huangyuanlove.com/image/Android/MMKV/apply.png">
+<meta property="og:image" content="http://blog.huangyuanlove.com/image/Android/MMKV/commit.png">
+<meta property="og:image" content="http://blog.huangyuanlove.com/image/Android/MMKV/Linux-storage-stack.png">
+<meta property="og:image" content="http://blog.huangyuanlove.com/image/Android/MMKV/linux-io.png">
+<meta property="og:updated_time" content="2020-11-26T04:10:08.512Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MMKV与SharedPreference">
+<meta name="twitter:description" content="鉴于SP的”种种问题”,萌发了想要使用写文件的方式替换掉sp的想法，发现腾讯开源MMKV是个不错的选择。">
+<meta name="twitter:image" content="http://blog.huangyuanlove.com/image/Android/MMKV/apply.png">
+  <link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+  <link rel="canonical" href="http://blog.huangyuanlove.com/2020/08/23/MMKV与SharedPreference/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>MMKV与SharedPreference | 放码过来</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123314537-1"></script>
+  <script>
+    var host = window.location.hostname;
+    if (host !== "localhost" || !true) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-123314537-1');
+    }
+  </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?98796e1ecbcbaac6a6d9d3fea85985ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">放码过来</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">技术宅 huangyuan@huangyuanlove.com</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-sitemap">
+      
+    
+
+    <a href="/sitemap.xml" rel="section"><i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input" id="search-input"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+  
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2020/08/23/MMKV与SharedPreference/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HuangYuan_xuan">
+      <meta itemprop="description" content="锱铢必较间接性奋发图强，睚眦必报持续性混吃等死">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="放码过来">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">MMKV与SharedPreference<a href="https://github.com/huangyuanlove/hexo_back/tree/master/source/_posts/MMKV与SharedPreference.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020年08月23日 11:31:39" itemprop="dateCreated datePublished" datetime="2020-08-23T11:31:39+08:00">2020年08月23日</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020年11月26日 12:10:08" itemprop="dateModified" datetime="2020-11-26T12:10:08+08:00">2020年11月26日</time>
+              </span>
+            
+          
+
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>2.5k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>4 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>鉴于SP的”种种问题”,萌发了想要使用写文件的方式替换掉sp的想法，发现腾讯开源MMKV是个不错的选择。</p>
+<a id="more"></a>
+
+<h5 id="存储方式"><a href="#存储方式" class="headerlink" title="存储方式"></a>存储方式</h5><ol>
+<li>SharedPreferences</li>
+<li>ContentProvider</li>
+<li>文件</li>
+<li>数据库</li>
+</ol>
+<h5 id="如何选择"><a href="#如何选择" class="headerlink" title="如何选择"></a>如何选择</h5><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>时间开销</td>
+<td>这里说的时间开销包括了CPU时间和/0时间，在I/O优化中我就多次提到相比CPU和内存，I/0存储的速度是非常慢的。但是如果存储方法中比如编解码或者加密/解密等设计的比较复杂，整个数据存储过程也会出现CPU时间变得更长的情况</td>
+</tr>
+<tr>
+<td>正确性</td>
+<td>选择存储方案的时候，第一个需要判断它是否靠谱。这套存储方案设计是否完备，有没有支持多线程或者跨进程同步操作。内部是否健壮，有没有考虑异常情况下数据的校验和恢复，比如采用双写或者备份文件策略，即使主文件因为系统底层导致损坏，也可以一定程度 上恢复大部分数据</td>
+</tr>
+<tr>
+<td>空间开销</td>
+<td>即使相同的数据如果使用不同的编码方式，最后占用的存储空间也会有所不同。举一个简单的例子，相同的数据所占的空间大小是XML&gt;JSON&gt;ProtocolBuffer。除了编码方式的差异，在一些场景我们可能还需要引入压缩策略来进-步减少存储空间，例如zip、lzma等。数据存储的空间开销还需要考虑内存空间的占用量，整个存储过程会不会导致应用出现大量GC、OOM等</td>
+</tr>
+<tr>
+<td>安全</td>
+<td>应用中可能会有一些非常敏感的数据,即使它们存储在/data/data中，我们依然必须将它们加密。例如微信的聊天数据是存储在加密的数据库中，一些些账号相关的数据我们也要单独做加密落地。根据加密强度的不同，可以选择RSA、AES、chacha20、 TEA这些常用的加密算法</td>
+</tr>
+<tr>
+<td>开发成本</td>
+<td>有些存储方案看起来非常高大上，但是需要业务做很大改造才能接入。这里我们当然希望能无缝的接入到业务中，在整个开发过程越简单越好</td>
+</tr>
+<tr>
+<td>兼容性</td>
+<td>业务不停地向前演进，我们的存储字段或者格式有时候也会不得不有所变化。兼容性首先要考虑的是向前、向后的兼容性，老的数据在升级时能否迁移过来，新的数据在老版本能否降级使用。兼容性另外一个需要考虑的可能是多语言的问题，不同的语言是否支持转换</td>
+</tr>
+</tbody></table>
+<h4 id="sp的N宗罪"><a href="#sp的N宗罪" class="headerlink" title="sp的N宗罪"></a>sp的N宗罪</h4><ol>
+<li>跨进程不安全</li>
+<li>加载缓慢：异步加载，但是异步加载线程没有设置优先级，如果这时候主线程读取数据需要等待加载线程执行完毕(也就是主线程等待低优先级线程锁的问题)</li>
+<li>全量写入：无论是commit还是apply，即使改动一个条目，也会把全部内容写到文件</li>
+<li>卡顿：异步落盘机制在应用崩溃时会导致数据丢失</li>
+</ol>
+<p>下面是SP操作源码的简介图，来源：<a href="https://juejin.im/entry/6844903488271417351" target="_blank" rel="noopener">https://juejin.im/entry/6844903488271417351</a></p>
+<p><img src="/image/Android/MMKV/apply.png" alt="linux-io"></p>
+<p><img src="/image/Android/MMKV/commit.png" alt="linux-io"></p>
+<h4 id="SP优化"><a href="#SP优化" class="headerlink" title="SP优化"></a>SP优化</h4><p>可以在Application中重写getSharedPreference方法，返回自己实现的sp。我们可以自己将多次读写进行合并</p>
+<h4 id="MMKV与SP"><a href="#MMKV与SP" class="headerlink" title="MMKV与SP"></a>MMKV与SP</h4><table>
+<thead>
+<tr>
+<th>关键要素</th>
+<th>SP</th>
+<th>MMKV</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>正确性</td>
+<td>差<br>跨进程和apply机制导致数据丢失</td>
+<td>优<br>使用mmap和文件 锁保证数据完整</td>
+</tr>
+<tr>
+<td>时间开销</td>
+<td>差<br>全量写入、卡顿</td>
+<td>优<br>1.使用mmap<br>2.修改插入文件尾部，无需全量写入</td>
+</tr>
+<tr>
+<td>空间开销</td>
+<td>差<br>使用XML，格式比较冗余</td>
+<td>良<br>使用Protocol Buffer,但是增量更新可能会导致部分冗余</td>
+</tr>
+<tr>
+<td>安全</td>
+<td>差<br>完全明文存储，没有支持加密与权限校验，不适合存放敏感数据</td>
+<td>良<br>使用Protocol Buffer,不是完全明文。没有支持加密与权限校验，不适合存放敏感数据</td>
+</tr>
+<tr>
+<td>开发成本</td>
+<td>优<br>系统支持，非常简单</td>
+<td>良<br>需要引入单独库，有一定的改造成本</td>
+</tr>
+<tr>
+<td>兼容性</td>
+<td>优<br>支持前后兼容</td>
+<td>优<br>支持前后兼容，支持导入<br>SharedPreferences历史数据，但注意<br>转换后版本无法回退</td>
+</tr>
+</tbody></table>
+<h4 id="MMKV原理：来源https-github-com-Tencent-MMKV"><a href="#MMKV原理：来源https-github-com-Tencent-MMKV" class="headerlink" title="MMKV原理：来源https://github.com/Tencent/MMKV"></a>MMKV原理：来源<a href="https://github.com/Tencent/MMKV" target="_blank" rel="noopener">https://github.com/Tencent/MMKV</a></h4><ol>
+<li><p>内存准备</p>
+<p>通过 mmap 内存映射文件，提供一段可供随时写入的内存块，App 只管往里面写数据，由操作系统负责将内存回写到文件，不必担心 crash 导致数据丢失。</p>
+<p><img src="/image/Android/MMKV/Linux-storage-stack.png" alt="Linux-storage-stack"></p>
+</li>
+</ol>
+<p>简化版<br>   <img src="/image/Android/MMKV/linux-io.png" alt="linux-io"></p>
+<ol start="2">
+<li><p>数据组织</p>
+<p>数据序列化方面我们选用 protobuf 协议，pb 在性能和空间占用上都有不错的表现。考虑到我们要提供的是通用 kv 组件，key 可以限定是 string 字符串类型，value 则多种多样（int/bool/double 等）。要做到通用的话，考虑将 value 通过 protobuf 协议序列化成统一的内存块（buffer），然后就可以将这些 KV 对象序列化到内存中。</p>
+</li>
+<li><p>写入优化</p>
+<p>标准 protobuf 不提供增量更新的能力，每次写入都必须全量写入。考虑到主要使用场景是频繁地进行写入更新，我们需要有增量更新的能力：将增量 kv 对象序列化后，直接 append 到内存末尾；这样同一个 key 会有新旧若干份数据，最新的数据在最后；那么只需在程序启动第一次打开 mmkv 时，不断用后读入的 value 替换之前的值，就可以保证数据是最新有效的。</p>
+</li>
+<li><p>空间增长</p>
+<p>使用 append 实现增量更新带来了一个新的问题，就是不断 append 的话，文件大小会增长得不可控。例如同一个 key 不断更新的话，是可能耗尽几百 M 甚至上 G 空间，而事实上整个 kv 文件就这一个 key，不到 1k 空间就存得下。这明显是不可取的。我们需要在性能和空间上做个折中：以内存 pagesize 为单位申请空间，在空间用尽之前都是 append 模式；当 append 到文件末尾时，进行文件重整、key 排重，尝试序列化保存排重结果；排重后空间还是不够用的话，将文件扩大一倍，直到空间足够。</p>
+</li>
+<li><p>数据有效性</p>
+<p>考虑到文件系统、操作系统都有一定的不稳定性，我们另外增加了 crc 校验，对无效数据进行甄别。在 iOS 微信现网环境上，我们观察到有平均约 70万日次的数据校验不通过。</p>
+</li>
+</ol>
+<h4 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h4><p><a href="https://github.com/Tencent/MMKV" target="_blank" rel="noopener">https://github.com/Tencent/MMKV</a> github上有对应的示例</p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a href="http://www.0xffffff.org/2017/05/01/41-linux-io/" target="_blank" rel="noopener">聊聊 Linux IO</a><br><a href="https://tech.meituan.com/2017/05/19/about-desk-io.html" target="_blank" rel="noopener">磁盘I/O那些事</a><br><a href="https://www.ibm.com/developerworks/cn/linux/l-cache/index.html" target="_blank" rel="noopener">Linux 内核的文件 Cache 管理机制介绍</a><br><a href="https://www.ibm.com/developerworks/cn/linux/l-cn-directio/index.html" target="_blank" rel="noopener">Linux 中直接 I/O 机制的介绍</a><br><a href="https://developer.android.com/reference/android/os/MemoryFile" target="_blank" rel="noopener">MemoryFile</a><br><a href="https://developer.android.com/reference/java/nio/MappedByteBuffer" target="_blank" rel="noopener">MappedByteBuffer</a><br><a href="https://juejin.im/entry/6844903488271417351" target="_blank" rel="noopener">彻底搞懂 SharedPreferences</a><br><a href="https://developer.ibm.com/zh/articles/j-5things1/" target="_blank" rel="noopener">Java 对象序列化</a></p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div></div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/wechatpay.png" alt="HuangYuan_xuan 微信支付">
+        <p>微信支付</p>
+      </div>
+        
+      
+      <div style="display: inline-block">
+        <img src="/alipay.png" alt="HuangYuan_xuan 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2020/07/27/Flutter异常处理/" rel="next" title="Flutter异常处理">
+                  <i class="fa fa-chevron-left"></i> Flutter异常处理
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2020/09/24/正则表达式-上/" rel="prev" title="正则表达式--上">
+                  正则表达式--上 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zODYyMC8xNTE0OA"></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#存储方式"><span class="nav-number">1.</span> <span class="nav-text">存储方式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#如何选择"><span class="nav-number">2.</span> <span class="nav-text">如何选择</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sp的N宗罪"><span class="nav-number"></span> <span class="nav-text">sp的N宗罪</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SP优化"><span class="nav-number"></span> <span class="nav-text">SP优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MMKV与SP"><span class="nav-number"></span> <span class="nav-text">MMKV与SP</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MMKV原理：来源https-github-com-Tencent-MMKV"><span class="nav-number"></span> <span class="nav-text">MMKV原理：来源https://github.com/Tencent/MMKV</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用方式"><span class="nav-number"></span> <span class="nav-text">使用方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考"><span class="nav-number"></span> <span class="nav-text">参考</span></a></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466"
+      alt="HuangYuan_xuan">
+  <p class="site-author-name" itemprop="name">HuangYuan_xuan</p>
+  <div class="site-description" itemprop="description">锱铢必较间接性奋发图强，睚眦必报持续性混吃等死</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">122</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/huangyuanlove" title="GitHub &rarr; https://github.com/huangyuanlove" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:huangyuan@huangyuanlove.com" title="E-Mail &rarr; mailto:huangyuan@huangyuanlove.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright"><a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">鲁ICP备16004473号-1 </a><span><img src="/gonganbeian.png" style="display:inline-block;"/>
+  
+  <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11010502034083" rel="noopener" target="_blank">11010502034083 </a>&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HuangYuan_xuan</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">276k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">8:21</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+  <script>
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=65959286";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script><script src="/js/motion.js?v=7.4.0"></script>
+<script src="/js/schemes/muse.js?v=7.4.0"></script>
+
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/instantsearch.js@2/dist/instantsearch.min.css">
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@2/dist/instantsearch.min.js"></script><script src="/js/algolia-search.js?v=7.4.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdnjs.cloudflare.com/ajax/libs/mermaid/8.0.0/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>

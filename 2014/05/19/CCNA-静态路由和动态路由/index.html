@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=7.4.0">
+  <link rel="mask-icon" href="/favicon.ico?v=7.4.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: 'LO7AODH922',
+      apiKey: 'eef0d8a75f8bcbfe584416f372bf56e7',
+      indexName: 'blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="学习过程中的笔记，比较零散">
+<meta name="keywords" content="静态路由,动态路由">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CCNA-静态路由和动态路由">
+<meta property="og:url" content="http://blog.huangyuanlove.com/2014/05/19/CCNA-静态路由和动态路由/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="学习过程中的笔记，比较零散">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://blog.huangyuanlove.com/image/ccna/Classlessrouting_ad.png">
+<meta property="og:updated_time" content="2020-11-26T04:10:08.505Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CCNA-静态路由和动态路由">
+<meta name="twitter:description" content="学习过程中的笔记，比较零散">
+<meta name="twitter:image" content="http://blog.huangyuanlove.com/image/ccna/Classlessrouting_ad.png">
+  <link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+  <link rel="canonical" href="http://blog.huangyuanlove.com/2014/05/19/CCNA-静态路由和动态路由/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>CCNA-静态路由和动态路由 | 放码过来</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123314537-1"></script>
+  <script>
+    var host = window.location.hostname;
+    if (host !== "localhost" || !true) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-123314537-1');
+    }
+  </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?98796e1ecbcbaac6a6d9d3fea85985ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">放码过来</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">技术宅 huangyuan@huangyuanlove.com</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-sitemap">
+      
+    
+
+    <a href="/sitemap.xml" rel="section"><i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input" id="search-input"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+  
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2014/05/19/CCNA-静态路由和动态路由/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HuangYuan_xuan">
+      <meta itemprop="description" content="锱铢必较间接性奋发图强，睚眦必报持续性混吃等死">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="放码过来">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">CCNA-静态路由和动态路由<a href="https://github.com/huangyuanlove/hexo_back/tree/master/source/_posts/CCNA-静态路由和动态路由.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2014年05月19日 22:52:49" itemprop="dateCreated datePublished" datetime="2014-05-19T22:52:49+08:00">2014年05月19日</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020年11月26日 12:10:08" itemprop="dateModified" datetime="2020-11-26T12:10:08+08:00">2020年11月26日</time>
+              </span>
+            
+          
+
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>1.4k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>3 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>学习过程中的笔记，比较零散</p>
+<a id="more"></a>
+
+<h4 id="静态路由"><a href="#静态路由" class="headerlink" title="静态路由"></a>静态路由</h4><h5 id="路由功能"><a href="#路由功能" class="headerlink" title="路由功能"></a>路由功能</h5><ul>
+<li><p>负责在不同网段之间进行数据转发(三层路由)</p>
+</li>
+<li><p>通过路由表进行三层数据转发(基于路由表)</p>
+</li>
+<li><p>维护路由表信息</p>
+</li>
+<li><p>在冗余路径中进行最优路径判断</p>
+</li>
+<li><p>在三层转发时应用特定的转发策略</p>
+</li>
+</ul>
+<h5 id="静态路由-static-routes"><a href="#静态路由-static-routes" class="headerlink" title="静态路由 static routes"></a>静态路由 static routes</h5><ul>
+<li><p>管理员手动输入</p>
+</li>
+<li><p>占用路由器资源小</p>
+</li>
+<li><p>可以严格控制路由转发</p>
+</li>
+<li><p>支持广泛</p>
+</li>
+<li><p>出现网络拓扑变动的时候无法自动更新</p>
+</li>
+<li><p>当网络很大的时候管理复杂</p>
+</li>
+</ul>
+<h5 id="静态路由配置"><a href="#静态路由配置" class="headerlink" title="静态路由配置"></a>静态路由配置</h5><p>在全局配置模式下</p>
+<p>Router(config)# Ip route network [mask]</p>
+<p>(目标网络   子网掩码  下一跳出口)</p>
+<p>跟下一跳出接口在一定条件下有备份作用,冗余.</p>
+<p>缺省路由   0.0.0.0 0.0.0.0  </p>
+<h5 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h5><p>当我们拥有到达目标网络的多个路径的时候,我们可以配置中间的路由器在这些路径上进行负载均衡</p>
+<p>底层网络的负载均衡:</p>
+<p>1、基于数据包</p>
+<p>2、基于数据流</p>
+<h4 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h4><p>路由协议用在不同路由器之间,用来判断到远程网络的路径并维护路由器的路由表</p>
+<p>当路径决定之后,路由器会将被路由协议转发到目的网络</p>
+<p>动态路由协议是运行在路由器上的一个程序,相同的动态路由协议通过在不同的路由器之间交换此动态路由协议规定的数据包来交换各自的路由信息,从而达到学习路由,维护路由表,发现拓扑变动的目的.</p>
+<h4 id="动态路由协议分类"><a href="#动态路由协议分类" class="headerlink" title="动态路由协议分类"></a>动态路由协议分类</h4><h5 id="按应用范围分-IGP-amp-EGP-现在使用BGPv4"><a href="#按应用范围分-IGP-amp-EGP-现在使用BGPv4" class="headerlink" title="按应用范围分 IGP &amp; EGP(现在使用BGPv4)"></a>按应用范围分 IGP &amp; EGP(现在使用BGPv4)</h5><p>IGP（内部网关协议）应用于普通企业(在一个自治系统(as)之内路由)</p>
+<p>EGP（外部网关协议）路由整个互联网(在多个自治系统（as）之间路由)</p>
+<p>自治系统autonomous system是处在同一个管理范围的网络集合（管理范围比网络范围大）</p>
+<p>as有个编号 0<del>65535    64512</del>65535是私有的，不能出现在公网中</p>
+<h5 id="按算法分"><a href="#按算法分" class="headerlink" title="按算法分"></a>按算法分</h5><p>距离矢量型 distance vector（贝尔曼 福特）</p>
+<p>高级距离矢量型  advanced distance vector（DUAL cisoc私有）</p>
+<p>链路状态型link-state（SPF 最短路径优先）</p>
+<h4 id="Classful-roting-有类别路由协议"><a href="#Classful-roting-有类别路由协议" class="headerlink" title="Classful roting  有类别路由协议"></a>Classful roting  有类别路由协议</h4><p>有类别路由选择协议在路由更新中不携带子网掩码</p>
+<p>在一个网络中只能使用相同的子网掩码(不支持不连续的子网)</p>
+<p>在主类网的边界会进行自动汇总</p>
+<p>常见有类别路由协议</p>
+<p>1 ripv1</p>
+<p>2 IGRP</p>
+<h5 id="有类别路由协议学习路由的规则"><a href="#有类别路由协议学习路由的规则" class="headerlink" title="有类别路由协议学习路由的规则"></a>有类别路由协议学习路由的规则</h5><p>有类别路由协议在更新时不携带子网掩码,在学习路由过程中:</p>
+<p>1 首先判断接口接受的路由与接受接口配置的IP地址是否处于同一个主类网.</p>
+<p>2如果处于同一个主类网,则使用接受接口配置的子网掩码做为接受路由的子网掩码</p>
+<p>3如果接收路由与接收接口配置的IP地址不在同一个主类网中,则使用接收路由自身所属的主类网子网掩码作为该路由子网掩码(在主类网边界出现自动汇总)</p>
+<h4 id="Classlessrouting-无类别路由协议"><a href="#Classlessrouting-无类别路由协议" class="headerlink" title="Classlessrouting 无类别路由协议"></a>Classlessrouting 无类别路由协议</h4><p>在路由更新中携带子网掩码(CIDR 无类别域间路由 classless Internet domain route)</p>
+<p>支持VLSM,在同一个网络中可以拥有不同的子网掩码</p>
+<p>在网络中支持手工汇总</p>
+<p>常见的无类别路由选择协议</p>
+<p>RIPv2  EIGRP  OSPF ISIS  BGPv4</p>
+<p>RIPv2和EIGRP默认会在主类网边界进行自动汇总,需要手工关闭</p>
+<h5 id="最佳路由判定标准"><a href="#最佳路由判定标准" class="headerlink" title="最佳路由判定标准"></a>最佳路由判定标准</h5><p>RIP  根据跳数（hop count）（经过几个路由器）</p>
+<p>OSPF 根据带宽（cost）线路的速度</p>
+<p>带宽 bandwidth</p>
+<p>延时 delay</p>
+<p>可靠性  reliable</p>
+<p>负载 load</p>
+<p>度量值不能变</p>
+<p><img src="/image/ccna/Classlessrouting_ad.png" alt="geocoderSearch"></p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div></div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/wechatpay.png" alt="HuangYuan_xuan 微信支付">
+        <p>微信支付</p>
+      </div>
+        
+      
+      <div style="display: inline-block">
+        <img src="/alipay.png" alt="HuangYuan_xuan 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/CCNA/" rel="tag"><i class="fa fa-tag"></i> CCNA</a>
+            
+              <a href="/tags/笔记/" rel="tag"><i class="fa fa-tag"></i> 笔记</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2014/05/19/CCNA-网络拓扑结构/" rel="next" title="CCNA-网络拓扑结构">
+                  <i class="fa fa-chevron-left"></i> CCNA-网络拓扑结构
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2014/05/19/CCNA-ospf协议/" rel="prev" title="CCNA-ospf协议">
+                  CCNA-ospf协议 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zODYyMC8xNTE0OA"></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#静态路由"><span class="nav-number">1.</span> <span class="nav-text">静态路由</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#路由功能"><span class="nav-number">1.1.</span> <span class="nav-text">路由功能</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#静态路由-static-routes"><span class="nav-number">1.2.</span> <span class="nav-text">静态路由 static routes</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#静态路由配置"><span class="nav-number">1.3.</span> <span class="nav-text">静态路由配置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#负载均衡"><span class="nav-number">1.4.</span> <span class="nav-text">负载均衡</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动态路由"><span class="nav-number">2.</span> <span class="nav-text">动态路由</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动态路由协议分类"><span class="nav-number">3.</span> <span class="nav-text">动态路由协议分类</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#按应用范围分-IGP-amp-EGP-现在使用BGPv4"><span class="nav-number">3.1.</span> <span class="nav-text">按应用范围分 IGP &amp; EGP(现在使用BGPv4)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#按算法分"><span class="nav-number">3.2.</span> <span class="nav-text">按算法分</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Classful-roting-有类别路由协议"><span class="nav-number">4.</span> <span class="nav-text">Classful roting  有类别路由协议</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#有类别路由协议学习路由的规则"><span class="nav-number">4.1.</span> <span class="nav-text">有类别路由协议学习路由的规则</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Classlessrouting-无类别路由协议"><span class="nav-number">5.</span> <span class="nav-text">Classlessrouting 无类别路由协议</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#最佳路由判定标准"><span class="nav-number">5.1.</span> <span class="nav-text">最佳路由判定标准</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466"
+      alt="HuangYuan_xuan">
+  <p class="site-author-name" itemprop="name">HuangYuan_xuan</p>
+  <div class="site-description" itemprop="description">锱铢必较间接性奋发图强，睚眦必报持续性混吃等死</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">122</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/huangyuanlove" title="GitHub &rarr; https://github.com/huangyuanlove" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:huangyuan@huangyuanlove.com" title="E-Mail &rarr; mailto:huangyuan@huangyuanlove.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright"><a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">鲁ICP备16004473号-1 </a><span><img src="/gonganbeian.png" style="display:inline-block;"/>
+  
+  <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11010502034083" rel="noopener" target="_blank">11010502034083 </a>&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HuangYuan_xuan</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">276k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">8:21</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+  <script>
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=65959286";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script><script src="/js/motion.js?v=7.4.0"></script>
+<script src="/js/schemes/muse.js?v=7.4.0"></script>
+
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/instantsearch.js@2/dist/instantsearch.min.css">
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@2/dist/instantsearch.min.js"></script><script src="/js/algolia-search.js?v=7.4.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdnjs.cloudflare.com/ajax/libs/mermaid/8.0.0/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>

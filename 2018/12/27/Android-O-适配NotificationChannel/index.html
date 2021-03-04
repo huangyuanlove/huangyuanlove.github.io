@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=7.4.0">
+  <link rel="mask-icon" href="/favicon.ico?v=7.4.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: 'LO7AODH922',
+      apiKey: 'eef0d8a75f8bcbfe584416f372bf56e7',
+      indexName: 'blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="继之前跪在Android N的StrictMode上了。现在又跪在的Android O 的NotificationChannel上了 场景如下： 某些场景中需要上传图片，选择图片或者拍照时使用系统的图库会将自己的app置于后台，若选择图片的时间过长，则可能会导致自己的app会杀死。看了一下传承下来的代码，是在这种情况下发送一个前台通知startForeground,使此服务在前台运行。但是会在通知">
+<meta name="keywords" content="invalid channel for service notification,startForeground,NotificationChannel">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android O---适配NotificationChannel">
+<meta property="og:url" content="http://blog.huangyuanlove.com/2018/12/27/Android-O-适配NotificationChannel/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="继之前跪在Android N的StrictMode上了。现在又跪在的Android O 的NotificationChannel上了 场景如下： 某些场景中需要上传图片，选择图片或者拍照时使用系统的图库会将自己的app置于后台，若选择图片的时间过长，则可能会导致自己的app会杀死。看了一下传承下来的代码，是在这种情况下发送一个前台通知startForeground,使此服务在前台运行。但是会在通知">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://blog.huangyuanlove.com/image/Android/NotificationChanel/startForeground.png">
+<meta property="og:image" content="http://blog.huangyuanlove.com/image/Android/NotificationChanel/Notification_build.png">
+<meta property="og:updated_time" content="2020-11-26T04:10:08.498Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android O---适配NotificationChannel">
+<meta name="twitter:description" content="继之前跪在Android N的StrictMode上了。现在又跪在的Android O 的NotificationChannel上了 场景如下： 某些场景中需要上传图片，选择图片或者拍照时使用系统的图库会将自己的app置于后台，若选择图片的时间过长，则可能会导致自己的app会杀死。看了一下传承下来的代码，是在这种情况下发送一个前台通知startForeground,使此服务在前台运行。但是会在通知">
+<meta name="twitter:image" content="http://blog.huangyuanlove.com/image/Android/NotificationChanel/startForeground.png">
+  <link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+  <link rel="canonical" href="http://blog.huangyuanlove.com/2018/12/27/Android-O-适配NotificationChannel/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Android O---适配NotificationChannel | 放码过来</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123314537-1"></script>
+  <script>
+    var host = window.location.hostname;
+    if (host !== "localhost" || !true) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-123314537-1');
+    }
+  </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?98796e1ecbcbaac6a6d9d3fea85985ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">放码过来</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">技术宅 huangyuan@huangyuanlove.com</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-sitemap">
+      
+    
+
+    <a href="/sitemap.xml" rel="section"><i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input" id="search-input"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+  
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2018/12/27/Android-O-适配NotificationChannel/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HuangYuan_xuan">
+      <meta itemprop="description" content="锱铢必较间接性奋发图强，睚眦必报持续性混吃等死">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="放码过来">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Android O---适配NotificationChannel<a href="https://github.com/huangyuanlove/hexo_back/tree/master/source/_posts/Android-O-适配NotificationChannel.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2018年12月27日 19:47:25" itemprop="dateCreated datePublished" datetime="2018-12-27T19:47:25+08:00">2018年12月27日</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020年11月26日 12:10:08" itemprop="dateModified" datetime="2020-11-26T12:10:08+08:00">2020年11月26日</time>
+              </span>
+            
+          
+
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>2k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>4 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>继之前跪在Android N的<code>StrictMode</code>上了。现在又跪在的Android O 的NotificationChannel上了</p>
+<p>场景如下：</p>
+<p>某些场景中需要上传图片，选择图片或者拍照时使用系统的图库会将自己的app置于后台，若选择图片的时间过长，则可能会导致自己的app会杀死。看了一下传承下来的代码，是在这种情况下发送一个前台通知<code>startForeground</code>,使此服务在前台运行。但是会在通知栏上显示一个应用正在运行的通知</p>
+<p><img src="/image/Android/NotificationChanel/startForeground.png" alt="通知" title="startForeground通知"></p>
+<a id="more"></a>
+
+<h4 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h4><p>查看Android 28的源码，发现调用链如下：</p>
+<p>首先 <code>Service.java</code>中调用 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">startForeground</span><span class="params">(<span class="keyword">int</span> id, Notification notification)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           mActivityManager.setServiceForeground(</span><br><span class="line">                   <span class="keyword">new</span> ComponentName(<span class="keyword">this</span>, mClassName), mToken, id,</span><br><span class="line">                   notification, <span class="number">0</span>);</span><br><span class="line">       &#125; <span class="keyword">catch</span> (RemoteException ex) &#123;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的<code>mActivityManager</code>的声明是<code>private IActivityManager mActivityManager = null;</code>在这里，<code>IActivityManager</code>的实现类是<code>ActivityManagerService</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setServiceForeground</span><span class="params">(ComponentName className, IBinder token,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">int</span> id, Notification notification, <span class="keyword">int</span> flags)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span>(<span class="keyword">this</span>) &#123;</span><br><span class="line">            mServices.setServiceForegroundLocked(className, token, id, notification, flags);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setServiceForegroundLocked</span><span class="params">(ComponentName className, IBinder token,</span></span></span><br><span class="line"><span class="function"><span class="params">           <span class="keyword">int</span> id, Notification notification, <span class="keyword">int</span> flags)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">final</span> <span class="keyword">int</span> userId = UserHandle.getCallingUserId();</span><br><span class="line">       <span class="keyword">final</span> <span class="keyword">long</span> origId = Binder.clearCallingIdentity();</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           ServiceRecord r = findServiceLocked(className, token, userId);</span><br><span class="line">           <span class="keyword">if</span> (r != <span class="keyword">null</span>) &#123;</span><br><span class="line">               setServiceForegroundInnerLocked(r, id, notification, flags);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">           Binder.restoreCallingIdentity(origId);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>finally中调用的Binder方法是一个native方法，主要看一下<code>setServiceForegroundInnerLocked</code>:</p>
+<p>方法太长，关注一下我们需要的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Apps under strict background restrictions simply don't get to have foreground</span></span><br><span class="line"><span class="comment">// services, so now that we've enforced the startForegroundService() contract</span></span><br><span class="line"><span class="comment">// we only do the machinery of making the service foreground when the app</span></span><br><span class="line"><span class="comment">// is not restricted.</span></span><br><span class="line"><span class="keyword">if</span> (!ignoreForeground) &#123;</span><br><span class="line">    <span class="keyword">if</span> (r.foregroundId != id) &#123;</span><br><span class="line">        cancelForegroundNotificationLocked(r);</span><br><span class="line">        r.foregroundId = id;</span><br><span class="line">    &#125;</span><br><span class="line">    notification.flags |= Notification.FLAG_FOREGROUND_SERVICE;</span><br><span class="line">    r.foregroundNoti = notification;</span><br><span class="line">    <span class="keyword">if</span> (!r.isForeground) &#123;</span><br><span class="line">        <span class="keyword">final</span> ServiceMap smap = getServiceMapLocked(r.userId);</span><br><span class="line">        <span class="keyword">if</span> (smap != <span class="keyword">null</span>) &#123;</span><br><span class="line">            ActiveForegroundApp active = smap.mActiveForegroundApps.get(r.packageName);</span><br><span class="line">            <span class="keyword">if</span> (active == <span class="keyword">null</span>) &#123;</span><br><span class="line">                active = <span class="keyword">new</span> ActiveForegroundApp();</span><br><span class="line">                active.mPackageName = r.packageName;</span><br><span class="line">                active.mUid = r.appInfo.uid;</span><br><span class="line">                active.mShownWhileScreenOn = mScreenOn;</span><br><span class="line">                <span class="keyword">if</span> (r.app != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    active.mAppOnTop = active.mShownWhileTop =</span><br><span class="line">                            r.app.uidRecord.curProcState</span><br><span class="line">                                    &lt;= ActivityManager.PROCESS_STATE_TOP;</span><br><span class="line">                &#125;</span><br><span class="line">                active.mStartTime = active.mStartVisibleTime</span><br><span class="line">                        = SystemClock.elapsedRealtime();</span><br><span class="line">                smap.mActiveForegroundApps.put(r.packageName, active);</span><br><span class="line">                requestUpdateActiveForegroundAppsLocked(smap, <span class="number">0</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            active.mNumActive++;</span><br><span class="line">        &#125;</span><br><span class="line">        r.isForeground = <span class="keyword">true</span>;</span><br><span class="line">        mAm.mAppOpsService.startOperation(</span><br><span class="line">                AppOpsManager.getToken(mAm.mAppOpsService),</span><br><span class="line">                AppOpsManager.OP_START_FOREGROUND, r.appInfo.uid, r.packageName,</span><br><span class="line">                <span class="keyword">true</span>);</span><br><span class="line">        StatsLog.write(StatsLog.FOREGROUND_SERVICE_STATE_CHANGED,</span><br><span class="line">                r.appInfo.uid, r.shortName,</span><br><span class="line">                StatsLog.FOREGROUND_SERVICE_STATE_CHANGED__STATE__ENTER);</span><br><span class="line">    &#125;</span><br><span class="line">    r.postNotification();</span><br><span class="line">    <span class="keyword">if</span> (r.app != <span class="keyword">null</span>) &#123;</span><br><span class="line">        updateServiceForegroundLocked(r.app, <span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    getServiceMapLocked(r.userId).ensureNotStartingBackgroundLocked(r);</span><br><span class="line">    mAm.notifyPackageUse(r.serviceInfo.packageName,</span><br><span class="line">            PackageManager.NOTIFY_PACKAGE_USE_FOREGROUND_SERVICE);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里面的<code>r.postNotification();</code>这里的<code>r</code>是<code>ServiceRecord</code>的一个实例对象，在该方法中调用了<code>ams.mHandler.post(new Runnable())</code>方法，ams是<code>ActivityManagerService</code>的一个实例，在这里创建了一个匿名内部类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line">ams.mHandler.post(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                    NotificationManagerInternal nm = LocalServices.getService(</span><br><span class="line">                            NotificationManagerInternal.class);</span><br><span class="line">                    <span class="keyword">if</span> (nm == <span class="keyword">null</span>) &#123;</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    Notification localForegroundNoti = _foregroundNoti;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        <span class="keyword">if</span> (localForegroundNoti.getSmallIcon() == <span class="keyword">null</span>) &#123;</span><br><span class="line">                            <span class="comment">// It is not correct for the caller to not supply a notification</span></span><br><span class="line">                            <span class="comment">// icon, but this used to be able to slip through, so for</span></span><br><span class="line">                            <span class="comment">// those dirty apps we will create a notification clearly</span></span><br><span class="line">                            <span class="comment">// blaming the app.</span></span><br><span class="line">                            Slog.v(TAG, <span class="string">"Attempted to start a foreground service ("</span></span><br><span class="line">                                    + name</span><br><span class="line">                                    + <span class="string">") with a broken notification (no icon: "</span></span><br><span class="line">                                    + localForegroundNoti</span><br><span class="line">                                    + <span class="string">")"</span>);</span><br><span class="line"></span><br><span class="line">                            CharSequence appName = appInfo.loadLabel(</span><br><span class="line">                                    ams.mContext.getPackageManager());</span><br><span class="line">                            <span class="keyword">if</span> (appName == <span class="keyword">null</span>) &#123;</span><br><span class="line">                                appName = appInfo.packageName;</span><br><span class="line">                            &#125;</span><br><span class="line">                            Context ctx = <span class="keyword">null</span>;</span><br><span class="line">                            <span class="keyword">try</span> &#123;</span><br><span class="line">                                ctx = ams.mContext.createPackageContextAsUser(</span><br><span class="line">                                        appInfo.packageName, <span class="number">0</span>, <span class="keyword">new</span> UserHandle(userId));</span><br><span class="line"></span><br><span class="line">                                Notification.Builder notiBuilder = <span class="keyword">new</span> Notification.Builder(ctx,</span><br><span class="line">                                        localForegroundNoti.getChannelId());</span><br><span class="line"></span><br><span class="line">                                <span class="comment">// it's ugly, but it clearly identifies the app</span></span><br><span class="line">                                notiBuilder.setSmallIcon(appInfo.icon);</span><br><span class="line"></span><br><span class="line">                                <span class="comment">// mark as foreground</span></span><br><span class="line">                                notiBuilder.setFlag(Notification.FLAG_FOREGROUND_SERVICE, <span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">                                Intent runningIntent = <span class="keyword">new</span> Intent(</span><br><span class="line">                                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS);</span><br><span class="line">                                runningIntent.setData(Uri.fromParts(<span class="string">"package"</span>,</span><br><span class="line">                                        appInfo.packageName, <span class="keyword">null</span>));</span><br><span class="line">                                PendingIntent pi = PendingIntent.getActivityAsUser(ams.mContext, <span class="number">0</span>,</span><br><span class="line">                                        runningIntent, PendingIntent.FLAG_UPDATE_CURRENT, <span class="keyword">null</span>,</span><br><span class="line">                                        UserHandle.of(userId));</span><br><span class="line">                                notiBuilder.setColor(ams.mContext.getColor(</span><br><span class="line">                                        com.android.internal</span><br><span class="line">                                                .R.color.system_notification_accent_color));</span><br><span class="line">                                notiBuilder.setContentTitle(</span><br><span class="line">                                        ams.mContext.getString(</span><br><span class="line">                                                com.android.internal.R.string</span><br><span class="line">                                                        .app_running_notification_title,</span><br><span class="line">                                                appName));</span><br><span class="line">                                notiBuilder.setContentText(</span><br><span class="line">                                        ams.mContext.getString(</span><br><span class="line">                                                com.android.internal.R.string</span><br><span class="line">                                                        .app_running_notification_text,</span><br><span class="line">                                                appName));</span><br><span class="line">                                notiBuilder.setContentIntent(pi);</span><br><span class="line"></span><br><span class="line">                                localForegroundNoti = notiBuilder.build();</span><br><span class="line">                            &#125; <span class="keyword">catch</span> (PackageManager.NameNotFoundException e) &#123;</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">if</span> (nm.getNotificationChannel(localPackageName, appUid,</span><br><span class="line">                                localForegroundNoti.getChannelId()) == <span class="keyword">null</span>) &#123;</span><br><span class="line">                            <span class="keyword">int</span> targetSdkVersion = Build.VERSION_CODES.O_MR1;</span><br><span class="line">                            <span class="keyword">try</span> &#123;</span><br><span class="line">                                <span class="keyword">final</span> ApplicationInfo applicationInfo =</span><br><span class="line">                                        ams.mContext.getPackageManager().getApplicationInfoAsUser(</span><br><span class="line">                                                appInfo.packageName, <span class="number">0</span>, userId);</span><br><span class="line">                                targetSdkVersion = applicationInfo.targetSdkVersion;</span><br><span class="line">                            &#125; <span class="keyword">catch</span> (PackageManager.NameNotFoundException e) &#123;</span><br><span class="line">                            &#125;</span><br><span class="line">                            <span class="keyword">if</span> (targetSdkVersion &gt;= Build.VERSION_CODES.O_MR1) &#123;</span><br><span class="line">                                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(</span><br><span class="line">                                        <span class="string">"invalid channel for service notification: "</span></span><br><span class="line">                                                + foregroundNoti);</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">if</span> (localForegroundNoti.getSmallIcon() == <span class="keyword">null</span>) &#123;</span><br><span class="line">                            <span class="comment">// Notifications whose icon is 0 are defined to not show</span></span><br><span class="line">                            <span class="comment">// a notification, silently ignoring it.  We don't want to</span></span><br><span class="line">                            <span class="comment">// just ignore it, we want to prevent the service from</span></span><br><span class="line">                            <span class="comment">// being foreground.</span></span><br><span class="line">                            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"invalid service notification: "</span></span><br><span class="line">                                    + foregroundNoti);</span><br><span class="line">                        &#125;</span><br><span class="line">                        nm.enqueueNotification(localPackageName, localPackageName,</span><br><span class="line">                                appUid, appPid, <span class="keyword">null</span>, localForegroundId, 												localForegroundNoti,userId);</span><br><span class="line"></span><br><span class="line">                        foregroundNoti = localForegroundNoti; <span class="comment">// save it for amending next time</span></span><br><span class="line">                    &#125; <span class="keyword">catch</span> (RuntimeException e) &#123;</span><br><span class="line">                        Slog.w(TAG, <span class="string">"Error showing notification for service"</span>, e);</span><br><span class="line">                        <span class="comment">// If it gave us a garbage notification, it doesn't</span></span><br><span class="line">                        <span class="comment">// get to be foreground.</span></span><br><span class="line">                        ams.setServiceForeground(name, ServiceRecord.<span class="keyword">this</span>,</span><br><span class="line">                                <span class="number">0</span>, <span class="keyword">null</span>, <span class="number">0</span>);</span><br><span class="line">                        ams.crashApplication(appUid, appPid, localPackageName, -<span class="number">1</span>,</span><br><span class="line">                                <span class="string">"Bad notification for startForeground: "</span> + e);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>首先检查一下<code>getSmallIcon</code>是不是空，如果是空的，打印日志，然后创建一个新的Notification。然后走不为空的判断：检查有没有<code>NotificationChannel</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nm.getNotificationChannel(localPackageName, appUid,localForegroundNoti.getChannelId()) == <span class="keyword">null</span></span><br></pre></td></tr></table></figure>
+
+<p>这里面如果<code>targetSdkVersion &gt;= Build.VERSION_CODES.O_MR1</code>,则会抛出<code>invalid channel for service notification</code>异常。</p>
+<p>如果一切正常，入队列发通知。</p>
+<hr>
+<p>至此，应用中发生崩溃的原因找到了，targetSdk是28，又没有NotificationChannel。</p>
+<p>那么，NotificationChannel又是个卵？？？？</p>
+<h4 id="NotificationChannel"><a href="#NotificationChannel" class="headerlink" title="NotificationChannel"></a>NotificationChannel</h4><p>从Android 8.0系统开始，Google引入了通知渠道这个概念。</p>
+<p>什么是通知渠道呢？顾名思义，就是每条通知都要属于一个对应的渠道。每个App都可以自由地创建当前App拥有哪些通知渠道，但是这些通知渠道的控制权都是掌握在用户手上的。用户可以自由地选择这些通知渠道的重要程度，是否响铃、是否振动、或者是否要关闭这个渠道的通知。</p>
+<p>Google这次对于8.0系统通知渠道的推广态度还是比较强硬的。</p>
+<p>首先，如果你升级了appcompat库，那么所有使用appcompat库来构建通知的地方全部都会进行废弃方法提示，如下所示：</p>
+<p><img src="/image/Android/NotificationChanel/Notification_build.png" alt="通知" title="startForeground通知"></p>
+<h5 id="创建NotificationChannel"><a href="#创建NotificationChannel" class="headerlink" title="创建NotificationChannel"></a>创建NotificationChannel</h5><p>创建NotificationChannel对象(不必每次创建)，并且创建通知渠道的代码只在第一次执行的时候才会创建，以后每次执行创建代码系统会检测到该通知渠道已经存在了，因此不会重复创建，也并不会影响任何效率。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.O) &#123;</span><br><span class="line">           String channelId = <span class="string">"take_photo"</span>;</span><br><span class="line">           String channelName = <span class="string">"拍照选择图片"</span>;</span><br><span class="line">           <span class="keyword">int</span> importance = NotificationManager.IMPORTANCE_HIGH;</span><br><span class="line">           NotificationManager</span><br><span class="line">                   notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);</span><br><span class="line">           NotificationChannel channel = notificationManager.getNotificationChannel(channelId);</span><br><span class="line">           <span class="keyword">if</span> (channel == <span class="keyword">null</span>) &#123;</span><br><span class="line">               channel = <span class="keyword">new</span> NotificationChannel(channelId, channelName, importance);</span><br><span class="line">           &#125;</span><br><span class="line">           notificationManager.createNotificationChannel(channel);</span><br><span class="line">           <span class="keyword">if</span> (channel.getImportance() == NotificationManager.IMPORTANCE_NONE) &#123;</span><br><span class="line">               Intent intent = <span class="keyword">new</span> Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);</span><br><span class="line">               intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());</span><br><span class="line">               intent.putExtra(Settings.EXTRA_CHANNEL_ID, channel.getId());</span><br><span class="line">               startActivity(intent);</span><br><span class="line">               Toast.makeText(<span class="keyword">this</span>, <span class="string">"请手动将通知打开"</span>, Toast.LENGTH_SHORT).show();</span><br><span class="line">           &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">               Notification nf = <span class="keyword">new</span> Notification.Builder(<span class="keyword">this</span>, channelId)</span><br><span class="line">                       .setContentText(<span class="string">"setContentText"</span>)</span><br><span class="line">                       .setSettingsText(<span class="string">"setSettingsText"</span>)</span><br><span class="line">                       .setContentTitle(<span class="string">"setContentTitle"</span>)</span><br><span class="line">                       .setSmallIcon(R.drawable.ic_launcher_background)</span><br><span class="line">                       .build();</span><br><span class="line">               notificationManager.notify(<span class="number">1</span>, nf);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先要确保的是当前手机的系统版本必须是Android 8.0系统或者更高，因为低版本的手机系统并没有通知渠道这个功能，不做系统版本检查的话会在低版本手机上造成崩溃。创建一个通知渠道至少需要渠道ID、渠道名称以及重要等级这三个参数，其中渠道ID可以随便定义，只要保证全局唯一性就可以。渠道名称是给用户看的，需要能够表达清楚这个渠道的用途。重要等级的不同则会决定通知的不同行为，当然这里只是初始状态下的重要等级，用户可以随时手动更改某个渠道的重要等级，App是无法干预的。</p>
+<p>创建通知的代码就不再多做解释了，和传统创建通知的方法没什么两样，只是在NotificationCompat.Builder中需要多传入一个通知渠道ID，那么这里我们传入刚刚创建的渠道ID。</p>
+<h5 id="管理通知渠道"><a href="#管理通知渠道" class="headerlink" title="管理通知渠道"></a>管理通知渠道</h5><p>通知渠道一旦创建之后就不能再通过代码修改了，如果用户不小心关闭了该渠道，我们可以通知用户手动去修改，就像动态权限申请一样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.O) &#123;</span><br><span class="line">	NotificationChannel channel = manager.getNotificationChannel(<span class="string">"chat"</span>);</span><br><span class="line">    <span class="keyword">if</span> (channel.getImportance() == NotificationManager.IMPORTANCE_NONE) &#123;</span><br><span class="line">    	Intent intent = <span class="keyword">new</span> Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);</span><br><span class="line">        intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());</span><br><span class="line">        intent.putExtra(Settings.EXTRA_CHANNEL_ID, channel.getId());</span><br><span class="line">        startActivity(intent);</span><br><span class="line">        Toast.makeText(<span class="keyword">this</span>, <span class="string">"请手动将通知打开"</span>, Toast.LENGTH_SHORT).show();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过getNotificationChannel()方法获取到了NotificationChannel对象，然后就可以读取该通知渠道下的所有配置了。这里我们判断如果通知渠道的importance等于IMPORTANCE_NONE，就说明用户将该渠道的通知给关闭了，这时会跳转到通知的设置界面提醒用户手动打开。</p>
+<p>Android 8.0还赋予了我们删除通知渠道的功能，只需使用如下代码即可删除：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);</span><br><span class="line">manager.deleteNotificationChannel(channelId);</span><br></pre></td></tr></table></figure>
+
+<p>NotificationChannel章节参考 <a href="https://mp.weixin.qq.com/s/PG8XxHEHpijL4AMZ4AGP8g" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/PG8XxHEHpijL4AMZ4AGP8g</a></p>
+<hr>
+<p>以上</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div></div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/wechatpay.png" alt="HuangYuan_xuan 微信支付">
+        <p>微信支付</p>
+      </div>
+        
+      
+      <div style="display: inline-block">
+        <img src="/alipay.png" alt="HuangYuan_xuan 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+            
+              <a href="/tags/Android爬坑之旅/" rel="tag"><i class="fa fa-tag"></i> Android爬坑之旅</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2018/12/26/Ubuntu输入密码登陆后回到登录界面/" rel="next" title="Ubuntu输入密码登陆后回到登录界面">
+                  <i class="fa fa-chevron-left"></i> Ubuntu输入密码登陆后回到登录界面
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/01/03/写在2019年初-2018总结/" rel="prev" title="2018总结">
+                  2018总结 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zODYyMC8xNTE0OA"></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#源码分析"><span class="nav-number">1.</span> <span class="nav-text">源码分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NotificationChannel"><span class="nav-number">2.</span> <span class="nav-text">NotificationChannel</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#创建NotificationChannel"><span class="nav-number">2.1.</span> <span class="nav-text">创建NotificationChannel</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#管理通知渠道"><span class="nav-number">2.2.</span> <span class="nav-text">管理通知渠道</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466"
+      alt="HuangYuan_xuan">
+  <p class="site-author-name" itemprop="name">HuangYuan_xuan</p>
+  <div class="site-description" itemprop="description">锱铢必较间接性奋发图强，睚眦必报持续性混吃等死</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">122</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/huangyuanlove" title="GitHub &rarr; https://github.com/huangyuanlove" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:huangyuan@huangyuanlove.com" title="E-Mail &rarr; mailto:huangyuan@huangyuanlove.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright"><a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">鲁ICP备16004473号-1 </a><span><img src="/gonganbeian.png" style="display:inline-block;"/>
+  
+  <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11010502034083" rel="noopener" target="_blank">11010502034083 </a>&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HuangYuan_xuan</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">276k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">8:21</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+  <script>
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=65959286";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script><script src="/js/motion.js?v=7.4.0"></script>
+<script src="/js/schemes/muse.js?v=7.4.0"></script>
+
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/instantsearch.js@2/dist/instantsearch.min.css">
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@2/dist/instantsearch.min.js"></script><script src="/js/algolia-search.js?v=7.4.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdnjs.cloudflare.com/ajax/libs/mermaid/8.0.0/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+    MathJax.Ajax.config.path['mhchem'] = '//cdnjs.cloudflare.com/ajax/libs/mathjax-mhchem/3.3.0';
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        extensions: ['[mhchem]/mhchem.js'],
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>
