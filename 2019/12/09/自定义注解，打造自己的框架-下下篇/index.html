@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=7.4.0">
+  <link rel="mask-icon" href="/favicon.ico?v=7.4.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: 'LO7AODH922',
+      apiKey: 'eef0d8a75f8bcbfe584416f372bf56e7',
+      indexName: 'blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="该系列介绍自定义注解，完成如下功能。   @BindView 代替  findViewById   @ClickResponder 代替 setOnClickListener  @LongClickResponder 代替 setOnLongClickListener  @IntentValue 代替 getIntent().getXXX  @UriValue 代替 getQueryParamet">
+<meta name="keywords" content="自定义注解,Annotation,AutoService,AbstractProcessor,反射,javapoet">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自定义注解，打造自己的框架-下下篇">
+<meta property="og:url" content="http://blog.huangyuanlove.com/2019/12/09/自定义注解，打造自己的框架-下下篇/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="该系列介绍自定义注解，完成如下功能。   @BindView 代替  findViewById   @ClickResponder 代替 setOnClickListener  @LongClickResponder 代替 setOnLongClickListener  @IntentValue 代替 getIntent().getXXX  @UriValue 代替 getQueryParamet">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-11-26T04:10:08.536Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="自定义注解，打造自己的框架-下下篇">
+<meta name="twitter:description" content="该系列介绍自定义注解，完成如下功能。   @BindView 代替  findViewById   @ClickResponder 代替 setOnClickListener  @LongClickResponder 代替 setOnLongClickListener  @IntentValue 代替 getIntent().getXXX  @UriValue 代替 getQueryParamet">
+  <link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+  <link rel="canonical" href="http://blog.huangyuanlove.com/2019/12/09/自定义注解，打造自己的框架-下下篇/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>自定义注解，打造自己的框架-下下篇 | 放码过来</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123314537-1"></script>
+  <script>
+    var host = window.location.hostname;
+    if (host !== "localhost" || !true) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-123314537-1');
+    }
+  </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?98796e1ecbcbaac6a6d9d3fea85985ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">放码过来</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">技术宅 huangyuan@huangyuanlove.com</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-sitemap">
+      
+    
+
+    <a href="/sitemap.xml" rel="section"><i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input" id="search-input"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+  
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2019/12/09/自定义注解，打造自己的框架-下下篇/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HuangYuan_xuan">
+      <meta itemprop="description" content="锱铢必较间接性奋发图强，睚眦必报持续性混吃等死">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="放码过来">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">自定义注解，打造自己的框架-下下篇<a href="https://github.com/huangyuanlove/hexo_back/tree/master/source/_posts/自定义注解，打造自己的框架-下下篇.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019年12月09日 23:21:08" itemprop="dateCreated datePublished" datetime="2019-12-09T23:21:08+08:00">2019年12月09日</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020年11月26日 12:10:08" itemprop="dateModified" datetime="2020-11-26T12:10:08+08:00">2020年11月26日</time>
+              </span>
+            
+          
+
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>1.1k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>2 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>该系列介绍自定义注解，完成如下功能。</p>
+<ul>
+<li><input checked disabled type="checkbox"> @BindView 代替  findViewById </li>
+<li><input checked disabled type="checkbox"> @ClickResponder 代替 setOnClickListener</li>
+<li><input checked disabled type="checkbox"> @LongClickResponder 代替 setOnLongClickListener</li>
+<li><input checked disabled type="checkbox"> @IntentValue 代替 getIntent().getXXX</li>
+<li><input checked disabled type="checkbox"> @UriValue 代替 getQueryParameter</li>
+<li><input disabled type="checkbox"> @BroadcastResponder 代替 registerReceiver</li>
+<li><input disabled type="checkbox"> @RouterModule、@RouterPath 来进行反依赖传递调用<br>该系列源码在<a href="https://github.com/huangyuanlove/AndroidAnnotation" target="_blank" rel="noopener">https://github.com/huangyuanlove/AndroidAnnotation</a><br>前几篇介绍了<code>@BindView</code>、<code>@ClickResponder</code>、<code>@LongClickResponder</code>的实现，这一篇介绍一下<code>@IntentValue</code> 和<code>@UriValue</code>的实现。</li>
+</ul>
+<a id="more"></a>
+
+<h4 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h4><p>我们知道执行<code>Intent.putExtra()</code>方法时，实际上是把数据塞进Bundle中的，并且该方法有不同的重载类型，方便开发这存储不同的数据。当我们从中取数据时，需要调用不同的方法来获取不同类型的数据，这就需要我们在生成辅助代码时，根据注解字段的类型来调用不同的方法。</p>
+<p>而Uri中的能传递的参数只有有限的几种类型，最常见的就是String和int</p>
+<h4 id="声明注解"><a href="#声明注解" class="headerlink" title="声明注解"></a>声明注解</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target</span>(ElementType.FIELD)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.CLASS)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> IntentValue &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> DEFAULT_TYPE = -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> PARCELABLE_OBJECT = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> PARCELABLE_ARRAY_OBJECT = <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">int</span> PARCELABLE_ARRAYLIST_OBJECT = <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">int</span> SERIALIZABLE_OBJECT = <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">key</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">type</span><span class="params">()</span> <span class="keyword">default</span> DEFAULT_TYPE</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里在注解类中声明了几种类型，来配合注解使用，主要是为了在生成辅助代码时简单，因为<code>javax.lang.model.type.TypeKind</code>只声明了有限的几种类型，其余的需要我们自己取判断。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target</span>(ElementType.FIELD)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.CLASS)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> UriValue &#123;</span><br><span class="line">    <span class="function">String <span class="title">key</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="处理注解逻辑"><a href="#处理注解逻辑" class="headerlink" title="处理注解逻辑"></a>处理注解逻辑</h4><p>我们还是使用上一篇中的注解处理器，需要添加两个属性</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Map&lt;TypeElement, List&lt;Element&gt;&gt; intentValueMap = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"><span class="keyword">private</span> Map&lt;TypeElement, List&lt;Element&gt;&gt; uriValueMap = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>getSupportedAnnotationTypes</code>方法中添加支持</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set.add(IntentValue.class.getCanonicalName());</span><br><span class="line">set.add(UriValue.class.getCanonicalName());</span><br></pre></td></tr></table></figure>
+
+<p>在<code>process</code>方法中加入我们的注解处理逻辑</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">intentValueMap.clear();</span><br><span class="line">uriValueMap.clear();</span><br><span class="line"></span><br><span class="line">Set&lt;? extends Element&gt; intentValueSet = roundEnvironment.getElementsAnnotatedWith(IntentValue.class);</span><br><span class="line">Set&lt;? extends Element&gt; uriValueSet = roundEnvironment.getElementsAnnotatedWith(UriValue.class);</span><br><span class="line"></span><br><span class="line">collectIntentValueInfo(intentValueSet);</span><br><span class="line">collectUriValueMapInfo(uriValueSet);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">collectIntentValueInfo</span><span class="params">(Set&lt;? extends Element&gt; elements)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (Element element : elements) &#123;</span><br><span class="line">            TypeElement typeElement = (TypeElement) element.getEnclosingElement();</span><br><span class="line">            List&lt;Element&gt; elementList = intentValueMap.get(typeElement);</span><br><span class="line">            <span class="keyword">if</span> (elementList == <span class="keyword">null</span>) &#123;</span><br><span class="line">                elementList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">                intentValueMap.put(typeElement, elementList);</span><br><span class="line">            &#125;</span><br><span class="line">            elementList.add(element);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">collectUriValueMapInfo</span><span class="params">(Set&lt;? extends Element&gt; elements)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (Element element : elements) &#123;</span><br><span class="line">        TypeElement typeElement = (TypeElement) element.getEnclosingElement();</span><br><span class="line">        List&lt;Element&gt; elementList = uriValueMap.get(typeElement);</span><br><span class="line">        <span class="keyword">if</span> (elementList == <span class="keyword">null</span>) &#123;</span><br><span class="line">            elementList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">            uriValueMap.put(typeElement, elementList);</span><br><span class="line">        &#125;</span><br><span class="line">        elementList.add(element);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的这些收集信息的工作都差不多，把我们需要的数据存放在map中。</p>
+<p>在<code>generateCode()</code>方法中调用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">generateIntentValueCode();</span><br><span class="line">generateUriValueCode();</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">generateIntentValueCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (TypeElement typeElement : intentValueMap.keySet()) &#123;</span><br><span class="line">        MethodSpec.Builder methodBuilder = generateParseBundleMethodCode(typeElement);</span><br><span class="line"></span><br><span class="line">        List&lt;Element&gt; elements = intentValueMap.get(typeElement);</span><br><span class="line">        <span class="keyword">for</span> (Element element : elements) &#123;</span><br><span class="line">            processorIntentValue(element, methodBuilder);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">generateUriValueCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (TypeElement typeElement : uriValueMap.keySet()) &#123;</span><br><span class="line">        MethodSpec.Builder methodBuilder = generateParseUriMethodCode(typeElement);</span><br><span class="line"></span><br><span class="line">        List&lt;Element&gt; elements = uriValueMap.get(typeElement);</span><br><span class="line">        <span class="keyword">for</span> (Element element : elements) &#123;</span><br><span class="line">            processorUriValue(element, methodBuilder);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们先来看一下比较简单的处理Uri参数的方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">processorUriValue</span><span class="params">(Element element, MethodSpec.Builder methodBuilder)</span> </span>&#123;</span><br><span class="line">    VariableElement variableElement = (VariableElement) element;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//注解的字段名字</span></span><br><span class="line">    String varName = variableElement.getSimpleName().toString();</span><br><span class="line"></span><br><span class="line">    UriValue uriValue = variableElement.getAnnotation(UriValue.class);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取到注解的key，从Uri中获取对应的值</span></span><br><span class="line">    methodBuilder.addStatement(<span class="string">"temp = uri.getQueryParameter($S)"</span>, uriValue.key());</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//如果是String类型，直接赋值</span></span><br><span class="line">    <span class="keyword">if</span> (element.asType().toString().equals(<span class="string">"java.lang.String"</span>)) &#123;</span><br><span class="line">        methodBuilder.addStatement(<span class="string">"target.$L=temp"</span>,varName);</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//其他类型需要转换一下，然后再赋值</span></span><br><span class="line">        <span class="keyword">switch</span> (element.asType().getKind())&#123;</span><br><span class="line">            <span class="keyword">case</span> BOOLEAN:</span><br><span class="line">                methodBuilder.addStatement(<span class="string">"target.$L=Boolean.valueOf(temp)"</span>,varName);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> INT:</span><br><span class="line">                methodBuilder.addStatement(<span class="string">"target.$L= Integer.valueOf(temp)"</span>,varName);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> DOUBLE:</span><br><span class="line">                methodBuilder.addStatement(<span class="string">"target.$L= Double.valueOf(temp)"</span>,varName);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> FLOAT:</span><br><span class="line">                methodBuilder.addStatement(<span class="string">"target.$L= Float.valueOf(temp)"</span>,varName);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> LONG:</span><br><span class="line">                methodBuilder.addStatement(<span class="string">"target.$L= Long.valueOf(temp)"</span>,varName);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>基于同样的方式，我们来处理一下IntentValue，因为Bundle中可以存储的数据类型较多，方法比较长，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">processorIntentValue</span><span class="params">(Element element, MethodSpec.Builder methodBuilder)</span> </span>&#123;</span><br><span class="line">    VariableElement variableElement = (VariableElement) element;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//注解字段的名字</span></span><br><span class="line">    String varName = variableElement.getSimpleName().toString();</span><br><span class="line">    <span class="comment">//注解字段的类型名</span></span><br><span class="line">    String varType = variableElement.asType().toString();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    IntentValue intentValue = variableElement.getAnnotation(IntentValue.class);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    methodBuilder.beginControlFlow(<span class="string">"if(bundle.containsKey($S))"</span>, intentValue.key());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (intentValue.type() == IntentValue.DEFAULT_TYPE) &#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">//基本数据类型可以直接判断，不需要类型名</span></span><br><span class="line">        <span class="keyword">switch</span> (element.asType().getKind()) &#123;</span><br><span class="line">            <span class="keyword">case</span> BOOLEAN:</span><br><span class="line">                methodBuilder.addStatement(<span class="string">"target.$L = bundle.getBoolean($S)"</span>, varName, intentValue.key());</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> SHORT:</span><br><span class="line">                methodBuilder.addStatement(<span class="string">"target.$L = bundle.getShort($S)"</span>, varName, intentValue.key());</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> BYTE:</span><br><span class="line">                methodBuilder.addStatement(<span class="string">"target.$L = bundle.getByte($S)"</span>, varName, intentValue.key());</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> INT:</span><br><span class="line">                methodBuilder.addStatement(<span class="string">"target.$L = bundle.getInt($S)"</span>, varName, intentValue.key());</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> CHAR:</span><br><span class="line">                methodBuilder.addStatement(<span class="string">"target.$L = bundle.getChar($S)"</span>, varName, intentValue.key());</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> LONG:</span><br><span class="line">                methodBuilder.addStatement(<span class="string">"target.$L = bundle.getLong($S)"</span>, varName, intentValue.key());</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> FLOAT:</span><br><span class="line">                methodBuilder.addStatement(<span class="string">"target.$L = bundle.getFloat($S)"</span>, varName, intentValue.key());</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">case</span> DOUBLE:</span><br><span class="line">                methodBuilder.addStatement(<span class="string">"target.$L = bundle.getDouble($S)"</span>, varName, intentValue.key());</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">                <span class="comment">//ARRAY类型分好多中，需要类型的名字具体判断</span></span><br><span class="line">            <span class="keyword">case</span> ARRAY:</span><br><span class="line">                <span class="keyword">switch</span> (element.asType().toString()) &#123;</span><br><span class="line">                    <span class="keyword">case</span> <span class="string">"byte[]"</span>:</span><br><span class="line">                        methodBuilder.addStatement(<span class="string">"target.$L = bundle.getByteArray($S)"</span>, varName, intentValue.key());</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> <span class="string">"short[]"</span>:</span><br><span class="line"></span><br><span class="line">                        methodBuilder.addStatement(<span class="string">"target.$L = bundle.getShortArray($S)"</span>, varName, intentValue.key());</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> <span class="string">"boolean[]"</span>:</span><br><span class="line">                        methodBuilder.addStatement(<span class="string">"target.$L = bundle.getBooleanArray($S)"</span>, varName, intentValue.key());</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> <span class="string">"int[]"</span>:</span><br><span class="line">                        methodBuilder.addStatement(<span class="string">"target.$L = bundle.getIntArray($S)"</span>, varName, intentValue.key());</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> <span class="string">"long[]"</span>:</span><br><span class="line">                        methodBuilder.addStatement(<span class="string">"target.$L = bundle.getLongArray($S)"</span>, varName, intentValue.key());</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> <span class="string">"char[]"</span>:</span><br><span class="line">                        methodBuilder.addStatement(<span class="string">"target.$L = bundle.getCharArray($S)"</span>, varName, intentValue.key());</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> <span class="string">"java.lang.CharSequence[]"</span>:</span><br><span class="line">                        methodBuilder.addStatement(<span class="string">"target.$L = bundle.getCharSequenceArray($S)"</span>, varName, intentValue.key());</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> <span class="string">"float[]"</span>:</span><br><span class="line">                        methodBuilder.addStatement(<span class="string">"target.$L = bundle.getFloatArray($S)"</span>, varName, intentValue.key());</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> <span class="string">"double[]"</span>:</span><br><span class="line">                        methodBuilder.addStatement(<span class="string">"target.$L = bundle.getDoubleArray($S)"</span>, varName, intentValue.key());</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> <span class="string">"java.lang.String[]"</span>:</span><br><span class="line">                        methodBuilder.addStatement(<span class="string">"target.$L = bundle.getStringArray($S)"</span>, varName, intentValue.key());</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">default</span>:</span><br><span class="line">                        methodBuilder.addStatement(<span class="string">"target.$L = ($L) bundle.getParcelableArray($S)"</span>, varName, varType, intentValue.key());</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">                <span class="comment">//其余的会被当做`DECLARED`类型</span></span><br><span class="line">            <span class="keyword">case</span> DECLARED:</span><br><span class="line">                <span class="keyword">switch</span> (element.asType().toString()) &#123;</span><br><span class="line">                    <span class="keyword">case</span> <span class="string">"java.util.ArrayList&lt;java.lang.Integer&gt;"</span>:</span><br><span class="line">                        methodBuilder.addStatement(<span class="string">"target.$L = bundle.getIntegerArrayList($S)"</span>, varName, intentValue.key());</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> <span class="string">"java.lang.CharSequence"</span>:</span><br><span class="line"></span><br><span class="line">                        methodBuilder.addStatement(<span class="string">"target.$L = bundle.getCharSequence($S)"</span>, varName, intentValue.key());</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> <span class="string">"java.util.ArrayList&lt;java.lang.CharSequence&gt;"</span>:</span><br><span class="line">                        methodBuilder.addStatement(<span class="string">"target.$L = bundle.getCharSequenceArrayList($S)"</span>, varName, intentValue.key());</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> <span class="string">"java.lang.String"</span>:</span><br><span class="line">                        methodBuilder.addStatement(<span class="string">"target.$L = bundle.getString($S)"</span>, varName, intentValue.key());</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> <span class="string">"java.util.ArrayList&lt;java.lang.String&gt;"</span>:</span><br><span class="line">                        methodBuilder.addStatement(<span class="string">"target.$L = bundle.getStringArrayList($S)"</span>, varName, intentValue.key());</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">default</span>:</span><br><span class="line"></span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//这里的就是方便通过类型或者类型名来判断的，通过我们自己定义的类型来做判断</span></span><br><span class="line">        <span class="keyword">switch</span> (intentValue.type()) &#123;</span><br><span class="line">            <span class="keyword">case</span> IntentValue.SERIALIZABLE_OBJECT:</span><br><span class="line">                methodBuilder.addStatement(<span class="string">"target.$L  = ($L) bundle.getSerializable($S)"</span>, varName, varType, intentValue.key());</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> IntentValue.PARCELABLE_OBJECT:</span><br><span class="line">                methodBuilder.addStatement(<span class="string">"target.$L  = bundle.getParcelable($S)"</span>, varName, intentValue.key());</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> IntentValue.PARCELABLE_ARRAY_OBJECT:</span><br><span class="line"></span><br><span class="line">                methodBuilder.addStatement(<span class="string">" android.os.Parcelable[] temp = bundle.getParcelableArray($S)"</span>, intentValue.key());</span><br><span class="line">                methodBuilder.beginControlFlow(<span class="string">"if(temp!=null &amp;&amp; temp.length&gt;0)"</span>);</span><br><span class="line">                methodBuilder.addStatement(<span class="string">"target.$L = new $L[temp.length]"</span>, varName, varType.substring(<span class="number">0</span>, varType.length() - <span class="number">2</span>));</span><br><span class="line">                methodBuilder.beginControlFlow(<span class="string">"for(int i = 0 ; i &lt; temp.length;i++)"</span>);</span><br><span class="line">                methodBuilder.addStatement(<span class="string">"target.$L[i] = ($L) temp[i]"</span>, varName, varType.substring(<span class="number">0</span>, varType.length() - <span class="number">2</span>));</span><br><span class="line">                methodBuilder.endControlFlow();</span><br><span class="line">                methodBuilder.endControlFlow();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> IntentValue.PARCELABLE_ARRAYLIST_OBJECT:</span><br><span class="line">                methodBuilder.addStatement(<span class="string">"target.$L  = bundle.getParcelableArrayList($S)"</span>, varName, intentValue.key());</span><br><span class="line"></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    methodBuilder.endControlFlow();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="给使用者提供调用方法"><a href="#给使用者提供调用方法" class="headerlink" title="给使用者提供调用方法"></a>给使用者提供调用方法</h4><p>还是在api模块中的<code>ViewInjector</code>类中添加如下方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> Map&lt;Class&lt;?&gt;, Method&gt; BUNDLES = <span class="keyword">new</span> LinkedHashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">parseBundle</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Method method = findParseBundleMethodForClass(activity.getClass(),activity.getClass());</span><br><span class="line">        method.invoke(<span class="keyword">null</span>,activity,activity.getIntent()==<span class="keyword">null</span>?<span class="keyword">null</span>:activity.getIntent().getExtras());</span><br><span class="line">    &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">parseBundle</span><span class="params">(Fragment fragment)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Method method =findParseBundleMethodForClass(fragment.getClass(),fragment.getClass());</span><br><span class="line">        method .invoke(<span class="keyword">null</span>,fragment,fragment.getArguments());</span><br><span class="line"></span><br><span class="line">    &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Method <span class="title">findParseBundleMethodForClass</span><span class="params">(Class&lt;?&gt; cls,Class clazz)</span> </span>&#123;</span><br><span class="line">    Method parseBundle = BUNDLES.get(cls);</span><br><span class="line">    <span class="keyword">if</span> (parseBundle == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Class&lt;?&gt; bindingClass = Class.forName(cls.getName() + <span class="string">"$ViewInjector"</span>);</span><br><span class="line">            parseBundle=   bindingClass.getDeclaredMethod(<span class="string">"parseBundle"</span>,clazz, Bundle.class);</span><br><span class="line">            BUNDLES.put(cls, parseBundle);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> parseBundle;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> Map&lt;Class&lt;?&gt;, Method&gt; URIS = <span class="keyword">new</span> LinkedHashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">parseUri</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Method method = findParseUriMethodForClass(activity.getClass(),activity.getClass());</span><br><span class="line">        method.invoke(<span class="keyword">null</span>,activity,activity.getIntent()==<span class="keyword">null</span>?<span class="keyword">null</span>:activity.getIntent().getData());</span><br><span class="line">    &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Method <span class="title">findParseUriMethodForClass</span><span class="params">(Class&lt;?&gt; cls,Class clazz)</span> </span>&#123;</span><br><span class="line">    Method parseUri = URIS.get(cls);</span><br><span class="line">    <span class="keyword">if</span> (parseUri == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Class&lt;?&gt; bindingClass = Class.forName(cls.getName() + <span class="string">"$ViewInjector"</span>);</span><br><span class="line">            parseUri=  bindingClass.getDeclaredMethod(<span class="string">"parseUri"</span>,clazz, Uri.class);</span><br><span class="line">            URIS.put(cls, parseUri);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> parseUri;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><p>只需要在对应的类中调用<code>ViewInjector.parseBundle(this);</code>和<code>ViewInjector.parseUri(this);</code>方法就好了</p>
+<p>其实应该把UriValue当成练手让大家自己写的。。。。</p>
+<hr>
+<p>以上</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div></div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/wechatpay.png" alt="HuangYuan_xuan 微信支付">
+        <p>微信支付</p>
+      </div>
+        
+      
+      <div style="display: inline-block">
+        <img src="/alipay.png" alt="HuangYuan_xuan 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/12/04/自定义注解，打造自己的框架-下篇/" rel="next" title="自定义注解，打造自己的框架-下篇">
+                  <i class="fa fa-chevron-left"></i> 自定义注解，打造自己的框架-下篇
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/12/10/自定义注解，打造自己的框架-下下下篇/" rel="prev" title="自定义注解，打造自己的框架-下下下篇">
+                  自定义注解，打造自己的框架-下下下篇 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zODYyMC8xNTE0OA"></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前提"><span class="nav-number">1.</span> <span class="nav-text">前提</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#声明注解"><span class="nav-number">2.</span> <span class="nav-text">声明注解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#处理注解逻辑"><span class="nav-number">3.</span> <span class="nav-text">处理注解逻辑</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#给使用者提供调用方法"><span class="nav-number">4.</span> <span class="nav-text">给使用者提供调用方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用"><span class="nav-number">5.</span> <span class="nav-text">使用</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466"
+      alt="HuangYuan_xuan">
+  <p class="site-author-name" itemprop="name">HuangYuan_xuan</p>
+  <div class="site-description" itemprop="description">锱铢必较间接性奋发图强，睚眦必报持续性混吃等死</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">125</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/huangyuanlove" title="GitHub &rarr; https://github.com/huangyuanlove" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:huangyuan@huangyuanlove.com" title="E-Mail &rarr; mailto:huangyuan@huangyuanlove.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright"><a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">鲁ICP备16004473号-1 </a><span><img src="/gonganbeian.png" style="display:inline-block;"/>
+  
+  <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11010502034083" rel="noopener" target="_blank">11010502034083 </a>&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HuangYuan_xuan</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">284k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">8:36</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+  <script>
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=65959286";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script><script src="/js/motion.js?v=7.4.0"></script>
+<script src="/js/schemes/muse.js?v=7.4.0"></script>
+
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/instantsearch.js@2/dist/instantsearch.min.css">
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@2/dist/instantsearch.min.js"></script><script src="/js/algolia-search.js?v=7.4.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdnjs.cloudflare.com/ajax/libs/mermaid/8.0.0/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>

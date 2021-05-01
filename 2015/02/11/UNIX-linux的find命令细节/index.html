@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=7.4.0">
+  <link rel="mask-icon" href="/favicon.ico?v=7.4.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: 'LO7AODH922',
+      apiKey: 'eef0d8a75f8bcbfe584416f372bf56e7',
+      indexName: 'blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="find 命令的工作方式如下: 沿着文件层次结构向下遍历,匹配符合条件的文件,并执行相应的操作.">
+<meta name="keywords" content="linux find">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UNIX&#x2F;linux的find命令细节">
+<meta property="og:url" content="http://blog.huangyuanlove.com/2015/02/11/UNIX-linux的find命令细节/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="find 命令的工作方式如下: 沿着文件层次结构向下遍历,匹配符合条件的文件,并执行相应的操作.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-11-26T04:10:08.514Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UNIX&#x2F;linux的find命令细节">
+<meta name="twitter:description" content="find 命令的工作方式如下: 沿着文件层次结构向下遍历,匹配符合条件的文件,并执行相应的操作.">
+  <link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+  <link rel="canonical" href="http://blog.huangyuanlove.com/2015/02/11/UNIX-linux的find命令细节/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>UNIX/linux的find命令细节 | 放码过来</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123314537-1"></script>
+  <script>
+    var host = window.location.hostname;
+    if (host !== "localhost" || !true) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-123314537-1');
+    }
+  </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?98796e1ecbcbaac6a6d9d3fea85985ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">放码过来</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">技术宅 huangyuan@huangyuanlove.com</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-sitemap">
+      
+    
+
+    <a href="/sitemap.xml" rel="section"><i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input" id="search-input"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+  
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2015/02/11/UNIX-linux的find命令细节/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HuangYuan_xuan">
+      <meta itemprop="description" content="锱铢必较间接性奋发图强，睚眦必报持续性混吃等死">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="放码过来">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">UNIX/linux的find命令细节<a href="https://github.com/huangyuanlove/hexo_back/tree/master/source/_posts/UNIX-linux的find命令细节.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2015年02月11日 23:40:31" itemprop="dateCreated datePublished" datetime="2015-02-11T23:40:31+08:00">2015年02月11日</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020年11月26日 12:10:08" itemprop="dateModified" datetime="2020-11-26T12:10:08+08:00">2020年11月26日</time>
+              </span>
+            
+          
+
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>2.1k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>4 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>find 命令的工作方式如下:</p>
+<p>沿着文件层次结构向下遍历,匹配符合条件的文件,并执行相应的操作.</p>
+<a id="more"></a>
+
+<h4 id="根据文件名或者正则表达式匹配搜索"><a href="#根据文件名或者正则表达式匹配搜索" class="headerlink" title="根据文件名或者正则表达式匹配搜索"></a>根据文件名或者正则表达式匹配搜索</h4><p>选项-name的参数指定了文件名所必须匹配的字符串,我们可以将通配符作为参数使用.”*.txt” 可以匹配所有的以”.txt”结尾的文件.选项-print 在终端中打印出符合条件的文件名或者文件路径,这些匹配条件作为find 的参数给出</p>
+<p>find /home/huangyuan -name “*.txt” -print</p>
+<p>find 有一个选项-iname 可以忽略文件名的大小写</p>
+<p>如果想匹配多个条件中的一个,可以使用 OR 条件操作</p>
+<p>find . (-name “<em>.txt” -o -name “</em>.pdf”) -print</p>
+<p>上面的代码会打印出所有的 “.txt” 和 “.pdf” 文件,是因为这个find 命令可以匹配所有的这两类文件</p>
+<p>其中, “(“ 和 “)“ 用于将 -name “<em>.txt” -o -name “</em>.pdf” 视为一个整体</p>
+<p>选项 -path 可以使用通配符来匹配文件路径或者文件名</p>
+<p>选项 -regex 是基于正则表达式来匹配文件路径货文件.正则表达式是通配符的高级形式,例如,可以使用正则表达式来匹配Email ,一个 Email 的形式通常是 <a href="mailto:name@host.root" target="_blank" rel="noopener">name@host.root</a></p>
+<p>所以可以将其一般化为 [0-9a-zA-A]+@[0-9a-zA-A]+.[0-9a-zA-A] +</p>
+<p> “+” 指明在它之前的字符类中字符可以出现一次或者多次</p>
+<h4 id="否定参数"><a href="#否定参数" class="headerlink" title="否定参数 !"></a>否定参数 !</h4><p>find 也可以用 “!” 来否定参数的含义</p>
+<p>find . ! -name “*.txt” -print</p>
+<p>上面的命令可以用来 匹配所有不以 “.txt” 结尾的文件</p>
+<h4 id="基于目录深度的搜索"><a href="#基于目录深度的搜索" class="headerlink" title="基于目录深度的搜索"></a>基于目录深度的搜索</h4><p>find 命令在使用时会遍历所有的子目录,我们可以使用 -mindepth 和 -maxdepth 来限制搜索子目录的深度</p>
+<p>find . -maxdeoth 1 -print </p>
+<p>这条目录只会打印当前目录中的所有文件,而不会打印子目录中的文件</p>
+<p>find . -mindepth 2 -print</p>
+<p>这条目录打印目录深度至少为2 的文件</p>
+<h4 id="根据文件类型搜索"><a href="#根据文件类型搜索" class="headerlink" title="根据文件类型搜索"></a>根据文件类型搜索</h4><p>find . -type d -print</p>
+<p>上面的命令只会打印出目录</p>
+<p>文件类型                类型参数</p>
+<p>普通文件                f</p>
+<p>符号连接                l</p>
+<p>目录                       d</p>
+<p>字符设备                c</p>
+<p>块设备                    b</p>
+<p>套接字                    s</p>
+<p>Fifo                        p</p>
+<h4 id="根据文件时间进行搜索"><a href="#根据文件时间进行搜索" class="headerlink" title="根据文件时间进行搜索"></a>根据文件时间进行搜索</h4><p>unix/linux 文件系统中的每一个文件都有三种时间戳(timestamp) ,如下所示</p>
+<p>访问时间 (-atime) : 用户最近一次访问文件的时间</p>
+<p>修改时间 (-mtime): 文件内同最后一次被修改的时间</p>
+<p>变化时间 (-ctime) : 文件元数据(metadata,例如权限或者所有权)最后一次被修改的时间</p>
+<p>在unux/linux中没有创建时间这个概念</p>
+<p>-atime,-mtime,-ctime 可以作为 find 的时间参数,例如</p>
+<p>打印出 最近七天内被访问过的文件</p>
+<p>find . -atime -7 -print</p>
+<p>打印出 刚好七天前访问过的文件</p>
+<p>find . -atime 7 -print</p>
+<p>打印出 访问时间超过7天的文件</p>
+<p>find . -atime +7 -print</p>
+<p>还有其他一些基于时间的参数 (以分钟为单位)</p>
+<p>-amin</p>
+<p>-mmin</p>
+<p>-cmin</p>
+<h4 id="基于文件大小搜索"><a href="#基于文件大小搜索" class="headerlink" title="基于文件大小搜索"></a>基于文件大小搜索</h4><p>find . -size +2k</p>
+<p>大于2k的文件</p>
+<p>find . -size -2k</p>
+<p>小于2k的文件</p>
+<p>find .-size 2k</p>
+<p>等于2k的文件</p>
+<p>除了K之外,还有其他单元</p>
+<p>b——块  512字节</p>
+<p>c——字节</p>
+<p>w—–字  2字节</p>
+<p>k—–千字节</p>
+<p>m—-兆字节</p>
+<p>G—-吉字节</p>
+<h4 id="删除匹配文件"><a href="#删除匹配文件" class="headerlink" title="删除匹配文件"></a>删除匹配文件</h4><p>-delete 可以删除 find 查找到的匹配文件</p>
+<p>find . -name “*.flv” -delete ##(删除所有flv文件)</p>
+<p>基于文件权限和所有权的匹配</p>
+<p>find . -perm 644 -print</p>
+<p>find . -user huangyuan -print</p>
+<h4 id="结合-find-执行命令或动作"><a href="#结合-find-执行命令或动作" class="headerlink" title="结合 find 执行命令或动作"></a>结合 find 执行命令或动作</h4><p>find 命令可以借助选项 -exec 与其他命令结合</p>
+<p>例如  将制定目录中的所有C程序文件拼接起来写入单个文件 all_C_file.txt </p>
+<p>find . -name “*.c” -exec cat {} ;&gt; all_C_file.txt</p>
+<p>-exec 后面可以接任何命令.{}表示一个匹配.使用 &gt; 而不使用 &gt;&gt;　的原因是 find 命令的输出只是一个单数据流,而只有当多个数据流被追加到单个文件中的时候才有必要用 &gt;&gt; </p>
+<h4 id="跳过指定目录"><a href="#跳过指定目录" class="headerlink" title="跳过指定目录"></a>跳过指定目录</h4><p>find .  ( -name “.get” -prune  ) -o  ( -print )</p>
+<p>这条命令中  (-name “.git” -prune ) 指明 .git 目录应该排除掉, 而 ( -print ) 指明了执行的动作.这些动作需要放在第二个语句块中.</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div></div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/wechatpay.png" alt="HuangYuan_xuan 微信支付">
+        <p>微信支付</p>
+      </div>
+        
+      
+      <div style="display: inline-block">
+        <img src="/alipay.png" alt="HuangYuan_xuan 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/linux/" rel="tag"><i class="fa fa-tag"></i> linux</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2014/05/19/CCNA-Internet-connection/" rel="next" title="CCNA-Internet connection">
+                  <i class="fa fa-chevron-left"></i> CCNA-Internet connection
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2016/10/08/2016国庆/" rel="prev" title="2016年国庆-在深圳">
+                  2016年国庆-在深圳 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zODYyMC8xNTE0OA"></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#根据文件名或者正则表达式匹配搜索"><span class="nav-number">1.</span> <span class="nav-text">根据文件名或者正则表达式匹配搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#否定参数"><span class="nav-number">2.</span> <span class="nav-text">否定参数 !</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基于目录深度的搜索"><span class="nav-number">3.</span> <span class="nav-text">基于目录深度的搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#根据文件类型搜索"><span class="nav-number">4.</span> <span class="nav-text">根据文件类型搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#根据文件时间进行搜索"><span class="nav-number">5.</span> <span class="nav-text">根据文件时间进行搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基于文件大小搜索"><span class="nav-number">6.</span> <span class="nav-text">基于文件大小搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除匹配文件"><span class="nav-number">7.</span> <span class="nav-text">删除匹配文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结合-find-执行命令或动作"><span class="nav-number">8.</span> <span class="nav-text">结合 find 执行命令或动作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#跳过指定目录"><span class="nav-number">9.</span> <span class="nav-text">跳过指定目录</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466"
+      alt="HuangYuan_xuan">
+  <p class="site-author-name" itemprop="name">HuangYuan_xuan</p>
+  <div class="site-description" itemprop="description">锱铢必较间接性奋发图强，睚眦必报持续性混吃等死</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">125</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/huangyuanlove" title="GitHub &rarr; https://github.com/huangyuanlove" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:huangyuan@huangyuanlove.com" title="E-Mail &rarr; mailto:huangyuan@huangyuanlove.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright"><a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">鲁ICP备16004473号-1 </a><span><img src="/gonganbeian.png" style="display:inline-block;"/>
+  
+  <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11010502034083" rel="noopener" target="_blank">11010502034083 </a>&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HuangYuan_xuan</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">284k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">8:36</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+  <script>
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=65959286";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script><script src="/js/motion.js?v=7.4.0"></script>
+<script src="/js/schemes/muse.js?v=7.4.0"></script>
+
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/instantsearch.js@2/dist/instantsearch.min.css">
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@2/dist/instantsearch.min.js"></script><script src="/js/algolia-search.js?v=7.4.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdnjs.cloudflare.com/ajax/libs/mermaid/8.0.0/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>

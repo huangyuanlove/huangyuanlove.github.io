@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=7.4.0">
+  <link rel="mask-icon" href="/favicon.ico?v=7.4.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: 'LO7AODH922',
+      apiKey: 'eef0d8a75f8bcbfe584416f372bf56e7',
+      indexName: 'blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="2018年谷歌I/O 发布了一系列辅助android开发者的实用工具，合称Jetpack，以帮助开发者构建出色的 Android 应用。这次发布的 Android Jetpack 组件覆盖以下 4 个方面：Architecture、Foundation、Behavior 以及 UI。该系列博客介绍一下Jetpack中常用组件，本篇介绍Room，结合ViewModel和LiveData完成上图的结构">
+<meta name="keywords" content="Android,Jetpakc,Room,ViewModel,LiveData">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JetPack中的Room">
+<meta property="og:url" content="http://blog.huangyuanlove.com/2020/01/08/JetPack-Room/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="2018年谷歌I/O 发布了一系列辅助android开发者的实用工具，合称Jetpack，以帮助开发者构建出色的 Android 应用。这次发布的 Android Jetpack 组件覆盖以下 4 个方面：Architecture、Foundation、Behavior 以及 UI。该系列博客介绍一下Jetpack中常用组件，本篇介绍Room，结合ViewModel和LiveData完成上图的结构">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://blog.huangyuanlove.com/image/Android/jetpack/room.png">
+<meta property="og:updated_time" content="2020-11-26T04:10:08.509Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JetPack中的Room">
+<meta name="twitter:description" content="2018年谷歌I/O 发布了一系列辅助android开发者的实用工具，合称Jetpack，以帮助开发者构建出色的 Android 应用。这次发布的 Android Jetpack 组件覆盖以下 4 个方面：Architecture、Foundation、Behavior 以及 UI。该系列博客介绍一下Jetpack中常用组件，本篇介绍Room，结合ViewModel和LiveData完成上图的结构">
+<meta name="twitter:image" content="http://blog.huangyuanlove.com/image/Android/jetpack/room.png">
+  <link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+  <link rel="canonical" href="http://blog.huangyuanlove.com/2020/01/08/JetPack-Room/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>JetPack中的Room | 放码过来</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123314537-1"></script>
+  <script>
+    var host = window.location.hostname;
+    if (host !== "localhost" || !true) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-123314537-1');
+    }
+  </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?98796e1ecbcbaac6a6d9d3fea85985ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">放码过来</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">技术宅 huangyuan@huangyuanlove.com</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-sitemap">
+      
+    
+
+    <a href="/sitemap.xml" rel="section"><i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input" id="search-input"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+  
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2020/01/08/JetPack-Room/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HuangYuan_xuan">
+      <meta itemprop="description" content="锱铢必较间接性奋发图强，睚眦必报持续性混吃等死">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="放码过来">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">JetPack中的Room<a href="https://github.com/huangyuanlove/hexo_back/tree/master/source/_posts/JetPack-Room.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020年01月08日 18:49:43" itemprop="dateCreated datePublished" datetime="2020-01-08T18:49:43+08:00">2020年01月08日</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020年11月26日 12:10:08" itemprop="dateModified" datetime="2020-11-26T12:10:08+08:00">2020年11月26日</time>
+              </span>
+            
+          
+
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>2.4k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>4 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+            <div class="post-gallery-row">
+              <img src="/image/Android/jetpack/room.png" itemprop="contentUrl">
+            
+          
+
+          </div>
+        </div>
+        <p>2018年谷歌I/O 发布了一系列辅助android开发者的实用工具，合称Jetpack，以帮助开发者构建出色的 Android 应用。<br>这次发布的 Android Jetpack 组件覆盖以下 4 个方面：Architecture、Foundation、Behavior 以及 UI。该系列博客介绍一下Jetpack中常用组件，本篇介绍Room，结合ViewModel和LiveData完成上图的结构。最后借助于<a href="https://github.com/android/sunflower" target="_blank" rel="noopener">https://github.com/android/sunflower</a> 来写一个完整的应用</p>
+<a id="more"></a>
+
+<h4 id="Room简介"><a href="#Room简介" class="headerlink" title="Room简介"></a>Room简介</h4><p>原文地址：<a href="https://developer.android.google.cn/training/data-storage/room/index.html" target="_blank" rel="noopener">https://developer.android.google.cn/training/data-storage/room/index.html</a></p>
+<p>Room 持久性库在 SQLite 的基础上提供了一个抽象层，让用户能够在充分利用 SQLite 的强大功能的同时，获享更强健的数据库访问机制。<br>Room 包含 3 个主要组件：</p>
+<ul>
+<li><p>数据库：包含数据库持有者，并作为应用已保留的持久关系型数据的底层连接的主要接入点。</p>
+<p>使用 @Database 注释的类应满足以下条件：</p>
+<ul>
+<li><p>是扩展 RoomDatabase 的抽象类。</p>
+</li>
+<li><p>在注释中添加与数据库关联的实体列表。</p>
+</li>
+<li><p>包含具有 0 个参数且返回使用 @Dao 注释的类的抽象方法。</p>
+<p>在运行时，您可以通过调用 Room.databaseBuilder() 或 Room.inMemoryDatabaseBuilder() 获取 Database 的实例。</p>
+</li>
+</ul>
+</li>
+<li><p>Entity：表示数据库中的表。</p>
+</li>
+<li><p>DAO：包含用于访问数据库的方法。</p>
+</li>
+</ul>
+<h4 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h4><p>选择合适的版本</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Room components</span></span><br><span class="line">implementation <span class="string">"androidx.room:room-runtime:2.2.3"</span></span><br><span class="line">annotationProcessor <span class="string">"androidx.room:room-compiler:2.2.3"</span></span><br><span class="line">androidTestImplementation <span class="string">"androidx.room:room-testing:2.2.3"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Lifecycle components</span></span><br><span class="line">implementation <span class="string">"androidx.lifecycle:lifecycle-extensions:2.1.0"</span></span><br><span class="line">annotationProcessor <span class="string">"androidx.lifecycle:lifecycle-compiler:2.1.0"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// UI</span></span><br><span class="line">implementation <span class="string">"com.google.android.material:material:1.0.0"</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="创建实体类"><a href="#创建实体类" class="headerlink" title="创建实体类"></a>创建实体类</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span>(tableName = <span class="string">"word_table"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Word</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@PrimaryKey</span></span><br><span class="line">   <span class="meta">@NonNull</span></span><br><span class="line">   <span class="meta">@ColumnInfo</span>(name = <span class="string">"word"</span>)</span><br><span class="line">   <span class="keyword">private</span> String mWord;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="title">Word</span><span class="params">(String word)</span> </span>&#123;<span class="keyword">this</span>.mWord = word;&#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> String <span class="title">getWord</span><span class="params">()</span></span>&#123;<span class="keyword">return</span> <span class="keyword">this</span>.mWord;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解释一下常用的注解：</p>
+<p><strong>@Entity</strong> :数据表的实体类。<br><strong>@PrimaryKey</strong>: 每一个实体类都需要一个唯一的标识。<br><strong>@ColumnInfo</strong> :数据表中字段名称。<br><strong>@Ignore</strong> :标注不需要添加到数据表中的属性。<br><strong>@Embedded</strong> :实体类中引用其他实体类。<br><strong>@ForeignKey</strong>:外键约束。</p>
+<h4 id="创建DAO"><a href="#创建DAO" class="headerlink" title="创建DAO"></a>创建DAO</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Dao</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">WordDao</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// allowing the insert of the same word multiple times by passing a </span></span><br><span class="line">   <span class="comment">// conflict resolution strategy</span></span><br><span class="line">   <span class="meta">@Insert</span>(onConflict = OnConflictStrategy.IGNORE)</span><br><span class="line">   <span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(Word word)</span></span>;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@Query</span>(<span class="string">"DELETE FROM word_table"</span>)</span><br><span class="line">   <span class="function"><span class="keyword">void</span> <span class="title">deleteAll</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@Query</span>(<span class="string">"SELECT * from word_table ORDER BY word ASC"</span>)</span><br><span class="line">   <span class="function">List&lt;Word&gt; <span class="title">getAlphabetizedWords</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>@Dao</strong> ：数据库操作的类。<br><strong>@Query</strong> ： 包含所有Sqlite语句操作。<br><strong>@Insert</strong> ： 插入操作。<br><strong>@Delete</strong> ： 删除操作。<br><strong>@Update</strong> ： 更新操作。</p>
+<p><strong>冲突条款</strong> :我们在<code>@Insert</code>中添加的属性值。 就是针对出现<strong>约束异常(ROLLBACK, ABORT, FAIL, IGNORE, and REPLACE)</strong>的非标准处理。</p>
+<p><strong>ABORT</strong> ：  默认值，不处理约束异常。<br><strong>ROLLBACK</strong>：  与ABORT相似，不常用。<br><strong>FAIL</strong> ：  在批量更新或者修改时，中途出现了约束异常，就会终止后续执行，但会保留已执行的sql语句。<br><strong>IGNORE</strong> ：  忽略约束异常，不做任何处理保留原数据。<br><strong>REPLACE</strong>：  当出现约束异常时，移除原数据 &amp; 将新数据覆盖。</p>
+<p>解释一波：</p>
+<ul>
+<li>被<code>@Dao</code>注解的类一定是接口或者抽象类，</li>
+<li><code>void insert(Word word);</code>声明一个插入的方法，不需要我们提供SQL语句，只需要用<code>@Insert</code>标记一下就好</li>
+<li><code>@Query(&quot;DELETE FROM word_table&quot;)</code>:<code>@Query</code>需要我们提供一下SQL语句</li>
+</ul>
+<p>这里的<code>WordDao</code>会在编译时生成<code>WordDAO_Impl</code>类，</p>
+<h4 id="Room-database"><a href="#Room-database" class="headerlink" title="Room database"></a>Room database</h4><p>我们自己定义的Room database必须是继承自<code>RoomDatabase</code>的抽象类，通常我们会把该类做成单例模式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Database</span>(entities = &#123;Word.class&#125;, version = <span class="number">1</span>, exportSchema = <span class="keyword">false</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">WordRoomDatabase</span> <span class="keyword">extends</span> <span class="title">RoomDatabase</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> WordDao <span class="title">wordDao</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> WordRoomDatabase INSTANCE;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> NUMBER_OF_THREADS = <span class="number">4</span>;</span><br><span class="line">   <span class="keyword">static</span> <span class="keyword">final</span> ExecutorService databaseWriteExecutor =</span><br><span class="line">        Executors.newFixedThreadPool(NUMBER_OF_THREADS);</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">static</span> WordRoomDatabase <span class="title">getDatabase</span><span class="params">(<span class="keyword">final</span> Context context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (INSTANCE == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (WordRoomDatabase.class) &#123;</span><br><span class="line">                <span class="keyword">if</span> (INSTANCE == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),</span><br><span class="line">                            WordRoomDatabase.class, <span class="string">"word_database"</span>)</span><br><span class="line">                            .build();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们使用<code>@Database</code>注解来声明这是一个Room database ，并且使用参数中的entities属性，声明该数据库中的映射表，可以设置多个表，同时设置数据库版本，方便之后进行升级。</p>
+<h4 id="创建-Repository"><a href="#创建-Repository" class="headerlink" title="创建 Repository"></a>创建 Repository</h4><p><img src="/image/Android/jetpack/room_repository.png" alt="room_repository"></p>
+<p>Repository是一个抽象的数据访问层，数据可以来源于数据库，也可以来源于网络，这一次层并不是必须的，但还是推荐有这么一层。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WordRepository</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> WordDAO wordDAO;</span><br><span class="line">    <span class="keyword">private</span> LiveData&lt;List&lt;Word&gt;&gt; allWords;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">WordRepository</span><span class="params">(Application application)</span></span>&#123;</span><br><span class="line">        WordRoomDatabase db = WordRoomDatabase.getDatabase(application);</span><br><span class="line">        wordDAO = db.wordDAO();</span><br><span class="line">        allWords = wordDAO.getAlphabetizedWords();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> LiveData&lt;List&lt;Word&gt;&gt; getAllWords() &#123;</span><br><span class="line">        <span class="keyword">return</span> allWords;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">insert</span><span class="params">(<span class="keyword">final</span> Word word)</span></span>&#123;</span><br><span class="line">        WordRoomDatabase.databaseWriteExecutor.execute(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                wordDAO.insert(word);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建ViewModel"><a href="#创建ViewModel" class="headerlink" title="创建ViewModel"></a>创建ViewModel</h4><p><img src="/image/Android/jetpack/room_view_model.png" alt="room_view_model"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WordViewModel</span> <span class="keyword">extends</span> <span class="title">AndroidViewModel</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> WordRepository wordRepository;</span><br><span class="line">    <span class="keyword">private</span> LiveData&lt;List&lt;Word&gt;&gt; allWords;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">WordViewModel</span><span class="params">(@NonNull Application application)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(application);</span><br><span class="line">        wordRepository = <span class="keyword">new</span> WordRepository(application);</span><br><span class="line">        allWords = wordRepository.getAllWords();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> LiveData&lt;List&lt;Word&gt;&gt; getAllWords() &#123;</span><br><span class="line">        <span class="keyword">return</span> allWords;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">insert</span><span class="params">(Word word)</span> </span>&#123;</span><br><span class="line">        wordRepository.insert(word);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建页面"><a href="#创建页面" class="headerlink" title="创建页面"></a>创建页面</h4><p>页面包含一个<code>RecyclerView</code>，用于展示数据库保存的内容，一个<code>button</code>,点击后跳转新页面，添加新的<code>Word</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RoomWordActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> WordViewModel mWordViewModel;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> NEW_WORD_ACTIVITY_REQUEST_CODE = <span class="number">1</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_room_word);</span><br><span class="line">        RecyclerView recyclerView = findViewById(R.id.recyclerview);</span><br><span class="line">        <span class="keyword">final</span> WordListAdapter adapter = <span class="keyword">new</span> WordListAdapter(<span class="keyword">this</span>);</span><br><span class="line">        recyclerView.setAdapter(adapter);</span><br><span class="line">        recyclerView.setLayoutManager(<span class="keyword">new</span> LinearLayoutManager(<span class="keyword">this</span>));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        mWordViewModel = ViewModelProviders.of (<span class="keyword">this</span>).get(WordViewModel.class);</span><br><span class="line">        mWordViewModel.getAllWords().observe(<span class="keyword">this</span>, <span class="keyword">new</span> Observer&lt;List&lt;Word&gt;&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onChanged</span><span class="params">(@Nullable <span class="keyword">final</span> List&lt;Word&gt; words)</span> </span>&#123;</span><br><span class="line">                <span class="comment">// Update the cached copy of the words in the adapter.</span></span><br><span class="line">                adapter.setWords(words);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        FloatingActionButton fab = findViewById(R.id.fab);</span><br><span class="line">        fab.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">                Intent intent = <span class="keyword">new</span> Intent(RoomWordActivity.<span class="keyword">this</span>, NewWordActivity.class);</span><br><span class="line">                startActivityForResult(intent, NEW_WORD_ACTIVITY_REQUEST_CODE);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onActivityResult</span><span class="params">(<span class="keyword">int</span> requestCode, <span class="keyword">int</span> resultCode, Intent data)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onActivityResult(requestCode, resultCode, data);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (requestCode == NEW_WORD_ACTIVITY_REQUEST_CODE &amp;&amp; resultCode == RESULT_OK) &#123;</span><br><span class="line">            Word word = <span class="keyword">new</span> Word(data.getStringExtra(NewWordActivity.EXTRA_REPLY));</span><br><span class="line">            mWordViewModel.insert(word);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            Toast.makeText(</span><br><span class="line">                    getApplicationContext(),</span><br><span class="line">                    R.string.empty_not_saved,</span><br><span class="line">                    Toast.LENGTH_LONG).show();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样我们当我们添加完数据之后，会在页面上显示。</p>
+<h4 id="Dao编译后的产物"><a href="#Dao编译后的产物" class="headerlink" title="@Dao编译后的产物"></a>@Dao编译后的产物</h4><p>我们在WordDAO中添加了几天无关紧要的方法，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Insert</span>(onConflict = OnConflictStrategy.IGNORE)</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(Word word)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Update</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">updateWord</span><span class="params">(Word word)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Query</span>(<span class="string">"DELETE FROM word_table"</span>)</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">deleteAll</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Query</span>(<span class="string">"SELECT * from word_table ORDER BY word ASC"</span>)</span><br><span class="line">LiveData&lt;List&lt;Word&gt;&gt; getAlphabetizedWords();</span><br><span class="line"></span><br><span class="line"><span class="meta">@Query</span>(<span class="string">"select * from word_table where word=:word"</span>)</span><br><span class="line"><span class="function">LiveData&lt;Word&gt; <span class="title">getWordByContent</span><span class="params">(String word)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>我们来看一下编译时生成的类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">WordDAO_Impl</span> <span class="keyword">implements</span> <span class="title">WordDAO</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> RoomDatabase __db;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//对应着 void insert(Word word);方法</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> EntityInsertionAdapter&lt;Word&gt; __insertionAdapterOfWord;</span><br><span class="line">	<span class="comment">//对应着  void updateWord(Word word);方法</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> EntityDeletionOrUpdateAdapter&lt;Word&gt; __updateAdapterOfWord;</span><br><span class="line">	<span class="comment">//对应着 void deleteAll();方法</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> SharedSQLiteStatement __preparedStmtOfDeleteAll;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">WordDAO_Impl</span><span class="params">(RoomDatabase __db)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.__db = __db;</span><br><span class="line">    <span class="comment">//和JDBC中PreparedStatement很像，差不多是一致的</span></span><br><span class="line">    <span class="keyword">this</span>.__insertionAdapterOfWord = <span class="keyword">new</span> EntityInsertionAdapter&lt;Word&gt;(__db) &#123;</span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">public</span> String <span class="title">createQuery</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"INSERT OR IGNORE INTO `word_table` (`word`) VALUES (?)"</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">bind</span><span class="params">(SupportSQLiteStatement stmt, Word value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (value.getWord() == <span class="keyword">null</span>) &#123;</span><br><span class="line">          stmt.bindNull(<span class="number">1</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          stmt.bindString(<span class="number">1</span>, value.getWord());</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="comment">//这里也是进行预编译</span></span><br><span class="line">    <span class="keyword">this</span>.__updateAdapterOfWord = <span class="keyword">new</span> EntityDeletionOrUpdateAdapter&lt;Word&gt;(__db) &#123;</span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">public</span> String <span class="title">createQuery</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"UPDATE OR ABORT `word_table` SET `word` = ? WHERE `word` = ?"</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">bind</span><span class="params">(SupportSQLiteStatement stmt, Word value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (value.getWord() == <span class="keyword">null</span>) &#123;</span><br><span class="line">          stmt.bindNull(<span class="number">1</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          stmt.bindString(<span class="number">1</span>, value.getWord());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (value.getWord() == <span class="keyword">null</span>) &#123;</span><br><span class="line">          stmt.bindNull(<span class="number">2</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          stmt.bindString(<span class="number">2</span>, value.getWord());</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="comment">//这里是删除所有，并没有参数，所以没有预编译语句</span></span><br><span class="line">    <span class="keyword">this</span>.__preparedStmtOfDeleteAll = <span class="keyword">new</span> SharedSQLiteStatement(__db) &#123;</span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">public</span> String <span class="title">createQuery</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> String _query = <span class="string">"DELETE FROM word_table"</span>;</span><br><span class="line">        <span class="keyword">return</span> _query;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//这里是复写WordDAO中的方法，调用上面的预编译好的语句进行sql操作，没啥好说的；篇幅原因，</span></span><br><span class="line">  <span class="comment">//public LiveData&lt;List&lt;Word&gt;&gt; getAlphabetizedWords() </span></span><br><span class="line">  <span class="comment">//public LiveData&lt;Word&gt; getWordByContent(final String word)</span></span><br><span class="line">  <span class="comment">//没有抄过来</span></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">insert</span><span class="params">(<span class="keyword">final</span> Word word)</span> </span>&#123;</span><br><span class="line">    __db.assertNotSuspendingTransaction();</span><br><span class="line">    __db.beginTransaction();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      __insertionAdapterOfWord.insert(word);</span><br><span class="line">      __db.setTransactionSuccessful();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      __db.endTransaction();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateWord</span><span class="params">(<span class="keyword">final</span> Word word)</span> </span>&#123;</span><br><span class="line">    __db.assertNotSuspendingTransaction();</span><br><span class="line">    __db.beginTransaction();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      __updateAdapterOfWord.handle(word);</span><br><span class="line">      __db.setTransactionSuccessful();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      __db.endTransaction();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteAll</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    __db.assertNotSuspendingTransaction();</span><br><span class="line">    <span class="keyword">final</span> SupportSQLiteStatement _stmt = __preparedStmtOfDeleteAll.acquire();</span><br><span class="line">    __db.beginTransaction();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      _stmt.executeUpdateDelete();</span><br><span class="line">      __db.setTransactionSuccessful();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      __db.endTransaction();</span><br><span class="line">      __preparedStmtOfDeleteAll.release(_stmt);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Database编译后生成的类"><a href="#Database编译后生成的类" class="headerlink" title="@Database编译后生成的类"></a>@Database编译后生成的类</h4><p>我们定义的<code>WordRoomDatabase</code>类在编译后生成了<code>WordRoomDatabase_Impl</code>类，我们来看一下类的内容,删除了方法的实现，只保留了方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">WordRoomDatabase_Impl</span> <span class="keyword">extends</span> <span class="title">WordRoomDatabase</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">volatile</span> WordDAO _wordDAO;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">volatile</span> ManDAO _manDAO;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> SupportSQLiteOpenHelper <span class="title">createOpenHelper</span><span class="params">(DatabaseConfiguration configuration)</span> </span>&#123;</span><br><span class="line">   </span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="keyword">protected</span> RoomOpenHelper.<span class="function">ValidationResult <span class="title">onValidateSchema</span><span class="params">(SupportSQLiteDatabase _db)</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">final</span> SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(configuration.context)</span><br><span class="line">        .name(configuration.name)</span><br><span class="line">        .callback(_openCallback)</span><br><span class="line">        .build();</span><br><span class="line">    <span class="keyword">final</span> SupportSQLiteOpenHelper _helper = configuration.sqliteOpenHelperFactory.create(_sqliteConfig);</span><br><span class="line">    <span class="keyword">return</span> _helper;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> InvalidationTracker <span class="title">createInvalidationTracker</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> HashMap&lt;String, String&gt; _shadowTablesMap = <span class="keyword">new</span> HashMap&lt;String, String&gt;(<span class="number">0</span>);</span><br><span class="line">    HashMap&lt;String, Set&lt;String&gt;&gt; _viewTables = <span class="keyword">new</span> HashMap&lt;String, Set&lt;String&gt;&gt;(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> InvalidationTracker(<span class="keyword">this</span>, _shadowTablesMap, _viewTables, <span class="string">"word_table"</span>,<span class="string">"man"</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clearAllTables</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"> <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> WordDAO <span class="title">wordDAO</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (_wordDAO != <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> _wordDAO;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">synchronized</span>(<span class="keyword">this</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span>(_wordDAO == <span class="keyword">null</span>) &#123;</span><br><span class="line">          _wordDAO = <span class="keyword">new</span> WordDAO_Impl(<span class="keyword">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> _wordDAO;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> ManDAO <span class="title">ManDAO</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (_manDAO != <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> _manDAO;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">synchronized</span>(<span class="keyword">this</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span>(_manDAO == <span class="keyword">null</span>) &#123;</span><br><span class="line">          _manDAO = <span class="keyword">new</span> ManDAO_Impl(<span class="keyword">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> _manDAO;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里面我们发现了获取我们定义的两个<code>DAO</code>的方法，返回了<code>DAO_Impl</code>的实现类。</p>
+<p><code>createInvalidationTracker</code>是在创建RoomDatabase时调用的 ，代码在<code>RoomDatabase</code>类中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">RoomDatabase</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       mInvalidationTracker = createInvalidationTracker();</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>createOpenHelper</code>是在我们自己定义的RoomDatabase中调用<code>Room.databaseBuilder().build()</code>方法时，这个方法内部调用的。</p>
+<h4 id="调用流程"><a href="#调用流程" class="headerlink" title="调用流程"></a>调用流程</h4><p>上面简单说明了调用过程中所涉及到的类，下面简单捋一下调用过程：</p>
+<ol>
+<li>我们的<code>WordRoomDatabase</code>继承自<code>RoomDatabase</code>,并且在<code>getDatabase</code>方法中调用了<code>Room.databaseBuilder().build()</code>方法。这里的<code>Room.databaseBuilder()</code>方法返回的是<code>RoomDatabase.Builder</code>类型，这调用<code>build()</code>方法</li>
+<li>在<code>RoomDatabase.Builder.build</code>方法中，只看最后几行，前面是对数据库进行的配置</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">T db = Room.getGeneratedImplementation(mDatabaseClass, DB_IMPL_SUFFIX);</span><br><span class="line">db.init(configuration);</span><br><span class="line"><span class="keyword">return</span> db;</span><br></pre></td></tr></table></figure>
+
+<p>这里的<code>DB_IMPL_SUFFIX</code>是一个全局静态变量：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String DB_IMPL_SUFFIX = <span class="string">"_Impl"</span>;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>在返回数据库实例之前，调用了<code>db.init</code>方法，在<code>init</code>方法中调用了<code>createOpenHelper</code>方法，也就是上面</li>
+</ol>
+<p>提到的<code>WordRoomDatabase_Impl</code>中实现的<code>createOpenHelper</code>方法。</p>
+<p>至此，我们就可以调用DAO中的方法对数据库进行操作了</p>
+<hr>
+<p>以上</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div></div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/wechatpay.png" alt="HuangYuan_xuan 微信支付">
+        <p>微信支付</p>
+      </div>
+        
+      
+      <div style="display: inline-block">
+        <img src="/alipay.png" alt="HuangYuan_xuan 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2020/01/06/写在2020年初-2019总结/" rel="next" title="写在2020年初-2019总结">
+                  <i class="fa fa-chevron-left"></i> 写在2020年初-2019总结
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2020/02/25/JetPack中的Navigation/" rel="prev" title="JetPack中的Navigation">
+                  JetPack中的Navigation <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zODYyMC8xNTE0OA"></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Room简介"><span class="nav-number">1.</span> <span class="nav-text">Room简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加依赖"><span class="nav-number">2.</span> <span class="nav-text">添加依赖</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建实体类"><span class="nav-number">3.</span> <span class="nav-text">创建实体类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建DAO"><span class="nav-number">4.</span> <span class="nav-text">创建DAO</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Room-database"><span class="nav-number">5.</span> <span class="nav-text">Room database</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建-Repository"><span class="nav-number">6.</span> <span class="nav-text">创建 Repository</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建ViewModel"><span class="nav-number">7.</span> <span class="nav-text">创建ViewModel</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建页面"><span class="nav-number">8.</span> <span class="nav-text">创建页面</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dao编译后的产物"><span class="nav-number">9.</span> <span class="nav-text">@Dao编译后的产物</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Database编译后生成的类"><span class="nav-number">10.</span> <span class="nav-text">@Database编译后生成的类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#调用流程"><span class="nav-number">11.</span> <span class="nav-text">调用流程</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466"
+      alt="HuangYuan_xuan">
+  <p class="site-author-name" itemprop="name">HuangYuan_xuan</p>
+  <div class="site-description" itemprop="description">锱铢必较间接性奋发图强，睚眦必报持续性混吃等死</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">125</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/huangyuanlove" title="GitHub &rarr; https://github.com/huangyuanlove" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:huangyuan@huangyuanlove.com" title="E-Mail &rarr; mailto:huangyuan@huangyuanlove.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright"><a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">鲁ICP备16004473号-1 </a><span><img src="/gonganbeian.png" style="display:inline-block;"/>
+  
+  <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11010502034083" rel="noopener" target="_blank">11010502034083 </a>&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HuangYuan_xuan</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">284k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">8:36</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+  <script>
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=65959286";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script><script src="/js/motion.js?v=7.4.0"></script>
+<script src="/js/schemes/muse.js?v=7.4.0"></script>
+
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/instantsearch.js@2/dist/instantsearch.min.css">
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@2/dist/instantsearch.min.js"></script><script src="/js/algolia-search.js?v=7.4.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdnjs.cloudflare.com/ajax/libs/mermaid/8.0.0/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>
