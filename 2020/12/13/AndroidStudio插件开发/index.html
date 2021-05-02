@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=7.4.0">
+  <link rel="mask-icon" href="/favicon.ico?v=7.4.0" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2">
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: 'LO7AODH922',
+      apiKey: 'eef0d8a75f8bcbfe584416f372bf56e7',
+      indexName: 'blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="写了个类似Butter Knife的开发库，但是并没有与其配套的AndroidStudio插件，抽时间研究了以下IDEA的api文档，撸了一个对应的插件，源码在这里 代码参考https://github.com/avast/android-butterknife-zelezny 所用到的知识点：  查找文件 解析xml 写文件IDEA插件开发文档：https://jetbrains.org/int">
+<meta name="keywords" content="AndroidStudioPlugin,AS插件开发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AndroidStudio插件开发">
+<meta property="og:url" content="http://blog.huangyuanlove.com/2020/12/13/AndroidStudio插件开发/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="写了个类似Butter Knife的开发库，但是并没有与其配套的AndroidStudio插件，抽时间研究了以下IDEA的api文档，撸了一个对应的插件，源码在这里 代码参考https://github.com/avast/android-butterknife-zelezny 所用到的知识点：  查找文件 解析xml 写文件IDEA插件开发文档：https://jetbrains.org/int">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://blog.huangyuanlove.com/image/Android/AndroidStudioPlugin/create_plugin_gradle.png">
+<meta property="og:image" content="http://blog.huangyuanlove.com/image/Android/AndroidStudioPlugin/AndroidAnnotation.png">
+<meta property="og:updated_time" content="2020-12-15T02:11:53.822Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AndroidStudio插件开发">
+<meta name="twitter:description" content="写了个类似Butter Knife的开发库，但是并没有与其配套的AndroidStudio插件，抽时间研究了以下IDEA的api文档，撸了一个对应的插件，源码在这里 代码参考https://github.com/avast/android-butterknife-zelezny 所用到的知识点：  查找文件 解析xml 写文件IDEA插件开发文档：https://jetbrains.org/int">
+<meta name="twitter:image" content="http://blog.huangyuanlove.com/image/Android/AndroidStudioPlugin/create_plugin_gradle.png">
+  <link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+  <link rel="canonical" href="http://blog.huangyuanlove.com/2020/12/13/AndroidStudio插件开发/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>AndroidStudio插件开发 | 放码过来</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123314537-1"></script>
+  <script>
+    var host = window.location.hostname;
+    if (host !== "localhost" || !true) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-123314537-1');
+    }
+  </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?98796e1ecbcbaac6a6d9d3fea85985ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">放码过来</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">技术宅 huangyuan@huangyuanlove.com</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-sitemap">
+      
+    
+
+    <a href="/sitemap.xml" rel="section"><i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input" id="search-input"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+  
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2020/12/13/AndroidStudio插件开发/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="HuangYuan_xuan">
+      <meta itemprop="description" content="锱铢必较间接性奋发图强，睚眦必报持续性混吃等死">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="放码过来">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">AndroidStudio插件开发<a href="https://github.com/huangyuanlove/hexo_back/tree/master/source/_posts/AndroidStudio插件开发.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020年12月13日 22:42:42" itemprop="dateCreated datePublished" datetime="2020-12-13T22:42:42+08:00">2020年12月13日</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020年12月15日 10:11:53" itemprop="dateModified" datetime="2020-12-15T10:11:53+08:00">2020年12月15日</time>
+              </span>
+            
+          
+
+          
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>1.9k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>4 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>写了个类似<code>Butter Knife</code>的<a href="https://github.com/huangyuanlove/AndroidAnnotation" target="_blank" rel="noopener">开发库</a>，但是并没有与其配套的AndroidStudio插件，抽时间研究了以下IDEA的api文档，撸了一个对应的插件，<a href="https://github.com/huangyuanlove/AndroidAnnotation-Plugin" target="_blank" rel="noopener">源码在这里</a></p>
+<p>代码参考<a href="https://github.com/avast/android-butterknife-zelezny" target="_blank" rel="noopener">https://github.com/avast/android-butterknife-zelezny</a></p>
+<p>所用到的知识点：</p>
+<ol>
+<li>查找文件</li>
+<li>解析xml</li>
+<li>写文件<br>IDEA插件开发文档：<a href="https://jetbrains.org/intellij/sdk/docs/intro/welcome.html" target="_blank" rel="noopener">https://jetbrains.org/intellij/sdk/docs/intro/welcome.html</a><a id="more"></a>
+
+</li>
+</ol>
+<h4 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h4><p>官方推荐创建gradle项目，这里贴个图，创建过程按照官网叙述的创建就好</p>
+<p><a href="https://jetbrains.org/intellij/sdk/docs/tutorials/build_system/prerequisites.html" target="_blank" rel="noopener">https://jetbrains.org/intellij/sdk/docs/tutorials/build_system/prerequisites.html</a></p>
+<p>这里说明一下，如果想要在AndroidStudio中进行debug，阅读一下这个</p>
+<p><a href="https://jetbrains.org/intellij/sdk/docs/products/android_studio.html" target="_blank" rel="noopener">https://jetbrains.org/intellij/sdk/docs/products/android_studio.html</a></p>
+<p>也就是在项目根目录的的<code>build.gradle</code>中配置 <code>intellij</code>和<code>runIde</code>，具体含义可在网页中找到，这里不再赘述</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// See https://github.com/JetBrains/gradle-intellij-plugin/</span></span><br><span class="line">intellij &#123;</span><br><span class="line">    version <span class="string">'201.8743.12'</span></span><br><span class="line">    type <span class="string">'IC'</span></span><br><span class="line">    plugins = [<span class="string">'android'</span>, <span class="string">'java'</span>]</span><br><span class="line">&#125;</span><br><span class="line">runIde &#123;</span><br><span class="line">    <span class="comment">// Absolute path to installed target 3.5 Android Studio to use as IDE Development Instance</span></span><br><span class="line">    <span class="comment">// The "Contents" directory is macOS specific.</span></span><br><span class="line"><span class="comment">//    ideDirectory '/Applications/Android Studio.app/Contents' //for mac</span></span><br><span class="line"><span class="comment">//    ideDirectory '/home/huangyuan/androidStudio' //for linux</span></span><br><span class="line">    ideDirectory <span class="string">'G:\\AndroidStudio'</span> <span class="comment">//for window</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/image/Android/AndroidStudioPlugin/create_plugin_gradle.png" alt="create_plugin_gradle"></p>
+<h4 id="创建类"><a href="#创建类" class="headerlink" title="创建类"></a>创建类</h4><p>创建一个继承AnAction 的类，这里创建的方式有两种，一个是直接创建java类，然后再去注册；另外一个就是通过想到直接创建(就像我们创建Activity一样)；</p>
+<p>具体可以看这里 <a href="https://jetbrains.org/intellij/sdk/docs/tutorials/action_system/working_with_custom_actions.html" target="_blank" rel="noopener">https://jetbrains.org/intellij/sdk/docs/tutorials/action_system/working_with_custom_actions.html</a></p>
+<p>这里我们需要解析layout文件(xml文件)并且还要写入文件，所以就直接继承<code>BaseGenerateAction</code>，重写其中的两个方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">(@NotNull AnActionEvent e)</span> </span>&#123;</span><br><span class="line">   <span class="comment">// Using the event, evaluate the context, and enable or disable the action.</span></span><br><span class="line">    e.getPresentation().setEnabledAndVisible(e.getProject() != <span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">actionPerformed</span><span class="params">(@NotNull AnActionEvent event)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Using the event, implement an action. For example, create and show a dialog.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当工程处于indexing的时候，我们不想让插件生效，可以实现<code>DumbAware</code>接口，继续向<code>actionPerformed</code>方法中添加逻辑</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">actionPerformed</span><span class="params">(@NotNull AnActionEvent event)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//获取工程对象，具体信息可以看这里 https://jetbrains.org/intellij/sdk/docs/basics/project_structure.html</span></span><br><span class="line">    Project project = event.getData(PlatformDataKeys.PROJECT);</span><br><span class="line">    <span class="keyword">if</span>(project ==<span class="keyword">null</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> ;</span><br><span class="line">    &#125;</span><br><span class="line">    Editor editor = event.getData(PlatformDataKeys.EDITOR);</span><br><span class="line">    <span class="keyword">if</span>(editor ==<span class="keyword">null</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    DumbService dumbService = DumbService.getInstance(project);</span><br><span class="line">    <span class="keyword">if</span> (dumbService.isDumb()) &#123;</span><br><span class="line">        dumbService.showDumbModeNotification(<span class="string">"ViewInject plugin is not available during indexing"</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//这里是我们自己的逻辑</span></span><br><span class="line">    analyze(project, editor);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="获取文件"><a href="#获取文件" class="headerlink" title="获取文件"></a>获取文件</h4><p>我们可以获取到当前光标所指向的位置，也可以获取当前选中的字符，我们从官方文档中找到我们自己需要的东西：需要看一下PSI(Program Structure Interface),具体信息在这里<a href="https://jetbrains.org/intellij/sdk/docs/basics/architectural_overview/psi.html" target="_blank" rel="noopener">https://jetbrains.org/intellij/sdk/docs/basics/architectural_overview/psi.html</a></p>
+<p>关键信息在<a href="https://jetbrains.org/intellij/sdk/docs/basics/architectural_overview/psi_elements.html" target="_blank" rel="noopener">PSI element</a> 和 <a href="https://jetbrains.org/intellij/sdk/docs/basics/architectural_overview/psi_files.html" target="_blank" rel="noopener">PSI Files</a>，项目的中的具体逻辑在<code>GetLayoutFileUtil.java</code>，这里比较麻烦一些，用到了<code>Module</code>和<code>GlobalSearchScope</code>这两个类，<a href="https://jetbrains.org/intellij/sdk/docs/reference_guide/project_model/module.html" target="_blank" rel="noopener">具体可以看这里https://jetbrains.org/intellij/sdk/docs/reference_guide/project_model/module.html</a>，就不再抄一遍+翻译了</p>
+<h4 id="解析文件"><a href="#解析文件" class="headerlink" title="解析文件"></a>解析文件</h4><p>这里我们拿到了对应的<code>layout.xml</code>文件对象，一个<code>PsiFile</code>对象，调用文件的遍历方法<code>layoutFile.accept(PsiElementVisitor visitor)</code>，这里我们传入<code>XmlRecursiveElementVisitor</code>实例对象，在解析xml的过程中，我们可能会遇到<code>&lt;include&gt;</code>标签，需要继续解析该标签下的xml文件，这里搞个递归。</p>
+<h4 id="展示解析内容"><a href="#展示解析内容" class="headerlink" title="展示解析内容"></a>展示解析内容</h4><p>解析出来的数据存入ArrayList中，在解析过程中，保存了对应id、判断是否引用了android name space中id、将id的值转化为对应的字段名字、保存了是是否为自定义的view等信息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> String id;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">boolean</span> isAndroidNS = <span class="keyword">false</span>;</span><br><span class="line"><span class="keyword">public</span> String nameFull; <span class="comment">// element name with package</span></span><br><span class="line"><span class="keyword">public</span> String name; <span class="comment">// element name</span></span><br><span class="line"><span class="keyword">public</span> String fieldName; <span class="comment">// name of variable</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">boolean</span> isValid = <span class="keyword">false</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">boolean</span> used = <span class="keyword">true</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">boolean</span> isClick = <span class="keyword">true</span>;</span><br></pre></td></tr></table></figure>
+
+<p>展示解析内容使用<code>javax.swing</code>组件，这个也没什么好说的。</p>
+<p><img src="/image/Android/AndroidStudioPlugin/AndroidAnnotation.png" alt="show_android_annotation_info"></p>
+<p>在展示面板上提供的全选功能；提供了生成代码的两种格式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@BindView</span>(idStr = <span class="string">"xxxx"</span>) <span class="comment">//可在library、application中使用</span></span><br><span class="line"><span class="meta">@BindView</span>(id = R.id.xxx) <span class="comment">//仅在application中使用</span></span><br></pre></td></tr></table></figure>
+
+<p>因为在library中生成的R文件中的变量不是final类型，并且application中的R文件变量，在gradle plugin  5.0之后也不再是final的，所以建议使用idStr的方式，也是默认生成的代码</p>
+<h4 id="写入文件"><a href="#写入文件" class="headerlink" title="写入文件"></a>写入文件</h4><p>为了方便，写入文件的时候使用的是<code>PsiClass</code>对象进行操作的，<a href="https://upsource.jetbrains.com/idea-ce/file/idea-ce-4b94ba01122752d7576eb9d69638b6e89d1671b7/java/java-psi-api/src/com/intellij/psi/PsiClass.java" target="_blank" rel="noopener">源码在这里</a>，至于如何操作PsiFile，<a href="https://jetbrains.org/intellij/sdk/docs/basics/architectural_overview/psi.html" target="_blank" rel="noopener">可以看这里</a>。写入文件的过程，看起来个使用<code>javapoet</code>差不多，<a href="https://github.com/square/javapoet" target="_blank" rel="noopener">javapoet可以看这里，github上直接搜索即可</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">generateClick</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (ElementBean element : mElements) &#123;</span><br><span class="line">    <span class="keyword">if</span> (element.isClick) &#123;</span><br><span class="line">      StringBuilder method = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">      method.append(<span class="string">"@ClickResponder("</span> + element.getGenerateValue(generateId) + <span class="string">")"</span>);</span><br><span class="line">      method.append(<span class="string">"public void onClick"</span> + Utils.capitalize(element.fieldName) + <span class="string">" (View v) &#123;&#125;"</span>);</span><br><span class="line">      mClass.add(mFactory.createMethodFromText(method.toString(), mClass));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在写入类字段的时候，需要判断是否需要添加前缀，在<code>Constant</code>中列举了一些需要特殊处理的对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">generateFields</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (ElementBean element : mElements) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!element.used) &#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        StringBuilder injection = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">        injection.append(<span class="string">"@BindView"</span>);</span><br><span class="line">        injection.append(<span class="string">'('</span>);</span><br><span class="line">        injection.append(element.getGenerateValue(generateId));</span><br><span class="line">        injection.append(<span class="string">")"</span>);</span><br><span class="line">        <span class="keyword">if</span> (element.nameFull != <span class="keyword">null</span> &amp;&amp; element.nameFull.length() &gt; <span class="number">0</span>) &#123; <span class="comment">// custom package+class</span></span><br><span class="line">            injection.append(element.nameFull);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (Constant.paths.containsKey(element.name)) &#123; <span class="comment">// listed class</span></span><br><span class="line">            injection.append(Constant.paths.get(element.name));</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123; <span class="comment">// android.widget</span></span><br><span class="line">            injection.append(<span class="string">"android.widget."</span>);</span><br><span class="line">            injection.append(element.name);</span><br><span class="line">        &#125;</span><br><span class="line">        injection.append(<span class="string">" "</span>);</span><br><span class="line">        injection.append(element.fieldName);</span><br><span class="line">        injection.append(<span class="string">";"</span>);</span><br><span class="line">        mClass.add(mFactory.createFieldFromText(injection.toString(), mClass));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>写入完成后格式化一下代买，要不然写入的字段会是这样：<code>android.widget.TextView userNameTextView</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">JavaCodeStyleManager styleManager = JavaCodeStyleManager.getInstance(mProject);</span><br><span class="line">styleManager.optimizeImports(mFile);</span><br><span class="line">styleManager.shortenClassReferences(mClass);</span><br><span class="line"><span class="keyword">new</span> ReformatCodeProcessor(mProject, mClass.getContainingFile(), <span class="keyword">null</span>, <span class="keyword">false</span>).runWithoutProgress();</span><br></pre></td></tr></table></figure>
+
+<p>到此为止，就已经完成了我们的工作。</p>
+<hr>
+<p>以上</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        <div id="reward-container">
+  <div></div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block">
+        <img src="/wechatpay.png" alt="HuangYuan_xuan 微信支付">
+        <p>微信支付</p>
+      </div>
+        
+      
+      <div style="display: inline-block">
+        <img src="/alipay.png" alt="HuangYuan_xuan 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+            
+              <a href="/tags/Plugin/" rel="tag"><i class="fa fa-tag"></i> Plugin</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2020/11/26/gradle自定义插件/" rel="next" title="gradle自定义插件">
+                  <i class="fa fa-chevron-left"></i> gradle自定义插件
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2021/01/02/写在2021年初-2020总结/" rel="prev" title="写在2021年初-2020总结">
+                  写在2021年初-2020总结 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zODYyMC8xNTE0OA"></div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建项目"><span class="nav-number">1.</span> <span class="nav-text">创建项目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建类"><span class="nav-number">2.</span> <span class="nav-text">创建类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获取文件"><span class="nav-number">3.</span> <span class="nav-text">获取文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解析文件"><span class="nav-number">4.</span> <span class="nav-text">解析文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#展示解析内容"><span class="nav-number">5.</span> <span class="nav-text">展示解析内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#写入文件"><span class="nav-number">6.</span> <span class="nav-text">写入文件</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466"
+      alt="HuangYuan_xuan">
+  <p class="site-author-name" itemprop="name">HuangYuan_xuan</p>
+  <div class="site-description" itemprop="description">锱铢必较间接性奋发图强，睚眦必报持续性混吃等死</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">125</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/huangyuanlove" title="GitHub &rarr; https://github.com/huangyuanlove" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:huangyuan@huangyuanlove.com" title="E-Mail &rarr; mailto:huangyuan@huangyuanlove.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright"><a href="http://www.beian.miit.gov.cn" rel="noopener" target="_blank">鲁ICP备16004473号-1 </a><span><img src="/gonganbeian.png" style="display:inline-block;"/>
+  
+  <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11010502034083" rel="noopener" target="_blank">11010502034083 </a>&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HuangYuan_xuan</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">284k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">8:36</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+  <script>
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=65959286";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script><script src="/js/motion.js?v=7.4.0"></script>
+<script src="/js/schemes/muse.js?v=7.4.0"></script>
+
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/instantsearch.js@2/dist/instantsearch.min.css">
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@2/dist/instantsearch.min.js"></script><script src="/js/algolia-search.js?v=7.4.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdnjs.cloudflare.com/ajax/libs/mermaid/8.0.0/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme: 'forest',
+      logLevel: 3,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+<script>
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+</body>
+</html>
