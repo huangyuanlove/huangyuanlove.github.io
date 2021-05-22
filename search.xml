@@ -793,6 +793,108 @@ ZygoteConnection.java -> Zygote.java: 12:forkAndSpecialize</textarea><textarea i
       </tags>
   </entry>
   <entry>
+    <title>CCNA-ERGIP协议</title>
+    <url>/2014/05/19/CCNA-ERGIP%E5%8D%8F%E8%AE%AE/</url>
+    <content><![CDATA[<p>学习过程中的笔记，比较零散。</p>
+<span id="more"></span>
+
+<h4 id="EIPGRP（企业级、高级的路由选择协议）"><a href="#EIPGRP（企业级、高级的路由选择协议）" class="headerlink" title="EIPGRP（企业级、高级的路由选择协议）"></a>EIPGRP（企业级、高级的路由选择协议）</h4><p>（cisco私有的协议，只有cisco的设备才支持）</p>
+<p>特点</p>
+<ul>
+<li><p>高级距离矢量型协议（有没有发送路由信息）</p>
+</li>
+<li><p>收敛速度快（DUAL算法，扩散更新算法）</p>
+</li>
+<li><p>支持VLSM和不连续子网</p>
+</li>
+<li><p>部分更新（网络已经收敛，在网络拓扑不出现变动的时候，不在发送更新信息,只向收到变化影响路由条目的路由器发送变化的路由）</p>
+</li>
+<li><p>支持多种网络层协议</p>
+</li>
+<li><p>支持可扩展的网络设计（没有太多的设计要求）</p>
+</li>
+<li><p>使用组播或者单播进行更新（224.0.0.0）</p>
+</li>
+<li><p>可以在网络中的任何一点，进行手工汇总，并且支持超网汇总</p>
+</li>
+<li><p>100%支持无环路的无类路由</p>
+</li>
+<li><p>在wan和lan上容易配置</p>
+</li>
+<li><p>可以支持等开销或者非等开销的负载均衡</p>
+</li>
+</ul>
+<h4 id="工作原理-邻居机制"><a href="#工作原理-邻居机制" class="headerlink" title="工作原理 邻居机制"></a>工作原理 邻居机制</h4><p>EIGRP 三张表</p>
+<p>邻居(下一跳)表(发送更新之前先搜寻邻居)</p>
+<p>邻居表建立之后交换路由信息</p>
+<p>拓扑表(从邻居学习来的路由表)(运行DUAL算法,选择最优路径)</p>
+<p>路由表（选择出来的最优路径）</p>
+<h5 id="DUAL-算法"><a href="#DUAL-算法" class="headerlink" title="DUAL 算法"></a>DUAL 算法</h5><p>1  选择到达目标网络的最优的无环的路径</p>
+<p>2 AD  下一跳路由到达目标网络的开销</p>
+<p>3 FD  本地路由到达目标网络的开销=AD+本地路由到达通告给我AD的下一跳路由的开销</p>
+<p>lowest－cost＝lowest　FD</p>
+<p>（current）successor= 到达目标网络的最优的下一跳路由器</p>
+<p>Feasible successor =到达目标网络的次优的下一跳路由器</p>
+<p>FC 可行条件  ＡＤ＜ＦＤｍｉｎ</p>
+<p>FC 用来防环</p>
+<p>EIGRP  数据包直接使用IP协议，协议号88</p>
+<p>——hello   发现维护邻接关系（唯一周期性发送的）</p>
+<p>当线路&gt;t1  周期5秒  当三个周期以上没有收到hello  认为邻居挂掉</p>
+<p>当线路&lt;t1（１。５４４M）   周期30  同上</p>
+<p>——update  发送路由更新（路由信息）</p>
+<p>——query    向邻居查询特定路由信息</p>
+<p>——reply    响应query查询</p>
+<p>——ACK     确定数据包</p>
+<p>（rtp  确定收到  可靠传输）</p>
+<p><img src="/image/ccna/ERGIP_ket_technologies.png" alt="geocoderSearch"></p>
+<p>符合度量值（五种）</p>
+<p>带宽  延时 可靠性  负载 MTU</p>
+<p>默认使用带宽和延时（可靠性和负载是变值）</p>
+<p>K1   k2   k3  k4  k5 </p>
+<p>10100(对应五个度量值)</p>
+<p>EIGRP建立邻接关系的条件</p>
+<p>AS号一样（进程域）</p>
+<p>K值</p>
+<p>认证</p>
+<p>ERGIP　精确通告</p>
+<p>Router　　ERGIP　１</p>
+<p>no auto-suｍｍary</p>
+<p>network　目标IP 反码(与子网掩码相反) (０表示匹配１表示无所谓)</p>
+<p>ERGIP的表示是E(跳数最大100 内部管理距离90 外部管理距离170）　</p>
+<p>show ipprotocols</p>
+<p>show ip eigrp neighbor(邻居表)</p>
+<p>show ip eigrp topology</p>
+<p>show ip route ergip</p>
+<p>show ip ergip traffic</p>
+<p>在接口修改</p>
+<p>ip hello-interval ergip as号 时间</p>
+<p>ip hold-time ergip as号 三倍于hello时间</p>
+<p>修改复合度量值　</p>
+<p>Metric　weights　０１０１００</p>
+<p>第一个只支持０。</p>
+<p>检查K值　全网的K值必须一样</p>
+<p><img src="/image/ccna/ERGIP_MD5_AUTH.png" alt="geocoderSearch"></p>
+<p>keychain创建好之后每个支持加密的协议都可以用</p>
+<p> EIGRP可以在网络中的任何一点进行路由汇总（支持超网汇总）</p>
+<p>在接口级别上进行负载均衡</p>
+<p> bandwidth  。。。。K单位为K  进行负载均衡</p>
+<p>EIGRP Load Balancing</p>
+<p>默认情况下EIGRP 使用等开销</p>
+<p>默认最多在4条等开销路径上进行负载均衡</p>
+<p>最多配置到16条路径上进行负载均衡</p>
+<p>通过 maximum-paths 命令指定最大的路径</p>
+<p>非等开销</p>
+<p>Unequal-Cost 负载均衡</p>
+<p>variance 数字</p>
+<p>用法  ：  将最优的FD×variance值，只要大于某个线路的FD   改线路就会自动加进来</p>
+<p><img src="/image/ccna/ERGIP_Variance.png" alt="geocoderSearch"></p>
+]]></content>
+      <tags>
+        <tag>CCNA</tag>
+        <tag>笔记</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>CCNA-Internet connection</title>
     <url>/2014/05/19/CCNA-Internet-connection/</url>
     <content><![CDATA[<p>学习过程中的笔记，比较零散</p>
@@ -978,101 +1080,33 @@ ZygoteConnection.java -> Zygote.java: 12:forkAndSpecialize</textarea><textarea i
       </tags>
   </entry>
   <entry>
-    <title>CCNA-ERGIP协议</title>
-    <url>/2014/05/19/CCNA-ERGIP%E5%8D%8F%E8%AE%AE/</url>
-    <content><![CDATA[<p>学习过程中的笔记，比较零散。</p>
+    <title>CCNA-ospf协议</title>
+    <url>/2014/05/19/CCNA-ospf%E5%8D%8F%E8%AE%AE/</url>
+    <content><![CDATA[<p>学习过程中的笔记，比较零散</p>
 <span id="more"></span>
 
-<h4 id="EIPGRP（企业级、高级的路由选择协议）"><a href="#EIPGRP（企业级、高级的路由选择协议）" class="headerlink" title="EIPGRP（企业级、高级的路由选择协议）"></a>EIPGRP（企业级、高级的路由选择协议）</h4><p>（cisco私有的协议，只有cisco的设备才支持）</p>
-<p>特点</p>
-<ul>
-<li><p>高级距离矢量型协议（有没有发送路由信息）</p>
-</li>
-<li><p>收敛速度快（DUAL算法，扩散更新算法）</p>
-</li>
-<li><p>支持VLSM和不连续子网</p>
-</li>
-<li><p>部分更新（网络已经收敛，在网络拓扑不出现变动的时候，不在发送更新信息,只向收到变化影响路由条目的路由器发送变化的路由）</p>
-</li>
-<li><p>支持多种网络层协议</p>
-</li>
-<li><p>支持可扩展的网络设计（没有太多的设计要求）</p>
-</li>
-<li><p>使用组播或者单播进行更新（224.0.0.0）</p>
-</li>
-<li><p>可以在网络中的任何一点，进行手工汇总，并且支持超网汇总</p>
-</li>
-<li><p>100%支持无环路的无类路由</p>
-</li>
-<li><p>在wan和lan上容易配置</p>
-</li>
-<li><p>可以支持等开销或者非等开销的负载均衡</p>
-</li>
-</ul>
-<h4 id="工作原理-邻居机制"><a href="#工作原理-邻居机制" class="headerlink" title="工作原理 邻居机制"></a>工作原理 邻居机制</h4><p>EIGRP 三张表</p>
-<p>邻居(下一跳)表(发送更新之前先搜寻邻居)</p>
-<p>邻居表建立之后交换路由信息</p>
-<p>拓扑表(从邻居学习来的路由表)(运行DUAL算法,选择最优路径)</p>
-<p>路由表（选择出来的最优路径）</p>
-<h5 id="DUAL-算法"><a href="#DUAL-算法" class="headerlink" title="DUAL 算法"></a>DUAL 算法</h5><p>1  选择到达目标网络的最优的无环的路径</p>
-<p>2 AD  下一跳路由到达目标网络的开销</p>
-<p>3 FD  本地路由到达目标网络的开销=AD+本地路由到达通告给我AD的下一跳路由的开销</p>
-<p>lowest－cost＝lowest　FD</p>
-<p>（current）successor= 到达目标网络的最优的下一跳路由器</p>
-<p>Feasible successor =到达目标网络的次优的下一跳路由器</p>
-<p>FC 可行条件  ＡＤ＜ＦＤｍｉｎ</p>
-<p>FC 用来防环</p>
-<p>EIGRP  数据包直接使用IP协议，协议号88</p>
-<p>——hello   发现维护邻接关系（唯一周期性发送的）</p>
-<p>当线路&gt;t1  周期5秒  当三个周期以上没有收到hello  认为邻居挂掉</p>
-<p>当线路&lt;t1（１。５４４M）   周期30  同上</p>
-<p>——update  发送路由更新（路由信息）</p>
-<p>——query    向邻居查询特定路由信息</p>
-<p>——reply    响应query查询</p>
-<p>——ACK     确定数据包</p>
-<p>（rtp  确定收到  可靠传输）</p>
-<p><img src="/image/ccna/ERGIP_ket_technologies.png" alt="geocoderSearch"></p>
-<p>符合度量值（五种）</p>
-<p>带宽  延时 可靠性  负载 MTU</p>
-<p>默认使用带宽和延时（可靠性和负载是变值）</p>
-<p>K1   k2   k3  k4  k5 </p>
-<p>10100(对应五个度量值)</p>
-<p>EIGRP建立邻接关系的条件</p>
-<p>AS号一样（进程域）</p>
-<p>K值</p>
-<p>认证</p>
-<p>ERGIP　精确通告</p>
-<p>Router　　ERGIP　１</p>
-<p>no auto-suｍｍary</p>
-<p>network　目标IP 反码(与子网掩码相反) (０表示匹配１表示无所谓)</p>
-<p>ERGIP的表示是E(跳数最大100 内部管理距离90 外部管理距离170）　</p>
-<p>show ipprotocols</p>
-<p>show ip eigrp neighbor(邻居表)</p>
-<p>show ip eigrp topology</p>
-<p>show ip route ergip</p>
-<p>show ip ergip traffic</p>
-<p>在接口修改</p>
-<p>ip hello-interval ergip as号 时间</p>
-<p>ip hold-time ergip as号 三倍于hello时间</p>
-<p>修改复合度量值　</p>
-<p>Metric　weights　０１０１００</p>
-<p>第一个只支持０。</p>
-<p>检查K值　全网的K值必须一样</p>
-<p><img src="/image/ccna/ERGIP_MD5_AUTH.png" alt="geocoderSearch"></p>
-<p>keychain创建好之后每个支持加密的协议都可以用</p>
-<p> EIGRP可以在网络中的任何一点进行路由汇总（支持超网汇总）</p>
-<p>在接口级别上进行负载均衡</p>
-<p> bandwidth  。。。。K单位为K  进行负载均衡</p>
-<p>EIGRP Load Balancing</p>
-<p>默认情况下EIGRP 使用等开销</p>
-<p>默认最多在4条等开销路径上进行负载均衡</p>
-<p>最多配置到16条路径上进行负载均衡</p>
-<p>通过 maximum-paths 命令指定最大的路径</p>
-<p>非等开销</p>
-<p>Unequal-Cost 负载均衡</p>
-<p>variance 数字</p>
-<p>用法  ：  将最优的FD×variance值，只要大于某个线路的FD   改线路就会自动加进来</p>
-<p><img src="/image/ccna/ERGIP_Variance.png" alt="geocoderSearch"></p>
+<p>开放式最短路径优先  open 最短路径优先算法 </p>
+<p>高级企业级路由协议</p>
+<p>链路状态型的路由选择协议</p>
+<p>每个路由的选择是每个路由器独立选择的   不是靠别的路由器告诉的</p>
+<p>DU（距离矢量型） 交换的是route</p>
+<p>LS （链路状态型）交换的是linkstate（描绘网络拓扑的信息）</p>
+<p>链路状态型</p>
+<p>拥有全网的路由信息,并且每个路由器的路由信息都是一致的  </p>
+<p>链路状态信息通过LSA数据结构进行描述 </p>
+<p>路由器之间相互交换链路好状态信息,构成LSDB(拓扑数据库 链路状态数据库)</p>
+<p>运行spf  构建spftree  触发更新  部分有界更新</p>
+<p>OSPF 维护三张表</p>
+<p>1邻居表</p>
+<p>2拓扑表</p>
+<p>3路由表   </p>
+<p>建立邻居关系，相互交换LSDB建立拓扑表（网络地图），基于拓扑表运行SPF算法，选择最优路径，构建路由表。</p>
+<p><img src="/image/ccna/link-state_routing_protocels.png" alt="链路状态型"></p>
+<p>运行两次SPF算法，第一次构建全局拓扑表，去掉环路，第二次运行时删除次优路径，构建路由表。</p>
+<p>OSPF算法需要rourte-id唯一标识每一台路由器</p>
+<p>使用环回接口做为route-id的原因是：</p>
+<p>环回接口并不是实际通信接口，指定起来比较方便。一台路由器上至少要有一个IP才能开启OSPF算法</p>
+<p><img src="/image/ccna/link-state_routing_protocels_router_id.png.png" alt="链路状态型"></p>
 ]]></content>
       <tags>
         <tag>CCNA</tag>
@@ -1111,40 +1145,6 @@ ZygoteConnection.java -> Zygote.java: 12:forkAndSpecialize</textarea><textarea i
 <p>1减少路由表条目</p>
 <p>2隐藏拓扑变动</p>
 <p>-1由于汇总  减少了匹配位数   对于不连续的网段 可能导致 数据转发错误</p>
-]]></content>
-      <tags>
-        <tag>CCNA</tag>
-        <tag>笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CCNA-ospf协议</title>
-    <url>/2014/05/19/CCNA-ospf%E5%8D%8F%E8%AE%AE/</url>
-    <content><![CDATA[<p>学习过程中的笔记，比较零散</p>
-<span id="more"></span>
-
-<p>开放式最短路径优先  open 最短路径优先算法 </p>
-<p>高级企业级路由协议</p>
-<p>链路状态型的路由选择协议</p>
-<p>每个路由的选择是每个路由器独立选择的   不是靠别的路由器告诉的</p>
-<p>DU（距离矢量型） 交换的是route</p>
-<p>LS （链路状态型）交换的是linkstate（描绘网络拓扑的信息）</p>
-<p>链路状态型</p>
-<p>拥有全网的路由信息,并且每个路由器的路由信息都是一致的  </p>
-<p>链路状态信息通过LSA数据结构进行描述 </p>
-<p>路由器之间相互交换链路好状态信息,构成LSDB(拓扑数据库 链路状态数据库)</p>
-<p>运行spf  构建spftree  触发更新  部分有界更新</p>
-<p>OSPF 维护三张表</p>
-<p>1邻居表</p>
-<p>2拓扑表</p>
-<p>3路由表   </p>
-<p>建立邻居关系，相互交换LSDB建立拓扑表（网络地图），基于拓扑表运行SPF算法，选择最优路径，构建路由表。</p>
-<p><img src="/image/ccna/link-state_routing_protocels.png" alt="链路状态型"></p>
-<p>运行两次SPF算法，第一次构建全局拓扑表，去掉环路，第二次运行时删除次优路径，构建路由表。</p>
-<p>OSPF算法需要rourte-id唯一标识每一台路由器</p>
-<p>使用环回接口做为route-id的原因是：</p>
-<p>环回接口并不是实际通信接口，指定起来比较方便。一台路由器上至少要有一个IP才能开启OSPF算法</p>
-<p><img src="/image/ccna/link-state_routing_protocels_router_id.png.png" alt="链路状态型"></p>
 ]]></content>
       <tags>
         <tag>CCNA</tag>
@@ -1888,6 +1888,25 @@ ZygoteConnection.java -> Zygote.java: 12:forkAndSpecialize</textarea><textarea i
       </tags>
   </entry>
   <entry>
+    <title>Jenkins安装与使用</title>
+    <url>/2017/06/28/Jenkins%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>公司需求，业务越来越多，服务器越来越多，后台部署项目麻烦的要死，于是上了<code>jenkins</code>这货。<br>关于这货是干嘛的，请移步这里<a href="https://jenkins.io/">https://jenkins.io/</a>,下载请移步这里<a href="https://jenkins.io/download/">https://jenkins.io/download/</a><br>安装环境：ubuntu 16.04、tomcat7(这个是因为Jenkins是个war包)、maven(这个是因为后台的项目是maven工程)、jdk8(这个是因为需要tomcat)、gradle(构建Android工程)、SDK(构建Android工程)</p>
+<span id="more"></span>
+<h4 id="Jenkins-环境"><a href="#Jenkins-环境" class="headerlink" title="Jenkins 环境"></a>Jenkins 环境</h4><p>安装JDK、Tomcat、MAVEN(如有需要)、gradle(构建Android工程)、SDK(构建Android工程)</p>
+<h4 id="安装Jenkins"><a href="#安装Jenkins" class="headerlink" title="安装Jenkins"></a>安装Jenkins</h4><p>在上面的下载地址下载war，丢到tomcat的webapps文件夹下，然后启动tomcat，浏览器访问jenkin工程<code>127.0.0.1:8080/jenkins</code>如下图所示：<br><img src="/image/jenkins/jenkins_start.png" alt="jenkins首次启动"><br>打开红字提示的文件，里面是首次进入时需要的密码,点击右下角continue。</p>
+<h5 id="jenkins安装插件"><a href="#jenkins安装插件" class="headerlink" title="jenkins安装插件"></a>jenkins安装插件</h5><p>可以自定义也可以安装推荐的插件，我这里安装的是建议的插件.稍等一会，插件安装完成后会自动跳转到创建jenkins用户的界面</p>
+<h5 id="创建jenkins用户"><a href="#创建jenkins用户" class="headerlink" title="创建jenkins用户"></a>创建jenkins用户</h5><p>按照提示创建即可，点击右下角<code>Save and finish</code></p>
+<h5 id="配置Jenkins"><a href="#配置Jenkins" class="headerlink" title="配置Jenkins"></a>配置Jenkins</h5><p>以后再次访问jenkins的时候就不用再去使用初始密码，只需要使用上一步创建的账号即可，登录后首界面如下，<br><img src="/image/jenkins/jenkins_index.png" alt="jenkins首页"><br>点击左侧的<code>系统管理</code>，在中间列出的工具里面点击<code>Global Tool Configuration</code>，指定JDK和MAVEN的路径，如下<br><img src="/image/jenkins/jenkins_jdk.png" alt="jenkins配置JDK"><br><img src="/image/jenkins/jenkins_maven.png" alt="jenkins配置MAVEN"><br>然后Save保存</p>
+<h4 id="创建一个新的Maven工程"><a href="#创建一个新的Maven工程" class="headerlink" title="创建一个新的Maven工程"></a>创建一个新的Maven工程</h4><p>点击左侧菜单栏<code>新建</code>,输入工程名字，然后选择<code>构建一个只有风格的软件项目</code>,然后<code>ok</code><br><img src="/image/jenkins/jenkins_create_new_project.png" alt="jenkins创建新工程"></p>
+<h4 id="配置工程"><a href="#配置工程" class="headerlink" title="配置工程"></a>配置工程</h4><p>在新的界面可以配置项目的构建、源码管理等<br>我的工程是存放在git上面的，所以就选择git<br><img src="/image/jenkins/jenkins_config_project.png" alt="jenkins源码管理"><br>构建触发器可以配置在什么时间配置，我们暂时没有，需要手动点击构建才行<br>构建环境没有配置<br>构建一项选择 <code>Invoke top-level Maven target</code>,当然根据需求可以选择其他构建方式<br><code>Maven Version</code>是上面配置maven时选择的别名，<code>Goals</code>是需要执行的maven命令(前面不需要加maven)<br><img src="/image/jenkins/jenkins_project_build.png" alt="jenkins构建项目"><br>点击左下角保存</p>
+<h4 id="开始构建"><a href="#开始构建" class="headerlink" title="开始构建"></a>开始构建</h4><p>点击左侧的立即构建，可以在构建历史中查看原来构建的个过程<br><img src="/image/jenkins/jenkins_start_build_project.png" alt="jenkins构建"><br>点击构建历史列表里面对应构建历史的小圆点，可以查看控制台输出<br><img src="/image/jenkins/jenkins_build_history.png" alt="jenkins构建历史"><br><img src="/image/jenkins/jenkins_build_console_output.png" alt="jenkins"><br>ps：如果是普通用户启动的tomcat，使用git管理源码，则下载下来的工程源码在<code>/home/username/.jenkins/workspace</code>，如果是root用户，则在 <code>/root/.jenkins/workspace</code>下<br>pps:据说<code>jenkins</code>的包不需要tomcat也可以，执行<code>java -jar ***.war</code>即可</p>
+]]></content>
+      <tags>
+        <tag>jenkins</tag>
+        <tag>运维</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java并发多线程同步</title>
     <url>/2018/03/20/Java%E5%B9%B6%E5%8F%91%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5/</url>
     <content><![CDATA[<p>最近遇到了多线程并发同步问题，找到了<code>java.util.concurrent</code>包下的<code>CountDownLatch</code>、<code>CyclicBarrier</code>、<code>Semaphore</code>这三个类。<br><code>CountDownLatch</code>可以实现类似计数器的功能，例如线程A需要等待B、C、D三个线程执行完成之后才可以执行。<br><code>CyclicBarrier</code>可以实现让一组(多个)线程等待至某个状态之后再全部同时执行，当所有线程都被释放以后，CyclicBarrier可以被重用。<br><code>Semaphore</code>可以控制同时访问的线程个数，通过<code>acquire()</code>获取一个许可，如果没有就等待，而<code>release()</code>释放一个许可。</p>
@@ -1919,25 +1938,6 @@ ZygoteConnection.java -> Zygote.java: 12:forkAndSpecialize</textarea><textarea i
 ]]></content>
       <tags>
         <tag>java</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Jenkins安装与使用</title>
-    <url>/2017/06/28/Jenkins%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<p>公司需求，业务越来越多，服务器越来越多，后台部署项目麻烦的要死，于是上了<code>jenkins</code>这货。<br>关于这货是干嘛的，请移步这里<a href="https://jenkins.io/">https://jenkins.io/</a>,下载请移步这里<a href="https://jenkins.io/download/">https://jenkins.io/download/</a><br>安装环境：ubuntu 16.04、tomcat7(这个是因为Jenkins是个war包)、maven(这个是因为后台的项目是maven工程)、jdk8(这个是因为需要tomcat)、gradle(构建Android工程)、SDK(构建Android工程)</p>
-<span id="more"></span>
-<h4 id="Jenkins-环境"><a href="#Jenkins-环境" class="headerlink" title="Jenkins 环境"></a>Jenkins 环境</h4><p>安装JDK、Tomcat、MAVEN(如有需要)、gradle(构建Android工程)、SDK(构建Android工程)</p>
-<h4 id="安装Jenkins"><a href="#安装Jenkins" class="headerlink" title="安装Jenkins"></a>安装Jenkins</h4><p>在上面的下载地址下载war，丢到tomcat的webapps文件夹下，然后启动tomcat，浏览器访问jenkin工程<code>127.0.0.1:8080/jenkins</code>如下图所示：<br><img src="/image/jenkins/jenkins_start.png" alt="jenkins首次启动"><br>打开红字提示的文件，里面是首次进入时需要的密码,点击右下角continue。</p>
-<h5 id="jenkins安装插件"><a href="#jenkins安装插件" class="headerlink" title="jenkins安装插件"></a>jenkins安装插件</h5><p>可以自定义也可以安装推荐的插件，我这里安装的是建议的插件.稍等一会，插件安装完成后会自动跳转到创建jenkins用户的界面</p>
-<h5 id="创建jenkins用户"><a href="#创建jenkins用户" class="headerlink" title="创建jenkins用户"></a>创建jenkins用户</h5><p>按照提示创建即可，点击右下角<code>Save and finish</code></p>
-<h5 id="配置Jenkins"><a href="#配置Jenkins" class="headerlink" title="配置Jenkins"></a>配置Jenkins</h5><p>以后再次访问jenkins的时候就不用再去使用初始密码，只需要使用上一步创建的账号即可，登录后首界面如下，<br><img src="/image/jenkins/jenkins_index.png" alt="jenkins首页"><br>点击左侧的<code>系统管理</code>，在中间列出的工具里面点击<code>Global Tool Configuration</code>，指定JDK和MAVEN的路径，如下<br><img src="/image/jenkins/jenkins_jdk.png" alt="jenkins配置JDK"><br><img src="/image/jenkins/jenkins_maven.png" alt="jenkins配置MAVEN"><br>然后Save保存</p>
-<h4 id="创建一个新的Maven工程"><a href="#创建一个新的Maven工程" class="headerlink" title="创建一个新的Maven工程"></a>创建一个新的Maven工程</h4><p>点击左侧菜单栏<code>新建</code>,输入工程名字，然后选择<code>构建一个只有风格的软件项目</code>,然后<code>ok</code><br><img src="/image/jenkins/jenkins_create_new_project.png" alt="jenkins创建新工程"></p>
-<h4 id="配置工程"><a href="#配置工程" class="headerlink" title="配置工程"></a>配置工程</h4><p>在新的界面可以配置项目的构建、源码管理等<br>我的工程是存放在git上面的，所以就选择git<br><img src="/image/jenkins/jenkins_config_project.png" alt="jenkins源码管理"><br>构建触发器可以配置在什么时间配置，我们暂时没有，需要手动点击构建才行<br>构建环境没有配置<br>构建一项选择 <code>Invoke top-level Maven target</code>,当然根据需求可以选择其他构建方式<br><code>Maven Version</code>是上面配置maven时选择的别名，<code>Goals</code>是需要执行的maven命令(前面不需要加maven)<br><img src="/image/jenkins/jenkins_project_build.png" alt="jenkins构建项目"><br>点击左下角保存</p>
-<h4 id="开始构建"><a href="#开始构建" class="headerlink" title="开始构建"></a>开始构建</h4><p>点击左侧的立即构建，可以在构建历史中查看原来构建的个过程<br><img src="/image/jenkins/jenkins_start_build_project.png" alt="jenkins构建"><br>点击构建历史列表里面对应构建历史的小圆点，可以查看控制台输出<br><img src="/image/jenkins/jenkins_build_history.png" alt="jenkins构建历史"><br><img src="/image/jenkins/jenkins_build_console_output.png" alt="jenkins"><br>ps：如果是普通用户启动的tomcat，使用git管理源码，则下载下来的工程源码在<code>/home/username/.jenkins/workspace</code>，如果是root用户，则在 <code>/root/.jenkins/workspace</code>下<br>pps:据说<code>jenkins</code>的包不需要tomcat也可以，执行<code>java -jar ***.war</code>即可</p>
-]]></content>
-      <tags>
-        <tag>jenkins</tag>
-        <tag>运维</tag>
       </tags>
   </entry>
   <entry>
@@ -1983,54 +1983,6 @@ ZygoteConnection.java -> Zygote.java: 12:forkAndSpecialize</textarea><textarea i
 <p>FragmentA和FragmentB是一样的代码</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ViewModelFragmentA</span> <span class="keyword">extends</span> <span class="title">Fragment</span> <span class="keyword">implements</span> <span class="title">View</span>.<span class="title">OnClickListener</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> EditText name;</span><br><span class="line">    <span class="keyword">private</span> EditText age;</span><br><span class="line">    <span class="keyword">private</span> EditText sex;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> UserViewModel user;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ViewModelFragmentA</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Required empty public constructor</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(<span class="meta">@Nullable</span> Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    </span><br><span class="line">        user = ViewModelProviders.of(getActivity()).get(UserViewModel.class);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> View <span class="title">onCreateView</span><span class="params">(LayoutInflater inflater, ViewGroup container,</span></span></span><br><span class="line"><span class="params"><span class="function">                             Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Inflate the layout for this fragment</span></span><br><span class="line">        View view = inflater.inflate(R.layout.fragment_view_model, container, <span class="keyword">false</span>);</span><br><span class="line">        name = view.findViewById(R.id.name);</span><br><span class="line">        age = view.findViewById(R.id.age);</span><br><span class="line">        sex = view.findViewById(R.id.sex);</span><br><span class="line">    </span><br><span class="line">        view.findViewById(R.id.save).setOnClickListener(<span class="keyword">this</span>);</span><br><span class="line">        view.findViewById(R.id.reset).setOnClickListener(<span class="keyword">this</span>);</span><br><span class="line">        view.findViewById(R.id.show).setOnClickListener(<span class="keyword">this</span>);</span><br><span class="line">        user.getValueChanged().observeForever(<span class="keyword">new</span> Observer&lt;Integer&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onChanged</span><span class="params">(Integer integer)</span> </span>&#123;</span><br><span class="line">                show();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    </span><br><span class="line">        show();</span><br><span class="line">        <span class="keyword">return</span> view;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        sex.setText(user.getSex());</span><br><span class="line">        age.setText(String.valueOf(user.getAge()));</span><br><span class="line">        name.setText(user.getName());</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">switch</span> (v.getId()) &#123;</span><br><span class="line">            <span class="keyword">case</span> R.id.save:</span><br><span class="line">                user.setSex(sex.getText().toString());</span><br><span class="line">                user.setName(name.getText().toString());</span><br><span class="line">                user.setAge(Integer.valueOf(age.getText().toString()));</span><br><span class="line">                user.getValueChanged().postValue(<span class="number">1</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> R.id.reset:</span><br><span class="line">                user.setAge(<span class="number">11</span>);</span><br><span class="line">                user.setName(<span class="string">&quot;aa&quot;</span>);</span><br><span class="line">                user.setSex(<span class="string">&quot;M&quot;</span>);</span><br><span class="line">                user.getValueChanged().postValue(<span class="number">1</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> R.id.show:</span><br><span class="line">                show();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>Activity中显示名字、年龄、性别。两个按钮save和reset。 在Fragment中多一个show按钮。<br>我们获取ViewModel都是通过<code>ViewModelProviders.of(getActivity()).get(UserViewModel.class)</code>来获取，得到是同一个对象。<br>当我们在任意一个地方修改数据并保存之后，会通过<code>valueChanged</code>属性来通知观察者来刷新界面。前面也提到过，我们可以把每个属性都用<code>MutableLiveData</code><br>包装一下，观察者就可以在每个属性改变的时候得到通知了。</p>
-<hr>
-<p>以上</p>
-]]></content>
-      <tags>
-        <tag>Android</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>JetPack-sunflower</title>
-    <url>/2020/03/12/JetPack-sunflower/</url>
-    <content><![CDATA[<p>2018年谷歌I/O 发布了一系列辅助android开发者的实用工具，合称Jetpack，以帮助开发者构建出色的 Android 应用。<br>sunflower with java，A gardening app illustrating Android development best practices with Android Jetpack.<br>sunflower的java版本：园艺应用程序，说明了使用Android Jetpack进行Android开发的最佳做法。<br>源码地址 <a href="https://github.com/huangyuanlove/sunflower_java">https://github.com/huangyuanlove/sunflower_java</a> 本项目完全来自于kotlin版本的<strong>代码翻译</strong><br>kotlin版本 <a href="https://github.com/android/sunflower">https://github.com/android/sunflower</a></p>
-<span id="more"></span>
-
-<h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><ol>
-<li>主页分为两个tab，默认tab展示已经栽种的植物，另外一个tab展示所有可栽种植物；</li>
-<li>点击每个植物进入到植物详情</li>
-<li>单Activity</li>
-<li>ViewModel从数据库中读取数据，返回LiveData对象，并将对象绑定到视图中</li>
-<li>展示了创建数据库、数据对象以及ViewModel、Repository过程<h4 id="JetPack组件"><a href="#JetPack组件" class="headerlink" title="JetPack组件"></a>JetPack组件</h4></li>
-<li>lifecycle</li>
-<li>navigation</li>
-<li>room</li>
-<li>work</li>
-<li>liveData</li>
-<li>databinding</li>
-</ol>
-<h4 id="框架搭建"><a href="#框架搭建" class="headerlink" title="框架搭建"></a>框架搭建</h4><ol>
-<li>主页：MainActivity -&gt; HomeViewPagerFragment</li>
-<li>我的花园：GardenFragment</li>
-<li>植物目录：PlantListFragment</li>
-<li>植物详情：PlantDetailFragment</li>
-<li>数据来源：assets中的plants.json</li>
-</ol>
-<h4 id="结构简介"><a href="#结构简介" class="headerlink" title="结构简介"></a>结构简介</h4><ol>
-<li>adapter:包含DatabindingAdapter,ListViewAdapter</li>
-<li>data:数据库、实体类、DAO</li>
-<li>utilities:常量字段</li>
-<li>viewmodels:各个视图所需的ViewModel</li>
-<li>widget:自定义控件</li>
-<li>workers:初始化数据库</li>
-<li>*Fragment:视图UI</li>
-</ol>
-<h4 id="流程简介"><a href="#流程简介" class="headerlink" title="流程简介"></a>流程简介</h4><ol>
-<li>AppDatabase单例模式，在GardenFragment中会进行初始化，这时会将plants.json写入数据库；</li>
-<li>在PlantListFragment中，读取数据库中植物信息并展示在页面上；点击右上角按钮，会筛选植物</li>
-<li>点击植物进入详情</li>
-<li>在详情页点击加号添加植物，则会出现在GardenFragment中，同时加号隐藏</li>
-</ol>
 <hr>
 <p>以上</p>
 ]]></content>
@@ -2129,6 +2081,54 @@ ZygoteConnection.java -> Zygote.java: 12:forkAndSpecialize</textarea><textarea i
 </ol>
 <p>提到的<code>WordRoomDatabase_Impl</code>中实现的<code>createOpenHelper</code>方法。</p>
 <p>至此，我们就可以调用DAO中的方法对数据库进行操作了</p>
+<hr>
+<p>以上</p>
+]]></content>
+      <tags>
+        <tag>Android</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JetPack-sunflower</title>
+    <url>/2020/03/12/JetPack-sunflower/</url>
+    <content><![CDATA[<p>2018年谷歌I/O 发布了一系列辅助android开发者的实用工具，合称Jetpack，以帮助开发者构建出色的 Android 应用。<br>sunflower with java，A gardening app illustrating Android development best practices with Android Jetpack.<br>sunflower的java版本：园艺应用程序，说明了使用Android Jetpack进行Android开发的最佳做法。<br>源码地址 <a href="https://github.com/huangyuanlove/sunflower_java">https://github.com/huangyuanlove/sunflower_java</a> 本项目完全来自于kotlin版本的<strong>代码翻译</strong><br>kotlin版本 <a href="https://github.com/android/sunflower">https://github.com/android/sunflower</a></p>
+<span id="more"></span>
+
+<h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><ol>
+<li>主页分为两个tab，默认tab展示已经栽种的植物，另外一个tab展示所有可栽种植物；</li>
+<li>点击每个植物进入到植物详情</li>
+<li>单Activity</li>
+<li>ViewModel从数据库中读取数据，返回LiveData对象，并将对象绑定到视图中</li>
+<li>展示了创建数据库、数据对象以及ViewModel、Repository过程<h4 id="JetPack组件"><a href="#JetPack组件" class="headerlink" title="JetPack组件"></a>JetPack组件</h4></li>
+<li>lifecycle</li>
+<li>navigation</li>
+<li>room</li>
+<li>work</li>
+<li>liveData</li>
+<li>databinding</li>
+</ol>
+<h4 id="框架搭建"><a href="#框架搭建" class="headerlink" title="框架搭建"></a>框架搭建</h4><ol>
+<li>主页：MainActivity -&gt; HomeViewPagerFragment</li>
+<li>我的花园：GardenFragment</li>
+<li>植物目录：PlantListFragment</li>
+<li>植物详情：PlantDetailFragment</li>
+<li>数据来源：assets中的plants.json</li>
+</ol>
+<h4 id="结构简介"><a href="#结构简介" class="headerlink" title="结构简介"></a>结构简介</h4><ol>
+<li>adapter:包含DatabindingAdapter,ListViewAdapter</li>
+<li>data:数据库、实体类、DAO</li>
+<li>utilities:常量字段</li>
+<li>viewmodels:各个视图所需的ViewModel</li>
+<li>widget:自定义控件</li>
+<li>workers:初始化数据库</li>
+<li>*Fragment:视图UI</li>
+</ol>
+<h4 id="流程简介"><a href="#流程简介" class="headerlink" title="流程简介"></a>流程简介</h4><ol>
+<li>AppDatabase单例模式，在GardenFragment中会进行初始化，这时会将plants.json写入数据库；</li>
+<li>在PlantListFragment中，读取数据库中植物信息并展示在页面上；点击右上角按钮，会筛选植物</li>
+<li>点击植物进入详情</li>
+<li>在详情页点击加号添加植物，则会出现在GardenFragment中，同时加号隐藏</li>
+</ol>
 <hr>
 <p>以上</p>
 ]]></content>
@@ -3239,7 +3239,7 @@ implementation(&quot;com.tinkerpatch.sdk:tinkerpatch-android-sdk:$&#123;TINKERPA
 <p>上面的代码会打印出所有的 “.txt” 和 “.pdf” 文件,是因为这个find 命令可以匹配所有的这两类文件</p>
 <p>其中, “(“ 和 “)“ 用于将 -name “<em>.txt” -o -name “</em>.pdf” 视为一个整体</p>
 <p>选项 -path 可以使用通配符来匹配文件路径或者文件名</p>
-<p>选项 -regex 是基于正则表达式来匹配文件路径货文件.正则表达式是通配符的高级形式,例如,可以使用正则表达式来匹配Email ,一个 Email 的形式通常是 <a href="mailto:&#110;&#97;&#x6d;&#101;&#64;&#104;&#x6f;&#115;&#x74;&#x2e;&#114;&#x6f;&#x6f;&#x74;">&#110;&#97;&#x6d;&#101;&#64;&#104;&#x6f;&#115;&#x74;&#x2e;&#114;&#x6f;&#x6f;&#x74;</a></p>
+<p>选项 -regex 是基于正则表达式来匹配文件路径货文件.正则表达式是通配符的高级形式,例如,可以使用正则表达式来匹配Email ,一个 Email 的形式通常是 <a href="mailto:&#110;&#x61;&#109;&#101;&#x40;&#x68;&#111;&#x73;&#116;&#46;&#x72;&#111;&#x6f;&#x74;">&#110;&#x61;&#109;&#101;&#x40;&#x68;&#111;&#x73;&#116;&#46;&#x72;&#111;&#x6f;&#x74;</a></p>
 <p>所以可以将其一般化为 [0-9a-zA-A]+@[0-9a-zA-A]+.[0-9a-zA-A] +</p>
 <p> “+” 指明在它之前的字符类中字符可以出现一次或者多次</p>
 <h4 id="否定参数"><a href="#否定参数" class="headerlink" title="否定参数 !"></a>否定参数 !</h4><p>find 也可以用 “!” 来否定参数的含义</p>
@@ -4767,31 +4767,6 @@ implementation(&quot;com.tinkerpatch.sdk:tinkerpatch-android-sdk:$&#123;TINKERPA
       </tags>
   </entry>
   <entry>
-    <title>《我的安卓爬坑之旅》--高德地图遇到的坑</title>
-    <url>/2016/12/18/%E3%80%8A%E6%88%91%E7%9A%84%E5%AE%89%E5%8D%93%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85%E3%80%8B-%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91-1/</url>
-    <content><![CDATA[<p>这篇博客是关于高德使用中遇到的问题，或许是因为开发文档中没有说明，或许是因为自己段位不够，反正就是遇到坑了。</p>
-<span id="more"></span>
-<p>####生成key</p>
-<ol>
-<li>生成key的时候，同一个app下，可以填入相同的包名、key名称等。注意不要用错了key</li>
-<li>由于高德地图升级的原因，需要将原来没有整理过的key先整理，使其属于某个应用，才可以继续创建其他的key。</li>
-</ol>
-<p>####文档</p>
-<ol>
-<li>仅在入门指南中提到了需要加入 <strong><code>&lt;service android:name=&quot;com.amap.api.location.APSService&quot;&gt;&lt;/service&gt;</code></strong><br>开发注意事项里面居然没有提到。最关键的是，没有加入这个service时，定位有时还能成功，只是不能连续定位。我看的时候时从开发注意事项开始看的，完全没有注意到这一点，后来在demo中看到了需要加入这个配置，才能生效。</li>
-<li>文档里面只给出了部分关键代码和部分关键类，完全不知道这个类怎么实例化，怎么去调用方法，调用方法的时候需要传入哪种类型的参数。<hr>就我个人看来，看官方api文档还不如去看他们的demo，文档写的真心不算好。
-官方部分demo地址[官方demo地址](http://lbs.amap.com/dev/demo) 
-官方sdk以及开发文档、demo等相关下载[官方sdk、开发文档以及demo](http://lbs.amap.com/api/android-sdk/download/) 
-以后遇到坑再补充吧，估计遇到的都是文档中没有标明但在demo中有示例的那种。</li>
-</ol>
-]]></content>
-      <tags>
-        <tag>Android爬坑之旅</tag>
-        <tag>Android</tag>
-        <tag>高德地图</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《我的安卓爬坑之旅》--融云IM遇到的坑</title>
     <url>/2016/12/01/%E3%80%8A%E6%88%91%E7%9A%84%E5%AE%89%E5%8D%93%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85%E3%80%8B-%E8%9E%8D%E4%BA%91IM%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91/</url>
     <content><![CDATA[<p>这篇博客是关于融云IM使用中遇到的问题，不算是坑，只能说是注意事项吧</p>
@@ -4814,6 +4789,31 @@ implementation(&quot;com.tinkerpatch.sdk:tinkerpatch-android-sdk:$&#123;TINKERPA
         <tag>Android爬坑之旅</tag>
         <tag>Android</tag>
         <tag>融云IM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《我的安卓爬坑之旅》--高德地图遇到的坑</title>
+    <url>/2016/12/18/%E3%80%8A%E6%88%91%E7%9A%84%E5%AE%89%E5%8D%93%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85%E3%80%8B-%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91-1/</url>
+    <content><![CDATA[<p>这篇博客是关于高德使用中遇到的问题，或许是因为开发文档中没有说明，或许是因为自己段位不够，反正就是遇到坑了。</p>
+<span id="more"></span>
+<p>####生成key</p>
+<ol>
+<li>生成key的时候，同一个app下，可以填入相同的包名、key名称等。注意不要用错了key</li>
+<li>由于高德地图升级的原因，需要将原来没有整理过的key先整理，使其属于某个应用，才可以继续创建其他的key。</li>
+</ol>
+<p>####文档</p>
+<ol>
+<li>仅在入门指南中提到了需要加入 <strong><code>&lt;service android:name=&quot;com.amap.api.location.APSService&quot;&gt;&lt;/service&gt;</code></strong><br>开发注意事项里面居然没有提到。最关键的是，没有加入这个service时，定位有时还能成功，只是不能连续定位。我看的时候时从开发注意事项开始看的，完全没有注意到这一点，后来在demo中看到了需要加入这个配置，才能生效。</li>
+<li>文档里面只给出了部分关键代码和部分关键类，完全不知道这个类怎么实例化，怎么去调用方法，调用方法的时候需要传入哪种类型的参数。<hr>就我个人看来，看官方api文档还不如去看他们的demo，文档写的真心不算好。
+官方部分demo地址[官方demo地址](http://lbs.amap.com/dev/demo) 
+官方sdk以及开发文档、demo等相关下载[官方sdk、开发文档以及demo](http://lbs.amap.com/api/android-sdk/download/) 
+以后遇到坑再补充吧，估计遇到的都是文档中没有标明但在demo中有示例的那种。</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>Android爬坑之旅</tag>
+        <tag>Android</tag>
+        <tag>高德地图</tag>
       </tags>
   </entry>
   <entry>
@@ -4936,43 +4936,6 @@ email: huangyuan@huangyuanlove.com
       </tags>
   </entry>
   <entry>
-    <title>2018总结</title>
-    <url>/2019/01/03/%E5%86%99%E5%9C%A82019%E5%B9%B4%E5%88%9D-2018%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<p>一句话总结一下：2019年争取把2018年没完成的2017年的计划不要推到2020年。</p>
-<span id="more"></span>
-
-<h4 id="回头想想2018年都学会了啥："><a href="#回头想想2018年都学会了啥：" class="headerlink" title="回头想想2018年都学会了啥："></a>回头想想2018年都学会了啥：</h4><ol>
-<li> $LaTeX$初级</li>
-<li>《Android开发艺术探索》刷了一遍，跟着翻了一遍源码，感觉有点进步，最起码会自己撸源码了。</li>
-<li>《Android Gradle权威指南》刷了一遍，熟悉了一下Gradle相关的东西</li>
-<li>Android hook、ConstraintLayout、Alarm优化、Android O适配NotificationChannel</li>
-<li>《Kotlin程序开发入门精要》刷了一遍</li>
-<li>《剑指offer》题目在牛客网上刷了一遍，感觉没啥用，只是见的题目多了</li>
-<li>《好好说话(马东)》、《好好学习(成甲)》、《极简主义》、《番茄工作法》、《单核工作法图解》</li>
-</ol>
-<h4 id="还欠着啥"><a href="#还欠着啥" class="headerlink" title="还欠着啥"></a>还欠着啥</h4><p>还欠着7本技术相关的书没看：</p>
-<ol>
-<li>《Vue.js 实战》</li>
-<li>《React进阶之路》</li>
-<li>《ES6标准入门》</li>
-<li>《RxJava 2.x 实战》</li>
-<li>《Android音视频开发》</li>
-<li>《Android源码设计模式》</li>
-<li>《Android自定义控件开发入门与实战》</li>
-</ol>
-<h4 id="还想学啥"><a href="#还想学啥" class="headerlink" title="还想学啥"></a>还想学啥</h4><p>当然是flutter和ML和DL了。</p>
-<p>ML和DL等着妹子指导，flutter也等着复习一下前端的知识再上手。</p>
-<p>19年先把7、6、4撸完，穿插着看完3、1，估计就到国庆了。</p>
-<p>再然后就是玩flutter了，两个月的时间，在有前端基础的前提下，差不多能入门吧。这个时候该踩的坑别人都已经踩完了。</p>
-<p>都说大前端时代要到来，也不知道19年的行情怎么样。</p>
-<p>其他的也没啥打算，能做完上面这些就不错了，一年的计划太长了，赶不上变化，谁知道中间会不会又出什么幺蛾子。。。。</p>
-<hr>
-]]></content>
-      <tags>
-        <tag>乱七八糟</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>写在2016年末</title>
     <url>/2016/12/31/%E5%86%99%E5%9C%A82016%E5%B9%B4%E6%9C%AB/</url>
     <content><![CDATA[<p>2016年的最后一天的最后半个小时了，写写这一年的收获总结和2017的计划吧。<br>一个字总结了一下2016年：穷。<br>当然这是开玩笑式的总结，但也是最接近事实的了。</p>
@@ -5062,6 +5025,43 @@ email: huangyuan@huangyuanlove.com
 <li>修身养性，别这么大脾气了，一点就爆(抱个杯子，泡点枸杞挺不错的)。</li>
 </ul>
 <h2 id=""><a href="#" class="headerlink" title=""></a><img src="/image/2018_01_01.png" alt="2018"></h2><p>以上</p>
+]]></content>
+      <tags>
+        <tag>乱七八糟</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2018总结</title>
+    <url>/2019/01/03/%E5%86%99%E5%9C%A82019%E5%B9%B4%E5%88%9D-2018%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<p>一句话总结一下：2019年争取把2018年没完成的2017年的计划不要推到2020年。</p>
+<span id="more"></span>
+
+<h4 id="回头想想2018年都学会了啥："><a href="#回头想想2018年都学会了啥：" class="headerlink" title="回头想想2018年都学会了啥："></a>回头想想2018年都学会了啥：</h4><ol>
+<li> $LaTeX$初级</li>
+<li>《Android开发艺术探索》刷了一遍，跟着翻了一遍源码，感觉有点进步，最起码会自己撸源码了。</li>
+<li>《Android Gradle权威指南》刷了一遍，熟悉了一下Gradle相关的东西</li>
+<li>Android hook、ConstraintLayout、Alarm优化、Android O适配NotificationChannel</li>
+<li>《Kotlin程序开发入门精要》刷了一遍</li>
+<li>《剑指offer》题目在牛客网上刷了一遍，感觉没啥用，只是见的题目多了</li>
+<li>《好好说话(马东)》、《好好学习(成甲)》、《极简主义》、《番茄工作法》、《单核工作法图解》</li>
+</ol>
+<h4 id="还欠着啥"><a href="#还欠着啥" class="headerlink" title="还欠着啥"></a>还欠着啥</h4><p>还欠着7本技术相关的书没看：</p>
+<ol>
+<li>《Vue.js 实战》</li>
+<li>《React进阶之路》</li>
+<li>《ES6标准入门》</li>
+<li>《RxJava 2.x 实战》</li>
+<li>《Android音视频开发》</li>
+<li>《Android源码设计模式》</li>
+<li>《Android自定义控件开发入门与实战》</li>
+</ol>
+<h4 id="还想学啥"><a href="#还想学啥" class="headerlink" title="还想学啥"></a>还想学啥</h4><p>当然是flutter和ML和DL了。</p>
+<p>ML和DL等着妹子指导，flutter也等着复习一下前端的知识再上手。</p>
+<p>19年先把7、6、4撸完，穿插着看完3、1，估计就到国庆了。</p>
+<p>再然后就是玩flutter了，两个月的时间，在有前端基础的前提下，差不多能入门吧。这个时候该踩的坑别人都已经踩完了。</p>
+<p>都说大前端时代要到来，也不知道19年的行情怎么样。</p>
+<p>其他的也没啥打算，能做完上面这些就不错了，一年的计划太长了，赶不上变化，谁知道中间会不会又出什么幺蛾子。。。。</p>
+<hr>
 ]]></content>
       <tags>
         <tag>乱七八糟</tag>
@@ -5426,68 +5426,6 @@ email: huangyuan@huangyuanlove.com
       </tags>
   </entry>
   <entry>
-    <title>简单的桌面小部件</title>
-    <url>/2017/03/20/%E7%AE%80%E5%8D%95%E7%9A%84%E6%A1%8C%E9%9D%A2%E5%B0%8F%E9%83%A8%E4%BB%B6/</url>
-    <content><![CDATA[<p>实现一个简单的桌面小部件，响应点击事件，更新等功能。</p>
-<ol>
-<li>定义小部件界面</li>
-<li>定义小部件配置信息</li>
-<li>定义小部件的实现类</li>
-<li>声明小部件<br>在AndroidStudio中只需要在<code>main\java</code>下新建一个<code>widget</code>,就可以了，IDE会自动在<code>res\layout</code>添加布局文件，在<code>res\xml</code>下新建配置信息文件。然后就可以进行具体实现了。</li>
-</ol>
-<span id="more"></span>
-
-<p><img src="/image/new_widget.png" alt="AS下新建widget"></p>
-<h3 id="定义小部件界面"><a href="#定义小部件界面" class="headerlink" title="定义小部件界面"></a>定义小部件界面</h3><p>RemoteView目前并不能支持所有的View，现在支持的类型如下：</p>
-<ul>
-<li>Layout<ul>
-<li>FrameLayout</li>
-<li>LinearLayout</li>
-<li>RelativeLayout</li>
-<li>GridLayout</li>
-</ul>
-</li>
-<li>View<ul>
-<li>AnalogClock</li>
-<li>Button</li>
-<li>Chronometer</li>
-<li>ImageButton</li>
-<li>ImageView</li>
-<li>ProgressBar</li>
-<li>TextView</li>
-<li>ViewFlipper</li>
-<li>ListView</li>
-<li>GridView</li>
-<li>StackView</li>
-<li>AdapterViewFlipper</li>
-<li>ViewStub</li>
-</ul>
-</li>
-</ul>
-<p>这个没什么好说的，按照写界面布局的方式写就好了，但是不建议写过于复杂的布局。</p>
-<h3 id="定义小部件配置信息"><a href="#定义小部件配置信息" class="headerlink" title="定义小部件配置信息"></a>定义小部件配置信息</h3><p>下面的代码就是IDE自动成的配置信息文件，不喜欢IDE代劳的同学可以自己创建。</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">appwidget-provider</span> <span class="attr">xmlns:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:initialKeyguardLayout</span>=<span class="string">&quot;@layout/test_remote_view_widget&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:initialLayout</span>=<span class="string">&quot;@layout/test_remote_view_widget&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:minHeight</span>=<span class="string">&quot;40dp&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:minWidth</span>=<span class="string">&quot;40dp&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:previewImage</span>=<span class="string">&quot;@drawable/example_appwidget_preview&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:resizeMode</span>=<span class="string">&quot;horizontal|vertical&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:updatePeriodMillis</span>=<span class="string">&quot;86400000&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:widgetCategory</span>=<span class="string">&quot;home_screen&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">appwidget-provider</span>&gt;</span> </span><br></pre></td></tr></table></figure>
-<p><code>initialLayout</code>：布局文件<br><code>previewImage</code>： 预览的图片<br><code>updatePeriodMillis</code>：刷新周期，单位毫秒</p>
-<h3 id="定义小部件的实现类"><a href="#定义小部件的实现类" class="headerlink" title="定义小部件的实现类"></a>定义小部件的实现类</h3><p>实现的功能是当点击这个小部件的时候改变文字内容</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestRemoteViewWidget</span> <span class="keyword">extends</span> <span class="title">AppWidgetProvider</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String CLICK_ACTION = <span class="string">&quot;com.huangyuan.testwidget.TAP_CLICK_ACTION&quot;</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onReceive</span><span class="params">(Context context, Intent intent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onReceive(context, intent);</span><br><span class="line">        Toast.makeText(context,<span class="string">&quot;onReceive:&quot;</span> + intent.getAction(),Toast.LENGTH_SHORT).show();</span><br><span class="line">        <span class="keyword">if</span>(intent.getAction().equals(CLICK_ACTION))&#123;</span><br><span class="line">            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);</span><br><span class="line">            RemoteViews remoteViews = <span class="keyword">new</span> RemoteViews(context.getPackageName(),R.layout.test_remote_view_widget);</span><br><span class="line">            remoteViews.setTextViewText(R.id.appwidget_text,<span class="string">&quot;点击&quot;</span>);</span><br><span class="line">            appWidgetManager.updateAppWidget(<span class="keyword">new</span> ComponentName(context,TestRemoteViewWidget.class),remoteViews);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onUpdate</span><span class="params">(Context context, AppWidgetManager appWidgetManager, <span class="keyword">int</span>[] appWidgetIds)</span> </span>&#123;</span><br><span class="line">        Toast.makeText(context,<span class="string">&quot;onUpdate&quot;</span> ,Toast.LENGTH_SHORT).show();</span><br><span class="line">        RemoteViews remoteViews = <span class="keyword">new</span> RemoteViews(context.getPackageName(),R.layout.test_remote_view_widget);</span><br><span class="line">        Intent clickIntent = <span class="keyword">new</span> Intent();</span><br><span class="line">        clickIntent.setAction(CLICK_ACTION);</span><br><span class="line">        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,<span class="number">0</span>,clickIntent,<span class="number">0</span>);</span><br><span class="line">        remoteViews.setOnClickPendingIntent(R.id.appwidget_text,pendingIntent);</span><br><span class="line">        appWidgetManager.updateAppWidget(appWidgetIds,remoteViews);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>其中还有其他方法：</p>
-<ul>
-<li>onEnabled:当该窗口小部件第一次添加到桌面时调用该方法，可添加多次，但只在第一次调用</li>
-<li>onUpdate:小部件被添加时或者每次小部件更新时都会调用一次该方法，小部件的更新时机由<code>updatePeriodMillis</code>指定。</li>
-<li>onDeleted:每删除一次桌面小部件就调用一次。</li>
-<li>onDisabled:当最后一个该类型的桌面小部件被删除时调用该方法，追时最后一个。<br>需要注意的是，更新remoteView时，不能直接访问里面的View,需要通过RemoteView所提供的一系列方法更新View。</li>
-<li>更新文本： remoteViews.setTextViewText();</li>
-<li>更新图片： remoteViews.setImageViewResource();remoteViews.setImageViewBitmap();</li>
-<li>添加单击事件：remoteViews.setOnClickPendingIntent();</li>
-</ul>
-<hr>
-]]></content>
-      <tags>
-        <tag>Android</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>正则表达式--上</title>
     <url>/2020/09/24/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F-%E4%B8%8A/</url>
     <content><![CDATA[<p>如果你有一个问题，你想到可以用正则来解决，那么你有两个问题了。</p>
@@ -5797,6 +5735,68 @@ A3-->A34("X(?!Y):匹配后面不是Y的X")</pre>
 ]]></content>
       <tags>
         <tag>正则</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>简单的桌面小部件</title>
+    <url>/2017/03/20/%E7%AE%80%E5%8D%95%E7%9A%84%E6%A1%8C%E9%9D%A2%E5%B0%8F%E9%83%A8%E4%BB%B6/</url>
+    <content><![CDATA[<p>实现一个简单的桌面小部件，响应点击事件，更新等功能。</p>
+<ol>
+<li>定义小部件界面</li>
+<li>定义小部件配置信息</li>
+<li>定义小部件的实现类</li>
+<li>声明小部件<br>在AndroidStudio中只需要在<code>main\java</code>下新建一个<code>widget</code>,就可以了，IDE会自动在<code>res\layout</code>添加布局文件，在<code>res\xml</code>下新建配置信息文件。然后就可以进行具体实现了。</li>
+</ol>
+<span id="more"></span>
+
+<p><img src="/image/new_widget.png" alt="AS下新建widget"></p>
+<h3 id="定义小部件界面"><a href="#定义小部件界面" class="headerlink" title="定义小部件界面"></a>定义小部件界面</h3><p>RemoteView目前并不能支持所有的View，现在支持的类型如下：</p>
+<ul>
+<li>Layout<ul>
+<li>FrameLayout</li>
+<li>LinearLayout</li>
+<li>RelativeLayout</li>
+<li>GridLayout</li>
+</ul>
+</li>
+<li>View<ul>
+<li>AnalogClock</li>
+<li>Button</li>
+<li>Chronometer</li>
+<li>ImageButton</li>
+<li>ImageView</li>
+<li>ProgressBar</li>
+<li>TextView</li>
+<li>ViewFlipper</li>
+<li>ListView</li>
+<li>GridView</li>
+<li>StackView</li>
+<li>AdapterViewFlipper</li>
+<li>ViewStub</li>
+</ul>
+</li>
+</ul>
+<p>这个没什么好说的，按照写界面布局的方式写就好了，但是不建议写过于复杂的布局。</p>
+<h3 id="定义小部件配置信息"><a href="#定义小部件配置信息" class="headerlink" title="定义小部件配置信息"></a>定义小部件配置信息</h3><p>下面的代码就是IDE自动成的配置信息文件，不喜欢IDE代劳的同学可以自己创建。</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">appwidget-provider</span> <span class="attr">xmlns:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:initialKeyguardLayout</span>=<span class="string">&quot;@layout/test_remote_view_widget&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:initialLayout</span>=<span class="string">&quot;@layout/test_remote_view_widget&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:minHeight</span>=<span class="string">&quot;40dp&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:minWidth</span>=<span class="string">&quot;40dp&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:previewImage</span>=<span class="string">&quot;@drawable/example_appwidget_preview&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:resizeMode</span>=<span class="string">&quot;horizontal|vertical&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:updatePeriodMillis</span>=<span class="string">&quot;86400000&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:widgetCategory</span>=<span class="string">&quot;home_screen&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">appwidget-provider</span>&gt;</span> </span><br></pre></td></tr></table></figure>
+<p><code>initialLayout</code>：布局文件<br><code>previewImage</code>： 预览的图片<br><code>updatePeriodMillis</code>：刷新周期，单位毫秒</p>
+<h3 id="定义小部件的实现类"><a href="#定义小部件的实现类" class="headerlink" title="定义小部件的实现类"></a>定义小部件的实现类</h3><p>实现的功能是当点击这个小部件的时候改变文字内容</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestRemoteViewWidget</span> <span class="keyword">extends</span> <span class="title">AppWidgetProvider</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String CLICK_ACTION = <span class="string">&quot;com.huangyuan.testwidget.TAP_CLICK_ACTION&quot;</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onReceive</span><span class="params">(Context context, Intent intent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onReceive(context, intent);</span><br><span class="line">        Toast.makeText(context,<span class="string">&quot;onReceive:&quot;</span> + intent.getAction(),Toast.LENGTH_SHORT).show();</span><br><span class="line">        <span class="keyword">if</span>(intent.getAction().equals(CLICK_ACTION))&#123;</span><br><span class="line">            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);</span><br><span class="line">            RemoteViews remoteViews = <span class="keyword">new</span> RemoteViews(context.getPackageName(),R.layout.test_remote_view_widget);</span><br><span class="line">            remoteViews.setTextViewText(R.id.appwidget_text,<span class="string">&quot;点击&quot;</span>);</span><br><span class="line">            appWidgetManager.updateAppWidget(<span class="keyword">new</span> ComponentName(context,TestRemoteViewWidget.class),remoteViews);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onUpdate</span><span class="params">(Context context, AppWidgetManager appWidgetManager, <span class="keyword">int</span>[] appWidgetIds)</span> </span>&#123;</span><br><span class="line">        Toast.makeText(context,<span class="string">&quot;onUpdate&quot;</span> ,Toast.LENGTH_SHORT).show();</span><br><span class="line">        RemoteViews remoteViews = <span class="keyword">new</span> RemoteViews(context.getPackageName(),R.layout.test_remote_view_widget);</span><br><span class="line">        Intent clickIntent = <span class="keyword">new</span> Intent();</span><br><span class="line">        clickIntent.setAction(CLICK_ACTION);</span><br><span class="line">        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,<span class="number">0</span>,clickIntent,<span class="number">0</span>);</span><br><span class="line">        remoteViews.setOnClickPendingIntent(R.id.appwidget_text,pendingIntent);</span><br><span class="line">        appWidgetManager.updateAppWidget(appWidgetIds,remoteViews);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中还有其他方法：</p>
+<ul>
+<li>onEnabled:当该窗口小部件第一次添加到桌面时调用该方法，可添加多次，但只在第一次调用</li>
+<li>onUpdate:小部件被添加时或者每次小部件更新时都会调用一次该方法，小部件的更新时机由<code>updatePeriodMillis</code>指定。</li>
+<li>onDeleted:每删除一次桌面小部件就调用一次。</li>
+<li>onDisabled:当最后一个该类型的桌面小部件被删除时调用该方法，追时最后一个。<br>需要注意的是，更新remoteView时，不能直接访问里面的View,需要通过RemoteView所提供的一系列方法更新View。</li>
+<li>更新文本： remoteViews.setTextViewText();</li>
+<li>更新图片： remoteViews.setImageViewResource();remoteViews.setImageViewBitmap();</li>
+<li>添加单击事件：remoteViews.setOnClickPendingIntent();</li>
+</ul>
+<hr>
+]]></content>
+      <tags>
+        <tag>Android</tag>
       </tags>
   </entry>
   <entry>
@@ -6558,6 +6558,59 @@ A3-->A34("X(?!Y):匹配后面不是Y的X")</pre>
       </tags>
   </entry>
   <entry>
+    <title>Android多进程(一)</title>
+    <url>/2018/06/21/Android%E5%A4%9A%E8%BF%9B%E7%A8%8B-%E4%B8%80/</url>
+    <content><![CDATA[<p>Reference：《Android开发艺术探索》，作者：任玉刚<br>多进程基础以及一些名词</p>
+<span id="more"></span>
+<h6 id="IPC"><a href="#IPC" class="headerlink" title="IPC"></a>IPC</h6><p>进程间通信或者跨进程通信，全称：Inter-Process Communication。<br>在操作系统中，线程是CPU调度的最小单元，同时线程是一种有限的系统资源。而进程一般指一个执行单元。一个进程可以包含做个线程。最简单的情况下，一个进程中可以只有一个线程，即主线程，在Android中，主线程也叫UI线程。<br>IPC不是Android中所独有的，任何一个操作系统都需要有相应的IPC机制，比如windows上可以通过剪贴板、管道和邮槽等来进行进程间通信；linux上可以通过命名管道、共享内容、信号量等来进行进程间通信。Android是基于Linux内核的移动操作系统，它的进程间通信方式没有完全继承自linux，在Android中可以通过Binder轻松实现进程间通信。除了Binder，Android还支持Socket。</p>
+<h6 id="开启多进程"><a href="#开启多进程" class="headerlink" title="开启多进程"></a>开启多进程</h6><p>** 指定process属性 **</p>
+<p>正常情况下，在Android中多进程是指一个应用中存在多个进程的情况，因此先忽略多个应用多进程的情况。首先在Android中使用多进程只有一种方式：在AndroidMenifest文件中指定<code>android:process</code>属性，除此之外还有一种非常规的方式，通过JNI在native层fork一个新的进程。也就是说我们无法给一个线程或者一个实体类指定其运行时所在的进程。</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:name</span>=<span class="string">&quot;.ui.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:process</span>=<span class="string">&quot;:remote&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">activity</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:name</span>=<span class="string">&quot;.ui.ActivityTwo&quot;</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:process</span>=<span class="string">&quot;com.huangyuanlove.xuan&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">activity</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:name</span>=<span class="string">&quot;.ui.ActivityThree&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>假如当前应用包名为<code>com.huangyuanlove.ipc</code>，当<code>ActivityOne</code>启动时，系统会为它创建一个单独的进程，进程名为<code>com.huangyuanlove.ipc:remote</code>，当<code>ActivityTwo</code>启动时，系统也会为它创建一个进程，进程名为：<code>com.huangyuanlove.xuan</code>，当然<code>ActivityThree</code>是运行在默认进程中，默认进程是包名。</p>
+<p>** :name 和 全限定名的区别 **</p>
+<ul>
+<li>“:”的含义是在当前进程名的前面附加上包名(ActivityOne)，全限定名并不会附加包名。</li>
+<li>以”:”开头的进程属于当前应用的私有进程，其他应用的组件不可以和它跑在同一个进程中，其他不以”:”开头的进程属于全局进程，其他应用通过ShareUID方式可以和它跑在同一个进程中。</li>
+</ul>
+<p>​     Android会为每一个应用分配一个UID，具有相同UID的应用才能共享数据，需要注意的是，两个应用通过ShareUID跑在同一个进程中是有要求的，需要这两个应用有相同的ShareUID并且签名相同才可以。这种情况下，他们可以互相访问对方的私有数据，还可以共享内存数据，或者说它们看起来就像是一个应用的两个部分。</p>
+<h6 id="带来的问题"><a href="#带来的问题" class="headerlink" title="带来的问题"></a>带来的问题</h6><ul>
+<li>静态成员和单例模式凉凉</li>
+<li>线程同步锁机制凉凉</li>
+<li>SharedPreferences可靠性凉凉</li>
+<li>Application会创建多次</li>
+</ul>
+<p>因为开启多进程之后，就不再是同一个内存区域，所以带来第一个问题，第二个问题也是同样，不在同一个内存区域，无论是对象锁还是全局锁可靠性基本就凉了。第三个问题和多进程写sp一样，第四个问题也是显而易见的，系统在创建新进程的时候会同时分配独立的虚拟机，所以这个过程就是启动一个应用的过程。</p>
+<h6 id="Parcelable-和-Serializable"><a href="#Parcelable-和-Serializable" class="headerlink" title="Parcelable 和 Serializable"></a>Parcelable 和 Serializable</h6><p>这个自己玩</p>
+<h6 id="Binder"><a href="#Binder" class="headerlink" title="Binder"></a>Binder</h6><p>直观的讲，Binder是Android中的一个类，它继承了IBinder接口。从IPC角度来说，Binder是Android中的一种跨进程通信方式，从Android Framework角度来说，Binder是ServiceManager连接各种Manager(ActivityManager、WindowManager，等等)和相应ManagerService的桥梁；从Android应用层来说，Binder是客户端和服务端进行通信的媒介。</p>
+<p>** 创建AIDL示例 **<br>创建一个Book类，实现Parcelable接口。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Book</span> <span class="keyword">implements</span> <span class="title">Parcelable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> bookId;</span><br><span class="line">    <span class="keyword">private</span> String bookName;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Book</span><span class="params">(<span class="keyword">int</span> bookId, String bookName)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.bookId = bookId;</span><br><span class="line">        <span class="keyword">this</span>.bookName = bookName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">describeContents</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeToParcel</span><span class="params">(Parcel dest, <span class="keyword">int</span> flags)</span> </span>&#123;</span><br><span class="line">        dest.writeInt(<span class="keyword">this</span>.bookId);</span><br><span class="line">        dest.writeString(<span class="keyword">this</span>.bookName);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">Book</span><span class="params">(Parcel in)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.bookId = in.readInt();</span><br><span class="line">        <span class="keyword">this</span>.bookName = in.readString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Creator&lt;Book&gt; CREATOR = <span class="keyword">new</span> Creator&lt;Book&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Book <span class="title">createFromParcel</span><span class="params">(Parcel source)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Book(source);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> Book[] newArray(<span class="keyword">int</span> size) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Book[size];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>创建<code>IBookManager.aidl</code>文件，需要注意的是，在AndroidStudio中，右键创建aidl文件时候，IDE会自动创建一个和java平级的aidl文件夹，我们创建的aidl文件就在这里面。<br><img src="/image/Android/IPC/create_aidl.png" alt="create_aidl_file"><br>** Book.aidl **</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.huangyuan.testandroid;</span><br><span class="line">parcelable Book;</span><br></pre></td></tr></table></figure>
+<p><code>Book.aidl</code>是<code>Book.java</code>类在AIDL中的声明。</p>
+<p>** IBookManager.aidl **</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// IBookManager.aidl</span></span><br><span class="line"><span class="keyword">package</span> com.example.huangyuan.testandroid;</span><br><span class="line"><span class="keyword">import</span> com.example.huangyuan.testandroid.Book;</span><br><span class="line"><span class="comment">// Declare any non-default types here with import statements</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">IBookManager</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Demonstrates some basic types that you can use as parameters</span></span><br><span class="line"><span class="comment">     * and return values in AIDL.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">basicTypes</span><span class="params">(<span class="keyword">int</span> anInt, <span class="keyword">long</span> aLong, <span class="keyword">boolean</span> aBoolean, <span class="keyword">float</span> aFloat,</span></span></span><br><span class="line"><span class="params"><span class="function">            <span class="keyword">double</span> aDouble, String aString)</span></span>;</span><br><span class="line"></span><br><span class="line">     <span class="function">List&lt;Book&gt; <span class="title">getBookList</span><span class="params">()</span></span>;</span><br><span class="line">     <span class="function"><span class="keyword">void</span> <span class="title">addBook</span><span class="params">(in Book book)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中 <code>basicTypes</code>是IDE自动生成的，我们自己添加 <code>getBookList()</code> 和 <code>addBook</code> 两个方法<br>尽管Book类和IBookManager的包名相同，但是在IBookManager中仍要导入Book类。下面看一下IDE生成的<code>IBookManager.java</code>类，该类在<code>app/build/generated/source/aidl/debug/packageName</code>包下。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * This file is auto-generated.  DO NOT MODIFY.</span></span><br><span class="line"><span class="comment"> * Original file: /Users/huangyuan/AndroidStudioProjects/TestAndroid/app/src/main/aidl/com/example/huangyuan/testandroid/IBookManager.aidl</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">package</span> com.example.huangyuan.testandroid;</span><br><span class="line"><span class="comment">// Declare any non-default types here with import statements</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IBookManager</span> <span class="keyword">extends</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">IInterface</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Local-side IPC implementation stub class.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Stub</span> <span class="keyword">extends</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">Binder</span> <span class="keyword">implements</span> <span class="title">com</span>.<span class="title">example</span>.<span class="title">huangyuan</span>.<span class="title">testandroid</span>.<span class="title">IBookManager</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> java.lang.String DESCRIPTOR = <span class="string">&quot;com.example.huangyuan.testandroid.IBookManager&quot;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * Construct the stub at attach it to the interface.</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Stub</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.attachInterface(<span class="keyword">this</span>, DESCRIPTOR);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * Cast an IBinder object into an com.example.huangyuan.testandroid.IBookManager interface,</span></span><br><span class="line"><span class="comment">         * generating a proxy if needed.</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> com.example.huangyuan.testandroid.<span class="function">IBookManager <span class="title">asInterface</span><span class="params">(android.os.IBinder obj)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> ((obj == <span class="keyword">null</span>)) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            android.os.IInterface iin = obj.queryLocalInterface(DESCRIPTOR);</span><br><span class="line">            <span class="keyword">if</span> (((iin != <span class="keyword">null</span>) &amp;&amp; (iin <span class="keyword">instanceof</span> com.example.huangyuan.testandroid.IBookManager))) &#123;</span><br><span class="line">                <span class="keyword">return</span> ((com.example.huangyuan.testandroid.IBookManager) iin);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> com.example.huangyuan.testandroid.IBookManager.Stub.Proxy(obj);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> android.os.<span class="function">IBinder <span class="title">asBinder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTransact</span><span class="params">(<span class="keyword">int</span> code, android.os.Parcel data, android.os.Parcel reply, <span class="keyword">int</span> flags)</span> <span class="keyword">throws</span> android.os.RemoteException </span>&#123;</span><br><span class="line">            <span class="keyword">switch</span> (code) &#123;</span><br><span class="line">                <span class="keyword">case</span> INTERFACE_TRANSACTION: &#123;</span><br><span class="line">                    reply.writeString(DESCRIPTOR);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">case</span> TRANSACTION_basicTypes: &#123;</span><br><span class="line">                    data.enforceInterface(DESCRIPTOR);</span><br><span class="line">                    <span class="keyword">int</span> _arg0;</span><br><span class="line">                    _arg0 = data.readInt();</span><br><span class="line">                    <span class="keyword">long</span> _arg1;</span><br><span class="line">                    _arg1 = data.readLong();</span><br><span class="line">                    <span class="keyword">boolean</span> _arg2;</span><br><span class="line">                    _arg2 = (<span class="number">0</span> != data.readInt());</span><br><span class="line">                    <span class="keyword">float</span> _arg3;</span><br><span class="line">                    _arg3 = data.readFloat();</span><br><span class="line">                    <span class="keyword">double</span> _arg4;</span><br><span class="line">                    _arg4 = data.readDouble();</span><br><span class="line">                    java.lang.String _arg5;</span><br><span class="line">                    _arg5 = data.readString();</span><br><span class="line">                    <span class="keyword">this</span>.basicTypes(_arg0, _arg1, _arg2, _arg3, _arg4, _arg5);</span><br><span class="line">                    reply.writeNoException();</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">case</span> TRANSACTION_getBookList: &#123;</span><br><span class="line">                    data.enforceInterface(DESCRIPTOR);</span><br><span class="line">                    java.util.List&lt;com.example.huangyuan.testandroid.Book&gt; _result = <span class="keyword">this</span>.getBookList();</span><br><span class="line">                    reply.writeNoException();</span><br><span class="line">                    reply.writeTypedList(_result);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">case</span> TRANSACTION_addBook: &#123;</span><br><span class="line">                    data.enforceInterface(DESCRIPTOR);</span><br><span class="line">                    com.example.huangyuan.testandroid.Book _arg0;</span><br><span class="line">                    <span class="keyword">if</span> ((<span class="number">0</span> != data.readInt())) &#123;</span><br><span class="line">                        _arg0 = com.example.huangyuan.testandroid.Book.CREATOR.createFromParcel(data);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        _arg0 = <span class="keyword">null</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">this</span>.addBook(_arg0);</span><br><span class="line">                    reply.writeNoException();</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">super</span>.onTransact(code, data, reply, flags);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Proxy</span> <span class="keyword">implements</span> <span class="title">com</span>.<span class="title">example</span>.<span class="title">huangyuan</span>.<span class="title">testandroid</span>.<span class="title">IBookManager</span> </span>&#123;</span><br><span class="line">            <span class="keyword">private</span> android.os.IBinder mRemote;</span><br><span class="line"></span><br><span class="line">            Proxy(android.os.IBinder remote) &#123;</span><br><span class="line">                mRemote = remote;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> android.os.<span class="function">IBinder <span class="title">asBinder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> mRemote;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">public</span> java.lang.<span class="function">String <span class="title">getInterfaceDescriptor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> DESCRIPTOR;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">/**</span></span><br><span class="line"><span class="comment">             * Demonstrates some basic types that you can use as parameters</span></span><br><span class="line"><span class="comment">             * and return values in AIDL.</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">basicTypes</span><span class="params">(<span class="keyword">int</span> anInt, <span class="keyword">long</span> aLong, <span class="keyword">boolean</span> aBoolean, <span class="keyword">float</span> aFloat, <span class="keyword">double</span> aDouble, java.lang.String aString)</span> <span class="keyword">throws</span> android.os.RemoteException </span>&#123;</span><br><span class="line">                android.os.Parcel _data = android.os.Parcel.obtain();</span><br><span class="line">                android.os.Parcel _reply = android.os.Parcel.obtain();</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    _data.writeInterfaceToken(DESCRIPTOR);</span><br><span class="line">                    _data.writeInt(anInt);</span><br><span class="line">                    _data.writeLong(aLong);</span><br><span class="line">                    _data.writeInt(((aBoolean) ? (<span class="number">1</span>) : (<span class="number">0</span>)));</span><br><span class="line">                    _data.writeFloat(aFloat);</span><br><span class="line">                    _data.writeDouble(aDouble);</span><br><span class="line">                    _data.writeString(aString);</span><br><span class="line">                    mRemote.transact(Stub.TRANSACTION_basicTypes, _data, _reply, <span class="number">0</span>);</span><br><span class="line">                    _reply.readException();</span><br><span class="line">                &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                    _reply.recycle();</span><br><span class="line">                    _data.recycle();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> java.util.List&lt;com.example.huangyuan.testandroid.Book&gt; getBookList() <span class="keyword">throws</span> android.os.RemoteException &#123;</span><br><span class="line">                android.os.Parcel _data = android.os.Parcel.obtain();</span><br><span class="line">                android.os.Parcel _reply = android.os.Parcel.obtain();</span><br><span class="line">                java.util.List&lt;com.example.huangyuan.testandroid.Book&gt; _result;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    _data.writeInterfaceToken(DESCRIPTOR);</span><br><span class="line">                    mRemote.transact(Stub.TRANSACTION_getBookList, _data, _reply, <span class="number">0</span>);</span><br><span class="line">                    _reply.readException();</span><br><span class="line">                    _result = _reply.createTypedArrayList(com.example.huangyuan.testandroid.Book.CREATOR);</span><br><span class="line">                &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                    _reply.recycle();</span><br><span class="line">                    _data.recycle();</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> _result;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addBook</span><span class="params">(com.example.huangyuan.testandroid.Book book)</span> <span class="keyword">throws</span> android.os.RemoteException </span>&#123;</span><br><span class="line">                android.os.Parcel _data = android.os.Parcel.obtain();</span><br><span class="line">                android.os.Parcel _reply = android.os.Parcel.obtain();</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    _data.writeInterfaceToken(DESCRIPTOR);</span><br><span class="line">                    <span class="keyword">if</span> ((book != <span class="keyword">null</span>)) &#123;</span><br><span class="line">                        _data.writeInt(<span class="number">1</span>);</span><br><span class="line">                        book.writeToParcel(_data, <span class="number">0</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        _data.writeInt(<span class="number">0</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    mRemote.transact(Stub.TRANSACTION_addBook, _data, _reply, <span class="number">0</span>);</span><br><span class="line">                    _reply.readException();</span><br><span class="line">                &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                    _reply.recycle();</span><br><span class="line">                    _data.recycle();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TRANSACTION_basicTypes = (android.os.IBinder.FIRST_CALL_TRANSACTION + <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TRANSACTION_getBookList = (android.os.IBinder.FIRST_CALL_TRANSACTION + <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TRANSACTION_addBook = (android.os.IBinder.FIRST_CALL_TRANSACTION + <span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Demonstrates some basic types that you can use as parameters</span></span><br><span class="line"><span class="comment">     * and return values in AIDL.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">basicTypes</span><span class="params">(<span class="keyword">int</span> anInt, <span class="keyword">long</span> aLong, <span class="keyword">boolean</span> aBoolean, <span class="keyword">float</span> aFloat, <span class="keyword">double</span> aDouble, java.lang.String aString)</span> <span class="keyword">throws</span> android.os.RemoteException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> java.util.List&lt;com.example.huangyuan.testandroid.Book&gt; getBookList() <span class="keyword">throws</span> android.os.RemoteException;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addBook</span><span class="params">(com.example.huangyuan.testandroid.Book book)</span> <span class="keyword">throws</span> android.os.RemoteException</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>结构比较简单，最外面是IBookManager接口，<br>其中声明了一个抽象内部类Stub，在该类中，声明了一个Proxy代理类。还声明了三个静态变量来标志aidl文件中的三个方法。这个Stub就是一个Binder类，当客户端和服务端都位于同一个进程时，方法调用不会走跨进程的transact过程，而当两者位于不同进程时，方法调用需要走transact过程，这个逻辑由内部Proxy类来完成。<br>最后，声明了aidl文件中的三个方法。<br>下面详细介绍：<br>** DESCRIPTOR **<br>Binder的唯一标示，一般用当前Binder的类名标示</p>
+<p>** asInterface(android.os.IBinder obj) **<br>用于将服务端的BInder对象转换成客户端所需的AIDL借口类型的对象，这种转换过程是区分进程的，如果客户端和服务端位于同一进程，那么此方法返回的就是服务端的Stub对象本身，否则返回的是系统封装后的Stub.proxy对象。</p>
+<p>** asBinder **<br>用于返回当前Binder对象</p>
+<p>** onTransact **<br>这个方法运行在服务端中的Binder线程池中，当客户端发起跨进程请求时，远程请求会通过系统底层封装后交由此方法来处理。该方法的原型为public Boolean onTransact(int code,android.os. Parcel data,android.os.Parcel reply,int flags)。服务端通过code可以确定客户端所请求的目标方法是什么，接着从data中取出目标方法所需的参数(如果目标方法有参数的话)，然后执行目标方法。当目标方法执行完毕后，就向reply中写入返回值(如果目标方法有返回值的话)，onTransact方 法的执行过程就是这样的。需要注意的是，如果此方法返回false,那么客户端的请求会失败，因此我们可以利用这个特性来做权限验证，毕竟我们也不希望随便-一个进程都能远程调用我们的服务。</p>
+<p>** Proxy#getBookList **<br>这个方法运行在客户端，当客户端远程调用此方法时，它的内部实现是这样的:首先创建该方法所需要的输入型Parcel对象_data、 输出型Parcel对象_ reply和返回值对象List;然后把该方法的参数信息写入_data中(如果有参数的话);接着调用transact方法来发起RPC (远程过程调用)请求，同时当前线程挂起;然后服务端的onTransact方法会被调用，直到RPC过程返回后，当前线程继续执行，并从_reply中 取出RPC过程的返回结果;最后返回_reply中的数据。</p>
+<p>** Proxy#addBook **<br>这个方法运行在客户端，它的执行过程和getBookList是一样的，addBook没有返回值，所以它不需要从_replay中取出返回值。</p>
+<p>接下来，我们介绍Binder的两个很重要的方法linkToDeath和unlinkToDeath。我们知道，Binder运行在服务端进程，如果服务端进程由于某种原因异常终止，这个时候我们到服务端的Binder连接断裂(称之为Binder死亡)，会导致我们的远程调用失败。更为关键的是，如果我们不知道Binder连接已经断裂，那么客户端的功能就会受到影响。为了解决这个问题，Binder中提供 了两个配对的方法linkToDeath和unlinkToDeath,通过linkToDeath我们可以给Binder设置- - 个死亡代理，当Binder死亡时， 我们就会收到通知，这个时候我们就可以重新发起连接请求从而恢复连接。那么到底如何给Binder设置死亡代理呢?也很简单。<br>首先，声明一个DeathRecipient对象。DeathRecipient是一个接口，其内部只有一个方法binderDied,我们需要实现这个方法，当Binder死亡的时 候，系统就会回调binderDied方法，然后我们就可以移出之前绑定的binder代理并重新绑定远程服务:</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> IBinder .DeathRecipient mDeathRecipient = <span class="keyword">new</span> IBinder.DeathRecipient() &#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">binderDied</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> ( mBookManager ==<span class="keyword">null</span>)</span><br><span class="line">				<span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">		mBookManager.asBinder().unlinkToDeath(mDeathRecipient <span class="number">0</span>);</span><br><span class="line">		mBookManager = <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>其次，在客户端绑定远程服务成功后，给binder设置死亡代理。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">mService = IMessageBoxManager.Stub.asInterface(binder);</span><br><span class="line">binder.linkToDeath(mDeathRecipient,<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>其中linkToDeath的第二个参数是个标记位，我们直接设为0即可。经过上面两个步骤，就给我们的Binder设置了死亡代理，当Binder死 亡的时候我们就可以收到通知了。另外，通过Binder的 方法isBinderAlive也可以判断Binder是否死亡。</p>
+<h2 id="这一篇全部都是抄的《Android开发艺术探索》第2-3-3Binder-章节上的内容，毕竟一直带着书也不现实"><a href="#这一篇全部都是抄的《Android开发艺术探索》第2-3-3Binder-章节上的内容，毕竟一直带着书也不现实" class="headerlink" title="** 这一篇全部都是抄的《Android开发艺术探索》第2.3.3Binder 章节上的内容，毕竟一直带着书也不现实 **"></a>** 这一篇全部都是抄的《Android开发艺术探索》第2.3.3Binder 章节上的内容，毕竟一直带着书也不现实 **</h2><p>以上</p>
+]]></content>
+      <tags>
+        <tag>Android</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Android多进程三</title>
     <url>/2018/07/23/Android%E5%A4%9A%E8%BF%9B%E7%A8%8B%E4%B8%89/</url>
     <content><![CDATA[<p>Android中中IPC方式有很多，比如使用Bundle，使用文件共享，使用Messenger，使用AIDL，使用ContentProvider，使用Socket等。前两种方式比较简单，自己玩。<br>下面主要是抄的《Android开发艺术探索》2.4.4章节，看过书的就不用看了。</p>
@@ -6629,59 +6682,6 @@ A3-->A34("X(?!Y):匹配后面不是Y的X")</pre>
 </ul>
 <hr>
 <p>以上</p>
-]]></content>
-      <tags>
-        <tag>Android</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Android多进程(一)</title>
-    <url>/2018/06/21/Android%E5%A4%9A%E8%BF%9B%E7%A8%8B-%E4%B8%80/</url>
-    <content><![CDATA[<p>Reference：《Android开发艺术探索》，作者：任玉刚<br>多进程基础以及一些名词</p>
-<span id="more"></span>
-<h6 id="IPC"><a href="#IPC" class="headerlink" title="IPC"></a>IPC</h6><p>进程间通信或者跨进程通信，全称：Inter-Process Communication。<br>在操作系统中，线程是CPU调度的最小单元，同时线程是一种有限的系统资源。而进程一般指一个执行单元。一个进程可以包含做个线程。最简单的情况下，一个进程中可以只有一个线程，即主线程，在Android中，主线程也叫UI线程。<br>IPC不是Android中所独有的，任何一个操作系统都需要有相应的IPC机制，比如windows上可以通过剪贴板、管道和邮槽等来进行进程间通信；linux上可以通过命名管道、共享内容、信号量等来进行进程间通信。Android是基于Linux内核的移动操作系统，它的进程间通信方式没有完全继承自linux，在Android中可以通过Binder轻松实现进程间通信。除了Binder，Android还支持Socket。</p>
-<h6 id="开启多进程"><a href="#开启多进程" class="headerlink" title="开启多进程"></a>开启多进程</h6><p>** 指定process属性 **</p>
-<p>正常情况下，在Android中多进程是指一个应用中存在多个进程的情况，因此先忽略多个应用多进程的情况。首先在Android中使用多进程只有一种方式：在AndroidMenifest文件中指定<code>android:process</code>属性，除此之外还有一种非常规的方式，通过JNI在native层fork一个新的进程。也就是说我们无法给一个线程或者一个实体类指定其运行时所在的进程。</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:name</span>=<span class="string">&quot;.ui.ActivityOne&quot;</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:process</span>=<span class="string">&quot;:remote&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">activity</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:name</span>=<span class="string">&quot;.ui.ActivityTwo&quot;</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:process</span>=<span class="string">&quot;com.huangyuanlove.xuan&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">activity</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:name</span>=<span class="string">&quot;.ui.ActivityThree&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>假如当前应用包名为<code>com.huangyuanlove.ipc</code>，当<code>ActivityOne</code>启动时，系统会为它创建一个单独的进程，进程名为<code>com.huangyuanlove.ipc:remote</code>，当<code>ActivityTwo</code>启动时，系统也会为它创建一个进程，进程名为：<code>com.huangyuanlove.xuan</code>，当然<code>ActivityThree</code>是运行在默认进程中，默认进程是包名。</p>
-<p>** :name 和 全限定名的区别 **</p>
-<ul>
-<li>“:”的含义是在当前进程名的前面附加上包名(ActivityOne)，全限定名并不会附加包名。</li>
-<li>以”:”开头的进程属于当前应用的私有进程，其他应用的组件不可以和它跑在同一个进程中，其他不以”:”开头的进程属于全局进程，其他应用通过ShareUID方式可以和它跑在同一个进程中。</li>
-</ul>
-<p>​     Android会为每一个应用分配一个UID，具有相同UID的应用才能共享数据，需要注意的是，两个应用通过ShareUID跑在同一个进程中是有要求的，需要这两个应用有相同的ShareUID并且签名相同才可以。这种情况下，他们可以互相访问对方的私有数据，还可以共享内存数据，或者说它们看起来就像是一个应用的两个部分。</p>
-<h6 id="带来的问题"><a href="#带来的问题" class="headerlink" title="带来的问题"></a>带来的问题</h6><ul>
-<li>静态成员和单例模式凉凉</li>
-<li>线程同步锁机制凉凉</li>
-<li>SharedPreferences可靠性凉凉</li>
-<li>Application会创建多次</li>
-</ul>
-<p>因为开启多进程之后，就不再是同一个内存区域，所以带来第一个问题，第二个问题也是同样，不在同一个内存区域，无论是对象锁还是全局锁可靠性基本就凉了。第三个问题和多进程写sp一样，第四个问题也是显而易见的，系统在创建新进程的时候会同时分配独立的虚拟机，所以这个过程就是启动一个应用的过程。</p>
-<h6 id="Parcelable-和-Serializable"><a href="#Parcelable-和-Serializable" class="headerlink" title="Parcelable 和 Serializable"></a>Parcelable 和 Serializable</h6><p>这个自己玩</p>
-<h6 id="Binder"><a href="#Binder" class="headerlink" title="Binder"></a>Binder</h6><p>直观的讲，Binder是Android中的一个类，它继承了IBinder接口。从IPC角度来说，Binder是Android中的一种跨进程通信方式，从Android Framework角度来说，Binder是ServiceManager连接各种Manager(ActivityManager、WindowManager，等等)和相应ManagerService的桥梁；从Android应用层来说，Binder是客户端和服务端进行通信的媒介。</p>
-<p>** 创建AIDL示例 **<br>创建一个Book类，实现Parcelable接口。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Book</span> <span class="keyword">implements</span> <span class="title">Parcelable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> bookId;</span><br><span class="line">    <span class="keyword">private</span> String bookName;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Book</span><span class="params">(<span class="keyword">int</span> bookId, String bookName)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.bookId = bookId;</span><br><span class="line">        <span class="keyword">this</span>.bookName = bookName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">describeContents</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeToParcel</span><span class="params">(Parcel dest, <span class="keyword">int</span> flags)</span> </span>&#123;</span><br><span class="line">        dest.writeInt(<span class="keyword">this</span>.bookId);</span><br><span class="line">        dest.writeString(<span class="keyword">this</span>.bookName);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">Book</span><span class="params">(Parcel in)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.bookId = in.readInt();</span><br><span class="line">        <span class="keyword">this</span>.bookName = in.readString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Creator&lt;Book&gt; CREATOR = <span class="keyword">new</span> Creator&lt;Book&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Book <span class="title">createFromParcel</span><span class="params">(Parcel source)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Book(source);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> Book[] newArray(<span class="keyword">int</span> size) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Book[size];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>创建<code>IBookManager.aidl</code>文件，需要注意的是，在AndroidStudio中，右键创建aidl文件时候，IDE会自动创建一个和java平级的aidl文件夹，我们创建的aidl文件就在这里面。<br><img src="/image/Android/IPC/create_aidl.png" alt="create_aidl_file"><br>** Book.aidl **</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.huangyuan.testandroid;</span><br><span class="line">parcelable Book;</span><br></pre></td></tr></table></figure>
-<p><code>Book.aidl</code>是<code>Book.java</code>类在AIDL中的声明。</p>
-<p>** IBookManager.aidl **</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// IBookManager.aidl</span></span><br><span class="line"><span class="keyword">package</span> com.example.huangyuan.testandroid;</span><br><span class="line"><span class="keyword">import</span> com.example.huangyuan.testandroid.Book;</span><br><span class="line"><span class="comment">// Declare any non-default types here with import statements</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">IBookManager</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Demonstrates some basic types that you can use as parameters</span></span><br><span class="line"><span class="comment">     * and return values in AIDL.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">basicTypes</span><span class="params">(<span class="keyword">int</span> anInt, <span class="keyword">long</span> aLong, <span class="keyword">boolean</span> aBoolean, <span class="keyword">float</span> aFloat,</span></span></span><br><span class="line"><span class="params"><span class="function">            <span class="keyword">double</span> aDouble, String aString)</span></span>;</span><br><span class="line"></span><br><span class="line">     <span class="function">List&lt;Book&gt; <span class="title">getBookList</span><span class="params">()</span></span>;</span><br><span class="line">     <span class="function"><span class="keyword">void</span> <span class="title">addBook</span><span class="params">(in Book book)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>其中 <code>basicTypes</code>是IDE自动生成的，我们自己添加 <code>getBookList()</code> 和 <code>addBook</code> 两个方法<br>尽管Book类和IBookManager的包名相同，但是在IBookManager中仍要导入Book类。下面看一下IDE生成的<code>IBookManager.java</code>类，该类在<code>app/build/generated/source/aidl/debug/packageName</code>包下。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * This file is auto-generated.  DO NOT MODIFY.</span></span><br><span class="line"><span class="comment"> * Original file: /Users/huangyuan/AndroidStudioProjects/TestAndroid/app/src/main/aidl/com/example/huangyuan/testandroid/IBookManager.aidl</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">package</span> com.example.huangyuan.testandroid;</span><br><span class="line"><span class="comment">// Declare any non-default types here with import statements</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IBookManager</span> <span class="keyword">extends</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">IInterface</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Local-side IPC implementation stub class.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Stub</span> <span class="keyword">extends</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">Binder</span> <span class="keyword">implements</span> <span class="title">com</span>.<span class="title">example</span>.<span class="title">huangyuan</span>.<span class="title">testandroid</span>.<span class="title">IBookManager</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> java.lang.String DESCRIPTOR = <span class="string">&quot;com.example.huangyuan.testandroid.IBookManager&quot;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * Construct the stub at attach it to the interface.</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Stub</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.attachInterface(<span class="keyword">this</span>, DESCRIPTOR);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * Cast an IBinder object into an com.example.huangyuan.testandroid.IBookManager interface,</span></span><br><span class="line"><span class="comment">         * generating a proxy if needed.</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> com.example.huangyuan.testandroid.<span class="function">IBookManager <span class="title">asInterface</span><span class="params">(android.os.IBinder obj)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> ((obj == <span class="keyword">null</span>)) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            android.os.IInterface iin = obj.queryLocalInterface(DESCRIPTOR);</span><br><span class="line">            <span class="keyword">if</span> (((iin != <span class="keyword">null</span>) &amp;&amp; (iin <span class="keyword">instanceof</span> com.example.huangyuan.testandroid.IBookManager))) &#123;</span><br><span class="line">                <span class="keyword">return</span> ((com.example.huangyuan.testandroid.IBookManager) iin);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> com.example.huangyuan.testandroid.IBookManager.Stub.Proxy(obj);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> android.os.<span class="function">IBinder <span class="title">asBinder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTransact</span><span class="params">(<span class="keyword">int</span> code, android.os.Parcel data, android.os.Parcel reply, <span class="keyword">int</span> flags)</span> <span class="keyword">throws</span> android.os.RemoteException </span>&#123;</span><br><span class="line">            <span class="keyword">switch</span> (code) &#123;</span><br><span class="line">                <span class="keyword">case</span> INTERFACE_TRANSACTION: &#123;</span><br><span class="line">                    reply.writeString(DESCRIPTOR);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">case</span> TRANSACTION_basicTypes: &#123;</span><br><span class="line">                    data.enforceInterface(DESCRIPTOR);</span><br><span class="line">                    <span class="keyword">int</span> _arg0;</span><br><span class="line">                    _arg0 = data.readInt();</span><br><span class="line">                    <span class="keyword">long</span> _arg1;</span><br><span class="line">                    _arg1 = data.readLong();</span><br><span class="line">                    <span class="keyword">boolean</span> _arg2;</span><br><span class="line">                    _arg2 = (<span class="number">0</span> != data.readInt());</span><br><span class="line">                    <span class="keyword">float</span> _arg3;</span><br><span class="line">                    _arg3 = data.readFloat();</span><br><span class="line">                    <span class="keyword">double</span> _arg4;</span><br><span class="line">                    _arg4 = data.readDouble();</span><br><span class="line">                    java.lang.String _arg5;</span><br><span class="line">                    _arg5 = data.readString();</span><br><span class="line">                    <span class="keyword">this</span>.basicTypes(_arg0, _arg1, _arg2, _arg3, _arg4, _arg5);</span><br><span class="line">                    reply.writeNoException();</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">case</span> TRANSACTION_getBookList: &#123;</span><br><span class="line">                    data.enforceInterface(DESCRIPTOR);</span><br><span class="line">                    java.util.List&lt;com.example.huangyuan.testandroid.Book&gt; _result = <span class="keyword">this</span>.getBookList();</span><br><span class="line">                    reply.writeNoException();</span><br><span class="line">                    reply.writeTypedList(_result);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">case</span> TRANSACTION_addBook: &#123;</span><br><span class="line">                    data.enforceInterface(DESCRIPTOR);</span><br><span class="line">                    com.example.huangyuan.testandroid.Book _arg0;</span><br><span class="line">                    <span class="keyword">if</span> ((<span class="number">0</span> != data.readInt())) &#123;</span><br><span class="line">                        _arg0 = com.example.huangyuan.testandroid.Book.CREATOR.createFromParcel(data);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        _arg0 = <span class="keyword">null</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">this</span>.addBook(_arg0);</span><br><span class="line">                    reply.writeNoException();</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">super</span>.onTransact(code, data, reply, flags);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Proxy</span> <span class="keyword">implements</span> <span class="title">com</span>.<span class="title">example</span>.<span class="title">huangyuan</span>.<span class="title">testandroid</span>.<span class="title">IBookManager</span> </span>&#123;</span><br><span class="line">            <span class="keyword">private</span> android.os.IBinder mRemote;</span><br><span class="line"></span><br><span class="line">            Proxy(android.os.IBinder remote) &#123;</span><br><span class="line">                mRemote = remote;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> android.os.<span class="function">IBinder <span class="title">asBinder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> mRemote;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">public</span> java.lang.<span class="function">String <span class="title">getInterfaceDescriptor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> DESCRIPTOR;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">/**</span></span><br><span class="line"><span class="comment">             * Demonstrates some basic types that you can use as parameters</span></span><br><span class="line"><span class="comment">             * and return values in AIDL.</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">basicTypes</span><span class="params">(<span class="keyword">int</span> anInt, <span class="keyword">long</span> aLong, <span class="keyword">boolean</span> aBoolean, <span class="keyword">float</span> aFloat, <span class="keyword">double</span> aDouble, java.lang.String aString)</span> <span class="keyword">throws</span> android.os.RemoteException </span>&#123;</span><br><span class="line">                android.os.Parcel _data = android.os.Parcel.obtain();</span><br><span class="line">                android.os.Parcel _reply = android.os.Parcel.obtain();</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    _data.writeInterfaceToken(DESCRIPTOR);</span><br><span class="line">                    _data.writeInt(anInt);</span><br><span class="line">                    _data.writeLong(aLong);</span><br><span class="line">                    _data.writeInt(((aBoolean) ? (<span class="number">1</span>) : (<span class="number">0</span>)));</span><br><span class="line">                    _data.writeFloat(aFloat);</span><br><span class="line">                    _data.writeDouble(aDouble);</span><br><span class="line">                    _data.writeString(aString);</span><br><span class="line">                    mRemote.transact(Stub.TRANSACTION_basicTypes, _data, _reply, <span class="number">0</span>);</span><br><span class="line">                    _reply.readException();</span><br><span class="line">                &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                    _reply.recycle();</span><br><span class="line">                    _data.recycle();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> java.util.List&lt;com.example.huangyuan.testandroid.Book&gt; getBookList() <span class="keyword">throws</span> android.os.RemoteException &#123;</span><br><span class="line">                android.os.Parcel _data = android.os.Parcel.obtain();</span><br><span class="line">                android.os.Parcel _reply = android.os.Parcel.obtain();</span><br><span class="line">                java.util.List&lt;com.example.huangyuan.testandroid.Book&gt; _result;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    _data.writeInterfaceToken(DESCRIPTOR);</span><br><span class="line">                    mRemote.transact(Stub.TRANSACTION_getBookList, _data, _reply, <span class="number">0</span>);</span><br><span class="line">                    _reply.readException();</span><br><span class="line">                    _result = _reply.createTypedArrayList(com.example.huangyuan.testandroid.Book.CREATOR);</span><br><span class="line">                &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                    _reply.recycle();</span><br><span class="line">                    _data.recycle();</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> _result;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addBook</span><span class="params">(com.example.huangyuan.testandroid.Book book)</span> <span class="keyword">throws</span> android.os.RemoteException </span>&#123;</span><br><span class="line">                android.os.Parcel _data = android.os.Parcel.obtain();</span><br><span class="line">                android.os.Parcel _reply = android.os.Parcel.obtain();</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    _data.writeInterfaceToken(DESCRIPTOR);</span><br><span class="line">                    <span class="keyword">if</span> ((book != <span class="keyword">null</span>)) &#123;</span><br><span class="line">                        _data.writeInt(<span class="number">1</span>);</span><br><span class="line">                        book.writeToParcel(_data, <span class="number">0</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        _data.writeInt(<span class="number">0</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    mRemote.transact(Stub.TRANSACTION_addBook, _data, _reply, <span class="number">0</span>);</span><br><span class="line">                    _reply.readException();</span><br><span class="line">                &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                    _reply.recycle();</span><br><span class="line">                    _data.recycle();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TRANSACTION_basicTypes = (android.os.IBinder.FIRST_CALL_TRANSACTION + <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TRANSACTION_getBookList = (android.os.IBinder.FIRST_CALL_TRANSACTION + <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TRANSACTION_addBook = (android.os.IBinder.FIRST_CALL_TRANSACTION + <span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Demonstrates some basic types that you can use as parameters</span></span><br><span class="line"><span class="comment">     * and return values in AIDL.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">basicTypes</span><span class="params">(<span class="keyword">int</span> anInt, <span class="keyword">long</span> aLong, <span class="keyword">boolean</span> aBoolean, <span class="keyword">float</span> aFloat, <span class="keyword">double</span> aDouble, java.lang.String aString)</span> <span class="keyword">throws</span> android.os.RemoteException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> java.util.List&lt;com.example.huangyuan.testandroid.Book&gt; getBookList() <span class="keyword">throws</span> android.os.RemoteException;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addBook</span><span class="params">(com.example.huangyuan.testandroid.Book book)</span> <span class="keyword">throws</span> android.os.RemoteException</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>结构比较简单，最外面是IBookManager接口，<br>其中声明了一个抽象内部类Stub，在该类中，声明了一个Proxy代理类。还声明了三个静态变量来标志aidl文件中的三个方法。这个Stub就是一个Binder类，当客户端和服务端都位于同一个进程时，方法调用不会走跨进程的transact过程，而当两者位于不同进程时，方法调用需要走transact过程，这个逻辑由内部Proxy类来完成。<br>最后，声明了aidl文件中的三个方法。<br>下面详细介绍：<br>** DESCRIPTOR **<br>Binder的唯一标示，一般用当前Binder的类名标示</p>
-<p>** asInterface(android.os.IBinder obj) **<br>用于将服务端的BInder对象转换成客户端所需的AIDL借口类型的对象，这种转换过程是区分进程的，如果客户端和服务端位于同一进程，那么此方法返回的就是服务端的Stub对象本身，否则返回的是系统封装后的Stub.proxy对象。</p>
-<p>** asBinder **<br>用于返回当前Binder对象</p>
-<p>** onTransact **<br>这个方法运行在服务端中的Binder线程池中，当客户端发起跨进程请求时，远程请求会通过系统底层封装后交由此方法来处理。该方法的原型为public Boolean onTransact(int code,android.os. Parcel data,android.os.Parcel reply,int flags)。服务端通过code可以确定客户端所请求的目标方法是什么，接着从data中取出目标方法所需的参数(如果目标方法有参数的话)，然后执行目标方法。当目标方法执行完毕后，就向reply中写入返回值(如果目标方法有返回值的话)，onTransact方 法的执行过程就是这样的。需要注意的是，如果此方法返回false,那么客户端的请求会失败，因此我们可以利用这个特性来做权限验证，毕竟我们也不希望随便-一个进程都能远程调用我们的服务。</p>
-<p>** Proxy#getBookList **<br>这个方法运行在客户端，当客户端远程调用此方法时，它的内部实现是这样的:首先创建该方法所需要的输入型Parcel对象_data、 输出型Parcel对象_ reply和返回值对象List;然后把该方法的参数信息写入_data中(如果有参数的话);接着调用transact方法来发起RPC (远程过程调用)请求，同时当前线程挂起;然后服务端的onTransact方法会被调用，直到RPC过程返回后，当前线程继续执行，并从_reply中 取出RPC过程的返回结果;最后返回_reply中的数据。</p>
-<p>** Proxy#addBook **<br>这个方法运行在客户端，它的执行过程和getBookList是一样的，addBook没有返回值，所以它不需要从_replay中取出返回值。</p>
-<p>接下来，我们介绍Binder的两个很重要的方法linkToDeath和unlinkToDeath。我们知道，Binder运行在服务端进程，如果服务端进程由于某种原因异常终止，这个时候我们到服务端的Binder连接断裂(称之为Binder死亡)，会导致我们的远程调用失败。更为关键的是，如果我们不知道Binder连接已经断裂，那么客户端的功能就会受到影响。为了解决这个问题，Binder中提供 了两个配对的方法linkToDeath和unlinkToDeath,通过linkToDeath我们可以给Binder设置- - 个死亡代理，当Binder死亡时， 我们就会收到通知，这个时候我们就可以重新发起连接请求从而恢复连接。那么到底如何给Binder设置死亡代理呢?也很简单。<br>首先，声明一个DeathRecipient对象。DeathRecipient是一个接口，其内部只有一个方法binderDied,我们需要实现这个方法，当Binder死亡的时 候，系统就会回调binderDied方法，然后我们就可以移出之前绑定的binder代理并重新绑定远程服务:</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> IBinder .DeathRecipient mDeathRecipient = <span class="keyword">new</span> IBinder.DeathRecipient() &#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">binderDied</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> ( mBookManager ==<span class="keyword">null</span>)</span><br><span class="line">				<span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">		mBookManager.asBinder().unlinkToDeath(mDeathRecipient <span class="number">0</span>);</span><br><span class="line">		mBookManager = <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-<p>其次，在客户端绑定远程服务成功后，给binder设置死亡代理。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">mService = IMessageBoxManager.Stub.asInterface(binder);</span><br><span class="line">binder.linkToDeath(mDeathRecipient,<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-<p>其中linkToDeath的第二个参数是个标记位，我们直接设为0即可。经过上面两个步骤，就给我们的Binder设置了死亡代理，当Binder死 亡的时候我们就可以收到通知了。另外，通过Binder的 方法isBinderAlive也可以判断Binder是否死亡。</p>
-<h2 id="这一篇全部都是抄的《Android开发艺术探索》第2-3-3Binder-章节上的内容，毕竟一直带着书也不现实"><a href="#这一篇全部都是抄的《Android开发艺术探索》第2-3-3Binder-章节上的内容，毕竟一直带着书也不现实" class="headerlink" title="** 这一篇全部都是抄的《Android开发艺术探索》第2.3.3Binder 章节上的内容，毕竟一直带着书也不现实 **"></a>** 这一篇全部都是抄的《Android开发艺术探索》第2.3.3Binder 章节上的内容，毕竟一直带着书也不现实 **</h2><p>以上</p>
 ]]></content>
       <tags>
         <tag>Android</tag>
