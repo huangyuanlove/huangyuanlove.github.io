@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"LO7AODH922","apiKey":"eef0d8a75f8bcbfe584416f372bf56e7","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一个开发Flutter plugin  和 在Flutter中嵌入原生控件的笔记。完全是照着的官网来实践的。 https:&#x2F;&#x2F;flutter.dev&#x2F;docs&#x2F;development&#x2F;packages-and-plugins&#x2F;developing-packages Flutter中的package分为两种，一种是纯dart语言的的package，比如 fluro，称之为Dart packages">
+<meta property="og:type" content="article">
+<meta property="og:title" content="flutter_plugin开发">
+<meta property="og:url" content="http://blog.huangyuanlove.com/2019/09/16/flutter_plugin%E5%BC%80%E5%8F%91/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="一个开发Flutter plugin  和 在Flutter中嵌入原生控件的笔记。完全是照着的官网来实践的。 https:&#x2F;&#x2F;flutter.dev&#x2F;docs&#x2F;development&#x2F;packages-and-plugins&#x2F;developing-packages Flutter中的package分为两种，一种是纯dart语言的的package，比如 fluro，称之为Dart packages">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://blog.huangyuanlove.com/image/flutter/flutter_plugin_project_in_xcode.png">
+<meta property="article:published_time" content="2019-09-16T03:20:05.000Z">
+<meta property="article:modified_time" content="2020-11-26T04:10:08.517Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="flutter">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.huangyuanlove.com/image/flutter/flutter_plugin_project_in_xcode.png">
+
+<link rel="canonical" href="http://blog.huangyuanlove.com/2019/09/16/flutter_plugin%E5%BC%80%E5%8F%91/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>flutter_plugin开发 | 放码过来</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123314537-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-123314537-1');
+      }
+    </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?98796e1ecbcbaac6a6d9d3fea85985ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">放码过来</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">技术宅 huangyuan@huangyuanlove.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/huangyuanlove" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2019/09/16/flutter_plugin%E5%BC%80%E5%8F%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+      <meta itemprop="name" content="HuangYuan_xuan">
+      <meta itemprop="description" content="锱铢必较间接性奋发图强，睚眦必报持续性混吃等死">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="放码过来">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          flutter_plugin开发<a href="https://github.com/huangyuanlove/hexo_back/tree/master/source/_posts/flutter_plugin%E5%BC%80%E5%8F%91.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil-alt"></i></a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019年09月16日 11:20:05" itemprop="dateCreated datePublished" datetime="2019-09-16T11:20:05+08:00">2019年09月16日</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020年11月26日 12:10:08" itemprop="dateModified" datetime="2020-11-26T12:10:08+08:00">2020年11月26日</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>一个开发Flutter plugin  和 在Flutter中嵌入原生控件的笔记。完全是照着的官网来实践的。</p>
+<p><a target="_blank" rel="noopener" href="https://flutter.dev/docs/development/packages-and-plugins/developing-packages">https://flutter.dev/docs/development/packages-and-plugins/developing-packages</a></p>
+<p>Flutter中的package分为两种，一种是纯dart语言的的package，比如 <a target="_blank" rel="noopener" href="https://pub.dev/packages/fluro"><code>fluro</code></a>，称之为<em>Dart packages</em></p>
+<p>还有一种是由原生平台代码(Android:java or kotlin，iOS：OC or swift)，比如<a target="_blank" rel="noopener" href="https://pub.dev/packages/battery"><code>battery</code></a>，称之为<em>Plugin packages</em>。</p>
+<p>下面是对<em>Plugin packages</em>开发的实践</p>
+<span id="more"></span>
+
+<h3 id="Create-the-package"><a href="#Create-the-package" class="headerlink" title="Create the package"></a>Create the package</h3><p>创建工程，命令行</p>
+<p><code>flutter create --org com.example --template=plugin name</code></p>
+<p>默认Android是java，iOS是OC，也可以指定默认语言</p>
+<p><code>flutter create --template=plugin -i swift -a kotlin name</code></p>
+<p>也可以同过AS创建，选择<code>Flutter plugin</code>就好。</p>
+<p>主要文件如下(以工程根目录为基础目录来说的)：</p>
+<ul>
+<li><p>lib</p>
+<p>刚创建好的项目中，该文件夹下只有一个以项目名命名的dart文件，创建了一个MethodChannel 和实现了一个<code>platformVersion</code>方法</p>
+</li>
+<li><p>android</p>
+<p>这里需要注意一下，在AndroidStudio中以Project方式预览工程时，该目录下的src.main文件夹下只有一个清单文件，可以切换到Android方式预览。可以看到src.main下有一个实现<code>MethodCallHandler</code>接口的类，并且已经实现了<code>getPlatformVersion</code>的调用，我们开发插件原生代码就是在这里写的</p>
+</li>
+<li><p>iOS</p>
+<p>在AndroidStudio下看到只有两个文件夹Assets和Classes，在Classes下有个<code>.h</code> 和<code>.m</code>，也是创建了<code>FlutterMethodChannel</code>和实现了<code>platformVersion</code>调用</p>
+</li>
+<li><p>Example</p>
+<p>在这里测试我们自己写的插件，并且给使用这提供示例。该文件夹下包含Android、iOS和Flutter代码</p>
+</li>
+</ul>
+<h3 id="Implement-the-package"><a href="#Implement-the-package" class="headerlink" title="Implement the package"></a>Implement the package</h3><p>As a plugin package contains code for several platforms written in several programming languages, some specific steps are needed to ensure a smooth experience.</p>
+<h4 id="Define-the-package-API"><a href="#Define-the-package-API" class="headerlink" title="Define the package API"></a>Define the package API</h4><p>假如我们要开发一个打开某些原生界面的插件，比如打开原生设置页面、拨号页面、浏览器等</p>
+<p>在<code>lib</code>下的dart文件中，增加一个名字为<code>openOSView</code>的方法调用，并且传递一个String类型的url参数</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FlutterPluginOpenNative</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">const</span> MethodChannel _channel =</span><br><span class="line">      <span class="keyword">const</span> MethodChannel(<span class="string">&#x27;flutter_plugin_open_native&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> Future&lt;<span class="built_in">String</span>&gt; <span class="keyword">get</span> platformVersion <span class="keyword">async</span> &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="built_in">String</span> version = <span class="keyword">await</span> _channel.invokeMethod(<span class="string">&#x27;getPlatformVersion&#x27;</span>);</span><br><span class="line">    <span class="keyword">return</span> version;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> Future&lt;<span class="keyword">void</span>&gt;  openNative(<span class="built_in">String</span> url) <span class="keyword">async</span> &#123;</span><br><span class="line">    <span class="keyword">await</span> _channel.invokeMethod(<span class="string">&#x27;openOSView&#x27;</span>,url);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Add-Android-platform-code"><a href="#Add-Android-platform-code" class="headerlink" title="Add Android platform code"></a>Add Android platform code</h4><p>在Android下实现了<code>MethodCallHandler</code>接口的类中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMethodCall</span><span class="params">(MethodCall call, Result result)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (call.method.equals(<span class="string">&quot;getPlatformVersion&quot;</span>)) &#123;</span><br><span class="line">      result.success(<span class="string">&quot;Android &quot;</span> + android.os.Build.VERSION.RELEASE);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span>(call.method.equals(<span class="string">&quot;openOSView&quot;</span>))&#123;</span><br><span class="line">      Intent intent = <span class="keyword">new</span> Intent();</span><br><span class="line">      intent.setAction(Intent.ACTION_VIEW);</span><br><span class="line">      intent.setData(Uri.parse(call.arguments.toString()));</span><br><span class="line">      activity.startActivity(intent);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      result.notImplemented();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Add-iOS-platform-code"><a href="#Add-iOS-platform-code" class="headerlink" title="Add iOS platform code"></a>Add iOS platform code</h4><p>在iOS</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result &#123;</span><br><span class="line">    if ([@&quot;getPlatformVersion&quot; isEqualToString:call.method]) &#123;</span><br><span class="line">        result([@&quot;iOS &quot; stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);</span><br><span class="line">    &#125;</span><br><span class="line">    else if([@&quot;openOSView&quot; isEqualToString:call.method])&#123;</span><br><span class="line">        NSString * phoneUri = call.arguments;</span><br><span class="line">        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:phoneUri]];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    else &#123;</span><br><span class="line">        result(FlutterMethodNotImplemented);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果是用XCode开发的话，选择打开example–&gt;ios–&gt;Runner.xcworkspace，该文件存在于</p>
+<p><code>Pods--&gt;Development Pods--&gt;projectname</code>下</p>
+<p><img src="/image/flutter/flutter_plugin_project_in_xcode.png" alt="project in xcode"></p>
+<p>第一个红框是项目中example–&gt;ios中的内容</p>
+<p>第二个红框是项目中ios文件夹下内容</p>
+<hr>
+<p>这样，一个简单的插件就开发完了，我们可以在example中测试一下，由于插件特别简单，不需要在原生侧做初始化之类的工作，使用创建项目时生成的代码就可以满足我们的需要。</p>
+<p>在<code>example--&gt;lib--&gt;main.dart</code>中放一个按钮，点击的时候调用<code>FlutterPluginOpenNative.openNative(&quot;https://blog.huangyuanlove.com&quot;);</code>然后运行到设备，查看一下效果</p>
+<p><code>flutter run -d all</code> 可以运行到所有已连接的设备</p>
+<hr>
+<h3 id="Flutter嵌入原生控件"><a href="#Flutter嵌入原生控件" class="headerlink" title="Flutter嵌入原生控件"></a>Flutter嵌入原生控件</h3><p>上面是开发的插件，下面是如果在flutter中嵌入原生控件</p>
+<p>这里用到了Flutter中的两个类<code>AndroidView</code>和<code>UiKitView</code>，懒得翻译直接看官方版<a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/AndroidView-class.html">https://api.flutter.dev/flutter/widgets/AndroidView-class.html</a>  和<a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/UiKitView-class.html">https://api.flutter.dev/flutter/widgets/UiKitView-class.html</a></p>
+<p>例如，我们要嵌入原生展示文字的控件，对于Android来讲，一般是TextView，对于iOS来讲，一般是UILabel。</p>
+<h4 id="在-flutter侧"><a href="#在-flutter侧" class="headerlink" title="在 flutter侧"></a>在 flutter侧</h4><p>一般是一个Controller和一个StatefulWidget，当然这里的Controller只是一个普通类，用来创建channel和原生通信</p>
+<p>代码如下</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">void</span> TextViewCreatedCallback(TextViewController controller);</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TextViewController</span> </span>&#123;</span><br><span class="line">  TextViewController._(<span class="built_in">int</span> id)</span><br><span class="line">      : _channel = <span class="keyword">new</span> MethodChannel(<span class="string">&#x27;me.chunyu.textview/textview&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">final</span> MethodChannel _channel;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//调用setText方法给控件设置文字，需要原生侧进行实现</span></span><br><span class="line">  Future&lt;<span class="keyword">void</span>&gt; setText(<span class="built_in">String</span> text) <span class="keyword">async</span> &#123;</span><br><span class="line">    <span class="keyword">assert</span>(text != <span class="keyword">null</span>);</span><br><span class="line">    <span class="keyword">return</span> _channel.invokeMethod(<span class="string">&#x27;setText&#x27;</span>, text);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AndroidTextView</span> <span class="keyword">extends</span> <span class="title">StatefulWidget</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">final</span> TextViewCreatedCallback onTextViewCreated;</span><br><span class="line">  <span class="keyword">const</span> AndroidTextView(&#123;</span><br><span class="line">    Key key,</span><br><span class="line">    <span class="keyword">this</span>.onTextViewCreated,</span><br><span class="line">  &#125;) : <span class="keyword">super</span>(key: key);</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  _AndroidTextViewState createState() =&gt; _AndroidTextViewState();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//对Android平台返回AndroidView，对iOS平台返回UiKitView，并且制定viewType</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_AndroidTextViewState</span> <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">AndroidTextView</span>&gt; </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">if</span> (defaultTargetPlatform == TargetPlatform.android) &#123;</span><br><span class="line">      <span class="keyword">return</span> AndroidView(</span><br><span class="line">        viewType: <span class="string">&#x27;me.chunyu.textview/textview&#x27;</span>,</span><br><span class="line">        onPlatformViewCreated: _onPlatformViewCreated,</span><br><span class="line">      );</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span> (defaultTargetPlatform == TargetPlatform.iOS)&#123;</span><br><span class="line">      <span class="keyword">return</span> UiKitView(</span><br><span class="line">        viewType: <span class="string">&#x27;me.chunyu.textview/textview&#x27;</span>,</span><br><span class="line">        onPlatformViewCreated: _onPlatformViewCreated,</span><br><span class="line">      );</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> Text(</span><br><span class="line">        <span class="string">&#x27;<span class="subst">$defaultTargetPlatform</span> is not yet supported by the text_view plugin&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">void</span> _onPlatformViewCreated(<span class="built_in">int</span> id) &#123;</span><br><span class="line">    <span class="keyword">if</span> (widget.onTextViewCreated == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;id _onPlatformViewCreated :--&gt; <span class="subst">$id</span>&quot;</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    widget.onTextViewCreated(<span class="keyword">new</span> TextViewController._(id));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="在Android侧"><a href="#在Android侧" class="headerlink" title="在Android侧"></a>在Android侧</h4><p>我们需要一个实现了<code>PlatformViewFactory</code>的类 和一个实现了<code>PlatformView</code>、<code>MethodCallHandler</code>接口的类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TextViewFactory</span> <span class="keyword">extends</span> <span class="title">PlatformViewFactory</span></span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> BinaryMessenger messenger;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">TextViewFactory</span><span class="params">(BinaryMessenger messenger)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(StandardMessageCodec.INSTANCE);</span><br><span class="line">    <span class="keyword">this</span>.messenger = messenger;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> PlatformView <span class="title">create</span><span class="params">(Context context, <span class="keyword">int</span> id, Object o)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> FlutterTextView(context, messenger, id);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FlutterTextView</span> <span class="keyword">implements</span> <span class="title">PlatformView</span>, <span class="title">MethodCallHandler</span>  </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> TextView textView;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> MethodChannel methodChannel;</span><br><span class="line"></span><br><span class="line">  FlutterTextView(Context context, BinaryMessenger messenger, <span class="keyword">int</span> id) &#123;</span><br><span class="line">    Log.e(<span class="string">&quot;id&quot;</span>,<span class="string">&quot;id :--&gt;&quot;</span> +id);</span><br><span class="line">    textView = <span class="keyword">new</span> TextView(context);</span><br><span class="line">    textView.setTextColor(Color.BLUE);</span><br><span class="line">    textView.setBackgroundColor(Color.GREEN);</span><br><span class="line">    methodChannel = <span class="keyword">new</span> MethodChannel(messenger, <span class="string">&quot;me.chunyu.textview/textview&quot;</span>);</span><br><span class="line">    methodChannel.setMethodCallHandler(<span class="keyword">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> View <span class="title">getView</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> textView;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//实现以下flutter通过channel调用的`setText`方法</span></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMethodCall</span><span class="params">(MethodCall methodCall, MethodChannel.Result result)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (methodCall.method) &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="string">&quot;setText&quot;</span>:</span><br><span class="line">        setText(methodCall, result);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        result.notImplemented();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//设置文字，并返回成功</span></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setText</span><span class="params">(MethodCall methodCall, Result result)</span> </span>&#123;</span><br><span class="line">    String text = (String) methodCall.arguments;</span><br><span class="line">    textView.setText(text);</span><br><span class="line">    result.success(<span class="keyword">null</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dispose</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里需要注意，在插件的<code>registerWith</code>方法中注册一下<code>channel</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">registrar.platformViewRegistry().registerViewFactory(<span class="string">&quot;me.chunyu.textview/textview&quot;</span>,<span class="keyword">new</span> TextViewFactory(registrar.messenger()));</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="在iOS侧"><a href="#在iOS侧" class="headerlink" title="在iOS侧"></a>在iOS侧</h4><p>一个<code>.h</code>文件，声明一下实现<code>NSObject&lt;FlutterPlatformView&gt;</code></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;Flutter/Flutter.h&gt;</span></span></span><br><span class="line"><span class="built_in">NS_ASSUME_NONNULL_BEGIN</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">AndroidTextView</span> : <span class="title">NSObject</span>&lt;<span class="title">FlutterPlatformView</span>&gt;</span></span><br><span class="line">- (<span class="keyword">instancetype</span>)initWithWithFrame:(<span class="built_in">CGRect</span>)frame</span><br><span class="line">                   viewIdentifier:(int64_t)viewId</span><br><span class="line">                        arguments:(<span class="keyword">id</span> _Nullable)args</span><br><span class="line">                  binaryMessenger:(<span class="built_in">NSObject</span>&lt;FlutterBinaryMessenger&gt;*)messenger;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">FlutterAndroidTextViewFactory</span> : <span class="title">NSObject</span>&lt;<span class="title">FlutterPlatformViewFactory</span>&gt;</span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">instancetype</span>)initWithMessenger:(<span class="built_in">NSObject</span>&lt;FlutterBinaryMessenger&gt;*)messager;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">NS_ASSUME_NONNULL_END</span></span><br></pre></td></tr></table></figure>
+
+<p>一个<code>.m</code>文件，实现以上方法</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#import <span class="meta-string">&quot;AndroidTextView.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">FlutterAndroidTextViewFactory</span></span>&#123;</span><br><span class="line">    <span class="built_in">NSObject</span>&lt;FlutterBinaryMessenger&gt;*_messenger;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">instancetype</span>)initWithMessenger:(<span class="built_in">NSObject</span>&lt;FlutterBinaryMessenger&gt; *)messager&#123;</span><br><span class="line">    <span class="keyword">self</span> = [<span class="keyword">super</span> init];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        _messenger = messager;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-(<span class="built_in">NSObject</span>&lt;FlutterMessageCodec&gt; *)createArgsCodec&#123;</span><br><span class="line">    <span class="keyword">return</span> [FlutterStandardMessageCodec sharedInstance];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-(<span class="built_in">NSObject</span>&lt;FlutterPlatformView&gt; *)createWithFrame:(<span class="built_in">CGRect</span>)frame viewIdentifier:(int64_t)viewId arguments:(<span class="keyword">id</span>)args&#123;</span><br><span class="line">    AndroidTextView * androidTextView = [[AndroidTextView alloc] initWithWithFrame:frame viewIdentifier:viewId arguments:args binaryMessenger:_messenger];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> androidTextView;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">AndroidTextView</span></span>&#123;</span><br><span class="line">    int64_t _viewId;</span><br><span class="line">    FlutterMethodChannel* _channel;</span><br><span class="line">    <span class="built_in">UILabel</span> * _label;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">instancetype</span>)initWithWithFrame:(<span class="built_in">CGRect</span>)frame viewIdentifier:(int64_t)viewId arguments:(<span class="keyword">id</span>)args binaryMessenger:(<span class="built_in">NSObject</span>&lt;FlutterBinaryMessenger&gt; *)messenger&#123;</span><br><span class="line">    <span class="keyword">if</span> ([<span class="keyword">super</span> init]) &#123;</span><br><span class="line">        _label = [[<span class="built_in">UILabel</span> alloc] init];</span><br><span class="line">        _label.textColor = <span class="built_in">UIColor</span>.redColor;</span><br><span class="line">        _label.backgroundColor = <span class="built_in">UIColor</span>.blueColor;</span><br><span class="line">        _label.font = [<span class="built_in">UIFont</span> fontWithName:<span class="string">@&quot;Arial&quot;</span> size:<span class="number">30</span>];</span><br><span class="line">        _viewId = viewId;</span><br><span class="line">        <span class="built_in">NSString</span>* channelName =  <span class="string">@&quot;me.chunyu.textview/textview&quot;</span>;</span><br><span class="line">        _channel = [FlutterMethodChannel methodChannelWithName:channelName binaryMessenger:messenger];</span><br><span class="line">        __<span class="keyword">weak</span> __typeof__(<span class="keyword">self</span>) weakSelf = <span class="keyword">self</span>;</span><br><span class="line">        [_channel setMethodCallHandler:^(FlutterMethodCall *  call, FlutterResult  result) &#123;</span><br><span class="line">            [weakSelf onMethodCall:call result:result];</span><br><span class="line">        &#125;];   </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-(<span class="built_in">UIView</span> *)view&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;invoke view()&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> _label;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//实现flutter侧通过channel调用的`setText`方法</span></span><br><span class="line">-(<span class="keyword">void</span>)onMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result&#123;</span><br><span class="line">    <span class="keyword">if</span> ([[call method] isEqualToString:<span class="string">@&quot;setText&quot;</span>]) &#123;</span><br><span class="line">        _label.text = [call arguments];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;%@&quot;</span>, call.arguments);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>在plugin中的<code>registerWithRegistrar</code>方法中注册一下<code>channel</code></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[registrar registerViewFactory:[[FlutterAndroidTextViewFactory alloc] initWithMessenger:registrar.messenger] withId:<span class="string">@&quot;me.chunyu.textview/textview&quot;</span>];</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，如果想要在iOS中显示这种flutter嵌入原生的空间，需要在info.plist文件中加入</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;key&gt;io.flutter.embedded_views_preview&lt;/key&gt;</span><br><span class="line">&lt;<span class="literal">true</span>/&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在flutter中嵌入原生控件并不推荐，性能跟不上，消耗太大了，但是在某些情况下不得不这么搞。。。。。</p>
+<h3 id="Adding-documentation"><a href="#Adding-documentation" class="headerlink" title="Adding documentation"></a>Adding documentation</h3><p>这个没啥好说的，跟着官方做就好了</p>
+<p>When you publish a package, API documentation is automatically generated and published to dartdocs.org, see for example the <a target="_blank" rel="noopener" href="https://pub.dev/documentation/device_info/latest">device_info docs</a></p>
+<h3 id="Adding-licenses-to-the-LICENSE-file"><a href="#Adding-licenses-to-the-LICENSE-file" class="headerlink" title="Adding licenses to the LICENSE file"></a>Adding licenses to the LICENSE file</h3><p>添加协议</p>
+<h3 id="Publishing-packages"><a href="#Publishing-packages" class="headerlink" title="Publishing packages"></a>Publishing packages</h3><p>发布之前运行一下 <code>flutter pub pub publish --dry-run</code>，根据提示修改不满足需求的地方。</p>
+<p>之后执行<code>flutter pub pub publish</code>，具体可以看For details on publishing, see the <a target="_blank" rel="noopener" href="https://dart.dev/tools/pub/publishing">publishing docs</a> for the Pub site.</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/wechatpay.png" alt="HuangYuan_xuan 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/alipay.png" alt="HuangYuan_xuan 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/flutter/" rel="tag"># flutter</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/09/12/flutter-boost%E6%8E%A5%E5%85%A5%E5%8F%8A%E5%88%86%E6%9E%90/" rel="prev" title="flutter_boost接入及分析">
+      <i class="fa fa-chevron-left"></i> flutter_boost接入及分析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/11/04/%E5%8F%91%E5%B8%83%E5%BC%80%E6%BA%90%E5%BA%93%E5%88%B0jcenter/" rel="next" title="发布开源库到jcenter">
+      发布开源库到jcenter <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create-the-package"><span class="nav-number">1.</span> <span class="nav-text">Create the package</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Implement-the-package"><span class="nav-number">2.</span> <span class="nav-text">Implement the package</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Define-the-package-API"><span class="nav-number">2.1.</span> <span class="nav-text">Define the package API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Add-Android-platform-code"><span class="nav-number">2.2.</span> <span class="nav-text">Add Android platform code</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Add-iOS-platform-code"><span class="nav-number">2.3.</span> <span class="nav-text">Add iOS platform code</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Flutter%E5%B5%8C%E5%85%A5%E5%8E%9F%E7%94%9F%E6%8E%A7%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">Flutter嵌入原生控件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8-flutter%E4%BE%A7"><span class="nav-number">3.1.</span> <span class="nav-text">在 flutter侧</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8Android%E4%BE%A7"><span class="nav-number">3.2.</span> <span class="nav-text">在Android侧</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8iOS%E4%BE%A7"><span class="nav-number">3.3.</span> <span class="nav-text">在iOS侧</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Adding-documentation"><span class="nav-number">4.</span> <span class="nav-text">Adding documentation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Adding-licenses-to-the-LICENSE-file"><span class="nav-number">5.</span> <span class="nav-text">Adding licenses to the LICENSE file</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Publishing-packages"><span class="nav-number">6.</span> <span class="nav-text">Publishing packages</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HuangYuan_xuan"
+      src="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+  <p class="site-author-name" itemprop="name">HuangYuan_xuan</p>
+  <div class="site-description" itemprop="description">锱铢必较间接性奋发图强，睚眦必报持续性混吃等死</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/huangyuanlove" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;huangyuanlove" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:huangyuan@huangyuanlove.com" title="E-Mail → mailto:huangyuan@huangyuanlove.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HuangYuan_xuan</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">278k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">4:13</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+  <script>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 30648,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '76c9d0ecf028751aa0d2',
+      clientSecret: '392bc0405dfbdf4928343edef0ef46007f02c7e4',
+      repo        : 'github.com/huangyuanlove/hexo_back',
+      owner       : 'huangyuanlove',
+      admin       : ['huangyuanlove'],
+      id          : '367288321898944f0e8f29e4720b93e8',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

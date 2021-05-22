@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"LO7AODH922","apiKey":"eef0d8a75f8bcbfe584416f372bf56e7","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="学习过程中的笔记，比较零散">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CCNA-Internet connection">
+<meta property="og:url" content="http://blog.huangyuanlove.com/2014/05/19/CCNA-Internet-connection/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="学习过程中的笔记，比较零散">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2014-05-19T15:32:26.000Z">
+<meta property="article:modified_time" content="2020-11-26T04:10:08.503Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="CCNA">
+<meta property="article:tag" content="笔记">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.huangyuanlove.com/2014/05/19/CCNA-Internet-connection/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>CCNA-Internet connection | 放码过来</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123314537-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-123314537-1');
+      }
+    </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?98796e1ecbcbaac6a6d9d3fea85985ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">放码过来</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">技术宅 huangyuan@huangyuanlove.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/huangyuanlove" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2014/05/19/CCNA-Internet-connection/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+      <meta itemprop="name" content="HuangYuan_xuan">
+      <meta itemprop="description" content="锱铢必较间接性奋发图强，睚眦必报持续性混吃等死">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="放码过来">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CCNA-Internet connection<a href="https://github.com/huangyuanlove/hexo_back/tree/master/source/_posts/CCNA-Internet-connection.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil-alt"></i></a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2014年05月19日 23:32:26" itemprop="dateCreated datePublished" datetime="2014-05-19T23:32:26+08:00">2014年05月19日</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020年11月26日 12:10:08" itemprop="dateModified" datetime="2020-11-26T12:10:08+08:00">2020年11月26日</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>学习过程中的笔记，比较零散</p>
+<span id="more"></span>
+
+<h4 id="主流的广域网连接"><a href="#主流的广域网连接" class="headerlink" title="主流的广域网连接"></a>主流的广域网连接</h4><p>包交换：运行商可以将一条线路租给多个用户，因为他们的网络需要量小。</p>
+<p>DSL（数字用户线），家庭终端用户和中小型企业（ADSL非对称用户线，意思是上行流量和下行流量不相等，下行速率较高，上行速率较低）ADSL技术实际上只应用于家庭ADSL猫和网络运营商的DSLAM的边界部分，而运营商内部还是高速的交换网络。是一层技术。解决长距离传输问题</p>
+<p>再上层是PPP协议</p>
+<p>DSL的优点：</p>
+<p>速度较快，可以达到８Ｍ</p>
+<p>可同时进行声音和数据传输</p>
+<p>可以２４小时在线</p>
+<p>可以和传统的模拟电话线路兼容</p>
+<p>缺点：</p>
+<p>限制多</p>
+<p>需要本地电话公司的支持</p>
+<p>开放的线路，安全性较差</p>
+<h4 id="串行接口封装"><a href="#串行接口封装" class="headerlink" title="串行接口封装"></a>串行接口封装</h4><p>Circuit switching 电路交换：在通信之前，要先建立连接，建立好之后线路专属于某以用户。但是连接速率低，通常是在异步线缆上进行，通常基于PSTN（ puclic switched telephon newwork公共电话交换网络)：简单，可用性高，费用低</p>
+<p>租用线路（leased Line）：速度快，费用高。线路是专门为用户预留的</p>
+<p>WAN connection bandwidth：串行接口要配置始终频率，一般是在DCE端进行配置，DTE端是用户端（实验室环境下两台路由器之间的线缆是模拟的广域网网云的环境。）</p>
+<p>DTE和DCE端是线缆决定的，线缆的DCE端插到哪个端口，哪边就是DCE端。</p>
+<p>Point－to－point　considerations</p>
+<p>优点：</p>
+<p>简单、质量高、可用性高；</p>
+<p>缺点：</p>
+<p>费用高、灵活性差</p>
+<p>思科的设备和别的设备在二层封装是不一样的，假如思科的路由器和华为的路由器Ｗａｎ口相连，是连接不通的，因为思科的二层封装是修改过的。</p>
+<p>修改接口的封装类型命令如下：</p>
+<p>Interface　s０／０／０（要修改的接口）</p>
+<p>Encapsulation　封装类型（Ｈｄｌｃ　PPP　Ｓｔｕｎ等）</p>
+<p>默认是hdlc</p>
+<p>不同厂商的设备相连一半时PPP协议</p>
+<p>PPP协议：认证、压缩、多链路、回拨；</p>
+<h4 id="Frame-relay（帧中继协议）："><a href="#Frame-relay（帧中继协议）：" class="headerlink" title="Frame　relay（帧中继协议）："></a>Frame　relay（帧中继协议）：</h4><p>工作在用户端和运营商边界的协议</p>
+<p>ATM 异步传输模式 属于信源交换   将数据分为53字节的定长信源；通常是在硬件之内完成，通常运行于运营商内部高速网络</p>
+<p>ISDN。。。。大概只出现过一年的时间左右，就过度到adsl了</p>
+<p>工作在用户端到运营商的边界处（称为最后一公里）</p>
+<p>使用了虚电路的概念</p>
+<p>在一根电缆上通过多路复用技术划分出virtual circuits （虚拟电路）租用给多个用户，用户感觉就像租用了专线一样</p>
+<p>虚拟电路分为临时线路（SVC）和永久线路（PVC）</p>
+<p>帧中继通过DLCI号（只具有本地意义，不一定全局唯一，通常情况下做成全局唯一的）来分辨每个虚拟电路（二层编址技术  0-1024）</p>
+<p>帧中继有两种封装形式：cisco（思科设备私有的）和IETF封装</p>
+<p>LIM：本地管理接口，两个设备之间使用的信令标准。有三种类型：</p>
+<p>Cisco  ansi  Q933a  可以理解为设备之间的语言</p>
+<p>配置的时候注意设备间使用的封装类型和信令标准</p>
+<p>帧中继 是NBMA网络，不支持广播和组播 </p>
+<p>帧中继通过逆向ARP解决IP–&gt;DLCI号的映射</p>
+<p>帧中继互联拓扑结构：</p>
+<p>全互联、部分互联、星形连接</p>
+<p>可以将一个帧中继接口划分为多个子接口：可以将线路隔离，可以解决水平分割问题；</p>
+<p>点对点子接口可以解决水平分割问题，但是浪费IP地址</p>
+<p>多点子接口不可以解决水平分割问题，但是不浪费IP地址</p>
+<h4 id="PPP协议"><a href="#PPP协议" class="headerlink" title="PPP协议"></a>PPP协议</h4><p>PPP协议可以说是应用最广泛的广域网二层协议，分为两个部分：NCP（网络控制协议，在三层与二层做兼容转换），LCP（链路控制协议，建立拆除线路）；</p>
+<p>PPP协议的特点：（LCP的实现）（不同厂商的设备可以连接）</p>
+<p>1 支持认证（2层的认证机制）</p>
+<p>2 支持回拨（通常用于企业集中化管理账单）</p>
+<p>3支持压缩（启用压缩之后，所有通过线缆的数据都是被压缩，相当于侧面提高了传输速率）</p>
+<p>4支持多链路（允许将多个物理线路捆绑成一个逻辑线路，提高传输s速率）</p>
+<p>《TCP/IP协议详解》80年代的书</p>
+<p>PPP连接建立的过程：</p>
+<p>1 请求建立连接；</p>
+<p>2 LCP控制连接（可能会有认证）</p>
+<p>3 NCP处理；</p>
+<p>PPP认证分为两种：PAP（明文认证）和CHAP（挑战握手认证协议（三次握手双向认证））使用的是路由器的全局用户名密码</p>
+<p>配置命令：（线路两端的封装协议必须一样）</p>
+<p>Interface　ｓ０／０／０</p>
+<p>Encapsulation　ppp</p>
+<p>认证：</p>
+<p>①PAP认证（有发起方和接收方）</p>
+<p>在全局模式下：</p>
+<p>Username name password passwd</p>
+<p>在要启用认证的接口上：</p>
+<p>Ppp authentication pap</p>
+<p>在线路另一端</p>
+<p>全局配置模式下：</p>
+<p>Ppp pap sent-usernam name password passed</p>
+<p>②CHAP认证：</p>
+<p>建立的用户名是对端的主机名，密码必须要一样</p>
+<p>在一端：</p>
+<p>全局配置模式：</p>
+<p>Username　对端的主机名　password　密码</p>
+<p>Ppp　authentication　CHAP</p>
+<p>另一端相同的配置</p>
+<p>查看过程可用　debug　ppp　negotiation</p>
+<h4 id="交换基础"><a href="#交换基础" class="headerlink" title="交换基础"></a>交换基础</h4><p>HUB连接：会产生数据冲突</p>
+<p>Bridges（网桥）：具有二层的过滤功能（基于二层的mac地址进行过滤），（还是属于软件处理）可以互联多个网段。</p>
+<p>switches（交换机）：属于硬件处理，可以线速转发。</p>
+<p>划分了多个冲突域，每个接口下的终端设备属于一个独立的冲突域，不会产生数据冲突。</p>
+<p>全双工模式，可以同时进行收和发允许线缆两端速度不一样。</p>
+<p>可以通过mac table 对数据进行智能转发，而且mac table是可以学习的</p>
+<p>交换机刚开机的时候mac table是空的，在转发过程中进行学习。当不知道目标mac地址在哪的时候，会把数据从其余的接口泛洪出去。对局域网的组播和广播数据进行泛洪操作。</p>
+<p>特点：</p>
+<p>多接口，很高冗余性，线速转发，可以混合不同的接口速度，快速转发</p>
+<p>三种工作模式：</p>
+<p>直通交换，无碎片交换，存储转发交换</p>
+<h4 id="VLAN和Trunks"><a href="#VLAN和Trunks" class="headerlink" title="VLAN和Trunks"></a>VLAN和Trunks</h4><p>划分冲突域，具有二层隔离性，一个vlan相当于一个冲突域，等于一个局域网。vlan隔离之后是两个子网，达到路由的隔离性。</p>
+<p>不同vlan通信需要通过三层设备。</p>
+<p>vlan的划分是在接口上划分的，不同的vlan是不同的逻辑子网</p>
+<p>划分出来的vlan就相当于两个处于不同网段的交换机</p>
+<p>vlan可以隔离广播域。</p>
+<p>Trunks 允许不同交换机的相同Vlan通信，允许在一根线路上承载多个vlan信息，这个接口就是Trunk接口。</p>
+<p>所有没打标记的数据包，统一划给native Vlan</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/wechatpay.png" alt="HuangYuan_xuan 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/alipay.png" alt="HuangYuan_xuan 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/CCNA/" rel="tag"># CCNA</a>
+              <a href="/tags/%E7%AC%94%E8%AE%B0/" rel="tag"># 笔记</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2014/05/19/CCNA-%E5%B9%BF%E5%9F%9F%E7%BD%91%E5%92%8CACL/" rel="prev" title="CCNA-广域网和ACL">
+      <i class="fa fa-chevron-left"></i> CCNA-广域网和ACL
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2015/02/11/UNIX-linux%E7%9A%84find%E5%91%BD%E4%BB%A4%E7%BB%86%E8%8A%82/" rel="next" title="UNIX/linux的find命令细节">
+      UNIX/linux的find命令细节 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E6%B5%81%E7%9A%84%E5%B9%BF%E5%9F%9F%E7%BD%91%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.</span> <span class="nav-text">主流的广域网连接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%B2%E8%A1%8C%E6%8E%A5%E5%8F%A3%E5%B0%81%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">串行接口封装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Frame-relay%EF%BC%88%E5%B8%A7%E4%B8%AD%E7%BB%A7%E5%8D%8F%E8%AE%AE%EF%BC%89%EF%BC%9A"><span class="nav-number">3.</span> <span class="nav-text">Frame　relay（帧中继协议）：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PPP%E5%8D%8F%E8%AE%AE"><span class="nav-number">4.</span> <span class="nav-text">PPP协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%A4%E6%8D%A2%E5%9F%BA%E7%A1%80"><span class="nav-number">5.</span> <span class="nav-text">交换基础</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#VLAN%E5%92%8CTrunks"><span class="nav-number">6.</span> <span class="nav-text">VLAN和Trunks</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HuangYuan_xuan"
+      src="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+  <p class="site-author-name" itemprop="name">HuangYuan_xuan</p>
+  <div class="site-description" itemprop="description">锱铢必较间接性奋发图强，睚眦必报持续性混吃等死</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/huangyuanlove" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;huangyuanlove" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:huangyuan@huangyuanlove.com" title="E-Mail → mailto:huangyuan@huangyuanlove.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HuangYuan_xuan</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">278k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">4:13</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+  <script>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 30648,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '76c9d0ecf028751aa0d2',
+      clientSecret: '392bc0405dfbdf4928343edef0ef46007f02c7e4',
+      repo        : 'github.com/huangyuanlove/hexo_back',
+      owner       : 'huangyuanlove',
+      admin       : ['huangyuanlove'],
+      id          : '3559ba7a67cf8a1632de97fc59db54af',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

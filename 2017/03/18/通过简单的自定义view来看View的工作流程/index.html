@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"LO7AODH922","apiKey":"eef0d8a75f8bcbfe584416f372bf56e7","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="通过简单的自定义View(画个圆)，来了解一下View的工作流程以及自定义View应该注意的地方。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通过简单的自定义view来看View的工作流程">
+<meta property="og:url" content="http://blog.huangyuanlove.com/2017/03/18/%E9%80%9A%E8%BF%87%E7%AE%80%E5%8D%95%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89view%E6%9D%A5%E7%9C%8BView%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="通过简单的自定义View(画个圆)，来了解一下View的工作流程以及自定义View应该注意的地方。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-03-18T06:54:01.000Z">
+<meta property="article:modified_time" content="2020-11-26T04:10:08.538Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.huangyuanlove.com/2017/03/18/%E9%80%9A%E8%BF%87%E7%AE%80%E5%8D%95%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89view%E6%9D%A5%E7%9C%8BView%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>通过简单的自定义view来看View的工作流程 | 放码过来</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123314537-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-123314537-1');
+      }
+    </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?98796e1ecbcbaac6a6d9d3fea85985ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">放码过来</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">技术宅 huangyuan@huangyuanlove.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/huangyuanlove" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2017/03/18/%E9%80%9A%E8%BF%87%E7%AE%80%E5%8D%95%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89view%E6%9D%A5%E7%9C%8BView%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+      <meta itemprop="name" content="HuangYuan_xuan">
+      <meta itemprop="description" content="锱铢必较间接性奋发图强，睚眦必报持续性混吃等死">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="放码过来">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          通过简单的自定义view来看View的工作流程<a href="https://github.com/huangyuanlove/hexo_back/tree/master/source/_posts/%E9%80%9A%E8%BF%87%E7%AE%80%E5%8D%95%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89view%E6%9D%A5%E7%9C%8BView%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil-alt"></i></a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017年03月18日 14:54:01" itemprop="dateCreated datePublished" datetime="2017-03-18T14:54:01+08:00">2017年03月18日</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020年11月26日 12:10:08" itemprop="dateModified" datetime="2020-11-26T12:10:08+08:00">2020年11月26日</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>通过简单的自定义View(画个圆)，来了解一下View的工作流程以及自定义View应该注意的地方。</p>
+<span id="more"></span>
+<h3 id="一、自定义View的分类"><a href="#一、自定义View的分类" class="headerlink" title="一、自定义View的分类"></a>一、自定义View的分类</h3><h4 id="1-1-继承View重写onDraw方法"><a href="#1-1-继承View重写onDraw方法" class="headerlink" title="1.1 继承View重写onDraw方法"></a>1.1 继承View重写onDraw方法</h4><p>这种方法主要用于实现一些不规则的效果，比如动态或者静态显示一些不规则的图形，采用这种方式需要自己支持<code>wrap_content</code>,并且<code>padding</code>需要自己处理.</p>
+<h4 id="1-2-继承ViewGroup派生特殊的Layout"><a href="#1-2-继承ViewGroup派生特殊的Layout" class="headerlink" title="1.2 继承ViewGroup派生特殊的Layout"></a>1.2 继承ViewGroup派生特殊的Layout</h4><p>这种方式主要用于实现自定义布局，如流式布局。采用这种方式需要合适的处理ViewGroup的测量、布局这两个过程，并同时处理子元素的测量和布局过程。</p>
+<h4 id="1-3-继承特定的View-如TextView"><a href="#1-3-继承特定的View-如TextView" class="headerlink" title="1.3 继承特定的View(如TextView)"></a>1.3 继承特定的View(如TextView)</h4><p>这种方法一般用于扩展某种已有的<code>View</code>的功能，比如<code>TextView</code>，这种方法比较容易实现，不需要自己支持<code>wrap_content</code>和<code>padding</code>。</p>
+<h4 id="1-4-继承特定的ViewGroup"><a href="#1-4-继承特定的ViewGroup" class="headerlink" title="1.4 继承特定的ViewGroup"></a>1.4 继承特定的ViewGroup</h4><p>采用这种方式不需要自己处理<code>ViewGroup</code>的测量和布局这两个过程。</p>
+<h3 id="二、值得注意的地方"><a href="#二、值得注意的地方" class="headerlink" title="二、值得注意的地方"></a>二、值得注意的地方</h3><h4 id="2-1-让View支持wrap-content"><a href="#2-1-让View支持wrap-content" class="headerlink" title="2.1 让View支持wrap_content"></a>2.1 让View支持wrap_content</h4><p>这是因为直接继承View或者ViewGroup的控件，如果不在<code>onMeasure</code>中对<code>wrap_content</code>做特殊处理，那么当外界在适用<code>wrap_content</code>时就无法达到预期的效果。</p>
+<h4 id="2-2-如果有必要，让View支持padding"><a href="#2-2-如果有必要，让View支持padding" class="headerlink" title="2.2 如果有必要，让View支持padding"></a>2.2 如果有必要，让View支持padding</h4><p>这是因为如果直接继承View，如果不在draw方法中处理padding，那么padding属性是无法起作用的。另外，直接继承自ViewGroup的控件需要在<code>onMeasure</code>和<code>onLayout</code>中考虑padding和子元素的margin对其造成的影响，不然将导致padding和子元素的margin失效。</p>
+<h4 id="2-3-尽量不要在View中使用Handler，没必要"><a href="#2-3-尽量不要在View中使用Handler，没必要" class="headerlink" title="2.3 尽量不要在View中使用Handler，没必要"></a>2.3 尽量不要在View中使用Handler，没必要</h4><p>因为View内部本身就提供了post系列的方法， 完全可以替代Handler的作用，当然除非你很明确要使用Handler来发送消息</p>
+<h4 id="2-4-及时停止动画和线程"><a href="#2-4-及时停止动画和线程" class="headerlink" title="2.4 及时停止动画和线程"></a>2.4 及时停止动画和线程</h4><p>如果需要停止线程或者动画，可以在<code>onDetachedFromWindow</code>方法中处理，当包含此View的Activity退出或者当前View被remove时，View的<code>onDetachedFromWindow</code>方法会被调用，和此方法对应的是<code>onAttachedToWindow</code>，当包含此View的Activity启动时，View的<code>onAttachedToWindow</code>方法会被调用。</p>
+<h4 id="2-5-View带有滑动嵌套情形时，需要处理好滑动冲突"><a href="#2-5-View带有滑动嵌套情形时，需要处理好滑动冲突" class="headerlink" title="2.5 View带有滑动嵌套情形时，需要处理好滑动冲突"></a>2.5 View带有滑动嵌套情形时，需要处理好滑动冲突</h4><p>如果有滑动冲突的话，那么要合适的处理滑动冲突，否则将会严重影响View的效果。</p>
+<h3 id="三、自定义View"><a href="#三、自定义View" class="headerlink" title="三、自定义View"></a>三、自定义View</h3><h4 id="3-1-继承View重写onDraw方法"><a href="#3-1-继承View重写onDraw方法" class="headerlink" title="3.1 继承View重写onDraw方法"></a>3.1 继承View重写onDraw方法</h4><p>首先来看一下代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestCustomCircleView</span> <span class="keyword">extends</span> <span class="title">View</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> color = Color.RED;</span><br><span class="line">    <span class="keyword">private</span> Paint paint;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TestCustomCircleView</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(context);</span><br><span class="line">        init();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TestCustomCircleView</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(context, attrs);</span><br><span class="line">        init();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TestCustomCircleView</span><span class="params">(Context context, AttributeSet attrs, <span class="keyword">int</span> defStyleAttr)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(context, attrs, defStyleAttr);</span><br><span class="line">        init();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</span><br><span class="line">        paint = <span class="keyword">new</span> Paint();</span><br><span class="line">        paint.setColor(color);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDraw</span><span class="params">(Canvas canvas)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onDraw(canvas);</span><br><span class="line">        <span class="keyword">int</span> width = getWidth();</span><br><span class="line">        <span class="keyword">int</span> height = getHeight();</span><br><span class="line">        <span class="keyword">int</span> radius = Math.min(width,height)/<span class="number">2</span>;</span><br><span class="line">        canvas.drawCircle(width/<span class="number">2</span>,height/<span class="number">2</span>,radius,paint);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码只是一种初级的实现，当我们进行使用的时候，只支持margin属性，并不支持padding属性。对<code>onDraw</code>方法进行修改，只要在绘制的时候考虑一下padding即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDraw</span><span class="params">(Canvas canvas)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">super</span>.onDraw(canvas);</span><br><span class="line">       <span class="keyword">int</span> paddingLeft = getPaddingLeft();</span><br><span class="line">       <span class="keyword">int</span> paddingRight = getPaddingRight();</span><br><span class="line">       <span class="keyword">int</span> paddingTop = getPaddingTop();</span><br><span class="line">       <span class="keyword">int</span> paddingBottom = getPaddingBottom();</span><br><span class="line">       <span class="keyword">int</span> width = getWidth() - paddingLeft - paddingRight;</span><br><span class="line">       <span class="keyword">int</span> height = getHeight() - paddingBottom - paddingTop;</span><br><span class="line">       <span class="keyword">int</span> radius = Math.min(width, height) / <span class="number">2</span>;</span><br><span class="line">       canvas.drawCircle(paddingLeft + width / <span class="number">2</span>, paddingTop + height / <span class="number">2</span>, radius, paint);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>但是现在还不能支持<code>warp_content</code>属性，现在使用<code>wrap_content</code>和使用<code>match_parent</code>没有任何区别：对于直接继承自View的控件，如果不对<code>wrap_content</code>做特殊处理，那么使用<code>wrap_content</code>就相当于使用<code>match_parent</code>.这里就需要我们重写<code>onMeasure</code>方法，当宽高属性为<code>wrap_content</code>时，取一个默认值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> desiredWidth = <span class="number">100</span>;</span><br><span class="line">    <span class="keyword">int</span> desiredHeight = <span class="number">100</span>;</span><br><span class="line">    <span class="keyword">int</span> widthMode = MeasureSpec.getMode(widthMeasureSpec);</span><br><span class="line">    <span class="keyword">int</span> widthSize = MeasureSpec.getSize(widthMeasureSpec);</span><br><span class="line">    <span class="keyword">int</span> heightMode = MeasureSpec.getMode(heightMeasureSpec);</span><br><span class="line">    <span class="keyword">int</span> heightSize = MeasureSpec.getSize(heightMeasureSpec);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> width;</span><br><span class="line">    <span class="keyword">int</span> height;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//宽度</span></span><br><span class="line">    <span class="keyword">if</span> (widthMode == MeasureSpec.AT_MOST) &#123;</span><br><span class="line">        width = Math.min(desiredWidth, widthSize);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (widthMode == MeasureSpec.EXACTLY) &#123;</span><br><span class="line">        width = widthSize;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        width = desiredWidth;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//高度</span></span><br><span class="line">    <span class="keyword">if</span> (heightMode == MeasureSpec.AT_MOST) &#123;</span><br><span class="line">        height = Math.min(desiredHeight, heightSize);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (heightMode == MeasureSpec.EXACTLY) &#123;</span><br><span class="line">        height = heightSize;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        height = desiredHeight;</span><br><span class="line">    &#125;</span><br><span class="line">    setMeasuredDimension(width, height);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样，当我们使用wrap_content时，就是使用默认的100px的值。</p>
+<h3 id="四、使用自定义属性"><a href="#四、使用自定义属性" class="headerlink" title="四、使用自定义属性"></a>四、使用自定义属性</h3><h4 id="4-1-创建自定义的配置文件"><a href="#4-1-创建自定义的配置文件" class="headerlink" title="4.1 创建自定义的配置文件"></a>4.1 创建自定义的配置文件</h4><p>在values目录下面创建自定义属性的XML，比如attrs.xml，也可以选择类似于attrs_circle_view.xml等这种以attrs_开头的文件名，当然这个文件名并没有什么限制，可以随便取名字。我们选择创建attrs.xml文件。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">resources</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">declare-styleable</span> <span class="attr">name</span>=<span class="string">&quot;TestCustomCircleView&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">attr</span> <span class="attr">name</span>=<span class="string">&quot;circle_color&quot;</span> <span class="attr">format</span>=<span class="string">&quot;color&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">declare-styleable</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">resources</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="4-2-在构造方法中解析自定义的属性值并做相应的处理"><a href="#4-2-在构造方法中解析自定义的属性值并做相应的处理" class="headerlink" title="4.2 在构造方法中解析自定义的属性值并做相应的处理"></a>4.2 在构造方法中解析自定义的属性值并做相应的处理</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">TestCustomCircleView</span><span class="params">(Context context, AttributeSet attrs, <span class="keyword">int</span> defStyleAttr)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(context, attrs, defStyleAttr);</span><br><span class="line">    TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.TestCustomCircleView);</span><br><span class="line">    color = typedArray.getColor(R.styleable.TestCustomCircleView_circle_color,Color.RED);</span><br><span class="line">    typedArray.recycle();</span><br><span class="line">    init();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先加载自定义属性集合，接着解析属性集合中<code>TestCustomCircleView_circle_color</code>，如果没有指定属性值，则使用<code>Color.RED</code>作为默认值。</p>
+<h4 id="4-3-在布局文件中使用自定义属性"><a href="#4-3-在布局文件中使用自定义属性" class="headerlink" title="4.3 在布局文件中使用自定义属性"></a>4.3 在布局文件中使用自定义属性</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">com.example.huangyuan.custom.TestCustomCircleView</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">&quot;wrap_content&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">&quot;wrap_content&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_gravity</span>=<span class="string">&quot;center_horizontal&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">app:circle_color</span>=<span class="string">&quot;@color/grey&quot;</span></span></span><br><span class="line"><span class="tag">    /&gt;</span></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/wechatpay.png" alt="HuangYuan_xuan 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/alipay.png" alt="HuangYuan_xuan 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/03/15/View%E7%9A%84%E6%BB%91%E5%8A%A8/" rel="prev" title="View的滑动">
+      <i class="fa fa-chevron-left"></i> View的滑动
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/03/20/%E7%AE%80%E5%8D%95%E7%9A%84%E6%A1%8C%E9%9D%A2%E5%B0%8F%E9%83%A8%E4%BB%B6/" rel="next" title="简单的桌面小部件">
+      简单的桌面小部件 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E8%87%AA%E5%AE%9A%E4%B9%89View%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">一、自定义View的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-%E7%BB%A7%E6%89%BFView%E9%87%8D%E5%86%99onDraw%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 继承View重写onDraw方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-%E7%BB%A7%E6%89%BFViewGroup%E6%B4%BE%E7%94%9F%E7%89%B9%E6%AE%8A%E7%9A%84Layout"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 继承ViewGroup派生特殊的Layout</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-%E7%BB%A7%E6%89%BF%E7%89%B9%E5%AE%9A%E7%9A%84View-%E5%A6%82TextView"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 继承特定的View(如TextView)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-%E7%BB%A7%E6%89%BF%E7%89%B9%E5%AE%9A%E7%9A%84ViewGroup"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 继承特定的ViewGroup</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%80%BC%E5%BE%97%E6%B3%A8%E6%84%8F%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="nav-number">2.</span> <span class="nav-text">二、值得注意的地方</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-%E8%AE%A9View%E6%94%AF%E6%8C%81wrap-content"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 让View支持wrap_content</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-%E5%A6%82%E6%9E%9C%E6%9C%89%E5%BF%85%E8%A6%81%EF%BC%8C%E8%AE%A9View%E6%94%AF%E6%8C%81padding"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 如果有必要，让View支持padding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-%E5%B0%BD%E9%87%8F%E4%B8%8D%E8%A6%81%E5%9C%A8View%E4%B8%AD%E4%BD%BF%E7%94%A8Handler%EF%BC%8C%E6%B2%A1%E5%BF%85%E8%A6%81"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 尽量不要在View中使用Handler，没必要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-%E5%8F%8A%E6%97%B6%E5%81%9C%E6%AD%A2%E5%8A%A8%E7%94%BB%E5%92%8C%E7%BA%BF%E7%A8%8B"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 及时停止动画和线程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-View%E5%B8%A6%E6%9C%89%E6%BB%91%E5%8A%A8%E5%B5%8C%E5%A5%97%E6%83%85%E5%BD%A2%E6%97%B6%EF%BC%8C%E9%9C%80%E8%A6%81%E5%A4%84%E7%90%86%E5%A5%BD%E6%BB%91%E5%8A%A8%E5%86%B2%E7%AA%81"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 View带有滑动嵌套情形时，需要处理好滑动冲突</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E8%87%AA%E5%AE%9A%E4%B9%89View"><span class="nav-number">3.</span> <span class="nav-text">三、自定义View</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-%E7%BB%A7%E6%89%BFView%E9%87%8D%E5%86%99onDraw%E6%96%B9%E6%B3%95"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 继承View重写onDraw方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E4%BD%BF%E7%94%A8%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B1%9E%E6%80%A7"><span class="nav-number">4.</span> <span class="nav-text">四、使用自定义属性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-%E5%88%9B%E5%BB%BA%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 创建自定义的配置文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-%E5%9C%A8%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E4%B8%AD%E8%A7%A3%E6%9E%90%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84%E5%B1%9E%E6%80%A7%E5%80%BC%E5%B9%B6%E5%81%9A%E7%9B%B8%E5%BA%94%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 在构造方法中解析自定义的属性值并做相应的处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-%E5%9C%A8%E5%B8%83%E5%B1%80%E6%96%87%E4%BB%B6%E4%B8%AD%E4%BD%BF%E7%94%A8%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B1%9E%E6%80%A7"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 在布局文件中使用自定义属性</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HuangYuan_xuan"
+      src="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+  <p class="site-author-name" itemprop="name">HuangYuan_xuan</p>
+  <div class="site-description" itemprop="description">锱铢必较间接性奋发图强，睚眦必报持续性混吃等死</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/huangyuanlove" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;huangyuanlove" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:huangyuan@huangyuanlove.com" title="E-Mail → mailto:huangyuan@huangyuanlove.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HuangYuan_xuan</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">278k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">4:13</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+  <script>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 30648,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '76c9d0ecf028751aa0d2',
+      clientSecret: '392bc0405dfbdf4928343edef0ef46007f02c7e4',
+      repo        : 'github.com/huangyuanlove/hexo_back',
+      owner       : 'huangyuanlove',
+      admin       : ['huangyuanlove'],
+      id          : 'b0270cb22240ce92492668586fd483eb',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

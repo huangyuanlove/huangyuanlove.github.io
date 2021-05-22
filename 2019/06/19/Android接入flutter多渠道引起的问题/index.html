@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"LO7AODH922","apiKey":"eef0d8a75f8bcbfe584416f372bf56e7","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="公司已经开始在项目中使用Flutter进行跨平台开发了，并且已经在其中一款应用上线了，过程并没有多曲折，按照官网教程一步步进行，继承、打包、测试、发版。 最近另外一个项目有新的需求，也开始使用Flutter，在集成打包的时候出现了问题： A&#x2F;flutter: [FATAL:flutter&#x2F;shell&#x2F;common&#x2F;shell.cc(218)] Check failed: vm. Must be a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android接入flutter多渠道引起的问题">
+<meta property="og:url" content="http://blog.huangyuanlove.com/2019/06/19/Android%E6%8E%A5%E5%85%A5flutter%E5%A4%9A%E6%B8%A0%E9%81%93%E5%BC%95%E8%B5%B7%E7%9A%84%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="公司已经开始在项目中使用Flutter进行跨平台开发了，并且已经在其中一款应用上线了，过程并没有多曲折，按照官网教程一步步进行，继承、打包、测试、发版。 最近另外一个项目有新的需求，也开始使用Flutter，在集成打包的时候出现了问题： A&#x2F;flutter: [FATAL:flutter&#x2F;shell&#x2F;common&#x2F;shell.cc(218)] Check failed: vm. Must be a">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://blog.huangyuanlove.com/image/flutter/flutter_muilty_flavor.png">
+<meta property="og:image" content="http://blog.huangyuanlove.com/image/flutter/copy_flutter_assets_task.png">
+<meta property="article:published_time" content="2019-06-19T03:02:19.000Z">
+<meta property="article:modified_time" content="2020-11-26T04:10:08.502Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android爬坑之旅">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="Flutter">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.huangyuanlove.com/image/flutter/flutter_muilty_flavor.png">
+
+<link rel="canonical" href="http://blog.huangyuanlove.com/2019/06/19/Android%E6%8E%A5%E5%85%A5flutter%E5%A4%9A%E6%B8%A0%E9%81%93%E5%BC%95%E8%B5%B7%E7%9A%84%E9%97%AE%E9%A2%98/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Android接入flutter多渠道引起的问题 | 放码过来</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123314537-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-123314537-1');
+      }
+    </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?98796e1ecbcbaac6a6d9d3fea85985ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">放码过来</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">技术宅 huangyuan@huangyuanlove.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/huangyuanlove" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2019/06/19/Android%E6%8E%A5%E5%85%A5flutter%E5%A4%9A%E6%B8%A0%E9%81%93%E5%BC%95%E8%B5%B7%E7%9A%84%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+      <meta itemprop="name" content="HuangYuan_xuan">
+      <meta itemprop="description" content="锱铢必较间接性奋发图强，睚眦必报持续性混吃等死">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="放码过来">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android接入flutter多渠道引起的问题<a href="https://github.com/huangyuanlove/hexo_back/tree/master/source/_posts/Android%E6%8E%A5%E5%85%A5flutter%E5%A4%9A%E6%B8%A0%E9%81%93%E5%BC%95%E8%B5%B7%E7%9A%84%E9%97%AE%E9%A2%98.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil-alt"></i></a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019年06月19日 11:02:19" itemprop="dateCreated datePublished" datetime="2019-06-19T11:02:19+08:00">2019年06月19日</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020年11月26日 12:10:08" itemprop="dateModified" datetime="2020-11-26T12:10:08+08:00">2020年11月26日</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>公司已经开始在项目中使用Flutter进行跨平台开发了，并且已经在其中一款应用上线了，过程并没有多曲折，按照官网教程一步步进行，继承、打包、测试、发版。</p>
+<p>最近另外一个项目有新的需求，也开始使用Flutter，在集成打包的时候出现了问题：</p>
+<p><code>A/flutter: [FATAL:flutter/shell/common/shell.cc(218)] Check failed: vm. Must be able to initialize the VM.</code></p>
+<p>收集到的错误日志如下：</p>
+<span id="more"></span>
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">E/CrashReport: #++++++++++Record By Bugly++++++++++#</span><br><span class="line">E/CrashReport: # You can use Bugly(http:\\bugly.qq.com) to get more Crash Detail!</span><br><span class="line">E/CrashReport: # PKG NAME: me.chunyu.ChunyuDoctor</span><br><span class="line">E/CrashReport: # APP VER: 8.6.0</span><br><span class="line">E/CrashReport: # LAUNCH TIME: 2019-06-19 18:00:12</span><br><span class="line">E/CrashReport: # CRASH TYPE: NATIVE_CRASH</span><br><span class="line">E/CrashReport: # CRASH TIME: 2019-06-19 18:00:22</span><br><span class="line">E/CrashReport: # CRASH PROCESS: me.chunyu.ChunyuDoctor</span><br><span class="line">E/CrashReport: # CRASH THREAD: main(2)</span><br><span class="line">E/CrashReport: # REPORT ID: d88b5d1a-cbb0-4920-b41c-d8ea8eb804bd</span><br><span class="line">E/CrashReport: # CRASH DEVICE: MI 5 UNROOT</span><br><span class="line">E/CrashReport: # RUNTIME AVAIL RAM:1411100672 ROM:11107233792 SD:11107233792</span><br><span class="line">E/CrashReport: # RUNTIME TOTAL RAM:2824822784 ROM:26300211200 SD:26300211200</span><br><span class="line">E/CrashReport: # EXCEPTION FIRED BY UNKNOWN_USER me.chunyu.ChunyuDoctor(27335)</span><br><span class="line">E/CrashReport: # CRASH STACK: </span><br><span class="line">E/CrashReport: SIGABRT</span><br><span class="line">    0x6ac7</span><br><span class="line">    #00    pc 0004b10c    /system/lib/libc.so (tgkill+12) [armeabi-v7a::d7f479b7abcbff3bc09ca6d100c44333]</span><br><span class="line">    #01    pc 0001a9a3    /system/lib/libc.so (abort+54) [armeabi-v7a::d7f479b7abcbff3bc09ca6d100c44333]</span><br><span class="line">    #02    pc 00af85ab    /data/app/me.chunyu.ChunyuDoctor-n6cyA4a8iSyIl6wZ_2ghlw==/lib/arm/libflutter.so [armeabi-v7a::a12434e0b53806a35730000001000000]</span><br><span class="line">    #03    pc 00b197cf    /data/app/me.chunyu.ChunyuDoctor-n6cyA4a8iSyIl6wZ_2ghlw==/lib/arm/libflutter.so [armeabi-v7a::a12434e0b53806a35730000001000000]</span><br><span class="line">    #04    pc 00aeaf45    /data/app/me.chunyu.ChunyuDoctor-n6cyA4a8iSyIl6wZ_2ghlw==/lib/arm/libflutter.so [armeabi-v7a::a12434e0b53806a35730000001000000]</span><br><span class="line">    #05    pc 00af0507    /data/app/me.chunyu.ChunyuDoctor-n6cyA4a8iSyIl6wZ_2ghlw==/lib/arm/libflutter.so [armeabi-v7a::a12434e0b53806a35730000001000000]</span><br><span class="line">    #06    pc 00aef79b    /data/app/me.chunyu.ChunyuDoctor-n6cyA4a8iSyIl6wZ_2ghlw==/lib/arm/libflutter.so [armeabi-v7a::a12434e0b53806a35730000001000000]</span><br><span class="line">    #07    pc 003d9d29    /system/lib/libart.so (ExecuteMterpImpl+37417) [armeabi-v7a::d2078ba50169919802b98e67fdc80c58]</span><br><span class="line">    #08    pc 003d5fe1    /system/lib/libart.so (ExecuteMterpImpl+21729) [armeabi-v7a::d2078ba50169919802b98e67fdc80c58]</span><br><span class="line">    #09    pc 003da555    /system/lib/libart.so (art_quick_invoke_stub+228) [armeabi-v7a::d2078ba50169919802b98e67fdc80c58]</span><br><span class="line">    #10    pc 000a0e1d    /system/lib/libart.so (_ZN3art9ArtMethod6InvokeEPNS_6ThreadEPjjPNS_6JValueEPKc+140) [armeabi-v7a::d2078ba50169919802b98e67fdc80c58]</span><br><span class="line">    #11    pc 001e6e53    /system/lib/libart.so (_ZN3art11interpreter34ArtInterpreterToCompiledCodeBridgeEPNS_6ThreadEPNS_9ArtMethodEPKNS_7DexFile8CodeItemEPNS_11ShadowFrameEPNS_6JValueE+238) [armeabi-v7a::d2078ba50169919802b98e67fdc80c58]</span><br><span class="line">    #12    pc 001e2403    /system/lib/libart.so (_ZN3art11interpreter6DoCallILb0ELb0EEEbPNS_9ArtMethodEPNS_6ThreadERNS_11ShadowFrameEPKNS_11InstructionEtPNS_6JValueE+574) [armeabi-v7a::d2078ba50169919802b98e67fdc80c58]</span><br><span class="line">    #13    pc 003c0d75    /system/lib/libart.so (MterpInvokeDirect+360) [armeabi-v7a::d2078ba50169919802b98e67fdc80c58]</span><br><span class="line">    #14    pc 003c8394    /system/lib/libart.so (artInvokeSuperTrampolineWithAccessCheck+3599) [armeabi-v7a::d2078ba50169919802b98e67fdc80c58]</span><br><span class="line">    #15    pc 001c9985    /system/lib/libart.so (_ZN3art22IndirectReferenceTable10VisitRootsEPNS_11RootVisitorERKNS_8RootInfoE+16) [armeabi-v7a::d2078ba50169919802b98e67fdc80c58]</span><br><span class="line">    #16    pc 001ced07    /system/lib/libart.so (_ZN3art11interpreter33ArtInterpreterToInterpreterBridgeEPNS_6ThreadEPKNS_7DexFile8CodeItemEPNS_11ShadowFrameEPNS_6JValueE+142) [armeabi-v7a::d2078ba50169919802b98e67fdc80c58]</span><br><span class="line">    #17    pc 001e23ed    /system/lib/libart.so (_ZN3art11interpreter6DoCallILb0ELb0EEEbPNS_9ArtMethodEPNS_6ThreadERNS_11ShadowFrameEPKNS_11InstructionEtPNS_6JValueE+552) [armeabi-v7a::d2078ba50169919802b98e67fdc80c58]</span><br><span class="line">    #18    pc 003bfebf    /system/lib/libart.so (MterpInvokeVirtual+446) [armeabi-v7a::d2078ba50169919802b98e67fdc80c58]</span><br><span class="line">    #19    pc 003c8294    /system/lib/libart.so (artInvokeSuperTrampolineWithAccessCheck+3343) [armeabi-v7a::d2078ba50169919802b98e67fdc80c58]</span><br><span class="line">    #20    pc 001c9985    /system/lib/libart.so (_ZN3art22IndirectReferenceTable10VisitRootsEPNS_11RootVisitorERKNS_8RootInfoE+16) [armeabi-v7a::d2078ba50169919802b98e67fdc80c58]</span><br><span class="line">    #21    pc 001ced07    /system/lib/libart.so (_ZN3art11interpreter33ArtInterpreterToInterpreterBridgeEPNS_6ThreadEPKNS_7DexFile8CodeItemEPNS_11ShadowFrameEPNS_6JValueE+142) [armeabi-v7a::d2078ba50169919802b98e67fdc80c58]</span><br><span class="line">    #22    pc 001e23ed    /system/lib/libart.so (_ZN3art11interpreter6DoCallILb0ELb0EEEbPNS_9ArtMethodEPNS_6ThreadERNS_11ShadowFrameEPKNS_11InstructionEtPNS_6JValueE+552) [armeabi-v7a::d2078ba50169919802b98e67fdc80c58]</span><br><span class="line">    #23    pc 003c0d75    /system/lib/libart.so (MterpInvokeDirect+360) [armeabi-v7a::d2078ba50169919802b98e67fdc80c58]</span><br><span class="line">    #24    pc 003c8394    /system/lib/libart.so (artInvokeSuperTrampolineWithAccessCheck+3599) [armeabi-v7a::d2078ba50169919802b98e67fdc80c58]</span><br><span class="line">    #25    pc 001c9985    /system/lib/libart.so (_ZN3art22IndirectReferenceTable10VisitRootsEPNS_11RootVisitorERKNS_8RootInfoE+16) [armeabi-v7a::</span><br><span class="line">E/CrashReport: #++++++++++++++++++++++++++++++++++++++++++#</span><br></pre></td></tr></table></figure>
+
+<p>刚开始以为是so包的问题，但是用到so的地方和已经发版的应用没啥区别。排除这个问题的影响。<br>网上疯狂搜索，看到了这个<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/273c462896c3">https://www.jianshu.com/p/273c462896c3</a><br>说是因为安装包缺少flutter_assets导致的。解开安装包，发现现象一致。因为多渠道打包的问题，导致<code>flutter_assets</code>没有被打包进去，flutter的Issues#27027 <a target="_blank" rel="noopener" href="https://github.com/flutter/flutter/issues/27028">https://github.com/flutter/flutter/issues/27028</a>  有提到这个，需要在fluuter module的build.gradle(flutter module/.android/Flutter/build.gradle)中配置同样的渠道信息。</p>
+<p><img src="/image/flutter/flutter_muilty_flavor.png" alt="问题原因"></p>
+<p>配置完了打包安装运行还是包上面的错误。根据上面文章，找到flutter安装目录下的打包使用的gradle,<code>flutter/packages/flutter_tools/gradle/flutter.gradle</code>文件，其中有这么个方法</p>
+<p><code>private void addFlutterTask(Project project)</code></p>
+<p><img src="/image/flutter/copy_flutter_assets_task.png" alt="copyFlutterAssetsTask"></p>
+<p>其中定义了合并资源的task：<code> Task mergeAssets = project.tasks.findByPath(&quot;:$&#123;mainModuleName&#125;:merge$&#123;variant.name.capitalize()&#125;Assets&quot;)</code></p>
+<p>这里面的变量<code>mainModuleName</code>默认是<code>app</code>,但是我们的工程的主module不是这个名字，这个task就不会被执行。</p>
+<p>加上打印日志，果然<code>mergeAssets </code>是null，导致资源文件不会被打包进去。</p>
+<p>这个问题有人发现了，并且提交了 Pull request,地址 <a target="_blank" rel="noopener" href="https://github.com/flutter/flutter/pull/27154">https://github.com/flutter/flutter/pull/27154</a></p>
+<p>解决方案是在我们工程的<code>setting.gradle</code>文件中指定主module的名字</p>
+<p><code>setBinding(new Binding([gradle: this, mainModuleName: &#39;example&#39;]))</code></p>
+<p>关于上面的多渠道打包的问题，有人说flutter module中的.android文件夹是flutter自己生成的，提交代码的时候并不会提交这个文件夹下的任何内容。我们可以魔改一下上面提到的<code>flutter.gradle</code>文件，在打多渠道包的时候将当前的渠道信息传进去，在gradle文件中读取一下渠道信息就好。</p>
+<p>这里需要提一下AS生成的合并资源任务名字：比如当前渠道是<code>normal</code>,主工程的名字是<code>example</code>,生成的任务则是<code>exampleMergeNormalDebugAssets</code>和<code>exampleMergeNormalReleaseAssets</code>。可以在AS中打开gradle任务预览，在flutter这个module中<code>Task--&gt;other</code>分组中找到该任务。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">String flavor = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    String tempFlavor = project.rootProject.ext.app.flavor</span><br><span class="line">    <span class="keyword">if</span>(tempFlavor!=<span class="literal">null</span> &amp;&amp; !tempFlavor.empty)&#123;</span><br><span class="line">        flavor = tempFlavor</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">    println e</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Task mergeAssets</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(flavor!=<span class="literal">null</span> &amp;&amp; !flavor.empty)&#123;</span><br><span class="line">    mergeAssets = project.tasks.findByPath(<span class="string">&quot;:$&#123;mainModuleName&#125;:merge$&#123;flavor.capitalize()&#125;$&#123;variant.name.capitalize()&#125;Assets&quot;</span>)</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    mergeAssets = project.tasks.findByPath(<span class="string">&quot;:$&#123;mainModuleName&#125;:merge$&#123;variant.name.capitalize()&#125;Assets&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>以上</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/wechatpay.png" alt="HuangYuan_xuan 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/alipay.png" alt="HuangYuan_xuan 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85/" rel="tag"># Android爬坑之旅</a>
+              <a href="/tags/Android/" rel="tag"># Android</a>
+              <a href="/tags/Flutter/" rel="tag"># Flutter</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/05/29/ss%E3%80%81ssr%E5%92%8Cv2ray%E4%BB%A5%E5%8F%8Abbr/" rel="prev" title="ss、ssr和v2ray以及bbr">
+      <i class="fa fa-chevron-left"></i> ss、ssr和v2ray以及bbr
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/06/27/flutter%E8%B7%AF%E7%94%B1%E7%AE%80%E4%BB%8B/" rel="next" title="flutter路由简介">
+      flutter路由简介 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HuangYuan_xuan"
+      src="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+  <p class="site-author-name" itemprop="name">HuangYuan_xuan</p>
+  <div class="site-description" itemprop="description">锱铢必较间接性奋发图强，睚眦必报持续性混吃等死</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/huangyuanlove" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;huangyuanlove" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:huangyuan@huangyuanlove.com" title="E-Mail → mailto:huangyuan@huangyuanlove.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HuangYuan_xuan</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">278k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">4:13</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+  <script>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 30648,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '76c9d0ecf028751aa0d2',
+      clientSecret: '392bc0405dfbdf4928343edef0ef46007f02c7e4',
+      repo        : 'github.com/huangyuanlove/hexo_back',
+      owner       : 'huangyuanlove',
+      admin       : ['huangyuanlove'],
+      id          : '4f48b73b08a2a57aee433538c5dd0e34',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

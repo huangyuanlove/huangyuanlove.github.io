@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"LO7AODH922","apiKey":"eef0d8a75f8bcbfe584416f372bf56e7","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="参考《Android Gradle 权威指南》第四章Gradle任务，主要介绍任务的创建方式、访问任务、任务分组和描述、&lt;&lt;操作符、任务的执行分析、任务排序、启用和禁用、断言、规则等。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gradle任务">
+<meta property="og:url" content="http://blog.huangyuanlove.com/2018/11/19/gradle%E4%BB%BB%E5%8A%A1/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="参考《Android Gradle 权威指南》第四章Gradle任务，主要介绍任务的创建方式、访问任务、任务分组和描述、&lt;&lt;操作符、任务的执行分析、任务排序、启用和禁用、断言、规则等。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-11-19T02:56:26.000Z">
+<meta property="article:modified_time" content="2020-11-26T04:10:08.525Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="gradle">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.huangyuanlove.com/2018/11/19/gradle%E4%BB%BB%E5%8A%A1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>gradle任务 | 放码过来</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123314537-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-123314537-1');
+      }
+    </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?98796e1ecbcbaac6a6d9d3fea85985ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">放码过来</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">技术宅 huangyuan@huangyuanlove.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/huangyuanlove" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2018/11/19/gradle%E4%BB%BB%E5%8A%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+      <meta itemprop="name" content="HuangYuan_xuan">
+      <meta itemprop="description" content="锱铢必较间接性奋发图强，睚眦必报持续性混吃等死">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="放码过来">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          gradle任务<a href="https://github.com/huangyuanlove/hexo_back/tree/master/source/_posts/gradle%E4%BB%BB%E5%8A%A1.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil-alt"></i></a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018年11月19日 10:56:26" itemprop="dateCreated datePublished" datetime="2018-11-19T10:56:26+08:00">2018年11月19日</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020年11月26日 12:10:08" itemprop="dateModified" datetime="2020-11-26T12:10:08+08:00">2020年11月26日</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>参考《Android Gradle 权威指南》第四章Gradle任务，主要介绍任务的创建方式、访问任务、任务分组和描述、&lt;&lt;操作符、任务的执行分析、任务排序、启用和禁用、断言、规则等。</p>
+<span id="more"></span>
+
+<h4 id="任务的创建方式"><a href="#任务的创建方式" class="headerlink" title="任务的创建方式"></a>任务的创建方式</h4><h5 id="直接以任务名的方式创建"><a href="#直接以任务名的方式创建" class="headerlink" title="直接以任务名的方式创建"></a>直接以任务名的方式创建</h5><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> Task temp = task(createTaskByName)</span><br><span class="line">temp.doLast &#123;</span><br><span class="line">    println <span class="string">&quot;原型为 Task task(String name) throws InvalidUserDataException&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面代码中的<code>createTaskByName</code>就是我们创建的任务，可以通过<code>gradle -q createTaskByName</code>来执行这个任务。这种创建方式本质就上就是调用<code>Project</code>的<code>task(String name)</code>方法来创建任务，然后将<code>Task</code>类型的返回值赋值给我们定义的temp变量，最后通过<code>doLast</code>方式来配置任务。</p>
+<h5 id="任务名字-任务配置的Map对象"><a href="#任务名字-任务配置的Map对象" class="headerlink" title="任务名字+任务配置的Map对象"></a>任务名字+任务配置的Map对象</h5><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> Task temp = task(createTaskByName,<span class="attr">group:</span> <span class="string">&#x27;custom&#x27;</span>)</span><br><span class="line">temp.doLast &#123;</span><br><span class="line">    println <span class="string">&quot;原型为 Task task(String name) throws InvalidUserDataException&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>和第一种方式大同小异，只是多了一个Map参数用以对task进行配置，比如上面的代码指定了该task所属的group，当我们在执行 <code>gradle -q tasks --all</code>就可以在对应的group中找到该任务。下面列出的是可用配置：</p>
+<table>
+<thead>
+<tr>
+<th align="center">配置项</th>
+<th align="center">描述</th>
+<th align="center">默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">type</td>
+<td align="center">基于一个存在的Task来创建，类似继承</td>
+<td align="center">DefaultTask</td>
+</tr>
+<tr>
+<td align="center">overwirte</td>
+<td align="center">是否替换存在的Task，可以和type配合使用</td>
+<td align="center">false</td>
+</tr>
+<tr>
+<td align="center">dependsOn</td>
+<td align="center">用于配置任务依赖</td>
+<td align="center">[]</td>
+</tr>
+<tr>
+<td align="center">action</td>
+<td align="center">添加到任务中的一个action或者一个闭包</td>
+<td align="center">null</td>
+</tr>
+<tr>
+<td align="center">description</td>
+<td align="center">任务描述</td>
+<td align="center">null</td>
+</tr>
+<tr>
+<td align="center">group</td>
+<td align="center">任务分组</td>
+<td align="center">null</td>
+</tr>
+</tbody></table>
+<h5 id="任务名字-闭包形式"><a href="#任务名字-闭包形式" class="headerlink" title="任务名字+闭包形式"></a>任务名字+闭包形式</h5><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">task temp &#123;</span><br><span class="line">    description <span class="string">&quot;这是任务名字+闭包形式创建任务&quot;</span></span><br><span class="line">    doLast &#123;</span><br><span class="line">    	println <span class="string">&quot;通过任务名字+闭包形式创建任务&quot;</span></span><br><span class="line">    	println <span class="string">&quot;$&#123;description&#125;&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为Map的方式所能配置的信息有限，所以常见的创建任务是已这种方式进行，或者调用tasks.create方法：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">tasks.create(<span class="string">&#x27;temp&#x27;</span>)&#123;</span><br><span class="line">description <span class="string">&quot;这是任务名字+闭包形式创建任务&quot;</span></span><br><span class="line">    doLast &#123;</span><br><span class="line">    println <span class="string">&quot;通过任务名字+闭包形式创建任务&quot;</span></span><br><span class="line">    println <span class="string">&quot;$&#123;description&#125;&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="访问任务"><a href="#访问任务" class="headerlink" title="访问任务"></a>访问任务</h4><ol>
+<li>通过任务名字访问</li>
+</ol>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">task temp&#123;&#125;</span><br><span class="line"><span class="comment">//第一种方式</span></span><br><span class="line">temp.doLast&#123;&#125;</span><br><span class="line"><span class="comment">//第二种方式</span></span><br><span class="line">tasks[<span class="string">&#x27;temp&#x27;</span>].doLast&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问的时候，任务名就是key,这里说法有点不恰当，因为tasks并不是一个map，<code>[]</code>在groovy中是一个操作符，在groovy中的操作符都有对应的方法让我们重载，<code>a[b]</code>对应的是<code>a.getAt(b)</code>这个方法，对应上面的代码<code>tasks[&#39;temp&#39;]</code>其实是调用的<code>tasks.getAt(&#39;temp&#39;)</code>这个方法，在<code>gradle</code>源码中，发现调用的是<code>findByName(String name)</code>实现的。</p>
+<p>然后就是通过路径访问，有两种方式，一种是<code>get</code>，一种是<code>find</code>，区别在于使用<code>get</code>的时候如果找不到该任务就是抛出<code>UnknownTaskException</code>，而find则会返回<code>null</code>.</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">task temp</span><br><span class="line">tasks[<span class="string">&#x27;temp&#x27;</span>].doLast&#123;</span><br><span class="line">    println tasks.findByPath(<span class="string">&#x27;temp&#x27;</span>)</span><br><span class="line">    println tasks.getByPath(<span class="string">&#x27;temp&#x27;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后就是通过名称访问，方式、区别和上面通过路径访问是一样的。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">task temp</span><br><span class="line">tasks[<span class="string">&#x27;temp&#x27;</span>].doLast&#123;</span><br><span class="line">    println tasks.findByName(<span class="string">&#x27;temp&#x27;</span>)</span><br><span class="line">    println tasks.getByName(<span class="string">&#x27;temp&#x27;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，通过路径访问的时候，参数值可以是路径值也可以是任务名字,但是通过名字访问的时候，参数值只能是任务的名字，不能为路径。</p>
+<h4 id="lt-lt-操作符"><a href="#lt-lt-操作符" class="headerlink" title="&lt;&lt;操作符"></a>&lt;&lt;操作符</h4><p><code>&lt;&lt;</code>操作符在Gradle的Task上是doLast方法的短标记形式。</p>
+<p><code>&lt;&lt;</code>是操作符，在Groovy中是可以重载的，<code>a&lt;&lt;b</code>对应的是<code>a.leftShift(b)</code>方法，所以Task接口中肯定有同一个leftShift方法重载的<code>&lt;&lt;</code>，在Gradle源码中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Task.java</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;Adds the given closure to the end of this task&#x27;s action list.  The closure is passed this task as a parameter</span></span><br><span class="line"><span class="comment">     * when executed. You can call this method from your build script using the &amp;lt;&amp;lt; left shift operator.&lt;/p&gt;</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> action The action closure to execute.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> This task.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@deprecated</span> Use &#123;<span class="doctag">@link</span> #doLast(Closure action)&#125;</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Deprecated</span></span><br><span class="line">    <span class="function">Task <span class="title">leftShift</span><span class="params">(Closure action)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>leftShift方法和doLast方法实现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> Task <span class="title">leftShift</span><span class="params">(<span class="keyword">final</span> Closure action)</span> </span>&#123;</span><br><span class="line">       DeprecationLogger.nagUserOfDiscontinuedMethod(<span class="string">&quot;Task.leftShift(Closure)&quot;</span>, <span class="string">&quot;Please use Task.doLast(Action) instead.&quot;</span>);</span><br><span class="line"></span><br><span class="line">       hasCustomActions = <span class="keyword">true</span>;</span><br><span class="line">       <span class="keyword">if</span> (action == <span class="keyword">null</span>) &#123;</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> InvalidUserDataException(<span class="string">&quot;Action must not be null!&quot;</span>);</span><br><span class="line">       &#125;</span><br><span class="line">       taskMutator.mutate(<span class="string">&quot;Task.leftShift(Closure)&quot;</span>, <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">           <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">               getTaskActions().add(taskMutator.leftShift(convertClosureToAction(action, <span class="string">&quot;doLast &#123;&#125; action&quot;</span>)));</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;);</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Task <span class="title">doLast</span><span class="params">(<span class="keyword">final</span> Closure action)</span> </span>&#123;</span><br><span class="line">        hasCustomActions = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">if</span> (action == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> InvalidUserDataException(<span class="string">&quot;Action must not be null!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        taskMutator.mutate(<span class="string">&quot;Task.doLast(Closure)&quot;</span>, <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                getTaskActions().add(convertClosureToAction(action, <span class="string">&quot;doLast &#123;&#125; action&quot;</span>));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="任务执行分析"><a href="#任务执行分析" class="headerlink" title="任务执行分析"></a>任务执行分析</h4><p>当我们在执行一个Task的时候，其实就是执行其拥有的actions列表，这个列表保存在Task对象实例中的actions成员变量中，在<code>AbstractTask</code>类中有这么一个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> List&lt;ContextAwareTaskAction&gt; <span class="title">getTaskActions</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (actions == <span class="keyword">null</span>) &#123;</span><br><span class="line">           actions = <span class="keyword">new</span> ArrayList&lt;ContextAwareTaskAction&gt;(<span class="number">3</span>);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> actions;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们写个demo来看一下actions怎么工作的</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Task myTask = task test(<span class="attr">type :</span> CustomTask)</span><br><span class="line"></span><br><span class="line">myTask.doFirst &#123;</span><br><span class="line">    println <span class="string">&quot;doFirst&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">myTask.doLast &#123;</span><br><span class="line">    println <span class="string">&quot;doLast&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomTask</span> <span class="keyword">extends</span> <span class="title">DefaultTask</span>&#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@TaskAction</span></span><br><span class="line">    <span class="keyword">def</span> doSelf()&#123;</span><br><span class="line">        println <span class="string">&quot;执行doSelf&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>上面代码定义了一个Task类型的CustomTask，并且声明了一个被<code>TaskAction</code>注解标准的<code>doSelf</code>方法。意思是该方法就是Task本身执行的方法，执行<code>test</code>任务，得到输出</p>
+<blockquote>
+<p>doFirst<br>执行doSelf<br>doLast</p>
+</blockquote>
+<p>我们可以看一下具体源码怎么写的</p>
+<p>当我们使用Task方法创建一个task的时候，Gradle会解析其带有TaskAction标注的方法作为其Task执行的Action，然后通过</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prependParallelSafeAction</span><span class="params">(<span class="keyword">final</span> Action&lt;? <span class="keyword">super</span> Task&gt; action)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (action == <span class="keyword">null</span>) &#123;</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> InvalidUserDataException(<span class="string">&quot;Action must not be null!&quot;</span>);</span><br><span class="line">       &#125;</span><br><span class="line">       getTaskActions().add(<span class="number">0</span>, wrap(action));</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>添加到actions list里面。这时候Task刚被创建，所以不会有其他的action。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Task <span class="title">doFirst</span><span class="params">(<span class="keyword">final</span> Action&lt;? <span class="keyword">super</span> Task&gt; action)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> doFirst(<span class="string">&quot;doFirst &#123;&#125; action&quot;</span>, action);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Task <span class="title">doFirst</span><span class="params">(<span class="keyword">final</span> String actionName, <span class="keyword">final</span> Action&lt;? <span class="keyword">super</span> Task&gt; action)</span> </span>&#123;</span><br><span class="line">        hasCustomActions = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">if</span> (action == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> InvalidUserDataException(<span class="string">&quot;Action must not be null!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        taskMutator.mutate(<span class="string">&quot;Task.doFirst(Action)&quot;</span>, <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                getTaskActions().add(<span class="number">0</span>, wrap(action, actionName));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Task <span class="title">doLast</span><span class="params">(<span class="keyword">final</span> Action&lt;? <span class="keyword">super</span> Task&gt; action)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> doLast(<span class="string">&quot;doLast &#123;&#125; action&quot;</span>, action);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Task <span class="title">doLast</span><span class="params">(<span class="keyword">final</span> String actionName, <span class="keyword">final</span> Action&lt;? <span class="keyword">super</span> Task&gt; action)</span> </span>&#123;</span><br><span class="line">        hasCustomActions = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">if</span> (action == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> InvalidUserDataException(<span class="string">&quot;Action must not be null!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        taskMutator.mutate(<span class="string">&quot;Task.doLast(Action)&quot;</span>, <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                getTaskActions().add(wrap(action, actionName));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，doFirst每次都添加到list的最前面，doLast每次都添加到最后面。最后这个actions list就按照顺序形成了doFirst、doSelf、doLast三部分的Actions。</p>
+<h4 id="任务排序"><a href="#任务排序" class="headerlink" title="任务排序"></a>任务排序</h4><p>这个并没有真正实现排序功能，而是通过<code>shouldRunAfter</code>和<code>mustRunAfter</code>这两个方法，他们可以控制一个任务应该或者一定在某个任务之后执行。</p>
+<p><code>taskB.mustRunAfter(taskA)</code>表示<code>taskB</code>必须在<code>taskA</code>执行之后执行，这个规则比较严格</p>
+<h4 id="任务的启用和禁用"><a href="#任务的启用和禁用" class="headerlink" title="任务的启用和禁用"></a>任务的启用和禁用</h4><p>Task中有个<code>enable</code>属性，用于启用和禁用任务，默认是<code>true</code>，表示启用，设置为<code>false</code>，则禁止该任务执行，输出会提示该任务被跳过。</p>
+<h4 id="任务的onlyIf断言"><a href="#任务的onlyIf断言" class="headerlink" title="任务的onlyIf断言"></a>任务的onlyIf断言</h4><p>断言就是一个条件表达式，Task有一个<code>onlyIf</code>方法，它接受一个闭包作为参数，如果该闭包返回true则执行该任务，否则跳过。</p>
+<p>假如我们首发渠道是应用宝，直接build会编译出来所有包，现在我们就采用onlyIf的方式通过属性来控制：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> String BUILD_APP_ALL = <span class="string">&quot;all&quot;</span>;</span><br><span class="line"><span class="keyword">final</span> String BUILD_APP_SHOUFA = <span class="string">&quot;shoufa&quot;</span>;</span><br><span class="line"><span class="keyword">final</span> String BUILD_APP_EXCLUDE_SHOUFA=<span class="string">&quot;exclude_shoufa&quot;</span>;</span><br><span class="line"></span><br><span class="line">task qqRelease &lt;&lt;&#123;</span><br><span class="line">    println <span class="string">&quot;应用宝&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task baiduRelease &lt;&lt;&#123;</span><br><span class="line">    println <span class="string">&quot;百度&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task huaweiRelease &lt;&lt;&#123;</span><br><span class="line">    println <span class="string">&quot;华为&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task miuiRelease &lt;&lt;&#123;</span><br><span class="line">    println <span class="string">&quot;小米&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task test &lt;&lt;&#123;</span><br><span class="line">    group BasePlugin.BUILD_GROUP</span><br><span class="line">    description <span class="string">&quot;打渠道包&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">test.dependsOn qqRelease,baiduRelease,huaweiRelease,miuiRelease</span><br><span class="line"></span><br><span class="line">qqRelease.onlyIf &#123;</span><br><span class="line">    <span class="keyword">def</span> execute = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(project.hasProperty(<span class="string">&quot;build_apps&quot;</span>))&#123;</span><br><span class="line">        Object buildApp = project.property(<span class="string">&quot;build_apps&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span>(BUILD_APP_SHOUFA.equals(buildApp) || BUILD_APP_ALL.equals(buildApp))&#123;</span><br><span class="line">            execute = <span class="literal">true</span></span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            execute = <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        execute = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    execute</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">baiduRelease.onlyIf &#123;</span><br><span class="line">    <span class="keyword">def</span> execute = <span class="literal">false</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span>(project.hasProperty(<span class="string">&quot;build_apps&quot;</span>))&#123;</span><br><span class="line"></span><br><span class="line">        String buildApp = project.property(<span class="string">&quot;build_apps&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span>(BUILD_APP_SHOUFA.equals(buildApp) || BUILD_APP_ALL.equals(buildApp))&#123;</span><br><span class="line">            execute = <span class="literal">true</span></span><br><span class="line">            </span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            execute = <span class="literal">false</span></span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        execute = <span class="literal">true</span></span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    execute</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">huaweiRelease.onlyIf &#123;</span><br><span class="line">    <span class="keyword">def</span> execute = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(project.hasProperty(<span class="string">&quot;build_apps&quot;</span>))&#123;</span><br><span class="line">        Object buildApp = project.property(<span class="string">&quot;build_apps&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span>(BUILD_APP_EXCLUDE_SHOUFA.equals(buildApp) || BUILD_APP_ALL.equals(buildApp))&#123;</span><br><span class="line">            execute = <span class="literal">true</span></span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            execute = <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        execute = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    execute</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">miuiRelease.onlyIf &#123;</span><br><span class="line">    <span class="keyword">def</span> execute = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(project.hasProperty(<span class="string">&quot;build_apps&quot;</span>))&#123;</span><br><span class="line">        Object buildApp = project.property(<span class="string">&quot;build_apps&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span>(BUILD_APP_EXCLUDE_SHOUFA.equals(buildApp) || BUILD_APP_ALL.equals(buildApp))&#123;</span><br><span class="line">            execute = <span class="literal">true</span></span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            execute = <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        execute = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    execute</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面定义了4个渠道，其中百度和应用宝是首发，通过build_apps属性来控制要打哪些渠道包</p>
+<blockquote>
+<p>//打所有渠道包</p>
+<p>gradle test</p>
+<p>gradle -P build_apps=all test</p>
+<p>//打首发包</p>
+<p>gradle -P build_apps=shoufa test</p>
+<p>//打非首发包</p>
+<p>gradle -P build_apps=exclude_shoufa test</p>
+</blockquote>
+<p>命令行中的-P意思是为Project执行K-V格式属性的键值对</p>
+<h4 id="任务规则"><a href="#任务规则" class="headerlink" title="任务规则"></a>任务规则</h4><p>我们知道创建的人物都爱TaskContainer里，是由其进行管理的，所以当我们访问任务的时候都是通过TaskContainer进行访问，而TaskContainer又是一个NamedDomainObjectCollection，所以我们说的任务规则其实就是NamedDomainObjectCollection的规则。</p>
+<p>NamedDomainObjectCollection是一个具有唯一不变名字的域对象的集合，它里面所有的元素都有一个唯一不变的名字，该名字是String类型，所以我们可以通过名字获取该元素。但是这个唯一的名字可能不存在，具体到任务中就是说你想获取的这个任务不存在，这时候就会调用我们添加的规则来处理这种异常情况。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">findName</span><span class="params">(String name)</span></span>&#123;</span><br><span class="line">    T value = findByNameWithoutRules(name);</span><br><span class="line">    <span class="keyword">if</span>(value != <span class="keyword">null</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line">    applyRules(name);</span><br><span class="line">    <span class="keyword">return</span> findByNameWithoutRules(name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以名字查找的时候，如果没有找到则调用applyRules(name)应用我们添加的规则。</p>
+<p>我们可以通过调用addRule来添加我们自定义的规则，它有两个用法:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Adds a rule to this collection. The given rule is invoked when an unknown object is requested by name.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> rule The rule to add.</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span> The added rule.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function">Rule <span class="title">addRule</span><span class="params">(Rule rule)</span></span>;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Adds a rule to this collection. The given closure is executed when an unknown object is requested by name. The</span></span><br><span class="line"><span class="comment">    * requested name is passed to the closure as a parameter.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> description The description of the rule.</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> ruleAction The closure to execute to apply the rule.</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span> The added rule.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function">Rule <span class="title">addRule</span><span class="params">(String description, Closure ruleAction)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>一个是直接添加一个Rule，另一个是通过闭包配置成一个Rule再添加，两种方式大同小异。</p>
+<p>当我们执行、依赖一个不存在的任务时，Gradle会执行失败，失败信息是任务不存在。我们使用规则对其进行改造，不会执行失败，而是打印提示信息：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">tasks.addRule(<span class="string">&quot;对该规则的一个描述&quot;</span>)&#123;</span><br><span class="line">    String taskName -&gt;</span><br><span class="line">        task(taskName) &lt;&lt;&#123;</span><br><span class="line">            println(<span class="string">&quot;该$&#123;taskName&#125;任务不存在，请查证后再执行&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task testA &#123;</span><br><span class="line">    dependsOn missTask</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/wechatpay.png" alt="HuangYuan_xuan 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/alipay.png" alt="HuangYuan_xuan 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+              <a href="/tags/gradle/" rel="tag"># gradle</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/12/%E9%80%82%E9%85%8D%E5%85%A8%E9%9D%A2%E5%B1%8F%E6%89%8B%E6%9C%BA/" rel="prev" title="适配全面屏手机">
+      <i class="fa fa-chevron-left"></i> 适配全面屏手机
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/12/09/gradle%E6%8F%92%E4%BB%B6/" rel="next" title="gradle插件">
+      gradle插件 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%88%9B%E5%BB%BA%E6%96%B9%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">任务的创建方式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E4%BB%A5%E4%BB%BB%E5%8A%A1%E5%90%8D%E7%9A%84%E6%96%B9%E5%BC%8F%E5%88%9B%E5%BB%BA"><span class="nav-number">1.1.</span> <span class="nav-text">直接以任务名的方式创建</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E5%90%8D%E5%AD%97-%E4%BB%BB%E5%8A%A1%E9%85%8D%E7%BD%AE%E7%9A%84Map%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.2.</span> <span class="nav-text">任务名字+任务配置的Map对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E5%90%8D%E5%AD%97-%E9%97%AD%E5%8C%85%E5%BD%A2%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">任务名字+闭包形式</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E4%BB%BB%E5%8A%A1"><span class="nav-number">2.</span> <span class="nav-text">访问任务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lt-lt-%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="nav-number">3.</span> <span class="nav-text">&lt;&lt;操作符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E6%89%A7%E8%A1%8C%E5%88%86%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">任务执行分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E6%8E%92%E5%BA%8F"><span class="nav-number">5.</span> <span class="nav-text">任务排序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%90%AF%E7%94%A8%E5%92%8C%E7%A6%81%E7%94%A8"><span class="nav-number">6.</span> <span class="nav-text">任务的启用和禁用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E7%9A%84onlyIf%E6%96%AD%E8%A8%80"><span class="nav-number">7.</span> <span class="nav-text">任务的onlyIf断言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E8%A7%84%E5%88%99"><span class="nav-number">8.</span> <span class="nav-text">任务规则</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HuangYuan_xuan"
+      src="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+  <p class="site-author-name" itemprop="name">HuangYuan_xuan</p>
+  <div class="site-description" itemprop="description">锱铢必较间接性奋发图强，睚眦必报持续性混吃等死</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/huangyuanlove" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;huangyuanlove" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:huangyuan@huangyuanlove.com" title="E-Mail → mailto:huangyuan@huangyuanlove.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HuangYuan_xuan</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">278k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">4:13</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+  <script>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 30648,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '76c9d0ecf028751aa0d2',
+      clientSecret: '392bc0405dfbdf4928343edef0ef46007f02c7e4',
+      repo        : 'github.com/huangyuanlove/hexo_back',
+      owner       : 'huangyuanlove',
+      admin       : ['huangyuanlove'],
+      id          : '9377339d5537fcaa1fc26f1512fe5d5c',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

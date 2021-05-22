@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"LO7AODH922","apiKey":"eef0d8a75f8bcbfe584416f372bf56e7","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Android P,Q 版本适配常见问题 项目地址 https:&#x2F;&#x2F;github.com&#x2F;huangyuanlove&#x2F;AdaptationAndroidP  文件操作 拍照选择图片 存储访问框架(SAF) 通知 权限申请 快捷方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="适配Android高版本系统常见问题">
+<meta property="og:url" content="http://blog.huangyuanlove.com/2019/04/17/%E9%80%82%E9%85%8DAndroid%E9%AB%98%E7%89%88%E6%9C%AC%E7%B3%BB%E7%BB%9F%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="Android P,Q 版本适配常见问题 项目地址 https:&#x2F;&#x2F;github.com&#x2F;huangyuanlove&#x2F;AdaptationAndroidP  文件操作 拍照选择图片 存储访问框架(SAF) 通知 权限申请 快捷方式">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://blog.huangyuanlove.com/image/Android/adaptation/uninstall_apk_dialog.png">
+<meta property="article:published_time" content="2019-04-17T10:03:41.000Z">
+<meta property="article:modified_time" content="2020-11-26T04:10:08.538Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.huangyuanlove.com/image/Android/adaptation/uninstall_apk_dialog.png">
+
+<link rel="canonical" href="http://blog.huangyuanlove.com/2019/04/17/%E9%80%82%E9%85%8DAndroid%E9%AB%98%E7%89%88%E6%9C%AC%E7%B3%BB%E7%BB%9F%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>适配Android高版本系统常见问题 | 放码过来</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123314537-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-123314537-1');
+      }
+    </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?98796e1ecbcbaac6a6d9d3fea85985ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">放码过来</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">技术宅 huangyuan@huangyuanlove.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/huangyuanlove" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2019/04/17/%E9%80%82%E9%85%8DAndroid%E9%AB%98%E7%89%88%E6%9C%AC%E7%B3%BB%E7%BB%9F%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+      <meta itemprop="name" content="HuangYuan_xuan">
+      <meta itemprop="description" content="锱铢必较间接性奋发图强，睚眦必报持续性混吃等死">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="放码过来">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          适配Android高版本系统常见问题<a href="https://github.com/huangyuanlove/hexo_back/tree/master/source/_posts/%E9%80%82%E9%85%8DAndroid%E9%AB%98%E7%89%88%E6%9C%AC%E7%B3%BB%E7%BB%9F%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil-alt"></i></a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019年04月17日 18:03:41" itemprop="dateCreated datePublished" datetime="2019-04-17T18:03:41+08:00">2019年04月17日</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020年11月26日 12:10:08" itemprop="dateModified" datetime="2020-11-26T12:10:08+08:00">2020年11月26日</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Android P,Q 版本适配常见问题</p>
+<p>项目地址 <a target="_blank" rel="noopener" href="https://github.com/huangyuanlove/AdaptationAndroidP">https://github.com/huangyuanlove/AdaptationAndroidP</a></p>
+<ol>
+<li>文件操作</li>
+<li>拍照选择图片</li>
+<li>存储访问框架(SAF)</li>
+<li>通知</li>
+<li>权限申请</li>
+<li>快捷方式</li>
+</ol>
+<span id="more"></span>
+
+<p>Android P,Q 版本适配常见问题</p>
+<p>项目地址 <a target="_blank" rel="noopener" href="https://github.com/huangyuanlove/AdaptationAndroidP">https://github.com/huangyuanlove/AdaptationAndroidP</a></p>
+<h4 id="文件操作-FileOperationActivity"><a href="#文件操作-FileOperationActivity" class="headerlink" title="文件操作(FileOperationActivity)"></a>文件操作(FileOperationActivity)</h4><p>先看几个常用的文件路径，这里说明一下，应用的id是<code>com.huangyuanlove.adaptationhighversion</code></p>
+<ul>
+<li><p><strong>getFilesDir()</strong></p>
+<p>得到的路径是 <code>/data/user/0/com.huangyuanlove.adaptationhighversion/files</code>,读写该文件夹下的文件<strong>不需要</strong>申请文件读写权限。卸载应用时<strong>会被删除</strong>。对用户<strong>不可见</strong>，我们在AndroidStudio中使用<code>Device File Explorer</code>查看是在<code>/data/data/com.huangyuanlove.adaptationhighversion/files</code></p>
+</li>
+<li><p><strong>getCacheDir()</strong><br>得到的路径是<code>/data/user/0/com.huangyuanlove.adaptationhighversion/cache</code>，读写该文件夹下的文件<strong>不需要</strong>申请文件读写权限。卸载应用时<strong>会被删除</strong>。对用户<strong>不可见</strong>，我们在AndroidStudio中使用<code>Device File Explorer</code>查看是在<code>/data/data/com.huangyuanlove.adaptationhighversion/cache</code></p>
+</li>
+<li><p>getExternalCacheDir()</p>
+<p>得到的路径是<code>/storage/emulated/0/Android/data/com.huangyuanlove.adaptationhighversion/cache</code></p>
+<p>读写该文件夹下的文件<strong>不需要</strong>申请文件读写权限。卸载应用时<strong>会被删除</strong>。对用户<strong>可见</strong>，无法使用<code>Device File Explorer</code>查看，因为<code>/storage/emulated</code>下的文件没有操作权限，可以用过<code>adb shell</code>切换进去查看，路径为<code>/storage/emulated/0/Android/data/com.huangyuanlove.adaptationhighversion/cache</code>。用户使用手机的文件管理器查看时路径为<code>/Android/data/com.huangyuanlove.adaptationhighversion/cache</code></p>
+</li>
+<li><p>getExternalFilesDir(null)</p>
+<p>得到的路径是<code>/storage/emulated/0/Android/data/com.huangyuanlove.adaptationhighversion/files</code>,</p>
+<p>读写该文件夹下的文件<strong>不需要</strong>申请文件读写权限。卸载应用时<strong>会被删除</strong>。对用户<strong>可见</strong>，无法使用<code>Device File Explorer</code>查看，因为<code>/storage/emulated</code>下的文件没有操作权限，可以用过<code>adb shell</code>切换进去查看，路径为<code>/storage/emulated/0/Android/data/com.huangyuanlove.adaptationhighversion/file</code>。用户使用手机的文件管理器查看时路径为<code>/Android/data/com.huangyuanlove.adaptationhighversion/file</code></p>
+</li>
+<li><p>Environment.getExternalStorageDirectory();</p>
+<p>得到的路径是<code>/storage/emulated/0</code></p>
+<p>读写该文件夹下的文件<strong>需要</strong>申请文件读写权限。卸载应用时不会被删除。对用户<strong>可见</strong>，也就是外部存储的根路径。</p>
+</li>
+<li><p>Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);</p>
+<p>得到的路径是<code>/storage/emulated/0/Download</code></p>
+<p>该方法的参数可以查看<code>Environment</code>类来详细了解。读写该文件夹下的文件<strong>不需要</strong>申请文件读写权限。卸载应用时不会被删除。对用户可以，上述就是外部存储根路径下的Download文件夹。</p>
+</li>
+</ul>
+<p>P版本应用在sd卡根目录保存的应用数据卸载时不会被清除，但是Q版本这部分数据实际保存的是应用的沙箱目录 下，卸载的时候回全部被清除;<br>应用不想卸载删除的文件通过SAF或者是MediaProvider的接口保存在公共目录，不要放在应用的沙箱目录，公共目录文件卸载删除默认会弹框提示，对应弹框的第一 个勾选，默认保留，勾选删除，<strong>谷歌后续的版本计划把这 个勾选去掉，意味着应用保存到公共集合目录的文件卸载 的时候不会提示用户删除</strong>;<br>对于应用的沙箱文件，应用如果不想卸载的时候被删除，需要应用在manifest文件增加:<application android:fragileUserData="true" />，这样卸载应用的时候，系统弹出的对话框中才会有第二个勾选框出现(不增加该属性是不会有第二个勾选出现)，默认删除，勾选保留。</p>
+<p><img src="/image/Android/adaptation/uninstall_apk_dialog.png" alt="卸载app提示"></p>
+<h4 id="拍照、选择图片-TakePhotoOrChoosePhotoActivity"><a href="#拍照、选择图片-TakePhotoOrChoosePhotoActivity" class="headerlink" title="拍照、选择图片(TakePhotoOrChoosePhotoActivity)"></a>拍照、选择图片(TakePhotoOrChoosePhotoActivity)</h4><p>在Android6.0动态申请权限，Android7.0严格模式之后，拍照出现了问题，要么是没有权限存储图片，要么是返回的uri是空的，或者抛出如下异常：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">android.os.FileUriExposedException: file:<span class="comment">///storage/emulated/0/test.txt exposed beyond app through Intent.getData()</span></span><br><span class="line">java.lang.SecurityException: Permission Denial: reading com.android.providers.media.MediaProvider uri</span><br></pre></td></tr></table></figure>
+
+<p>出现上面的问题是因为Android7.0提高私有目录的安全性，防止应用信息的泄漏，从 Android 7.0 开始，应用私有目录的访问权限被做限制。具体表现为，开发人员不能够再简单地通过 file:// URI 访问其他应用的私有目录文件或者让其他应用访问自己的私有目录文件。对于面向 Android 7.0 的应用，Android 框架执行的 StrictMode API 政策禁止在您的应用外部公开 file:// URI。如果一项包含文件 URI 的 intent 离开您的应用，则应用出现故障，并出现 FileUriExposedException 异常。</p>
+<p>我们可以通过配置FileProvider方式来避免这种问题。</p>
+<p>配置方式网上一堆，这里不再抄一遍了：</p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ac5fe346a5b7">https://www.jianshu.com/p/ac5fe346a5b7</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/121bbb07cb07">https://www.jianshu.com/p/121bbb07cb07</a></p>
+<p>在项目中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">//指定Uri，拍照返回的data为空</span></span><br><span class="line">String tempImagePath = getFilesDir().getPath();</span><br><span class="line">tempImageFile = File.createTempFile(<span class="string">&quot;image_&quot;</span>, <span class="string">&quot;.jpg&quot;</span>, <span class="keyword">new</span> File(tempImagePath));</span><br><span class="line">Intent intent = <span class="keyword">new</span> Intent(MediaStore.ACTION_IMAGE_CAPTURE);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= <span class="number">24</span>) &#123;</span><br><span class="line">  intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);</span><br><span class="line">  intent.putExtra(MediaStore.EXTRA_OUTPUT,</span><br><span class="line">  FileProvider.getUriForFile(TakePhotoOrChoosePhotoActivity.<span class="keyword">this</span>,</span><br><span class="line">                                        <span class="string">&quot;com.huangyuanlove.adaptationhighversion.fileprovider&quot;</span>, tempImageFile));</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempImageFile));</span><br><span class="line">&#125;</span><br><span class="line">startActivityForResult(intent, TAKE_PHOTO_CODE);</span><br></pre></td></tr></table></figure>
+
+<p>当拍照返回之后</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bitmap = BitmapFactory.decodeFile(tempImageFile.getPath());</span><br><span class="line">showImage.setImageBitmap(bitmap);</span><br></pre></td></tr></table></figure>
+
+<p>选择图片的时候：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Intent albumIntent = <span class="keyword">new</span> Intent(Intent.ACTION_PICK);</span><br><span class="line">albumIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, <span class="string">&quot;image/*&quot;</span>);</span><br><span class="line">startActivityForResult(albumIntent, CHOOSE_PHOTO_CODE);</span><br></pre></td></tr></table></figure>
+
+<p>选择图片返回的时候</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (data != <span class="keyword">null</span>) &#123;</span><br><span class="line">  Uri selectedImage = data.getData();</span><br><span class="line">  String[] filePathColumn = &#123;MediaStore.Images.Media.DATA&#125;;</span><br><span class="line"></span><br><span class="line">  Cursor cursor = getContentResolver().query(selectedImage,</span><br><span class="line">                                             filePathColumn, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">  cursor.moveToFirst();</span><br><span class="line">  <span class="keyword">int</span> columnIndex = cursor.getColumnIndex(filePathColumn[<span class="number">0</span>]);</span><br><span class="line">  String picturePath = cursor.getString(columnIndex);</span><br><span class="line">  cursor.close();</span><br><span class="line"></span><br><span class="line">  bitmap = BitmapFactory.decodeFile(picturePath);</span><br><span class="line">  showImage.setImageBitmap(bitmap);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="存储访问框架-SAFActivity"><a href="#存储访问框架-SAFActivity" class="headerlink" title="存储访问框架(SAFActivity)"></a>存储访问框架(SAFActivity)</h4><p>官方有最佳实践：<a target="_blank" rel="noopener" href="https://developer.android.com/guide/topics/providers/document-provider?hl=zh-cn">https://developer.android.com/guide/topics/providers/document-provider?hl=zh-cn</a></p>
+<h4 id="通知管理-NotificationActivity"><a href="#通知管理-NotificationActivity" class="headerlink" title="通知管理(NotificationActivity)"></a>通知管理(NotificationActivity)</h4><p>主要是8.0之后的NotificationChannel问题，可以参考这个 </p>
+<p><a href="http://blog.huangyuanlove.com/2018/12/27/Android-O-%E9%80%82%E9%85%8DNotificationChannel/">http://blog.huangyuanlove.com/2018/12/27/Android-O-%E9%80%82%E9%85%8DNotificationChannel/</a></p>
+<h4 id="权限申请-MainActivity"><a href="#权限申请-MainActivity" class="headerlink" title="权限申请(MainActivity)"></a>权限申请(MainActivity)</h4><p>6.0之后的动态权限申请问题。大部分应用是在基类中一次性申请所有可能用到的权限，而不关心当前界面是否需要这个权限。</p>
+<p>比如应用中需要用到相机、访问存储空间、读写通讯录、录音权限，则在BaseActivity中去申请这四种高危权限，这种做法对开发人员来说比较简单粗暴，不需要关心每次点击事件是否有权限。但对于用户来讲，刚打开应用就申请这么多权限，体验是不好的。推荐做法还是在需要时去申请权限。</p>
+<p>比如更换头像时，点击按钮之后才会去申请相机权限，而不是打开资料设置界面的时候去申请。并且建议只申请用到的权限，而不是一次性全部申请。</p>
+<p>这里需要注意的是，国产手机中对于权限的判定和在设置里面看到的权限可能不一致。</p>
+<ol>
+<li><p>当我们点击了拍照按钮之后，首先检查权限：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED</span><br></pre></td></tr></table></figure>
+
+<p>这里需要判断一下版本，大于6.0(Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.M)才需要去判断。</p>
+<p>有权限直接到拍照界面，没有权限则申请权限：</p>
+</li>
+<li><p>申请权限</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">requestPermissions(<span class="keyword">new</span> String[]&#123;Manifest.permission.CAMERA&#125;, REQUEST_PERMISSION_CAMERA);</span><br></pre></td></tr></table></figure></li>
+<li><p>权限申请返回结果</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">   </span><br><span class="line"><span class="meta">@RequiresApi(api = Build.VERSION_CODES.M)</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onRequestPermissionsResult</span><span class="params">(<span class="keyword">int</span> requestCode, <span class="meta">@NonNull</span> String[] permissions, <span class="meta">@NonNull</span> <span class="keyword">int</span>[] grantResults)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">super</span>.onRequestPermissionsResult(requestCode, permissions, grantResults);</span><br><span class="line">  <span class="keyword">if</span> (permissions.length &lt;= <span class="number">0</span> || grantResults.length &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">switch</span> (requestCode) &#123;</span><br><span class="line">    <span class="keyword">case</span> REQUEST_PERMISSION_CAMERA:</span><br><span class="line">      <span class="keyword">final</span> String permission = permissions[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (grantResults.length &gt; <span class="number">0</span> &amp;&amp; grantResults[<span class="number">0</span>] ==</span><br><span class="line">    			PackageManager.PERMISSION_GRANTED) &#123;</span><br><span class="line">        Toast.makeText(MainActivity.<span class="keyword">this</span>, <span class="string">&quot;授予拍照权限成功&quot;</span>, Toast.LENGTH_SHORT).show();</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (shouldShowRequestPermissionRationale(permissions[<span class="number">0</span>])) &#123;</span><br><span class="line">          <span class="comment">//用户只点击了禁止，没有选择不再提示</span></span><br><span class="line">          Toast.makeText(MainActivity.<span class="keyword">this</span>, <span class="string">&quot;用户禁止了&quot;</span> + permission + <span class="string">&quot;权限&quot;</span>, Toast.LENGTH_SHORT).show();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          <span class="comment">//解释原因，并且引导用户至设置页手动授权</span></span><br><span class="line">          <span class="keyword">new</span> AlertDialog.Builder(<span class="keyword">this</span>)</span><br><span class="line">            .setMessage(<span class="string">&quot;【用户选择了不在提示按钮，或者系统默认不在提示（如MIUI）。&quot;</span> +</span><br><span class="line">                        <span class="string">&quot;引导用户到应用设置页去手动授权,注意提示用户具体需要哪些权限】\r\n&quot;</span> +</span><br><span class="line">                        <span class="string">&quot;获取相关权限失败:xxxxxx,将导致部分功能无法正常使用，需要到设置页面手动授权&quot;</span>)</span><br><span class="line">            .setPositiveButton(<span class="string">&quot;去授权&quot;</span>, <span class="keyword">new</span> DialogInterface.OnClickListener() &#123;</span><br><span class="line">              <span class="meta">@Override</span></span><br><span class="line">              <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(DialogInterface dialog, <span class="keyword">int</span> which)</span> </span>&#123;</span><br><span class="line">                <span class="comment">//引导用户至设置页手动授权</span></span><br><span class="line">                Intent intent = <span class="keyword">new</span> Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);</span><br><span class="line">                Uri uri = Uri.fromParts(<span class="string">&quot;package&quot;</span>, getApplicationContext().getPackageName(), <span class="keyword">null</span>);</span><br><span class="line">                intent.setData(uri);</span><br><span class="line">                startActivity(intent);</span><br><span class="line">              &#125;</span><br><span class="line">            &#125;)</span><br><span class="line">            .setNegativeButton(<span class="string">&quot;取消&quot;</span>, <span class="keyword">new</span> DialogInterface.OnClickListener() &#123;</span><br><span class="line">              <span class="meta">@Override</span></span><br><span class="line">              <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(DialogInterface dialog, <span class="keyword">int</span> which)</span> </span>&#123;</span><br><span class="line">                <span class="comment">//引导用户手动授权，权限请求失败</span></span><br><span class="line">                Toast.makeText(MainActivity.<span class="keyword">this</span>, <span class="string">&quot;引导授权失败:&quot;</span> + permission, Toast.LENGTH_LONG).show();</span><br><span class="line">              &#125;</span><br><span class="line">            &#125;).setOnCancelListener(<span class="keyword">new</span> DialogInterface.OnCancelListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCancel</span><span class="params">(DialogInterface dialog)</span> </span>&#123;</span><br><span class="line">              <span class="comment">//引导用户手动授权，权限请求失败</span></span><br><span class="line">              Toast.makeText(MainActivity.<span class="keyword">this</span>, <span class="string">&quot;引导授权失败:&quot;</span> + permission, Toast.LENGTH_LONG).show();</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;).show();</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里需要注意的是，官方文档说第一申请权限的时候不会有”禁止后不再询问”的复选框，但是在很多国内rom上第一次就会有这个提示。当用户勾选了”禁止后不再询问”，这时候我们申请权限会立刻调用<code>onRequestPermissionsResult</code>方法，并且<code>shouldShowRequestPermissionRationale</code>返回false。这时候我们需要引导用户到设置界面开启权限。</p>
+</li>
+</ol>
+<h4 id="快捷方式-ShortCutActivity"><a href="#快捷方式-ShortCutActivity" class="headerlink" title="快捷方式(ShortCutActivity)"></a>快捷方式(ShortCutActivity)</h4><p>Android 7.1之后提供了快捷方式的API，在长按应用图标后会弹出定义的快捷方式(个数有限)。但在国产rom中有可能会把这个功能干掉。</p>
+<p>快捷方式有分为动态注册和静态注册(配置文件)，动态注册的快捷方式可以动态删除，静态注册的快捷方式不可动态删除。</p>
+<ol>
+<li><p>静态注册</p>
+<p>在res文件夹下新建xml文件夹，在其中新建<code>shortcuts.xml</code>,内容如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">shortcuts</span> <span class="attr">xmlns:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">shortcut</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:enabled</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:icon</span>=<span class="string">&quot;@mipmap/ic_launcher_round&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:shortcutDisabledMessage</span>=<span class="string">&quot;@string/permission_deny&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:shortcutId</span>=<span class="string">&quot;camera&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:shortcutLongLabel</span>=<span class="string">&quot;@string/take_photo_or_choose_image&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:shortcutShortLabel</span>=<span class="string">&quot;@string/camera&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">intent</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:action</span>=<span class="string">&quot;android.intent.action.VIEW&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:targetClass</span>=<span class="string">&quot;com.huangyuanlove.adaptationhighversion.TakePhotoOrChoosePhotoActivity&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:targetPackage</span>=<span class="string">&quot;com.huangyuanlove.adaptationhighversion&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">shortcut</span>&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">shortcut</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:enabled</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:icon</span>=<span class="string">&quot;@mipmap/ic_launcher_round&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:shortcutDisabledMessage</span>=<span class="string">&quot;@string/permission_deny&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:shortcutId</span>=<span class="string">&quot;about_file&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:shortcutLongLabel</span>=<span class="string">&quot;@string/file_example&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:shortcutShortLabel</span>=<span class="string">&quot;@string/file&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">intent</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:action</span>=<span class="string">&quot;android.intent.action.VIEW&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:targetClass</span>=<span class="string">&quot;com.huangyuanlove.adaptationhighversion.FileOperationActivity&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:targetPackage</span>=<span class="string">&quot;com.huangyuanlove.adaptationhighversion&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">shortcut</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">shortcut</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:enabled</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:icon</span>=<span class="string">&quot;@mipmap/ic_launcher_round&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:shortcutDisabledMessage</span>=<span class="string">&quot;@string/permission_deny&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:shortcutId</span>=<span class="string">&quot;notification_example&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:shortcutLongLabel</span>=<span class="string">&quot;@string/notification_example&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:shortcutShortLabel</span>=<span class="string">&quot;@string/notification&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">intent</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:action</span>=<span class="string">&quot;android.intent.action.VIEW&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:targetClass</span>=<span class="string">&quot;com.huangyuanlove.adaptationhighversion.NotificationActivity&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:targetPackage</span>=<span class="string">&quot;com.huangyuanlove.adaptationhighversion&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">shortcut</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">shortcut</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:enabled</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:icon</span>=<span class="string">&quot;@mipmap/ic_launcher_round&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:shortcutDisabledMessage</span>=<span class="string">&quot;@string/permission_deny&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:shortcutId</span>=<span class="string">&quot;saf_example&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:shortcutLongLabel</span>=<span class="string">&quot;@string/saf_example&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:shortcutShortLabel</span>=<span class="string">&quot;@string/saf&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">intent</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:action</span>=<span class="string">&quot;android.intent.action.VIEW&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:targetClass</span>=<span class="string">&quot;com.huangyuanlove.adaptationhighversion.SAFActivity&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:targetPackage</span>=<span class="string">&quot;com.huangyuanlove.adaptationhighversion&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">shortcut</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">shortcuts</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里需要注意的是<code>shortcutDisabledMessage</code>、<code>shortcutLongLabel</code>、<code>shortcutShortLabel</code>属性值只能使用引用，不能直接硬编码。<code>shortcutLongLabel</code>是在长按图标时弹出的快捷方式名称，<code>shortcutShortLabel</code>是讲该快捷方式拖放到桌面后显示的名称。<code>shortcutId</code>是该快捷方式的唯一标识符。</p>
+<p>然后在<code>AndroidManifest.xml</code>文件中配置一下，找到一个Activity，其<code>intent-filter</code>被设置为<code>android.intent.action.MAIN</code>和<code>android.intent.category.LAUNCHER</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">&quot;.MainActivity&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.action.MAIN&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.action.VIEW&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.category.LAUNCHER&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta-data</span></span></span><br><span class="line"><span class="tag">             <span class="attr">android:name</span>=<span class="string">&quot;android.app.shortcuts&quot;</span></span></span><br><span class="line"><span class="tag">             <span class="attr">android:resource</span>=<span class="string">&quot;@xml/shortcuts&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>动态注册</p>
+</li>
+</ol>
+<p>算了，看代码吧</p>
+<p>添加新的快捷方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addShortcut</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.N_MR1) &#123;</span><br><span class="line">            ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);</span><br><span class="line">            Intent intent = <span class="keyword">new</span> Intent(ShortCutActivity.<span class="keyword">this</span>,ShortCutActivity.class);</span><br><span class="line">            intent.setAction(Intent.ACTION_VIEW);</span><br><span class="line">            ShortcutInfo shortcut = <span class="keyword">new</span> ShortcutInfo.Builder(ShortCutActivity.<span class="keyword">this</span>, <span class="string">&quot;shortcut&quot;</span>)</span><br><span class="line">                    .setIcon(Icon.createWithResource(<span class="keyword">this</span>, R.mipmap.ic_launcher))</span><br><span class="line">                    .setShortLabel( getString( R.string.shortcut))</span><br><span class="line">                    .setLongLabel(getString(R.string.shortcut_example))</span><br><span class="line">                    .setIntent(intent)</span><br><span class="line">                    .build();</span><br><span class="line">            shortcutManager.addDynamicShortcuts(Arrays.asList( <span class="keyword">new</span> ShortcutInfo[]&#123; shortcut&#125;));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>更新快捷方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">updateShortcut</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.N_MR1) &#123;</span><br><span class="line">            ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);</span><br><span class="line">            Intent intent = <span class="keyword">new</span> Intent(ShortCutActivity.<span class="keyword">this</span>,ShortCutActivity.class);</span><br><span class="line">            intent.setAction(Intent.ACTION_VIEW);</span><br><span class="line">            ShortcutInfo shortcut = <span class="keyword">new</span> ShortcutInfo.Builder(ShortCutActivity.<span class="keyword">this</span>, <span class="string">&quot;shortcut&quot;</span>)</span><br><span class="line">                    .setIcon(Icon.createWithResource(<span class="keyword">this</span>, R.mipmap.ic_launcher))</span><br><span class="line">                    .setShortLabel( getString( R.string.shortcut) +<span class="string">&quot;new&quot;</span>)</span><br><span class="line">                    .setLongLabel(getString(R.string.shortcut_example) +<span class="string">&quot;new&quot;</span>)</span><br><span class="line">                    .setIntent(intent)</span><br><span class="line">                    .build();</span><br><span class="line">            shortcutManager.updateShortcuts(Arrays.asList( <span class="keyword">new</span> ShortcutInfo[]&#123; shortcut&#125;));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>删除快捷方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">removeShortcut</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.N_MR1) &#123;</span><br><span class="line">            ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);</span><br><span class="line"></span><br><span class="line">            <span class="comment">//动态添加并且在桌面创建了快捷方式，删除之前，先disable一下.  或者判断</span></span><br><span class="line">            List&lt;ShortcutInfo&gt; shortcutInfos = shortcutManager.getPinnedShortcuts();</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">for</span>(ShortcutInfo si : shortcutInfos)&#123;</span><br><span class="line">                <span class="keyword">if</span>(si.getId().equals(<span class="string">&quot;shortcut&quot;</span>))&#123;</span><br><span class="line">                    shortcutManager.disableShortcuts(Arrays.asList(<span class="keyword">new</span> String[]&#123;<span class="string">&quot;shortcut&quot;</span>&#125;));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            shortcutManager.removeDynamicShortcuts(Arrays.asList(<span class="keyword">new</span> String[]&#123;<span class="string">&quot;shortcut&quot;</span>&#125;));</span><br><span class="line"></span><br><span class="line">            Toast.makeText(ShortCutActivity.<span class="keyword">this</span>,<span class="string">&quot;共&quot;</span> + shortcutInfos.size() +<span class="string">&quot;个桌面快捷方式&quot;</span>,Toast.LENGTH_SHORT).show();</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>被添加到桌面的快捷方式无法删除(可以从长按菜单中删除，但是桌面上图标无法删除，依然有效)，所以我们需要先查询一个桌面快捷方式有没有我们要删除的，如果有，先设置为不可以，由用户手动删除。设置为不可用时可以添加点击提示语(disableShortcuts的重载方法)</p>
+<p>持续更新</p>
+<hr>
+<p>以上</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/wechatpay.png" alt="HuangYuan_xuan 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/alipay.png" alt="HuangYuan_xuan 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/03/13/flutter-Android%E6%B7%B7%E7%BC%96%E5%8F%8A%E4%BA%92%E7%9B%B8%E8%B0%83%E7%94%A8/" rel="prev" title="flutter-Android混编及互相调用">
+      <i class="fa fa-chevron-left"></i> flutter-Android混编及互相调用
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/04/18/flutter%E6%80%A7%E8%83%BD%E7%93%B6%E9%A2%88/" rel="next" title="flutter性能瓶颈">
+      flutter性能瓶颈 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C-FileOperationActivity"><span class="nav-number">1.</span> <span class="nav-text">文件操作(FileOperationActivity)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%8D%E7%85%A7%E3%80%81%E9%80%89%E6%8B%A9%E5%9B%BE%E7%89%87-TakePhotoOrChoosePhotoActivity"><span class="nav-number">2.</span> <span class="nav-text">拍照、选择图片(TakePhotoOrChoosePhotoActivity)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E8%AE%BF%E9%97%AE%E6%A1%86%E6%9E%B6-SAFActivity"><span class="nav-number">3.</span> <span class="nav-text">存储访问框架(SAFActivity)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E7%9F%A5%E7%AE%A1%E7%90%86-NotificationActivity"><span class="nav-number">4.</span> <span class="nav-text">通知管理(NotificationActivity)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E7%94%B3%E8%AF%B7-MainActivity"><span class="nav-number">5.</span> <span class="nav-text">权限申请(MainActivity)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BF%AB%E6%8D%B7%E6%96%B9%E5%BC%8F-ShortCutActivity"><span class="nav-number">6.</span> <span class="nav-text">快捷方式(ShortCutActivity)</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HuangYuan_xuan"
+      src="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+  <p class="site-author-name" itemprop="name">HuangYuan_xuan</p>
+  <div class="site-description" itemprop="description">锱铢必较间接性奋发图强，睚眦必报持续性混吃等死</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/huangyuanlove" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;huangyuanlove" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:huangyuan@huangyuanlove.com" title="E-Mail → mailto:huangyuan@huangyuanlove.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HuangYuan_xuan</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">278k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">4:13</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+  <script>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 30648,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '76c9d0ecf028751aa0d2',
+      clientSecret: '392bc0405dfbdf4928343edef0ef46007f02c7e4',
+      repo        : 'github.com/huangyuanlove/hexo_back',
+      owner       : 'huangyuanlove',
+      admin       : ['huangyuanlove'],
+      id          : '22d911298f46725d5c4bcd18f0c0a57b',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

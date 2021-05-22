@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"LO7AODH922","apiKey":"eef0d8a75f8bcbfe584416f372bf56e7","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="InheritedWidget是Flutter中非常重要的一个功能型Widget，它可以高效的将数据在Widget树中向下传递(只能向下传递，无法向上传递，如果需要向上传递可以使用Notification)、共享，这在一些需要在Widget树中共享数据的场景中非常方便，如Flutter中，正是通过InheritedWidget来共享应用主题(Theme)和Locale(当前语言环境)信息的。这里建">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flutter InheritedWidget和Notification">
+<meta property="og:url" content="http://blog.huangyuanlove.com/2019/07/08/Flutter-InheritedWidget%E5%92%8CNotification/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="InheritedWidget是Flutter中非常重要的一个功能型Widget，它可以高效的将数据在Widget树中向下传递(只能向下传递，无法向上传递，如果需要向上传递可以使用Notification)、共享，这在一些需要在Widget树中共享数据的场景中非常方便，如Flutter中，正是通过InheritedWidget来共享应用主题(Theme)和Locale(当前语言环境)信息的。这里建">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-08T06:14:06.000Z">
+<meta property="article:modified_time" content="2020-11-26T04:10:08.506Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Flutter">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.huangyuanlove.com/2019/07/08/Flutter-InheritedWidget%E5%92%8CNotification/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Flutter InheritedWidget和Notification | 放码过来</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123314537-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-123314537-1');
+      }
+    </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?98796e1ecbcbaac6a6d9d3fea85985ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">放码过来</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">技术宅 huangyuan@huangyuanlove.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/huangyuanlove" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2019/07/08/Flutter-InheritedWidget%E5%92%8CNotification/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+      <meta itemprop="name" content="HuangYuan_xuan">
+      <meta itemprop="description" content="锱铢必较间接性奋发图强，睚眦必报持续性混吃等死">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="放码过来">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Flutter InheritedWidget和Notification<a href="https://github.com/huangyuanlove/hexo_back/tree/master/source/_posts/Flutter-InheritedWidget%E5%92%8CNotification.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil-alt"></i></a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019年07月08日 14:14:06" itemprop="dateCreated datePublished" datetime="2019-07-08T14:14:06+08:00">2019年07月08日</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020年11月26日 12:10:08" itemprop="dateModified" datetime="2020-11-26T12:10:08+08:00">2020年11月26日</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>InheritedWidget是Flutter中非常重要的一个功能型Widget，它可以高效的将数据在Widget树中向下传递(只能向下传递，无法向上传递，如果需要向上传递可以使用Notification)、共享，这在一些需要在Widget树中共享数据的场景中非常方便，如Flutter中，正是通过InheritedWidget来共享应用主题(Theme)和Locale(当前语言环境)信息的。这里建议阅读以下<code>theme.dart</code>的源码</p>
+<span id="more"></span>
+
+<p>现在有一需求，从A界面打开B界面，在B界面对数据进行修改，返回A界面的时候，A界面显示的数据也是修改之后的。</p>
+<p>两种方式：第一种我们可以在B界面修改数据之后做持久化存储，或者修改的数据做成全局静态字段，返回A界面后由A界面刷新</p>
+<p>第二种就是使用InheritedWidget进行数据共享实现。</p>
+<h3 id="InheritedWidget"><a href="#InheritedWidget" class="headerlink" title="InheritedWidget"></a>InheritedWidget</h3><h4 id="创建数据model和共享Widget"><a href="#创建数据model和共享Widget" class="headerlink" title="创建数据model和共享Widget"></a>创建数据model和共享Widget</h4><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">InheritedTestModel</span> </span>&#123;</span><br><span class="line">  <span class="built_in">String</span> name;</span><br><span class="line">  <span class="built_in">int</span> age;</span><br><span class="line">  <span class="built_in">String</span> sex;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="继承InheritedWidget来共享数据"><a href="#继承InheritedWidget来共享数据" class="headerlink" title="继承InheritedWidget来共享数据"></a>继承InheritedWidget来共享数据</h4><p>这里我们需要继承<code>InheritedWidget</code>，并且声明一个静态方法，用来从BuildContext中获取共享数据。</p>
+<p>还需要重写updateShouldNotify方法，如果返回true，则子树中依赖(build函数中有调用)本widget的子widget的<code>state.didChangeDependencies</code>会被调用。</p>
+<p>下面是详细代码：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">InheritedModelContext</span> <span class="keyword">extends</span> <span class="title">InheritedWidget</span> </span>&#123;</span><br><span class="line">  <span class="keyword">final</span> InheritedTestModel model;</span><br><span class="line"></span><br><span class="line">  InheritedModelContext(&#123;Key key, <span class="meta">@required</span> <span class="keyword">this</span>.model, <span class="meta">@required</span> Widget child&#125;)</span><br><span class="line">      : <span class="keyword">super</span>(key: key, child: child);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> InheritedModelContext of(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> context.inheritFromWidgetOfExactType(InheritedModelContext);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="built_in">bool</span> updateShouldNotify(InheritedModelContext oldWidget) &#123;</span><br><span class="line">    <span class="keyword">return</span> model.age != oldWidget.model.age ||</span><br><span class="line">        model.name != oldWidget.model.name ||</span><br><span class="line">        model.sex != oldWidget.model.sex;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一个约定俗成的 <code>of</code>方法用来让子树获取到共享数据。至于为什么可以获取的数据，</p>
+<blockquote>
+<p>在 <code>Element</code> 的内部有一个 <code>Map&lt;Type, InheritedElement&gt; _inheritedWidgets;</code> 参数，**_inheritedWidgets 一般情况下是空的，只有当父控件是 InheritedWidget 或者本身是 InheritedWidgets 时，它才会有被初始化，而当父控件是 InheritedWidget  时，这个 Map 会被一级一级往下传递与合并。**</p>
+<p>所以当我们通过 <code>context</code> 调用 <code>inheritFromWidgetOfExactType</code> 时，就可以通过这个 <code>Map</code>  往上查找，从而找到这个上级的 <code>InheritedWidget</code> 。</p>
+<p>作者：恋猫de小郭链接：<a target="_blank" rel="noopener" href="https://juejin.im/post/5d0634c7f265da1b91639232%E6%9D%A5%E6%BA%90%EF%BC%9A%E6%8E%98%E9%87%91%E8%91%97%E4%BD%9C%E6%9D%83%E5%BD%92%E4%BD%9C%E8%80%85%E6%89%80%E6%9C%89%E3%80%82%E5%95%86%E4%B8%9A%E8%BD%AC%E8%BD%BD%E8%AF%B7%E8%81%94%E7%B3%BB%E4%BD%9C%E8%80%85%E8%8E%B7%E5%BE%97%E6%8E%88%E6%9D%83%EF%BC%8C%E9%9D%9E%E5%95%86%E4%B8%9A%E8%BD%AC%E8%BD%BD%E8%AF%B7%E6%B3%A8%E6%98%8E%E5%87%BA%E5%A4%84%E3%80%82">https://juejin.im/post/5d0634c7f265da1b91639232来源：掘金著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</a></p>
+</blockquote>
+<h4 id="在A界面创建数据，并共享到下一个界面"><a href="#在A界面创建数据，并共享到下一个界面" class="headerlink" title="在A界面创建数据，并共享到下一个界面"></a>在A界面创建数据，并共享到下一个界面</h4><p>我们首先在界面A创建一个共享的数据model，显示在界面上，然后通过上面定义的<code>InheritedModelContext</code>共享给下一个界面：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">InheritedWidgetTestRouteState</span> <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">InheritedWidgetTestRoute</span>&gt; </span>&#123;</span><br><span class="line">  InheritedTestModel model;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="keyword">void</span> initState() &#123;</span><br><span class="line">    model = <span class="keyword">new</span> InheritedTestModel();</span><br><span class="line">    model.age = <span class="number">10</span>;</span><br><span class="line">    model.name = <span class="string">&quot;abc&quot;</span>;</span><br><span class="line">    model.sex = <span class="string">&quot;f&quot;</span>;</span><br><span class="line">    <span class="keyword">super</span>.initState();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> Scaffold(</span><br><span class="line">      appBar: AppBar(</span><br><span class="line">        title: Text(<span class="string">&quot;InheritedWidget&quot;</span>),</span><br><span class="line">      ),</span><br><span class="line">      body: Center(</span><br><span class="line">        child: Column(</span><br><span class="line">          children: &lt;Widget&gt;[</span><br><span class="line">            Text(<span class="string">&quot;age: <span class="subst">$&#123;model.age&#125;</span>&quot;</span>),</span><br><span class="line">            Text(<span class="string">&quot;name: <span class="subst">$&#123;model.name&#125;</span>&quot;</span>),</span><br><span class="line">            Text(<span class="string">&quot;sex: <span class="subst">$&#123;model.sex&#125;</span>&quot;</span>),</span><br><span class="line">          ],</span><br><span class="line">        ),</span><br><span class="line">      ),</span><br><span class="line">      floatingActionButton: FloatingActionButton(</span><br><span class="line">        onPressed: () &#123;</span><br><span class="line">          Navigator.of(context).push(MaterialPageRoute(builder: (context)&#123;</span><br><span class="line">          <span class="keyword">return</span>  InheritedModelContext(</span><br><span class="line">            model: model,</span><br><span class="line">            child: InheritedSecondPage(),</span><br><span class="line">          );</span><br><span class="line">          &#125;));</span><br><span class="line">        &#125;,</span><br><span class="line">        child: Icon(Icons.navigate_next),</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="在B界面获取共享数据，并作出修改"><a href="#在B界面获取共享数据，并作出修改" class="headerlink" title="在B界面获取共享数据，并作出修改"></a>在B界面获取共享数据，并作出修改</h4><p>我们在B界面获取到共享数据并展示出来，通过点击按钮，改变共享数据的值，当我们返回上一个界面的时候会发现上个界面的显示也被改变了</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">InheritedSecondPageState</span> <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">InheritedSecondPage</span>&gt; </span>&#123;</span><br><span class="line">  InheritedModelContext modelContext;</span><br><span class="line">  InheritedTestModel model;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">String</span> name = <span class="string">&quot;&quot;</span>;</span><br><span class="line">  <span class="built_in">int</span> age = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">String</span> sex = <span class="string">&quot;&quot;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="keyword">void</span> initState() &#123;</span><br><span class="line">    <span class="keyword">super</span>.initState();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    modelContext = InheritedModelContext.of(context);</span><br><span class="line">    model = modelContext.model;</span><br><span class="line">    <span class="keyword">return</span> Scaffold(</span><br><span class="line">      appBar: AppBar(</span><br><span class="line">        title: Text(<span class="string">&quot;第二页&quot;</span>),</span><br><span class="line">      ),</span><br><span class="line">      body: Center(</span><br><span class="line">        child: Column(</span><br><span class="line">          children: &lt;Widget&gt;[</span><br><span class="line">            Text(<span class="string">&quot;age: <span class="subst">$&#123;model.age&#125;</span>&quot;</span>),</span><br><span class="line">            Text(<span class="string">&quot;name: <span class="subst">$&#123;model.name&#125;</span>&quot;</span>),</span><br><span class="line">            Text(<span class="string">&quot;sex: <span class="subst">$&#123;model.sex&#125;</span>&quot;</span>),</span><br><span class="line">            Column(</span><br><span class="line">              children: &lt;Widget&gt;[</span><br><span class="line">                FlatButton(</span><br><span class="line">                  onPressed: () &#123;</span><br><span class="line">                    setState(() &#123;</span><br><span class="line">                      model.name = <span class="built_in">DateTime</span>.now().toLocal().toString();</span><br><span class="line">                    &#125;);</span><br><span class="line">                  &#125;,</span><br><span class="line">                  child: Text(<span class="string">&quot;改变Name&quot;</span>),</span><br><span class="line">                ),</span><br><span class="line">                FlatButton(</span><br><span class="line">                  onPressed: () &#123;</span><br><span class="line">                    setState(() &#123;</span><br><span class="line">                      model.age = <span class="built_in">DateTime</span>.now().millisecondsSinceEpoch;</span><br><span class="line">                    &#125;);</span><br><span class="line">                  &#125;,</span><br><span class="line">                  child: Text(<span class="string">&quot;改变Age&quot;</span>),</span><br><span class="line">                ),</span><br><span class="line">                FlatButton(</span><br><span class="line">                  onPressed: () &#123;</span><br><span class="line">                    setState(() &#123;</span><br><span class="line">                      model.sex = <span class="built_in">DateTime</span>.now().toString();</span><br><span class="line">                    &#125;);</span><br><span class="line">                  &#125;,</span><br><span class="line">                  child: Text(<span class="string">&quot;改变sex&quot;</span>),</span><br><span class="line">                ),</span><br><span class="line">              ],</span><br><span class="line">            ),</span><br><span class="line">          ],</span><br><span class="line">        ),</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Notification"><a href="#Notification" class="headerlink" title="Notification"></a>Notification</h3><blockquote>
+<p>Notification是Flutter中一个重要的机制，在Widget树中，每一个节点都可以分发通知，通知会沿着当前节点（context）向上传递，所有父节点都可以通过NotificationListener来监听通知，Flutter中称这种通知由子向父的传递为“通知冒泡”（Notification Bubbling），这个和用户触摸事件冒泡是相似的，但有一点不同：通知冒泡可以中止，但用户触摸事件不行。</p>
+<p>源自  ：<a target="_blank" rel="noopener" href="https://book.flutterchina.club/chapter8/notification.html">https://book.flutterchina.club/chapter8/notification.html</a></p>
+</blockquote>
+<h4 id="创建Model、InheritedWidget和上面一致"><a href="#创建Model、InheritedWidget和上面一致" class="headerlink" title="创建Model、InheritedWidget和上面一致"></a>创建Model、InheritedWidget和上面一致</h4><h4 id="定义Notification"><a href="#定义Notification" class="headerlink" title="定义Notification"></a>定义Notification</h4><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyNotification</span> <span class="keyword">extends</span> <span class="title">Notification</span></span>&#123;</span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">String</span> msg;</span><br><span class="line">  MyNotification(<span class="keyword">this</span>.msg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="定义两个Widget，放在同一个界面中"><a href="#定义两个Widget，放在同一个界面中" class="headerlink" title="定义两个Widget，放在同一个界面中"></a>定义两个Widget，放在同一个界面中</h4><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WidgetA</span> <span class="keyword">extends</span> <span class="title">StatefulWidget</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  State&lt;StatefulWidget&gt; createState() &#123;</span><br><span class="line">    <span class="keyword">return</span> WidgetAState();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WidgetAState</span> <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">WidgetA</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="keyword">void</span> initState() &#123;</span><br><span class="line">    <span class="keyword">super</span>.initState();</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">final</span> InheritedContext inheritedContext = InheritedContext.of(context);</span><br><span class="line">    <span class="keyword">final</span> SinglePageModel model = inheritedContext.model;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;WidgetA build&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> Center(</span><br><span class="line">      child: Column(</span><br><span class="line">        children: &lt;Widget&gt;[</span><br><span class="line">          Text(<span class="string">&quot;当前页<span class="subst">$&#123;model.page&#125;</span>&quot;</span>),</span><br><span class="line">          Text(<span class="string">&quot;内容：<span class="subst">$&#123;model.content&#125;</span>&quot;</span>),</span><br><span class="line">          FlatButton(</span><br><span class="line">            onPressed: () &#123;</span><br><span class="line">              <span class="keyword">if</span>(model.page==<span class="keyword">null</span>)&#123;</span><br><span class="line">                model.page = <span class="number">1</span>;</span><br><span class="line">              &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                model.page += <span class="number">1</span>;</span><br><span class="line">              &#125;</span><br><span class="line">              MyNotification(<span class="string">&quot;refresh&quot;</span>).dispatch(context);</span><br><span class="line">              setState(() &#123;</span><br><span class="line"></span><br><span class="line">              &#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            &#125;,</span><br><span class="line">            child: Icon(Icons.add),</span><br><span class="line">          ),</span><br><span class="line">          FlatButton(</span><br><span class="line">            onPressed: () &#123;</span><br><span class="line">              model.content = <span class="built_in">DateTime</span>.now().toLocal().toString();</span><br><span class="line">              <span class="comment">//发送通知</span></span><br><span class="line">              MyNotification(<span class="string">&quot;refresh&quot;</span>).dispatch(context);</span><br><span class="line">              setState(() &#123;</span><br><span class="line"></span><br><span class="line">              &#125;);</span><br><span class="line">            &#125;,</span><br><span class="line">            child: Text(<span class="string">&quot;改变content&quot;</span>),</span><br><span class="line">          ),</span><br><span class="line">        ],</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建界面并且监听自定义的通知"><a href="#创建界面并且监听自定义的通知" class="headerlink" title="创建界面并且监听自定义的通知"></a>创建界面并且监听自定义的通知</h4><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">InheritedWidgetInSinglePage</span> <span class="keyword">extends</span> <span class="title">StatefulWidget</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  State&lt;StatefulWidget&gt; createState() &#123;</span><br><span class="line">    <span class="keyword">return</span> InheritedWidgetInSinglePageState();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">InheritedWidgetInSinglePageState</span></span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">State</span>&lt;<span class="title">InheritedWidgetInSinglePage</span>&gt; </span>&#123;</span><br><span class="line">  SinglePageModel model = SinglePageModel();</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> Scaffold(</span><br><span class="line">      appBar: AppBar(</span><br><span class="line">        title: Text(<span class="string">&quot;同一页面共享数据&quot;</span>),</span><br><span class="line">      ),</span><br><span class="line">      body: NotificationListener&lt;MyNotification&gt;(</span><br><span class="line">      <span class="comment">//监听通知</span></span><br><span class="line">        onNotification: (notification) &#123;</span><br><span class="line">          setState(() &#123;&#125;);</span><br><span class="line">        &#125;,</span><br><span class="line">        child: InheritedContext(</span><br><span class="line">          model: model,</span><br><span class="line">          child: Column(</span><br><span class="line">            children: &lt;Widget&gt;[</span><br><span class="line">              Text(<span class="string">&quot;page:<span class="subst">$&#123;model.page&#125;</span>&quot;</span>),</span><br><span class="line">              Text(<span class="string">&quot;content:<span class="subst">$&#123;model.content&#125;</span>&quot;</span>),</span><br><span class="line">              FlatButton(</span><br><span class="line">                onPressed: () &#123;</span><br><span class="line">                  <span class="keyword">if</span> (model.page == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    model.page = <span class="number">1</span>;</span><br><span class="line">                  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    model.page += <span class="number">1</span>;</span><br><span class="line">                  &#125;</span><br><span class="line">                  setState(() &#123;&#125;);</span><br><span class="line">                &#125;,</span><br><span class="line">                child: Icon(Icons.add),</span><br><span class="line">              ),</span><br><span class="line">              WidgetA(),</span><br><span class="line">              WidgetB(),</span><br><span class="line">            ],</span><br><span class="line">          ),</span><br><span class="line">        ),</span><br><span class="line">      ),</span><br><span class="line">      floatingActionButton: FloatingActionButton(</span><br><span class="line">        onPressed: () &#123;</span><br><span class="line">          Navigator.of(context).push(MaterialPageRoute(builder: (context) &#123;</span><br><span class="line">            <span class="keyword">return</span> InheritedContext(</span><br><span class="line">              model: model,</span><br><span class="line">              child: SecondPageWidget(),</span><br><span class="line">            );</span><br><span class="line">          &#125;));</span><br><span class="line">        &#125;,</span><br><span class="line">        child: Icon(Icons.navigate_next),</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的<code>SecondPageWidget</code>和上面提到的B界面差不多，都是获取到共享数据后展示，点击按钮做出改变。</p>
+<hr>
+<p>以上</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/wechatpay.png" alt="HuangYuan_xuan 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/alipay.png" alt="HuangYuan_xuan 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Flutter/" rel="tag"># Flutter</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/07/01/Flutter%E4%B8%AD%E7%9A%84provider/" rel="prev" title="Flutter中的provider">
+      <i class="fa fa-chevron-left"></i> Flutter中的provider
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/08/03/%E6%A0%91%E8%8E%93%E6%B4%BE%E5%AE%89%E8%A3%85owncloud/" rel="next" title="树莓派安装owncloud">
+      树莓派安装owncloud <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#InheritedWidget"><span class="nav-number">1.</span> <span class="nav-text">InheritedWidget</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AEmodel%E5%92%8C%E5%85%B1%E4%BA%ABWidget"><span class="nav-number">1.1.</span> <span class="nav-text">创建数据model和共享Widget</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%A7%E6%89%BFInheritedWidget%E6%9D%A5%E5%85%B1%E4%BA%AB%E6%95%B0%E6%8D%AE"><span class="nav-number">1.2.</span> <span class="nav-text">继承InheritedWidget来共享数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8A%E7%95%8C%E9%9D%A2%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%EF%BC%8C%E5%B9%B6%E5%85%B1%E4%BA%AB%E5%88%B0%E4%B8%8B%E4%B8%80%E4%B8%AA%E7%95%8C%E9%9D%A2"><span class="nav-number">1.3.</span> <span class="nav-text">在A界面创建数据，并共享到下一个界面</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8B%E7%95%8C%E9%9D%A2%E8%8E%B7%E5%8F%96%E5%85%B1%E4%BA%AB%E6%95%B0%E6%8D%AE%EF%BC%8C%E5%B9%B6%E4%BD%9C%E5%87%BA%E4%BF%AE%E6%94%B9"><span class="nav-number">1.4.</span> <span class="nav-text">在B界面获取共享数据，并作出修改</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Notification"><span class="nav-number">2.</span> <span class="nav-text">Notification</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAModel%E3%80%81InheritedWidget%E5%92%8C%E4%B8%8A%E9%9D%A2%E4%B8%80%E8%87%B4"><span class="nav-number">2.1.</span> <span class="nav-text">创建Model、InheritedWidget和上面一致</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89Notification"><span class="nav-number">2.2.</span> <span class="nav-text">定义Notification</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E4%B8%A4%E4%B8%AAWidget%EF%BC%8C%E6%94%BE%E5%9C%A8%E5%90%8C%E4%B8%80%E4%B8%AA%E7%95%8C%E9%9D%A2%E4%B8%AD"><span class="nav-number">2.3.</span> <span class="nav-text">定义两个Widget，放在同一个界面中</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%95%8C%E9%9D%A2%E5%B9%B6%E4%B8%94%E7%9B%91%E5%90%AC%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84%E9%80%9A%E7%9F%A5"><span class="nav-number">2.4.</span> <span class="nav-text">创建界面并且监听自定义的通知</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HuangYuan_xuan"
+      src="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+  <p class="site-author-name" itemprop="name">HuangYuan_xuan</p>
+  <div class="site-description" itemprop="description">锱铢必较间接性奋发图强，睚眦必报持续性混吃等死</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/huangyuanlove" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;huangyuanlove" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:huangyuan@huangyuanlove.com" title="E-Mail → mailto:huangyuan@huangyuanlove.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HuangYuan_xuan</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">278k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">4:13</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+  <script>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 30648,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '76c9d0ecf028751aa0d2',
+      clientSecret: '392bc0405dfbdf4928343edef0ef46007f02c7e4',
+      repo        : 'github.com/huangyuanlove/hexo_back',
+      owner       : 'huangyuanlove',
+      admin       : ['huangyuanlove'],
+      id          : '0ed81e050639816e8d1c192f6d0dd805',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

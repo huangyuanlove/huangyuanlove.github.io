@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"LO7AODH922","apiKey":"eef0d8a75f8bcbfe584416f372bf56e7","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="该系列介绍自定义注解，完成如下功能。   @BindView 代替  findViewById   @ClickResponder 代替 setOnClickListener  @LongClickResponder 代替 setOnLongClickListener  @IntentValue 代替 getIntent().getXXX  @UriValue 代替 getQueryParamet">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自定义注解，打造自己的框架 (中篇)">
+<meta property="og:url" content="http://blog.huangyuanlove.com/2019/12/01/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3%EF%BC%8C%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%A1%86%E6%9E%B6-%E4%B8%AD%E7%AF%87/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="该系列介绍自定义注解，完成如下功能。   @BindView 代替  findViewById   @ClickResponder 代替 setOnClickListener  @LongClickResponder 代替 setOnLongClickListener  @IntentValue 代替 getIntent().getXXX  @UriValue 代替 getQueryParamet">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-12-01T09:42:27.000Z">
+<meta property="article:modified_time" content="2020-11-26T04:10:08.537Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://blog.huangyuanlove.com/2019/12/01/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3%EF%BC%8C%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%A1%86%E6%9E%B6-%E4%B8%AD%E7%AF%87/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>自定义注解，打造自己的框架 (中篇) | 放码过来</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123314537-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-123314537-1');
+      }
+    </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?98796e1ecbcbaac6a6d9d3fea85985ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">放码过来</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">技术宅 huangyuan@huangyuanlove.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/huangyuanlove" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2019/12/01/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3%EF%BC%8C%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%A1%86%E6%9E%B6-%E4%B8%AD%E7%AF%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+      <meta itemprop="name" content="HuangYuan_xuan">
+      <meta itemprop="description" content="锱铢必较间接性奋发图强，睚眦必报持续性混吃等死">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="放码过来">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          自定义注解，打造自己的框架 (中篇)<a href="https://github.com/huangyuanlove/hexo_back/tree/master/source/_posts/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3%EF%BC%8C%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%A1%86%E6%9E%B6-%E4%B8%AD%E7%AF%87.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil-alt"></i></a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019年12月01日 17:42:27" itemprop="dateCreated datePublished" datetime="2019-12-01T17:42:27+08:00">2019年12月01日</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020年11月26日 12:10:08" itemprop="dateModified" datetime="2020-11-26T12:10:08+08:00">2020年11月26日</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>484</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>该系列介绍自定义注解，完成如下功能。</p>
+<ul>
+<li><input disabled="" type="checkbox"> @BindView 代替  findViewById </li>
+<li><input disabled="" type="checkbox"> @ClickResponder 代替 setOnClickListener</li>
+<li><input disabled="" type="checkbox"> @LongClickResponder 代替 setOnLongClickListener</li>
+<li><input disabled="" type="checkbox"> @IntentValue 代替 getIntent().getXXX</li>
+<li><input disabled="" type="checkbox"> @UriValue 代替 getQueryParameter</li>
+<li><input disabled="" type="checkbox"> @BroadcastResponder 代替 registerReceiver</li>
+<li><input disabled="" type="checkbox"> @RouterModule、@RouterPath 来进行反依赖传递调用<br>该系列源码在<a target="_blank" rel="noopener" href="https://github.com/huangyuanlove/AndroidAnnotation">https://github.com/huangyuanlove/AndroidAnnotation</a><br>使用编译时注解，生成辅助类来完成这些操作，尽量少的使用的反射功能。</li>
+</ul>
+<p><strong>本章先介绍   <a target="_blank" rel="noopener" href="https://github.com/square/javapoet">javapoet </a> 和一丢丢反射相关的东西</strong></p>
+<span id="more"></span>
+
+<h4 id="javapoet"><a href="#javapoet" class="headerlink" title="javapoet"></a>javapoet</h4><p>用来辅助生成java代码的库，<a target="_blank" rel="noopener" href="https://github.com/square/javapoet">可以看这里</a>，有特别详细的示例。大致过了一遍，如下所示</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestJavaPoet</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        TypeSpec clazz = clazz(builtinTypeField(),          <span class="comment">// int</span></span><br><span class="line">                arrayTypeField(),            <span class="comment">// int[]</span></span><br><span class="line">                refTypeField(),              <span class="comment">// File</span></span><br><span class="line">                typeField(),                 <span class="comment">// T</span></span><br><span class="line">                parameterizedTypeField(),    <span class="comment">// List&lt;String&gt;</span></span><br><span class="line">                wildcardTypeField(),         <span class="comment">// List&lt;? extends String&gt;</span></span><br><span class="line">                constructor(),               <span class="comment">// 构造函数</span></span><br><span class="line">                method(code()));             <span class="comment">// 普通方法</span></span><br><span class="line">        JavaFile javaFile = JavaFile.builder(<span class="string">&quot;com.huangyuanlove.view_inject_compiler.test&quot;</span>, clazz).build();</span><br><span class="line"></span><br><span class="line">        System.out.println(javaFile.toString());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * `public abstract class Clazz&lt;T&gt; extends String implements Serializable, Comparable&lt;String&gt;, Comparable&lt;? extends String&gt; &#123;</span></span><br><span class="line"><span class="comment">     * ...</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> TypeSpec <span class="title">clazz</span><span class="params">(FieldSpec builtinTypeField, FieldSpec arrayTypeField, FieldSpec refTypeField,</span></span></span><br><span class="line"><span class="params"><span class="function">                                 FieldSpec typeField, FieldSpec parameterizedTypeField, FieldSpec wildcardTypeField,</span></span></span><br><span class="line"><span class="params"><span class="function">                                 MethodSpec constructor, MethodSpec methodSpec)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> TypeSpec.classBuilder(<span class="string">&quot;Clazz&quot;</span>)</span><br><span class="line">                <span class="comment">// 限定符</span></span><br><span class="line">                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)</span><br><span class="line">                <span class="comment">// 泛型</span></span><br><span class="line">                .addTypeVariable(TypeVariableName.get(<span class="string">&quot;T&quot;</span>))</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 继承与接口</span></span><br><span class="line">                .superclass(String.class)</span><br><span class="line">                .addSuperinterface(Serializable.class)</span><br><span class="line">                .addSuperinterface(ParameterizedTypeName.get(Comparable.class, String.class))</span><br><span class="line">                .addSuperinterface(ParameterizedTypeName.get(ClassName.get(Map.class),</span><br><span class="line">                        TypeVariableName.get(<span class="string">&quot;T&quot;</span>),</span><br><span class="line">                        WildcardTypeName.subtypeOf(String.class)))</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 初始化块</span></span><br><span class="line">                .addStaticBlock(CodeBlock.builder().build())</span><br><span class="line">                .addInitializerBlock(CodeBlock.builder().build())</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 属性</span></span><br><span class="line">                .addField(builtinTypeField)</span><br><span class="line">                .addField(arrayTypeField)</span><br><span class="line">                .addField(refTypeField)</span><br><span class="line">                .addField(typeField)</span><br><span class="line">                .addField(parameterizedTypeField)</span><br><span class="line">                .addField(wildcardTypeField)</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 方法 （构造函数也在此定义）</span></span><br><span class="line">                .addMethod(constructor)</span><br><span class="line">                .addMethod(methodSpec)</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 内部类</span></span><br><span class="line">                .addType(TypeSpec.classBuilder(<span class="string">&quot;InnerClass&quot;</span>).build())</span><br><span class="line"></span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 内置类型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> FieldSpec <span class="title">builtinTypeField</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// private int mInt;</span></span><br><span class="line">        <span class="keyword">return</span> FieldSpec.builder(<span class="keyword">int</span>.class, <span class="string">&quot;mInt&quot;</span>, Modifier.PRIVATE).build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 数组类型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> FieldSpec <span class="title">arrayTypeField</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// private int[] mArr;</span></span><br><span class="line">        <span class="keyword">return</span> FieldSpec.builder(<span class="keyword">int</span>[].class, <span class="string">&quot;mArr&quot;</span>, Modifier.PRIVATE).build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 需要导入 import 的类型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> FieldSpec <span class="title">refTypeField</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// private File mRef;</span></span><br><span class="line">        <span class="keyword">return</span> FieldSpec.builder(File.class, <span class="string">&quot;mRef&quot;</span>, Modifier.PRIVATE).build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 泛型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> FieldSpec <span class="title">typeField</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// private File mT;</span></span><br><span class="line">        <span class="keyword">return</span> FieldSpec.builder(TypeVariableName.get(<span class="string">&quot;T&quot;</span>), <span class="string">&quot;mT&quot;</span>, Modifier.PRIVATE).build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 参数化类型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> FieldSpec <span class="title">parameterizedTypeField</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// private List&lt;String&gt; mParameterizedField;</span></span><br><span class="line">        <span class="keyword">return</span> FieldSpec.builder(ParameterizedTypeName.get(List.class, String.class),</span><br><span class="line">                <span class="string">&quot;mParameterizedField&quot;</span>,</span><br><span class="line">                Modifier.PRIVATE)</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 通配符参数化类型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> FieldSpec <span class="title">wildcardTypeField</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// private List&lt;? extends String&gt; mWildcardField;</span></span><br><span class="line">        <span class="keyword">return</span> FieldSpec.builder(ParameterizedTypeName.get(ClassName.get(List.class),</span><br><span class="line">                WildcardTypeName.subtypeOf(String.class)),</span><br><span class="line">                <span class="string">&quot;mWildcardField&quot;</span>,</span><br><span class="line">                Modifier.PRIVATE)</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 构造函数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> MethodSpec <span class="title">constructor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> MethodSpec.constructorBuilder()</span><br><span class="line">                .addModifiers(Modifier.PUBLIC)</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * `<span class="doctag">@Override</span></span></span><br><span class="line"><span class="comment">     * public &lt;T&gt; Integer method(String string, T t, Map&lt;Integer, ? extends T&gt; map) throws IOException, RuntimeException &#123;</span></span><br><span class="line"><span class="comment">     * ...</span></span><br><span class="line"><span class="comment">     * &#125;`</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> MethodSpec <span class="title">method</span><span class="params">(CodeBlock codeBlock)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> MethodSpec.methodBuilder(<span class="string">&quot;method&quot;</span>)</span><br><span class="line">                .addAnnotation(Override.class)</span><br><span class="line">                .addTypeVariable(TypeVariableName.get(<span class="string">&quot;T&quot;</span>))</span><br><span class="line">                .addModifiers(Modifier.PUBLIC)</span><br><span class="line">                .returns(<span class="keyword">int</span>.class)</span><br><span class="line">                .addParameter(String.class, <span class="string">&quot;string&quot;</span>)</span><br><span class="line">                .addParameter(TypeVariableName.get(<span class="string">&quot;T&quot;</span>), <span class="string">&quot;t&quot;</span>)</span><br><span class="line">                .addParameter(ParameterizedTypeName.get(ClassName.get(Map.class),</span><br><span class="line">                        ClassName.get(Integer.class),</span><br><span class="line">                        WildcardTypeName.subtypeOf(TypeVariableName.get(<span class="string">&quot;T&quot;</span>))),</span><br><span class="line">                        <span class="string">&quot;map&quot;</span>)</span><br><span class="line">                .addException(IOException.class)</span><br><span class="line">                .addException(RuntimeException.class)</span><br><span class="line">                .addCode(codeBlock)</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * ‘method’ 方法中的具体语句</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> CodeBlock <span class="title">code</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> CodeBlock.builder()</span><br><span class="line">                .addStatement(<span class="string">&quot;int foo = 1&quot;</span>)</span><br><span class="line">                .addStatement(<span class="string">&quot;$T bar = $S&quot;</span>, String.class, <span class="string">&quot;a string&quot;</span>)</span><br><span class="line"></span><br><span class="line">                <span class="comment">// Object obj = new HashMap&lt;Integer, ? extends T&gt;(5);</span></span><br><span class="line">                .addStatement(<span class="string">&quot;$T obj = new $T(5)&quot;</span>,</span><br><span class="line">                        Object.class, ParameterizedTypeName.get(ClassName.get(HashMap.class),</span><br><span class="line">                                ClassName.get(Integer.class),</span><br><span class="line">                                WildcardTypeName.subtypeOf(TypeVariableName.get(<span class="string">&quot;T&quot;</span>))))</span><br><span class="line"></span><br><span class="line">                <span class="comment">// method(new Runnable(String param) &#123;</span></span><br><span class="line">                <span class="comment">//   @Override</span></span><br><span class="line">                <span class="comment">//   void run() &#123;</span></span><br><span class="line">                <span class="comment">//   &#125;</span></span><br><span class="line">                <span class="comment">// &#125;);</span></span><br><span class="line">                .addStatement(<span class="string">&quot;baz($L)&quot;</span>, TypeSpec.anonymousClassBuilder(<span class="string">&quot;$T param&quot;</span>, String.class)</span><br><span class="line">                        .superclass(Runnable.class)</span><br><span class="line">                        .addMethod(MethodSpec.methodBuilder(<span class="string">&quot;run&quot;</span>)</span><br><span class="line">                                .addAnnotation(Override.class)</span><br><span class="line">                                .returns(TypeName.VOID)</span><br><span class="line">                                .build())</span><br><span class="line">                        .build())</span><br><span class="line"></span><br><span class="line">                <span class="comment">// for</span></span><br><span class="line">                .beginControlFlow(<span class="string">&quot;for (int i = 0; i &lt; 5; i++)&quot;</span>)</span><br><span class="line">                .endControlFlow()</span><br><span class="line"></span><br><span class="line">                <span class="comment">// while</span></span><br><span class="line">                .beginControlFlow(<span class="string">&quot;while (false)&quot;</span>)</span><br><span class="line">                .endControlFlow()</span><br><span class="line"></span><br><span class="line">                <span class="comment">// do... while</span></span><br><span class="line">                .beginControlFlow(<span class="string">&quot;do&quot;</span>)</span><br><span class="line">                .endControlFlow(<span class="string">&quot;while (false)&quot;</span>)</span><br><span class="line"></span><br><span class="line">                <span class="comment">// if... else if... else...</span></span><br><span class="line">                .beginControlFlow(<span class="string">&quot;if (false)&quot;</span>)</span><br><span class="line">                .nextControlFlow(<span class="string">&quot;else if (false)&quot;</span>)</span><br><span class="line">                .nextControlFlow(<span class="string">&quot;else&quot;</span>)</span><br><span class="line">                .endControlFlow()</span><br><span class="line"></span><br><span class="line">                <span class="comment">// try... catch... finally</span></span><br><span class="line">                .beginControlFlow(<span class="string">&quot;try&quot;</span>)</span><br><span class="line">                .nextControlFlow(<span class="string">&quot;catch ($T e)&quot;</span>, Exception.class)</span><br><span class="line">                .addStatement(<span class="string">&quot;e.printStackTrace()&quot;</span>)</span><br><span class="line">                .nextControlFlow(<span class="string">&quot;finally&quot;</span>)</span><br><span class="line">                .endControlFlow()</span><br><span class="line"></span><br><span class="line">                .addStatement(<span class="string">&quot;return 0&quot;</span>)</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这样就省去了我们自己手动评价代码块的麻烦，提高效率，并且也比较容易查错。</p>
+<h4 id="反射"><a href="#反射" class="headerlink" title="反射"></a>反射</h4><p>这玩意说起来可就长了，这里只做示例</p>
+<p>一个Person类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.huangyuanlove;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getAddress</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;getAddress without param&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">getAddress</span><span class="params">(String zipCode)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;getAddress with param:&quot;</span> + zipCode;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Person</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>玩一下反射</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.huangyuanlove;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//如果没有对应类的依赖的话(不能直接import),可以用Class.forName</span></span><br><span class="line">            <span class="comment">//Class personClass = Class.forName(&quot;com.huangyuanlove.Person&quot;);</span></span><br><span class="line">            Class&lt;Person&gt; personClass = Person.class;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//调用私有无参构造方法创建对象</span></span><br><span class="line">            Constructor&lt;Person&gt; personConstructor = personClass.getDeclaredConstructor();</span><br><span class="line">            personConstructor.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">            Person person = personConstructor.newInstance();</span><br><span class="line">            <span class="comment">//反射获取公共方法并调用</span></span><br><span class="line">            Method getAddressWithoutParamMethod = personClass.getMethod(<span class="string">&quot;getAddress&quot;</span>);</span><br><span class="line">            System.out.println( getAddressWithoutParamMethod.invoke(person));</span><br><span class="line"></span><br><span class="line">            <span class="comment">//反射获取私有方法并调用</span></span><br><span class="line">            Method getAddressMethod = personClass.getDeclaredMethod(<span class="string">&quot;getAddress&quot;</span>, String.class);</span><br><span class="line">            getAddressMethod.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">            System.out.println(getAddressMethod.invoke(person, <span class="string">&quot;zipCode&quot;</span>));</span><br><span class="line"></span><br><span class="line">            <span class="comment">//反射获取私有字段并赋值</span></span><br><span class="line">            Field ageField =  personClass.getDeclaredField(<span class="string">&quot;age&quot;</span>);</span><br><span class="line">            ageField.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">            ageField.set(person,<span class="number">11</span>);</span><br><span class="line">            System.out.println(person.getAge());</span><br><span class="line"></span><br><span class="line">            <span class="comment">//反射获取私有静态方法并调用</span></span><br><span class="line">            Method sayHiMethod = personClass.getDeclaredMethod(<span class="string">&quot;saySomething&quot;</span>,String.class);</span><br><span class="line">            sayHiMethod.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">            sayHiMethod.invoke(<span class="keyword">null</span>,<span class="string">&quot;reflect&quot;</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>以上</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/wechatpay.png" alt="HuangYuan_xuan 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/alipay.png" alt="HuangYuan_xuan 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/11/23/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3-%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%A1%86%E6%9E%B6-%E4%B8%8A%E7%AF%87/" rel="prev" title="自定义注解,打造自己的框架(上篇)">
+      <i class="fa fa-chevron-left"></i> 自定义注解,打造自己的框架(上篇)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/12/04/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3%EF%BC%8C%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%A1%86%E6%9E%B6-%E4%B8%8B%E7%AF%87/" rel="next" title="自定义注解，打造自己的框架-下篇">
+      自定义注解，打造自己的框架-下篇 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#javapoet"><span class="nav-number">1.</span> <span class="nav-text">javapoet</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84"><span class="nav-number">2.</span> <span class="nav-text">反射</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HuangYuan_xuan"
+      src="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+  <p class="site-author-name" itemprop="name">HuangYuan_xuan</p>
+  <div class="site-description" itemprop="description">锱铢必较间接性奋发图强，睚眦必报持续性混吃等死</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/huangyuanlove" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;huangyuanlove" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:huangyuan@huangyuanlove.com" title="E-Mail → mailto:huangyuan@huangyuanlove.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HuangYuan_xuan</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">278k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">4:13</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+  <script>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 30648,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '76c9d0ecf028751aa0d2',
+      clientSecret: '392bc0405dfbdf4928343edef0ef46007f02c7e4',
+      repo        : 'github.com/huangyuanlove/hexo_back',
+      owner       : 'huangyuanlove',
+      admin       : ['huangyuanlove'],
+      id          : '7b3f1fe192d2d4eaa4ba712a6d7ab8b2',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

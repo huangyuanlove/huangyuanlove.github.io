@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"LO7AODH922","apiKey":"eef0d8a75f8bcbfe584416f372bf56e7","indexName":"blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="groovy 语法入门gradle 基础gradle 任务gradle 插件gradle-java 插件gradle-android 插件 前面简单的写了点关于gradle的以及gradle插件的东西,现在我们来看一下如何自定义插件,本篇文章是基于AndroidStudio、Android工程进行讲述。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gradle自定义插件">
+<meta property="og:url" content="http://blog.huangyuanlove.com/2020/11/26/gradle%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="groovy 语法入门gradle 基础gradle 任务gradle 插件gradle-java 插件gradle-android 插件 前面简单的写了点关于gradle的以及gradle插件的东西,现在我们来看一下如何自定义插件,本篇文章是基于AndroidStudio、Android工程进行讲述。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://blog.huangyuanlove.com/image/gradle/gradle-plugin/gradle-plugin-with-buildSrc.png">
+<meta property="og:image" content="http://blog.huangyuanlove.com/image/gradle/gradle-plugin/gradle-plugin-with-module.png">
+<meta property="article:published_time" content="2020-11-25T23:06:31.000Z">
+<meta property="article:modified_time" content="2020-11-27T03:24:41.673Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="gradle">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.huangyuanlove.com/image/gradle/gradle-plugin/gradle-plugin-with-buildSrc.png">
+
+<link rel="canonical" href="http://blog.huangyuanlove.com/2020/11/26/gradle%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>gradle自定义插件 | 放码过来</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123314537-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-123314537-1');
+      }
+    </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?98796e1ecbcbaac6a6d9d3fea85985ba";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">放码过来</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">技术宅 huangyuan@huangyuanlove.com</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/huangyuanlove" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2020/11/26/gradle%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+      <meta itemprop="name" content="HuangYuan_xuan">
+      <meta itemprop="description" content="锱铢必较间接性奋发图强，睚眦必报持续性混吃等死">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="放码过来">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          gradle自定义插件<a href="https://github.com/huangyuanlove/hexo_back/tree/master/source/_posts/gradle%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil-alt"></i></a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020年11月26日 07:06:31" itemprop="dateCreated datePublished" datetime="2020-11-26T07:06:31+08:00">2020年11月26日</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020年11月27日 11:24:41" itemprop="dateModified" datetime="2020-11-27T11:24:41+08:00">2020年11月27日</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><a href="https://blog.huangyuanlove.com/2018/11/09/groovy%E8%AF%AD%E6%B3%95%E5%85%A5%E9%97%A8/">groovy 语法入门</a><br><a href="https://blog.huangyuanlove.com/2018/11/11/gradle%E5%9F%BA%E7%A1%80/">gradle 基础</a><br><a href="https://blog.huangyuanlove.com/2018/11/19/gradle%E4%BB%BB%E5%8A%A1/">gradle 任务</a><br><a href="https://blog.huangyuanlove.com/2018/12/09/gradle%E6%8F%92%E4%BB%B6/">gradle 插件</a><br><a href="https://blog.huangyuanlove.com/2018/12/19/gradle-java%E6%8F%92%E4%BB%B6/">gradle-java 插件</a><br><a href="https://blog.huangyuanlove.com/2018/12/22/gradle-android%E6%8F%92%E4%BB%B6/">gradle-android 插件</a></p>
+<p>前面简单的写了点关于gradle的以及gradle插件的东西,现在我们来看一下如何自定义插件,<strong>本篇文章是基于AndroidStudio、Android工程进行讲述</strong>。</p>
+<span id="more"></span>
+<h4 id="存放插件源码"><a href="#存放插件源码" class="headerlink" title="存放插件源码"></a>存放插件源码</h4><p>我们可以在以下几个地方存放我们的插件源码</p>
+<h5 id="Build-Script"><a href="#Build-Script" class="headerlink" title="Build Script"></a>Build Script</h5><p>每个module中都会有build.gradle文件，我们可以在该文件中编写一些所需要的插件功能，好处是可以被自动编译并且包含在构建脚本的class path中(项目根目录下的build.gradle中buildScript中使用classPath依赖的插件)，坏处是不能被其他模块访问，插件功能没办法重用。</p>
+<h5 id="buildSrc-Module"><a href="#buildSrc-Module" class="headerlink" title="buildSrc Module"></a><code>buildSrc</code> Module</h5><p>根据所选语言的不同，我们可以把插件代码放在<code>rootProjectDir/buildSrc/src/main/java</code>、<code>rootProjectDir/buildSrc/src/main/groovy</code>、<code>rootProjectDir/buildSrc/src/main/kotlin</code> 文件夹下，同样的，我们也不需要做额外的操作就可以在其他module中使用，但是不能在其他项目中引用</p>
+<h5 id="Standalone-Project"><a href="#Standalone-Project" class="headerlink" title="Standalone Project"></a>Standalone Project</h5><p>我们可以为插件单独创建一个项目或者一个module，将它编译为jar包或者其他形式发布出去，使得其他项目可以引用</p>
+<h4 id="编写插件代码"><a href="#编写插件代码" class="headerlink" title="编写插件代码"></a>编写插件代码</h4><h5 id="先看下写在Build-Script中的构建脚本。"><a href="#先看下写在Build-Script中的构建脚本。" class="headerlink" title="先看下写在Build Script中的构建脚本。"></a>先看下写在<code>Build Script</code>中的构建脚本。</h5><p>这里的<code>Build Script</code>指的是每个module都会有<code>build.gradle</code>文件，我们对每个module的某些编译配置选项也会在这里配置.<br><strong>首先需要明确的是，我们可以在<code>build.gradle</code>文件编写Groovy、Java代码</strong>，还可以回顾一下之前写的一坨文章看一下。<br><strong>以下代码我是在resource1模块的build.gradle文件中编写</strong><br>先声明一个继承自<code>org.gradle.api.Plugin.Plugin</code>的类</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyPlugin</span> <span class="keyword">implements</span> <span class="title">Plugin</span>&lt;<span class="title">Project</span>&gt; &#123;</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">void</span> apply(Project project) &#123;</span><br><span class="line">        project.task(<span class="string">&quot;greeting&quot;</span>) &#123;</span><br><span class="line">            doLast &#123;</span><br><span class="line">                println(<span class="string">&quot;hello &quot;</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后apply一下</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="attr">plugin:</span> MyPlugin</span><br></pre></td></tr></table></figure>
+<p>这时候点击<code>Sync Now</code>,会在对应的module中Tasks–&gt;other分组中展示；双击该任务或者使用命令行可执行(./gradlew resource1:greeting);<br>如果想要像<code>apply plugin: &#39;com.android.library&#39;</code>这种进行配置该如果办？我们可以这么做</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyPlugin</span> <span class="keyword">implements</span> <span class="title">Plugin</span>&lt;<span class="title">Project</span>&gt; &#123;</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">void</span> apply(Project project) &#123;</span><br><span class="line">        <span class="keyword">def</span> extension = project.extensions.create(<span class="string">&quot;myPlugin&quot;</span>, MyPluginExtension)</span><br><span class="line">        project.task(<span class="string">&quot;greeting&quot;</span>) &#123;</span><br><span class="line">            doLast &#123;</span><br><span class="line">                println(<span class="string">&quot;$extension.greeter ,$extension.message&quot;</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyPluginExtension</span> &#123;</span></span><br><span class="line">    <span class="keyword">def</span> message = <span class="string">&quot;default message from MyPluginExtension&quot;</span></span><br><span class="line">    <span class="keyword">def</span> greeter = <span class="string">&quot;default greeter from MyPluginExtension&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply <span class="attr">plugin:</span> MyPlugin</span><br><span class="line">myPlugin &#123;</span><br><span class="line">    message = <span class="string">&quot;hi&quot;</span></span><br><span class="line">    greeter = <span class="string">&quot;xuan&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里需要注意的是，<code>project.extensions.create</code>方法中传入的第一个参数是我们在<code>build.gradle</code>文件配置块的名字；<br>另外，我们需要注意一个作用域的问题：如果我们想要在定义的类中使用一些三方的依赖包，需要在<strong>工程根目录下的build.gralde</strong>文件中<strong>buildscript</strong>使用classpath添加依赖，比如我想使用<code>commons-lang3</code>中的StringUtil来判断字符串是否为空，则</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">&#x27;org.apache.commons:commons-lang3:3.11&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后在module中的build.gradle文件中使用，别忘了导入包。</p>
+<h5 id="在buildSrc-Module中"><a href="#在buildSrc-Module中" class="headerlink" title="在buildSrc Module中"></a>在<code>buildSrc</code> Module中</h5><p>我们在工程中新建一个名字为<code>buildSrc</code>的文件夹，和各个module同级，然后按照module的格式，创建src/main/groovy|java|kotlin/package_name、build.gradle文件，将上面写的插件实现复制过来，<br>文件夹结构看起像这样<br><img src="/image/gradle/gradle-plugin/gradle-plugin-with-buildSrc.png" alt="gradle-plugin-buildSrc"><br>然后在build.gradle文件中引入我们所需要的依赖、plugin等，看起来像这样</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">&#x27;java-gradle-plugin&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line">java &#123;</span><br><span class="line">    sourceCompatibility = JavaVersion.VERSION_1_7</span><br><span class="line">    targetCompatibility = JavaVersion.VERSION_1_7</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的pluginds相当于 <code>apply plugin:&#39;java-gradle-plugin&#39;</code>,这个插件是官方推荐使用的，相当于我们引用了<code>java</code>和<code>groovy</code>，并且添加了<code>gradleApi()</code>的依赖,可以看这里<a target="_blank" rel="noopener" href="https://docs.gradle.org/nightly/userguide/custom_plugins.html">https://docs.gradle.org/nightly/userguide/custom_plugins.html</a>。<br>我们还需要给我们的plugin取个名字，这里有两种方案</p>
+<ol>
+<li>官方现在推荐<br>在<code>build.gradle</code>中配置<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">gradlePlugin &#123;</span><br><span class="line">    plugins &#123;</span><br><span class="line">        simplePlugin &#123;</span><br><span class="line">            id = <span class="string">&#x27;first-plugin&#x27;</span></span><br><span class="line">            implementationClass = <span class="string">&#x27;com.huangyuanlove.plugin.FirstPlugin&#x27;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>之前的写法<br>创建<code>main/resources/META-INF/gradle-plugins</code>文件夹，并在该文件夹下新建<code>first-plugin.properties</code>文件(这里的first-plugin就是插件的id)，在该文件中声明实现插件的类<code>implementation-class=com.huangyuanlove.plugin.FirstPlugin</code></li>
+</ol>
+<p>引用这个插件：<br>在使用这个插件的moudle中，</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="attr">plugin:</span> <span class="string">&#x27;first-plugin&#x27;</span></span><br><span class="line">greeting&#123;</span><br><span class="line">    message=<span class="string">&quot;hi&quot;</span></span><br><span class="line">    greeter=<span class="string">&quot;xuan&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后同步一下就可以使用了</p>
+<h5 id="作为一个独立模块"><a href="#作为一个独立模块" class="headerlink" title="作为一个独立模块"></a>作为一个独立模块</h5><ol>
+<li>编写、构建、发布<br>和上面差不多，新建一个<code>java library module</code>,然后像上面一样引入<code>java-gradle-plugin</code>,配置好插件id。<br>在独立模块中我们需要将插件发布一下，然后再依赖.<br>文件夹结构看起来像下面这样<br><img src="/image/gradle/gradle-plugin/gradle-plugin-with-module.png" alt="gradle-plugin-module"></li>
+</ol>
+<p>引入<code>maven</code>,配置一下发布信息，看起来像下面这样</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">&#x27;java-library&#x27;</span></span><br><span class="line">    id <span class="string">&#x27;kotlin&#x27;</span></span><br><span class="line">    id <span class="string">&#x27;java-gradle-plugin&#x27;</span></span><br><span class="line">    id <span class="string">&#x27;maven&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">java &#123;</span><br><span class="line">    sourceCompatibility = JavaVersion.VERSION_1_7</span><br><span class="line">    targetCompatibility = JavaVersion.VERSION_1_7</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation <span class="string">&quot;org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version&quot;</span></span><br><span class="line">&#125;</span><br><span class="line">uploadArchives&#123; <span class="comment">//当前项目可以发布到本地文件夹中</span></span><br><span class="line">    repositories &#123;</span><br><span class="line">        mavenDeployer &#123;</span><br><span class="line">            repository(<span class="attr">url:</span> uri(<span class="string">&#x27;/Users/huangyuan/maven_repo&#x27;</span>)) <span class="comment">//定义本地maven仓库的地址</span></span><br><span class="line">            pom.groupId = <span class="string">&#x27;com.example.mygradleplugin&#x27;</span>   <span class="comment">//groupId</span></span><br><span class="line">            pom.artifactId = <span class="string">&#x27;myplugin&#x27;</span>  <span class="comment">//artifactId</span></span><br><span class="line">            pom.version = <span class="string">&#x27;1.0.2&#x27;</span> <span class="comment">//版本号</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同步一下，就会看到该模块的task中多了一个upload.uploadArchives任务，执行之后会在maven仓库对应的文件夹下看到发布的jar包</p>
+<ol start="2">
+<li>依赖、引用<br>在项目根目录中，添加一下仓库地址，然后使用classpath进行依赖<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        <span class="comment">//添加该maven仓库，</span></span><br><span class="line">        maven &#123;</span><br><span class="line">            url uri(<span class="string">&#x27;/Users/huangyuan/maven_repo&#x27;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        <span class="comment">//添加发布的plugin的依赖</span></span><br><span class="line">        classpath <span class="string">&#x27;com.example.mygradleplugin:myplugin:1.0.2&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">allprojects &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        maven &#123;</span><br><span class="line">            url uri(<span class="string">&#x27;/Users/huangyuan/maven_repo&#x27;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+引用和上面一样，没什么好说的</li>
+</ol>
+<h4 id="进行调试"><a href="#进行调试" class="headerlink" title="进行调试"></a>进行调试</h4><p>当插件工作不是预期的结果时，我们可能需要进行断点调试(当然打日志的方法也不错)，在之前的版本中还需要新增remote配置，然后以debug方式执行这个任务，现在在AndroidStudio中(4.1.1版本)中，只需要在侧边找打这个任务，右键菜单debug执行就好了</p>
+<hr>
+<p>以上</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/wechatpay.png" alt="HuangYuan_xuan 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/alipay.png" alt="HuangYuan_xuan 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+              <a href="/tags/gradle/" rel="tag"># gradle</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/11/Android%E6%89%93%E5%8C%85%E6%B5%81%E7%A8%8B/" rel="prev" title="Android打包流程">
+      <i class="fa fa-chevron-left"></i> Android打包流程
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/12/13/AndroidStudio%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/" rel="next" title="AndroidStudio插件开发">
+      AndroidStudio插件开发 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%98%E6%94%BE%E6%8F%92%E4%BB%B6%E6%BA%90%E7%A0%81"><span class="nav-number">1.</span> <span class="nav-text">存放插件源码</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Build-Script"><span class="nav-number">1.1.</span> <span class="nav-text">Build Script</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#buildSrc-Module"><span class="nav-number">1.2.</span> <span class="nav-text">buildSrc Module</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Standalone-Project"><span class="nav-number">1.3.</span> <span class="nav-text">Standalone Project</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E6%8F%92%E4%BB%B6%E4%BB%A3%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">编写插件代码</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%88%E7%9C%8B%E4%B8%8B%E5%86%99%E5%9C%A8Build-Script%E4%B8%AD%E7%9A%84%E6%9E%84%E5%BB%BA%E8%84%9A%E6%9C%AC%E3%80%82"><span class="nav-number">2.1.</span> <span class="nav-text">先看下写在Build Script中的构建脚本。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9C%A8buildSrc-Module%E4%B8%AD"><span class="nav-number">2.2.</span> <span class="nav-text">在buildSrc Module中</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%9C%E4%B8%BA%E4%B8%80%E4%B8%AA%E7%8B%AC%E7%AB%8B%E6%A8%A1%E5%9D%97"><span class="nav-number">2.3.</span> <span class="nav-text">作为一个独立模块</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E8%A1%8C%E8%B0%83%E8%AF%95"><span class="nav-number">3.</span> <span class="nav-text">进行调试</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HuangYuan_xuan"
+      src="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+  <p class="site-author-name" itemprop="name">HuangYuan_xuan</p>
+  <div class="site-description" itemprop="description">锱铢必较间接性奋发图强，睚眦必报持续性混吃等死</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/huangyuanlove" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;huangyuanlove" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:huangyuan@huangyuanlove.com" title="E-Mail → mailto:huangyuan@huangyuanlove.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">HuangYuan_xuan</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">278k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">4:13</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+  <script>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 30648,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '76c9d0ecf028751aa0d2',
+      clientSecret: '392bc0405dfbdf4928343edef0ef46007f02c7e4',
+      repo        : 'github.com/huangyuanlove/hexo_back',
+      owner       : 'huangyuanlove',
+      admin       : ['huangyuanlove'],
+      id          : '22f4815b4d5a6e06677b1e674e246182',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
