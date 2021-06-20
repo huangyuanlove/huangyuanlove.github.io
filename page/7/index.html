@@ -207,6 +207,98 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2018/08/03/Toast%E6%98%BE%E7%A4%BA%E8%BF%87%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
+      <meta itemprop="name" content="HuangYuan_xuan">
+      <meta itemprop="description" content="锱铢必较间接性奋发图强，睚眦必报持续性混吃等死">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="放码过来">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/03/Toast%E6%98%BE%E7%A4%BA%E8%BF%87%E7%A8%8B/" class="post-title-link" itemprop="url">Toast显示过程</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018年08月03日 11:35:14" itemprop="dateCreated datePublished" datetime="2018-08-03T11:35:14+08:00">2018年08月03日</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020年11月26日 12:10:08" itemprop="dateModified" datetime="2020-11-26T12:10:08+08:00">2020年11月26日</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>抄书抄的有点烦，自己也学着分析一下源码，挑了个在我看来比较简单的Toast显示过程来玩一玩。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Toast.makeText(context, text, duration).show();</span><br></pre></td></tr></table></figure>
+<p>先了解一下makeText过程，该过程最终都会调用下面的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Make a standard toast to display using the specified looper.</span></span><br><span class="line"><span class="comment">     * If looper is null, Looper.myLooper() is used.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@hide</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Toast <span class="title">makeText</span><span class="params">(<span class="meta">@NonNull</span> Context context, <span class="meta">@Nullable</span> Looper looper,</span></span></span><br><span class="line"><span class="params"><span class="function">            <span class="meta">@NonNull</span> CharSequence text, <span class="meta">@Duration</span> <span class="keyword">int</span> duration)</span> </span>&#123;</span><br><span class="line">        Toast result = <span class="keyword">new</span> Toast(context, looper);</span><br><span class="line"></span><br><span class="line">        LayoutInflater inflate = (LayoutInflater)</span><br><span class="line">                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);</span><br><span class="line">        View v = inflate.inflate(com.android.internal.R.layout.transient_notification, <span class="keyword">null</span>);</span><br><span class="line">        TextView tv = (TextView)v.findViewById(com.android.internal.R.id.message);</span><br><span class="line">        tv.setText(text);</span><br><span class="line"></span><br><span class="line">        result.mNextView = v;</span><br><span class="line">        result.mDuration = duration;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>创建一个新的Toast对象，在Toast的构造方法中有一个TN类型的mTN对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mTN = <span class="keyword">new</span> TN(context.getPackageName(), looper);</span><br></pre></td></tr></table></figure>
+<p><code>TN</code>是<code>ITransientNotification.Stub</code>的子类，注意一下这个对象，这对后面的过程很重要。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/08/03/Toast%E6%98%BE%E7%A4%BA%E8%BF%87%E7%A8%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2018/08/02/Android-ContentProvider/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -988,92 +1080,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://blog.huangyuanlove.com/2018/06/11/Android7-0%E5%88%86%E5%B1%8F%E5%AE%9E%E7%8E%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/4216225?v=3&s=466">
-      <meta itemprop="name" content="HuangYuan_xuan">
-      <meta itemprop="description" content="锱铢必较间接性奋发图强，睚眦必报持续性混吃等死">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="放码过来">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/06/11/Android7-0%E5%88%86%E5%B1%8F%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">Android7.0 MultiWindow</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018年06月11日 15:17:54" itemprop="dateCreated datePublished" datetime="2018-06-11T15:17:54+08:00">2018年06月11日</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020年11月26日 12:10:08" itemprop="dateModified" datetime="2020-11-26T12:10:08+08:00">2020年11月26日</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Android7.0推出了多窗口(分屏)模式，允许一个屏幕下显示两个应用，可以一边追剧一边看电子书，不过在小一点的手机屏幕上看起来可能有点鸡肋。但是在TV端(这个屏幕就比较大了，一般都是40寸起步)中，画中画模式可以让我们同时进行多个任务了。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/06/11/Android7-0%E5%88%86%E5%B1%8F%E5%AE%9E%E7%8E%B0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1145,7 +1151,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-count">127</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1196,12 +1202,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">278k</span>
+    <span title="站点总字数">280k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">4:13</span>
+    <span title="站点阅读时长">4:14</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
