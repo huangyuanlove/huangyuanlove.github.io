@@ -1,0 +1,785 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="LaTeX">
+  
+    <meta name="description" content="记录一下某些自动化的工具，比如添加超链接(hyperref)、索引(makeindex)等">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LaTeX笔记-五(自动化工具)">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2018/02/27/LaTeX%E7%AC%94%E8%AE%B0-%E4%BA%94/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="记录一下某些自动化的工具，比如添加超链接(hyperref)、索引(makeindex)等">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-02-27T03:09:28.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.224Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="LaTeX">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>LaTeX笔记-五(自动化工具) - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LaTeX笔记-五(自动化工具)"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2018-02-27 11:09" pubdate>
+          2018年2月27日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.4k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LaTeX笔记-五(自动化工具)</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>记录一下某些自动化的工具，比如添加超链接(hyperref)、索引(makeindex)等</p>
+<span id="more"></span>
+<h4 id="电子文档与超链接"><a href="#电子文档与超链接" class="headerlink" title="电子文档与超链接"></a>电子文档与超链接</h4><p><code>hyperref</code>宏包可算是LaTeX最为复杂的宏包之一，它提供了大量的选项和命令，完成各种设置和功能，这里主要记录以PDF格式输出时，<code>hyperref</code>有关标签和超链接的一些最基本的功能和设置。<br><code>hyperref</code>最基本的用法非常简单，就是直接调用此宏包：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\usepackage</span>&#123;hyperef&#125;<br></code></pre></td></tr></table></figure>
+<p>如果使用ctex宏包或文档类，则可以加<code>hyperef</code>选项，这样啊ctex宏包会自动根据编码和编译方式选择合适的选项，避免出现乱码：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\documentclass</span>[hyperref,UTF8]&#123;ctexart&#125;<br></code></pre></td></tr></table></figure>
+<p>引入hyperref后再编译文档时，会根据章节结构，自动生成目录结构的PDF文档标签。同时，正文中的目录和所有交叉引用，都会自动成为超链接，可以用鼠标点击跳转到引用位置。要得到正确的PDF标签，也应至少表一两遍文档。<br>除了直接加在<code>\usepackage</code>，也可以使用<code>\hypersetup</code>命令单独设置。hyperref的选项大多使用&lt;选项&gt;&#x3D;&lt;值&gt;的方式设置，如果是布尔类型的真假值选项(true或false),通常可以省略为真的值，常见选项如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">选项</th>
+<th align="center">类型</th>
+<th align="center">默认值</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">colorlinks</td>
+<td align="center">布尔</td>
+<td align="center">false</td>
+<td align="center">超链接用彩色显示</td>
+</tr>
+<tr>
+<td align="left">bookmarks</td>
+<td align="center">布尔</td>
+<td align="center">true</td>
+<td align="center">生成PDF目录书签</td>
+</tr>
+<tr>
+<td align="left">bookmarksopen</td>
+<td align="center">布尔</td>
+<td align="center">false</td>
+<td align="center">在PDF阅读器中自动打开书签</td>
+</tr>
+<tr>
+<td align="left">bookmarksnumbered</td>
+<td align="center">布尔</td>
+<td align="center">false</td>
+<td align="center">目录书签带编号</td>
+</tr>
+<tr>
+<td align="left">pdfborder</td>
+<td align="center">数 数 数</td>
+<td align="center">0 0 1</td>
+<td align="center">当colorlink为假时，超链接由彩色边框包围(不会被打印)。默认值表示1pt宽的边框，可以设置为0 0 0 表示没有边框。</td>
+</tr>
+<tr>
+<td align="left">pdfpagemode</td>
+<td align="center">文本</td>
+<td align="center"></td>
+<td align="center">在PDF阅读器中的页面显示方式，常用值是FullScreen，表示全屏显示</td>
+</tr>
+<tr>
+<td align="left">pdfstartview</td>
+<td align="center">文本</td>
+<td align="center">Fit</td>
+<td align="center">在PDF阅读器中的页面缩放大小，默认值Fit表示“适合页面”；常用取值有适合宽度FitH，适合高度FitV</td>
+</tr>
+<tr>
+<td align="left">pdftitle</td>
+<td align="center">文本</td>
+<td align="center"></td>
+<td align="center">文档标题，会在PDF文档属性中显示</td>
+</tr>
+<tr>
+<td align="left">pdfauthor</td>
+<td align="center">文本</td>
+<td align="center"></td>
+<td align="center">文档作者，会在PDF文档属性中显示</td>
+</tr>
+<tr>
+<td align="left">pdfsubject</td>
+<td align="center">文本</td>
+<td align="center"></td>
+<td align="center">文档主题，会在PDF文档属性中显示</td>
+</tr>
+<tr>
+<td align="left">pdfkeywords</td>
+<td align="center">文本</td>
+<td align="center"></td>
+<td align="center">文档关键字，会在PDF文档属性中显示</td>
+</tr>
+<tr>
+<td align="left">除此之外，可以用<code>\url</code>命令输出URL地址，同时也具有超链接的功能。与排版纯文本不同，找<code>\url</code>命令的参数中，网址允许使用合法符号直接输入，并且默认以打字机字体输出，如果URL地址不需要超链接的效果，可以改用<code>\nolinkurl</code>命令。</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="left"><code>\href&#123;&lt;URL&gt;&#125;&#123;文字&#125;</code>命令可以用来使文字产生指向URL地址的超链接效果。</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="left"><code>\hyperref[&lt;标签&gt;]&#123;&lt;文字&gt;&#125;</code>命令可以用来产生使文字执行标签的超链接效果，这里方括号中的标签与<code>\ref</code>使用的标签相同，不能省略。</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="left"><code>\hypertarget&#123;&lt;名称&gt;&#125;&#123;&lt;文字&gt;&#125;</code>用来给文字定义带有名称的链接点，在文档的其他地方，则可以使用命令<code>\hyperlink&#123;&lt;名称&gt;&#125;&#123;&lt;文字&gt;&#125;</code>让另一段文字链接到指定名称的连接点。</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<h4 id="制作索引"><a href="#制作索引" class="headerlink" title="制作索引"></a>制作索引</h4><p>在LaTeX中制作索引，需要.tex源文件和外部索引程序的共同协作。在.tex源文件中，我们需要做一下几件事：</p>
+<ol>
+<li>在导言区使用<code>\makeindex</code>命令，开启索引文件输出</li>
+<li>在导言区调用<code>makeidx</code>宏包，开启索引列表排版功能</li>
+<li>在正文中需要索引的关键字处使用<code>\index</code>命令，生成索引项</li>
+<li>在需要生成索引的地方(通常是文档的末尾)，使用<code>\printindex</code>命令，实际输出处理好的索引列表</li>
+</ol>
+<p>例子如下：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\documentclass</span>[hyperref,UTF8]&#123;ctexart&#125;<br><span class="hljs-keyword">\usepackage</span>&#123;makeidx&#125;<br><span class="hljs-keyword">\makeindex</span><br><span class="hljs-comment">% ...</span><br>西方称勾股定理为毕达哥拉斯定理，<br><span class="hljs-keyword">\index</span>&#123;毕达哥拉斯定理&#125;<br>将勾股定理的发现归功于公元前 6 <br><span class="hljs-comment">%...</span><br>勾股定理可以用现代语言表述如下<span class="hljs-keyword">\index</span>&#123;勾股定理&#125;：<br><span class="hljs-comment">%...</span><br><span class="hljs-keyword">\printindex</span><br><span class="hljs-keyword">\end</span>&#123;document&#125;<br></code></pre></td></tr></table></figure>
+<p>与参考文献类似，要生成索引需要多次编译和外部工具<code>Makeindex</code>的配合，编译带索引的文档需要使用如下命令：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs tex">pdflatex ***<br>makeindex ***<br>pdflatex ***<br></code></pre></td></tr></table></figure>
+<p>以上命令可以在IDE的编译选项中找到<br>在<code>\index</code>的参数中可以使用符号<code>!</code>来分隔不同层次的索引项，这样将得到分级的索引项。默认支持三级列表，例如：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\index</span>&#123;language&#125;<br><span class="hljs-keyword">\index</span>&#123;language!Chinese&#125;<br><span class="hljs-keyword">\index</span>&#123;language!Chinese!dialect&#125;<br><span class="hljs-keyword">\index</span>&#123;language!English&#125;<br></code></pre></td></tr></table></figure>
+<p>在<code>\index</code>的参数后面使用符号<code>|</code>则可以使用几个特殊的功能，基本的用法是使用<code>|see&#123;&lt;条目&gt;&#125;</code>与<code>|seealse&#123;条目&#125;</code>表示参考条目。例如：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\index</span>&#123;beta&#125;<br><span class="hljs-keyword">\index</span>&#123;Beta|see&#123;beta&#125;&#125;<br><span class="hljs-keyword">\index</span>&#123;gamma|seealso&#123;beta&#125;&#125;<br></code></pre></td></tr></table></figure>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LaTeX/" class="print-no-link">#LaTeX</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LaTeX笔记-五(自动化工具)</div>
+      <div>https://blog.huangyuanlove.com/2018/02/27/LaTeX笔记-五/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2018年2月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/02/27/LaTeX%E7%AC%94%E8%AE%B0-%E5%85%AD/" title="LaTeX笔记-六(数学公式)">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LaTeX笔记-六(数学公式)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/02/11/LaTeX%E7%AC%94%E8%AE%B0-%E5%9B%9B/" title="LaTeX笔记(四)--文档结构层次">
+                        <span class="hidden-mobile">LaTeX笔记(四)--文档结构层次</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '2cd851b1a56a9e10c06486d57c7e7dce'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.1/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

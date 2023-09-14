@@ -1,0 +1,704 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="Android,Jetpakc,Room,ViewModel,LiveData">
+  
+    <meta name="description" content="2018年谷歌I&#x2F;O 发布了一系列辅助android开发者的实用工具，合称Jetpack，以帮助开发者构建出色的 Android 应用。这次发布的 Android Jetpack 组件覆盖以下 4 个方面：Architecture、Foundation、Behavior 以及 UI。该系列博客介绍一下Jetpack中常用组件，本篇介绍Room，结合ViewModel和LiveData完成">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JetPack中的Room">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2020/01/08/JetPack-Room/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="2018年谷歌I&#x2F;O 发布了一系列辅助android开发者的实用工具，合称Jetpack，以帮助开发者构建出色的 Android 应用。这次发布的 Android Jetpack 组件覆盖以下 4 个方面：Architecture、Foundation、Behavior 以及 UI。该系列博客介绍一下Jetpack中常用组件，本篇介绍Room，结合ViewModel和LiveData完成">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/Android/jetpack/room.png">
+<meta property="article:published_time" content="2020-01-08T10:49:43.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.222Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/Android/jetpack/room.png">
+  
+  
+  
+  <title>JetPack中的Room - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="JetPack中的Room"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-01-08 18:49" pubdate>
+          2020年1月8日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          12k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">JetPack中的Room</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>2018年谷歌I&#x2F;O 发布了一系列辅助android开发者的实用工具，合称Jetpack，以帮助开发者构建出色的 Android 应用。<br>这次发布的 Android Jetpack 组件覆盖以下 4 个方面：Architecture、Foundation、Behavior 以及 UI。该系列博客介绍一下Jetpack中常用组件，本篇介绍Room，结合ViewModel和LiveData完成上图的结构。最后借助于<a target="_blank" rel="noopener" href="https://github.com/android/sunflower">https://github.com/android/sunflower</a> 来写一个完整的应用</p>
+<span id="more"></span>
+
+<h4 id="Room简介"><a href="#Room简介" class="headerlink" title="Room简介"></a>Room简介</h4><p>原文地址：<a target="_blank" rel="noopener" href="https://developer.android.google.cn/training/data-storage/room/index.html">https://developer.android.google.cn/training/data-storage/room/index.html</a></p>
+<p>Room 持久性库在 SQLite 的基础上提供了一个抽象层，让用户能够在充分利用 SQLite 的强大功能的同时，获享更强健的数据库访问机制。<br>Room 包含 3 个主要组件：</p>
+<ul>
+<li><p>数据库：包含数据库持有者，并作为应用已保留的持久关系型数据的底层连接的主要接入点。</p>
+<p>使用 @Database 注释的类应满足以下条件：</p>
+<ul>
+<li><p>是扩展 RoomDatabase 的抽象类。</p>
+</li>
+<li><p>在注释中添加与数据库关联的实体列表。</p>
+</li>
+<li><p>包含具有 0 个参数且返回使用 @Dao 注释的类的抽象方法。</p>
+</li>
+</ul>
+<p> 在运行时，您可以通过调用 Room.databaseBuilder() 或 Room.inMemoryDatabaseBuilder() 获取 Database 的实例。</p>
+</li>
+<li><p>Entity：表示数据库中的表。</p>
+</li>
+<li><p>DAO：包含用于访问数据库的方法。</p>
+</li>
+</ul>
+<h4 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h4><p>选择合适的版本</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs groovy"><span class="hljs-comment">// Room components</span><br>implementation <span class="hljs-string">&quot;androidx.room:room-runtime:2.2.3&quot;</span><br>annotationProcessor <span class="hljs-string">&quot;androidx.room:room-compiler:2.2.3&quot;</span><br>androidTestImplementation <span class="hljs-string">&quot;androidx.room:room-testing:2.2.3&quot;</span><br><br><span class="hljs-comment">// Lifecycle components</span><br>implementation <span class="hljs-string">&quot;androidx.lifecycle:lifecycle-extensions:2.1.0&quot;</span><br>annotationProcessor <span class="hljs-string">&quot;androidx.lifecycle:lifecycle-compiler:2.1.0&quot;</span><br><br><span class="hljs-comment">// UI</span><br>implementation <span class="hljs-string">&quot;com.google.android.material:material:1.0.0&quot;</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="创建实体类"><a href="#创建实体类" class="headerlink" title="创建实体类"></a>创建实体类</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Entity(tableName = &quot;word_table&quot;)</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Word</span> &#123;<br><br>   <span class="hljs-meta">@PrimaryKey</span><br>   <span class="hljs-meta">@NonNull</span><br>   <span class="hljs-meta">@ColumnInfo(name = &quot;word&quot;)</span><br>   <span class="hljs-keyword">private</span> String mWord;<br><br>   <span class="hljs-keyword">public</span> <span class="hljs-title function_">Word</span><span class="hljs-params">(String word)</span> &#123;<span class="hljs-built_in">this</span>.mWord = word;&#125;<br><br>   <span class="hljs-keyword">public</span> String <span class="hljs-title function_">getWord</span><span class="hljs-params">()</span>&#123;<span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.mWord;&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>解释一下常用的注解：</p>
+<p><strong>@Entity</strong> :数据表的实体类。<br><strong>@PrimaryKey</strong>: 每一个实体类都需要一个唯一的标识。<br><strong>@ColumnInfo</strong> :数据表中字段名称。<br><strong>@Ignore</strong> :标注不需要添加到数据表中的属性。<br><strong>@Embedded</strong> :实体类中引用其他实体类。<br><strong>@ForeignKey</strong>:外键约束。</p>
+<h4 id="创建DAO"><a href="#创建DAO" class="headerlink" title="创建DAO"></a>创建DAO</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Dao</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">WordDao</span> &#123;<br><br>   <span class="hljs-comment">// allowing the insert of the same word multiple times by passing a </span><br>   <span class="hljs-comment">// conflict resolution strategy</span><br>   <span class="hljs-meta">@Insert(onConflict = OnConflictStrategy.IGNORE)</span><br>   <span class="hljs-keyword">void</span> <span class="hljs-title function_">insert</span><span class="hljs-params">(Word word)</span>;<br><br>   <span class="hljs-meta">@Query(&quot;DELETE FROM word_table&quot;)</span><br>   <span class="hljs-keyword">void</span> <span class="hljs-title function_">deleteAll</span><span class="hljs-params">()</span>;<br><br>   <span class="hljs-meta">@Query(&quot;SELECT * from word_table ORDER BY word ASC&quot;)</span><br>   List&lt;Word&gt; <span class="hljs-title function_">getAlphabetizedWords</span><span class="hljs-params">()</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>@Dao</strong> ：数据库操作的类。<br><strong>@Query</strong> ： 包含所有Sqlite语句操作。<br><strong>@Insert</strong> ： 插入操作。<br><strong>@Delete</strong> ： 删除操作。<br><strong>@Update</strong> ： 更新操作。</p>
+<p><strong>冲突条款</strong> :我们在<code>@Insert</code>中添加的属性值。 就是针对出现**约束异常(ROLLBACK, ABORT, FAIL, IGNORE, and REPLACE)**的非标准处理。</p>
+<p><strong>ABORT</strong> ：  默认值，不处理约束异常。<br><strong>ROLLBACK</strong>：  与ABORT相似，不常用。<br><strong>FAIL</strong> ：  在批量更新或者修改时，中途出现了约束异常，就会终止后续执行，但会保留已执行的sql语句。<br><strong>IGNORE</strong> ：  忽略约束异常，不做任何处理保留原数据。<br><strong>REPLACE</strong>：  当出现约束异常时，移除原数据 &amp; 将新数据覆盖。</p>
+<p>解释一波：</p>
+<ul>
+<li>被<code>@Dao</code>注解的类一定是接口或者抽象类，</li>
+<li><code>void insert(Word word);</code>声明一个插入的方法，不需要我们提供SQL语句，只需要用<code>@Insert</code>标记一下就好</li>
+<li><code>@Query(&quot;DELETE FROM word_table&quot;)</code>:<code>@Query</code>需要我们提供一下SQL语句</li>
+</ul>
+<p>这里的<code>WordDao</code>会在编译时生成<code>WordDAO_Impl</code>类，</p>
+<h4 id="Room-database"><a href="#Room-database" class="headerlink" title="Room database"></a>Room database</h4><p>我们自己定义的Room database必须是继承自<code>RoomDatabase</code>的抽象类，通常我们会把该类做成单例模式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Database(entities = &#123;Word.class&#125;, version = 1, exportSchema = false)</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">WordRoomDatabase</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">RoomDatabase</span> &#123;<br><br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> WordDao <span class="hljs-title function_">wordDao</span><span class="hljs-params">()</span>;<br><br>   <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">volatile</span> WordRoomDatabase INSTANCE;<br>   <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">NUMBER_OF_THREADS</span> <span class="hljs-operator">=</span> <span class="hljs-number">4</span>;<br>   <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">ExecutorService</span> <span class="hljs-variable">databaseWriteExecutor</span> <span class="hljs-operator">=</span><br>        Executors.newFixedThreadPool(NUMBER_OF_THREADS);<br><br>   <span class="hljs-keyword">static</span> WordRoomDatabase <span class="hljs-title function_">getDatabase</span><span class="hljs-params">(<span class="hljs-keyword">final</span> Context context)</span> &#123;<br>        <span class="hljs-keyword">if</span> (INSTANCE == <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-keyword">synchronized</span> (WordRoomDatabase.class) &#123;<br>                <span class="hljs-keyword">if</span> (INSTANCE == <span class="hljs-literal">null</span>) &#123;<br>                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),<br>                            WordRoomDatabase.class, <span class="hljs-string">&quot;word_database&quot;</span>)<br>                            .build();<br>                &#125;<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">return</span> INSTANCE;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们使用<code>@Database</code>注解来声明这是一个Room database ，并且使用参数中的entities属性，声明该数据库中的映射表，可以设置多个表，同时设置数据库版本，方便之后进行升级。</p>
+<h4 id="创建-Repository"><a href="#创建-Repository" class="headerlink" title="创建 Repository"></a>创建 Repository</h4><p><img src="/image/Android/jetpack/room_repository.png" srcset="/img/loading.gif" lazyload alt="room_repository"></p>
+<p>Repository是一个抽象的数据访问层，数据可以来源于数据库，也可以来源于网络，这一次层并不是必须的，但还是推荐有这么一层。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">WordRepository</span> &#123;<br><br>    <span class="hljs-keyword">private</span> WordDAO wordDAO;<br>    <span class="hljs-keyword">private</span> LiveData&lt;List&lt;Word&gt;&gt; allWords;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">WordRepository</span><span class="hljs-params">(Application application)</span>&#123;<br>        <span class="hljs-type">WordRoomDatabase</span> <span class="hljs-variable">db</span> <span class="hljs-operator">=</span> WordRoomDatabase.getDatabase(application);<br>        wordDAO = db.wordDAO();<br>        allWords = wordDAO.getAlphabetizedWords();<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> LiveData&lt;List&lt;Word&gt;&gt; <span class="hljs-title function_">getAllWords</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> allWords;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">insert</span><span class="hljs-params">(<span class="hljs-keyword">final</span> Word word)</span>&#123;<br>        WordRoomDatabase.databaseWriteExecutor.execute(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Runnable</span>() &#123;<br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>                wordDAO.insert(word);<br>            &#125;<br>        &#125;);<br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="创建ViewModel"><a href="#创建ViewModel" class="headerlink" title="创建ViewModel"></a>创建ViewModel</h4><p><img src="/image/Android/jetpack/room_view_model.png" srcset="/img/loading.gif" lazyload alt="room_view_model"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">WordViewModel</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AndroidViewModel</span> &#123;<br><br>    <span class="hljs-keyword">private</span> WordRepository wordRepository;<br>    <span class="hljs-keyword">private</span> LiveData&lt;List&lt;Word&gt;&gt; allWords;<br><br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">WordViewModel</span><span class="hljs-params">(<span class="hljs-meta">@NonNull</span> Application application)</span> &#123;<br>        <span class="hljs-built_in">super</span>(application);<br>        wordRepository = <span class="hljs-keyword">new</span> <span class="hljs-title class_">WordRepository</span>(application);<br>        allWords = wordRepository.getAllWords();<br><br>    &#125;<br>    <span class="hljs-keyword">public</span> LiveData&lt;List&lt;Word&gt;&gt; <span class="hljs-title function_">getAllWords</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> allWords;<br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">insert</span><span class="hljs-params">(Word word)</span> &#123;<br>        wordRepository.insert(word);<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h4 id="创建页面"><a href="#创建页面" class="headerlink" title="创建页面"></a>创建页面</h4><p>页面包含一个<code>RecyclerView</code>，用于展示数据库保存的内容，一个<code>button</code>,点击后跳转新页面，添加新的<code>Word</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RoomWordActivity</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AppCompatActivity</span> &#123;<br><br><br>    <span class="hljs-keyword">private</span> WordViewModel mWordViewModel;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">NEW_WORD_ACTIVITY_REQUEST_CODE</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onCreate</span><span class="hljs-params">(Bundle savedInstanceState)</span> &#123;<br>        <span class="hljs-built_in">super</span>.onCreate(savedInstanceState);<br>        setContentView(R.layout.activity_room_word);<br>        <span class="hljs-type">RecyclerView</span> <span class="hljs-variable">recyclerView</span> <span class="hljs-operator">=</span> findViewById(R.id.recyclerview);<br>        <span class="hljs-keyword">final</span> <span class="hljs-type">WordListAdapter</span> <span class="hljs-variable">adapter</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">WordListAdapter</span>(<span class="hljs-built_in">this</span>);<br>        recyclerView.setAdapter(adapter);<br>        recyclerView.setLayoutManager(<span class="hljs-keyword">new</span> <span class="hljs-title class_">LinearLayoutManager</span>(<span class="hljs-built_in">this</span>));<br><br><br>        mWordViewModel = ViewModelProviders.of (<span class="hljs-built_in">this</span>).get(WordViewModel.class);<br>        mWordViewModel.getAllWords().observe(<span class="hljs-built_in">this</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Observer</span>&lt;List&lt;Word&gt;&gt;() &#123;<br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onChanged</span><span class="hljs-params">(<span class="hljs-meta">@Nullable</span> <span class="hljs-keyword">final</span> List&lt;Word&gt; words)</span> &#123;<br>                <span class="hljs-comment">// Update the cached copy of the words in the adapter.</span><br>                adapter.setWords(words);<br>            &#125;<br>        &#125;);<br><br><br>        <span class="hljs-type">FloatingActionButton</span> <span class="hljs-variable">fab</span> <span class="hljs-operator">=</span> findViewById(R.id.fab);<br>        fab.setOnClickListener(<span class="hljs-keyword">new</span> <span class="hljs-title class_">View</span>.OnClickListener() &#123;<br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onClick</span><span class="hljs-params">(View view)</span> &#123;<br>                <span class="hljs-type">Intent</span> <span class="hljs-variable">intent</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Intent</span>(RoomWordActivity.<span class="hljs-built_in">this</span>, NewWordActivity.class);<br>                startActivityForResult(intent, NEW_WORD_ACTIVITY_REQUEST_CODE);<br>            &#125;<br>        &#125;);<br><br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onActivityResult</span><span class="hljs-params">(<span class="hljs-type">int</span> requestCode, <span class="hljs-type">int</span> resultCode, Intent data)</span> &#123;<br>        <span class="hljs-built_in">super</span>.onActivityResult(requestCode, resultCode, data);<br><br>        <span class="hljs-keyword">if</span> (requestCode == NEW_WORD_ACTIVITY_REQUEST_CODE &amp;&amp; resultCode == RESULT_OK) &#123;<br>            <span class="hljs-type">Word</span> <span class="hljs-variable">word</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Word</span>(data.getStringExtra(NewWordActivity.EXTRA_REPLY));<br>            mWordViewModel.insert(word);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            Toast.makeText(<br>                    getApplicationContext(),<br>                    R.string.empty_not_saved,<br>                    Toast.LENGTH_LONG).show();<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这样我们当我们添加完数据之后，会在页面上显示。</p>
+<h4 id="Dao编译后的产物"><a href="#Dao编译后的产物" class="headerlink" title="@Dao编译后的产物"></a>@Dao编译后的产物</h4><p>我们在WordDAO中添加了几天无关紧要的方法，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Insert(onConflict = OnConflictStrategy.IGNORE)</span><br><span class="hljs-keyword">void</span> <span class="hljs-title function_">insert</span><span class="hljs-params">(Word word)</span>;<br><br><span class="hljs-meta">@Update</span><br><span class="hljs-keyword">void</span> <span class="hljs-title function_">updateWord</span><span class="hljs-params">(Word word)</span>;<br><br><span class="hljs-meta">@Query(&quot;DELETE FROM word_table&quot;)</span><br><span class="hljs-keyword">void</span> <span class="hljs-title function_">deleteAll</span><span class="hljs-params">()</span>;<br><br><span class="hljs-meta">@Query(&quot;SELECT * from word_table ORDER BY word ASC&quot;)</span><br>LiveData&lt;List&lt;Word&gt;&gt; <span class="hljs-title function_">getAlphabetizedWords</span><span class="hljs-params">()</span>;<br><br><span class="hljs-meta">@Query(&quot;select * from word_table where word=:word&quot;)</span><br>LiveData&lt;Word&gt; <span class="hljs-title function_">getWordByContent</span><span class="hljs-params">(String word)</span>;<br></code></pre></td></tr></table></figure>
+
+<p>我们来看一下编译时生成的类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><code class="hljs java"><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">WordDAO_Impl</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">WordDAO</span> &#123;<br>  <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> RoomDatabase __db;<br><br>  <span class="hljs-comment">//对应着 void insert(Word word);方法</span><br>  <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> EntityInsertionAdapter&lt;Word&gt; __insertionAdapterOfWord;<br>	<span class="hljs-comment">//对应着  void updateWord(Word word);方法</span><br>  <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> EntityDeletionOrUpdateAdapter&lt;Word&gt; __updateAdapterOfWord;<br>	<span class="hljs-comment">//对应着 void deleteAll();方法</span><br>  <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> SharedSQLiteStatement __preparedStmtOfDeleteAll;<br><br>  <span class="hljs-keyword">public</span> <span class="hljs-title function_">WordDAO_Impl</span><span class="hljs-params">(RoomDatabase __db)</span> &#123;<br>    <span class="hljs-built_in">this</span>.__db = __db;<br>    <span class="hljs-comment">//和JDBC中PreparedStatement很像，差不多是一致的</span><br>    <span class="hljs-built_in">this</span>.__insertionAdapterOfWord = <span class="hljs-keyword">new</span> <span class="hljs-title class_">EntityInsertionAdapter</span>&lt;Word&gt;(__db) &#123;<br>      <span class="hljs-meta">@Override</span><br>      <span class="hljs-keyword">public</span> String <span class="hljs-title function_">createQuery</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;INSERT OR IGNORE INTO `word_table` (`word`) VALUES (?)&quot;</span>;<br>      &#125;<br><br>      <span class="hljs-meta">@Override</span><br>      <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">bind</span><span class="hljs-params">(SupportSQLiteStatement stmt, Word value)</span> &#123;<br>        <span class="hljs-keyword">if</span> (value.getWord() == <span class="hljs-literal">null</span>) &#123;<br>          stmt.bindNull(<span class="hljs-number">1</span>);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>          stmt.bindString(<span class="hljs-number">1</span>, value.getWord());<br>        &#125;<br>      &#125;<br>    &#125;;<br>    <span class="hljs-comment">//这里也是进行预编译</span><br>    <span class="hljs-built_in">this</span>.__updateAdapterOfWord = <span class="hljs-keyword">new</span> <span class="hljs-title class_">EntityDeletionOrUpdateAdapter</span>&lt;Word&gt;(__db) &#123;<br>      <span class="hljs-meta">@Override</span><br>      <span class="hljs-keyword">public</span> String <span class="hljs-title function_">createQuery</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;UPDATE OR ABORT `word_table` SET `word` = ? WHERE `word` = ?&quot;</span>;<br>      &#125;<br><br>      <span class="hljs-meta">@Override</span><br>      <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">bind</span><span class="hljs-params">(SupportSQLiteStatement stmt, Word value)</span> &#123;<br>        <span class="hljs-keyword">if</span> (value.getWord() == <span class="hljs-literal">null</span>) &#123;<br>          stmt.bindNull(<span class="hljs-number">1</span>);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>          stmt.bindString(<span class="hljs-number">1</span>, value.getWord());<br>        &#125;<br>        <span class="hljs-keyword">if</span> (value.getWord() == <span class="hljs-literal">null</span>) &#123;<br>          stmt.bindNull(<span class="hljs-number">2</span>);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>          stmt.bindString(<span class="hljs-number">2</span>, value.getWord());<br>        &#125;<br>      &#125;<br>    &#125;;<br>    <span class="hljs-comment">//这里是删除所有，并没有参数，所以没有预编译语句</span><br>    <span class="hljs-built_in">this</span>.__preparedStmtOfDeleteAll = <span class="hljs-keyword">new</span> <span class="hljs-title class_">SharedSQLiteStatement</span>(__db) &#123;<br>      <span class="hljs-meta">@Override</span><br>      <span class="hljs-keyword">public</span> String <span class="hljs-title function_">createQuery</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">_query</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;DELETE FROM word_table&quot;</span>;<br>        <span class="hljs-keyword">return</span> _query;<br>      &#125;<br>    &#125;;<br>  &#125;<br><br>  <span class="hljs-comment">//这里是复写WordDAO中的方法，调用上面的预编译好的语句进行sql操作，没啥好说的；篇幅原因，</span><br>  <span class="hljs-comment">//public LiveData&lt;List&lt;Word&gt;&gt; getAlphabetizedWords() </span><br>  <span class="hljs-comment">//public LiveData&lt;Word&gt; getWordByContent(final String word)</span><br>  <span class="hljs-comment">//没有抄过来</span><br>  <span class="hljs-meta">@Override</span><br>  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">insert</span><span class="hljs-params">(<span class="hljs-keyword">final</span> Word word)</span> &#123;<br>    __db.assertNotSuspendingTransaction();<br>    __db.beginTransaction();<br>    <span class="hljs-keyword">try</span> &#123;<br>      __insertionAdapterOfWord.insert(word);<br>      __db.setTransactionSuccessful();<br>    &#125; <span class="hljs-keyword">finally</span> &#123;<br>      __db.endTransaction();<br>    &#125;<br>  &#125;<br><br>  <span class="hljs-meta">@Override</span><br>  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">updateWord</span><span class="hljs-params">(<span class="hljs-keyword">final</span> Word word)</span> &#123;<br>    __db.assertNotSuspendingTransaction();<br>    __db.beginTransaction();<br>    <span class="hljs-keyword">try</span> &#123;<br>      __updateAdapterOfWord.handle(word);<br>      __db.setTransactionSuccessful();<br>    &#125; <span class="hljs-keyword">finally</span> &#123;<br>      __db.endTransaction();<br>    &#125;<br>  &#125;<br><br>  <span class="hljs-meta">@Override</span><br>  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">deleteAll</span><span class="hljs-params">()</span> &#123;<br>    __db.assertNotSuspendingTransaction();<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">SupportSQLiteStatement</span> <span class="hljs-variable">_stmt</span> <span class="hljs-operator">=</span> __preparedStmtOfDeleteAll.acquire();<br>    __db.beginTransaction();<br>    <span class="hljs-keyword">try</span> &#123;<br>      _stmt.executeUpdateDelete();<br>      __db.setTransactionSuccessful();<br>    &#125; <span class="hljs-keyword">finally</span> &#123;<br>      __db.endTransaction();<br>      __preparedStmtOfDeleteAll.release(_stmt);<br>    &#125;<br>  &#125;<br><br></code></pre></td></tr></table></figure>
+
+
+
+<h4 id="Database编译后生成的类"><a href="#Database编译后生成的类" class="headerlink" title="@Database编译后生成的类"></a>@Database编译后生成的类</h4><p>我们定义的<code>WordRoomDatabase</code>类在编译后生成了<code>WordRoomDatabase_Impl</code>类，我们来看一下类的内容,删除了方法的实现，只保留了方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">WordRoomDatabase_Impl</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">WordRoomDatabase</span> &#123;<br>  <span class="hljs-keyword">private</span> <span class="hljs-keyword">volatile</span> WordDAO _wordDAO;<br><br>  <span class="hljs-keyword">private</span> <span class="hljs-keyword">volatile</span> ManDAO _manDAO;<br><br>  <span class="hljs-meta">@Override</span><br>  <span class="hljs-keyword">protected</span> SupportSQLiteOpenHelper <span class="hljs-title function_">createOpenHelper</span><span class="hljs-params">(DatabaseConfiguration configuration)</span> &#123;<br>   <br>      <span class="hljs-meta">@Override</span><br>      <span class="hljs-keyword">protected</span> RoomOpenHelper.ValidationResult <span class="hljs-title function_">onValidateSchema</span><span class="hljs-params">(SupportSQLiteDatabase _db)</span> &#123;<br>        <br>    <span class="hljs-keyword">final</span> SupportSQLiteOpenHelper.<span class="hljs-type">Configuration</span> <span class="hljs-variable">_sqliteConfig</span> <span class="hljs-operator">=</span> SupportSQLiteOpenHelper.Configuration.builder(configuration.context)<br>        .name(configuration.name)<br>        .callback(_openCallback)<br>        .build();<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">SupportSQLiteOpenHelper</span> <span class="hljs-variable">_helper</span> <span class="hljs-operator">=</span> configuration.sqliteOpenHelperFactory.create(_sqliteConfig);<br>    <span class="hljs-keyword">return</span> _helper;<br>  &#125;<br><br>  <span class="hljs-meta">@Override</span><br>  <span class="hljs-keyword">protected</span> InvalidationTracker <span class="hljs-title function_">createInvalidationTracker</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">final</span> HashMap&lt;String, String&gt; _shadowTablesMap = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;String, String&gt;(<span class="hljs-number">0</span>);<br>    HashMap&lt;String, Set&lt;String&gt;&gt; _viewTables = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;String, Set&lt;String&gt;&gt;(<span class="hljs-number">0</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvalidationTracker</span>(<span class="hljs-built_in">this</span>, _shadowTablesMap, _viewTables, <span class="hljs-string">&quot;word_table&quot;</span>,<span class="hljs-string">&quot;man&quot;</span>);<br>  &#125;<br><br>  <span class="hljs-meta">@Override</span><br>  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">clearAllTables</span><span class="hljs-params">()</span> &#123;<br>    <br>  &#125;<br><br> <span class="hljs-meta">@Override</span><br>  <span class="hljs-keyword">public</span> WordDAO <span class="hljs-title function_">wordDAO</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">if</span> (_wordDAO != <span class="hljs-literal">null</span>) &#123;<br>      <span class="hljs-keyword">return</span> _wordDAO;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      <span class="hljs-keyword">synchronized</span>(<span class="hljs-built_in">this</span>) &#123;<br>        <span class="hljs-keyword">if</span>(_wordDAO == <span class="hljs-literal">null</span>) &#123;<br>          _wordDAO = <span class="hljs-keyword">new</span> <span class="hljs-title class_">WordDAO_Impl</span>(<span class="hljs-built_in">this</span>);<br>        &#125;<br>        <span class="hljs-keyword">return</span> _wordDAO;<br>      &#125;<br>    &#125;<br>  &#125;<br><br>  <span class="hljs-meta">@Override</span><br>  <span class="hljs-keyword">public</span> ManDAO <span class="hljs-title function_">ManDAO</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">if</span> (_manDAO != <span class="hljs-literal">null</span>) &#123;<br>      <span class="hljs-keyword">return</span> _manDAO;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      <span class="hljs-keyword">synchronized</span>(<span class="hljs-built_in">this</span>) &#123;<br>        <span class="hljs-keyword">if</span>(_manDAO == <span class="hljs-literal">null</span>) &#123;<br>          _manDAO = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ManDAO_Impl</span>(<span class="hljs-built_in">this</span>);<br>        &#125;<br>        <span class="hljs-keyword">return</span> _manDAO;<br>      &#125;<br>    &#125;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这里面我们发现了获取我们定义的两个<code>DAO</code>的方法，返回了<code>DAO_Impl</code>的实现类。</p>
+<p><code>createInvalidationTracker</code>是在创建RoomDatabase时调用的 ，代码在<code>RoomDatabase</code>类中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-title function_">RoomDatabase</span><span class="hljs-params">()</span> &#123;<br>       mInvalidationTracker = createInvalidationTracker();<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>createOpenHelper</code>是在我们自己定义的RoomDatabase中调用<code>Room.databaseBuilder().build()</code>方法时，这个方法内部调用的。</p>
+<h4 id="调用流程"><a href="#调用流程" class="headerlink" title="调用流程"></a>调用流程</h4><p>上面简单说明了调用过程中所涉及到的类，下面简单捋一下调用过程：</p>
+<ol>
+<li>我们的<code>WordRoomDatabase</code>继承自<code>RoomDatabase</code>,并且在<code>getDatabase</code>方法中调用了<code>Room.databaseBuilder().build()</code>方法。这里的<code>Room.databaseBuilder()</code>方法返回的是<code>RoomDatabase.Builder</code>类型，这调用<code>build()</code>方法</li>
+<li>在<code>RoomDatabase.Builder.build</code>方法中，只看最后几行，前面是对数据库进行的配置</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">T</span> <span class="hljs-variable">db</span> <span class="hljs-operator">=</span> Room.getGeneratedImplementation(mDatabaseClass, DB_IMPL_SUFFIX);<br>db.init(configuration);<br><span class="hljs-keyword">return</span> db;<br></code></pre></td></tr></table></figure>
+
+<p>这里的<code>DB_IMPL_SUFFIX</code>是一个全局静态变量：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">DB_IMPL_SUFFIX</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;_Impl&quot;</span>;<br></code></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>在返回数据库实例之前，调用了<code>db.init</code>方法，在<code>init</code>方法中调用了<code>createOpenHelper</code>方法，也就是上面</li>
+</ol>
+<p>提到的<code>WordRoomDatabase_Impl</code>中实现的<code>createOpenHelper</code>方法。</p>
+<p>至此，我们就可以调用DAO中的方法对数据库进行操作了</p>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>JetPack中的Room</div>
+      <div>https://blog.huangyuanlove.com/2020/01/08/JetPack-Room/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年1月8日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/02/25/JetPack%E4%B8%AD%E7%9A%84Navigation/" title="JetPack中的Navigation">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">JetPack中的Navigation</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/01/06/%E5%86%99%E5%9C%A82020%E5%B9%B4%E5%88%9D-2019%E6%80%BB%E7%BB%93/" title="写在2020年初-2019总结">
+                        <span class="hidden-mobile">写在2020年初-2019总结</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '158a2683730783f76f5dfd2c134f1199'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

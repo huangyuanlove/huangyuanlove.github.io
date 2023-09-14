@@ -1,0 +1,678 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="Android,PathMeasure,动画,路径动画">
+  
+    <meta name="description" content="我们可以利用路径动画实现很多好玩的东西，比如上面图中的类似支付宝支付完成的动画。主要用到了PathMeasure,ValueAnumator这两个类">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用PathMeasure实现路径动画">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2019/01/04/%E5%88%A9%E7%94%A8PathMeasure%E5%AE%9E%E7%8E%B0%E8%B7%AF%E5%BE%84%E5%8A%A8%E7%94%BB/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="我们可以利用路径动画实现很多好玩的东西，比如上面图中的类似支付宝支付完成的动画。主要用到了PathMeasure,ValueAnumator这两个类">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/Android/PathMeasure/path_measure.gif">
+<meta property="article:published_time" content="2019-01-04T13:47:21.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.241Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="animator">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/Android/PathMeasure/path_measure.gif">
+  
+  
+  
+  <title>利用PathMeasure实现路径动画 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="利用PathMeasure实现路径动画"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-01-04 21:47" pubdate>
+          2019年1月4日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.9k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">利用PathMeasure实现路径动画</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>我们可以利用路径动画实现很多好玩的东西，比如上面图中的类似支付宝支付完成的动画。<br>主要用到了<code>PathMeasure</code>,<code>ValueAnumator</code>这两个类</p>
+<span id="more"></span>
+
+<h4 id="PathMeasure"><a href="#PathMeasure" class="headerlink" title="PathMeasure"></a>PathMeasure</h4><p>类似于一个计算器，可以计算一些和路径相关的东西。<br>两种初始化方式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">PathMeasure</span> <span class="hljs-variable">pathMeasure</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PathMeasure</span>();<br>pathMeasure.setPath(path,<span class="hljs-literal">false</span>);<br></code></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">PathMeasure</span> <span class="hljs-variable">pathMeasure</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PathMeasure</span>(path,<span class="hljs-literal">false</span>);<br></code></pre></td></tr></table></figure>
+
+<h5 id="getLength"><a href="#getLength" class="headerlink" title="getLength()"></a>getLength()</h5><p>用来获取路径长度，并且获取到的是当前曲线的长度，而不是整个Path的长度</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onDraw</span><span class="hljs-params">(Canvas canvas)</span> &#123;<br>    <span class="hljs-built_in">super</span>.onDraw(canvas);<br>    canvas.translate(<span class="hljs-number">150</span>, <span class="hljs-number">150</span>);<br>    path.addRect(-<span class="hljs-number">50</span>,-<span class="hljs-number">50</span>,<span class="hljs-number">50</span>,<span class="hljs-number">50</span>,Path.Direction.CW);<br>    path.addRect(-<span class="hljs-number">100</span>,-<span class="hljs-number">100</span>,<span class="hljs-number">100</span>,<span class="hljs-number">100</span>,Path.Direction.CW);<br>    path.addRect(-<span class="hljs-number">120</span>,-<span class="hljs-number">120</span>,<span class="hljs-number">120</span>,<span class="hljs-number">120</span>,Path.Direction.CW);<br><br>    canvas.drawPath(path, paint);<br>    pathMeasure.setPath(path,<span class="hljs-literal">false</span>);<br>    <span class="hljs-keyword">do</span>&#123;<br>    	Log.e(<span class="hljs-string">&quot;huangyuan&quot;</span>,pathMeasure.getLength()+<span class="hljs-string">&quot;&quot;</span>);<br>    &#125;<span class="hljs-keyword">while</span> (pathMeasure.nextContour());<br><br>&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>2019-01-04 21:58:28.408 5231-5231&#x2F;huangyuanlove.com.customwidget E&#x2F;huangyuan: 400.0<br>2019-01-04 21:58:28.408 5231-5231&#x2F;huangyuanlove.com.customwidget E&#x2F;huangyuan: 800.0<br>2019-01-04 21:58:28.408 5231-5231&#x2F;huangyuanlove.com.customwidget E&#x2F;huangyuan: 960.0</p>
+</blockquote>
+<p>pathMeasure.nextContour()得到的曲线的顺序与添加到Path中的顺序相同</p>
+<h5 id="getSegment"><a href="#getSegment" class="headerlink" title="getSegment()"></a>getSegment()</h5><p>函数定义</p>
+<blockquote>
+<p>public boolean getSegment(float startD, float stopD, Path dst, boolean startWithMoveTo)</p>
+</blockquote>
+<p>懒得翻译，自己看吧</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">    * Given a start and stop distance, return in dst the intervening</span><br><span class="hljs-comment">    * segment(s). If the segment is zero-length, return false, else return</span><br><span class="hljs-comment">    * true. startD and stopD are pinned to legal values (0..getLength()).</span><br><span class="hljs-comment">    * If startD &gt;= stopD then return false (and leave dst untouched).</span><br><span class="hljs-comment">    * Begin the segment with a moveTo if startWithMoveTo is true.</span><br><span class="hljs-comment">*/</span><br></code></pre></td></tr></table></figure>
+<p>我们可以这么用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onDraw</span><span class="hljs-params">(Canvas canvas)</span> &#123;<br>    <span class="hljs-built_in">super</span>.onDraw(canvas);<br>    canvas.translate(<span class="hljs-number">150</span>, <span class="hljs-number">150</span>);<br>    path.addRect(-<span class="hljs-number">50</span>,-<span class="hljs-number">50</span>,<span class="hljs-number">50</span>,<span class="hljs-number">50</span>,Path.Direction.CW);<br>    <span class="hljs-type">Path</span> <span class="hljs-variable">dst</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Path</span>();<br>    pathMeasure.setPath(path,<span class="hljs-literal">false</span>);<br>    pathMeasure.getSegment(<span class="hljs-number">0</span>,<span class="hljs-number">150</span>,dst,<span class="hljs-literal">true</span>);<br>    canvas.drawPath(dst,paint);<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<p>得到：<br><img src="/image/Android/PathMeasure/dst.png" srcset="/img/loading.gif" lazyload alt="getSegment" title="getSegment"><br>如果dst路径不为空</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Path</span> <span class="hljs-variable">dst</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Path</span>();<br>dst.lineTo(<span class="hljs-number">10</span>,<span class="hljs-number">100</span>);<br></code></pre></td></tr></table></figure>
+<p>得到<br><img src="/image/Android/PathMeasure/dst_not_null.png" srcset="/img/loading.gif" lazyload alt="dst路径不空" title="dst路径不空"><br>如果dst路径不空，<code>startWithMoveTo</code>为false，得到<br><img src="/image/Android/PathMeasure/starWithMoveToFalse.png" srcset="/img/loading.gif" lazyload alt="starWithMoveToFalse，" title="starWithMoveToFalse"></p>
+<h5 id="路径加载动画"><a href="#路径加载动画" class="headerlink" title="路径加载动画"></a>路径加载动画</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-title function_">TestPathMeasure</span><span class="hljs-params">(Context context, <span class="hljs-meta">@Nullable</span> AttributeSet attrs, <span class="hljs-type">int</span> defStyleAttr)</span> &#123;<br>       <span class="hljs-built_in">super</span>(context, attrs, defStyleAttr);<br>       init();<br>   &#125;<br><br>   <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">init</span><span class="hljs-params">()</span> &#123;<br>       <span class="hljs-comment">//禁用硬件加速</span><br>       setLayerType(LAYER_TYPE_SOFTWARE,<span class="hljs-literal">null</span>);<br>       paint = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Paint</span>(Paint.ANTI_ALIAS_FLAG);<br>       paint.setColor(Color.BLACK);<br>       paint.setStrokeWidth(<span class="hljs-number">4</span>);<br>       paint.setStyle(Paint.Style.STROKE);<br>       dstPath = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Path</span>();<br>       circlePath = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Path</span>();<br>       circlePath.addCircle(<span class="hljs-number">100</span>,<span class="hljs-number">100</span>,<span class="hljs-number">50</span>,Path.Direction.CW);<br>       pathMeasure = <span class="hljs-keyword">new</span> <span class="hljs-title class_">PathMeasure</span>(circlePath,<span class="hljs-literal">true</span>);<br><br><br>       <span class="hljs-type">ValueAnimator</span> <span class="hljs-variable">valueAnimator</span> <span class="hljs-operator">=</span> ValueAnimator.ofFloat(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>);<br>       valueAnimator.setRepeatCount(ValueAnimator.INFINITE);<br><br><br>       valueAnimator.addUpdateListener(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ValueAnimator</span>.AnimatorUpdateListener() &#123;<br>           <span class="hljs-meta">@Override</span><br>           <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onAnimationUpdate</span><span class="hljs-params">(ValueAnimator animation)</span> &#123;<br>               currentAnimValue = (<span class="hljs-type">float</span>) animation.getAnimatedValue();<br>               invalidate();<br>           &#125;<br>       &#125;);<br>       valueAnimator.setDuration(<span class="hljs-number">2000</span>);<br>       valueAnimator.start();<br><br>   &#125;<br><br><br>   <span class="hljs-meta">@Override</span><br>   <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onDraw</span><span class="hljs-params">(Canvas canvas)</span> &#123;<br>       <span class="hljs-built_in">super</span>.onDraw(canvas);<br><br><br>       <span class="hljs-type">float</span> <span class="hljs-variable">length</span> <span class="hljs-operator">=</span> pathMeasure.getLength();<br><br>       <span class="hljs-type">float</span> <span class="hljs-variable">stop</span> <span class="hljs-operator">=</span> pathMeasure.getLength() * currentAnimValue;<br><br>       <span class="hljs-type">float</span> <span class="hljs-variable">start</span> <span class="hljs-operator">=</span> (<span class="hljs-type">float</span>) (stop- ((<span class="hljs-number">0.5</span>- Math.abs(currentAnimValue-<span class="hljs-number">0.5</span>))*length));<br><br>       dstPath.reset();<br>       pathMeasure.getSegment(start,stop,dstPath,<span class="hljs-literal">true</span>);<br>       canvas.drawPath(dstPath,paint);<br>   &#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>我们可以在路径动画上加个箭头，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">TestPathMeasure</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">View</span> &#123;<br><br>    <span class="hljs-keyword">private</span> Paint paint;<br>    <span class="hljs-keyword">private</span> Path path;<br>    <span class="hljs-keyword">private</span> Path dstPath;<br>    <span class="hljs-keyword">private</span> Path circlePath;<br>    <span class="hljs-keyword">private</span> PathMeasure pathMeasure;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">float</span> currentAnimValue;<br><br>    <span class="hljs-keyword">private</span> Bitmap icChevronRight;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-type">float</span>[] pos = <span class="hljs-keyword">new</span> <span class="hljs-title class_">float</span>[<span class="hljs-number">2</span>];<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">float</span>[] tan = <span class="hljs-keyword">new</span> <span class="hljs-title class_">float</span>[<span class="hljs-number">2</span>];<br><br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">TestPathMeasure</span><span class="hljs-params">(Context context)</span> &#123;<br>        <span class="hljs-built_in">super</span>(context);<br>        init(context);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">TestPathMeasure</span><span class="hljs-params">(Context context, <span class="hljs-meta">@Nullable</span> AttributeSet attrs)</span> &#123;<br>        <span class="hljs-built_in">super</span>(context, attrs);<br>        init(context);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">TestPathMeasure</span><span class="hljs-params">(Context context, <span class="hljs-meta">@Nullable</span> AttributeSet attrs, <span class="hljs-type">int</span> defStyleAttr)</span> &#123;<br>        <span class="hljs-built_in">super</span>(context, attrs, defStyleAttr);<br>        init(context);<br>    &#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">init</span><span class="hljs-params">(Context context)</span> &#123;<br>        <span class="hljs-comment">//禁用硬件加速</span><br>        setLayerType(LAYER_TYPE_SOFTWARE, <span class="hljs-literal">null</span>);<br>        paint = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Paint</span>(Paint.ANTI_ALIAS_FLAG);<br>        paint.setColor(Color.BLACK);<br>        paint.setStrokeWidth(<span class="hljs-number">4</span>);<br>        paint.setStyle(Paint.Style.STROKE);<br>        dstPath = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Path</span>();<br>        circlePath = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Path</span>();<br>        circlePath.addCircle(<span class="hljs-number">300</span>, <span class="hljs-number">300</span>, <span class="hljs-number">150</span>, Path.Direction.CW);<br>        pathMeasure = <span class="hljs-keyword">new</span> <span class="hljs-title class_">PathMeasure</span>(circlePath, <span class="hljs-literal">true</span>);<br>        BitmapFactory.<span class="hljs-type">Options</span> <span class="hljs-variable">options</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BitmapFactory</span>.Options();<br><br>        icChevronRight = BitmapFactory.decodeResource(context.getResources(), R.drawable.right);<br><br><br>        <span class="hljs-type">ValueAnimator</span> <span class="hljs-variable">valueAnimator</span> <span class="hljs-operator">=</span> ValueAnimator.ofFloat(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>);<br>        valueAnimator.setRepeatCount(ValueAnimator.INFINITE);<br><br><br>        valueAnimator.addUpdateListener(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ValueAnimator</span>.AnimatorUpdateListener() &#123;<br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onAnimationUpdate</span><span class="hljs-params">(ValueAnimator animation)</span> &#123;<br>                currentAnimValue = (<span class="hljs-type">float</span>) animation.getAnimatedValue();<br>                invalidate();<br>            &#125;<br>        &#125;);<br>        valueAnimator.setDuration(<span class="hljs-number">2000</span>);<br>        valueAnimator.start();<br><br>    &#125;<br><br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onDraw</span><span class="hljs-params">(Canvas canvas)</span> &#123;<br>        <span class="hljs-built_in">super</span>.onDraw(canvas);<br><br><br>        <span class="hljs-type">float</span> <span class="hljs-variable">length</span> <span class="hljs-operator">=</span> pathMeasure.getLength();<br><br>        <span class="hljs-type">float</span> <span class="hljs-variable">stop</span> <span class="hljs-operator">=</span> pathMeasure.getLength() * currentAnimValue;<br><br>        <span class="hljs-type">float</span> <span class="hljs-variable">start</span> <span class="hljs-operator">=</span> (<span class="hljs-type">float</span>) (stop - ((<span class="hljs-number">0.5</span> - Math.abs(currentAnimValue - <span class="hljs-number">0.5</span>)) * length));<br><br>        dstPath.reset();<br>        pathMeasure.getSegment(start, stop, dstPath, <span class="hljs-literal">true</span>);<br>        canvas.drawPath(dstPath, paint);<br><br><br>        pathMeasure.getPosTan(stop, pos, tan);<br>        <span class="hljs-type">float</span> <span class="hljs-variable">degrees</span> <span class="hljs-operator">=</span> (<span class="hljs-type">float</span>) (Math.atan2(tan[<span class="hljs-number">1</span>], tan[<span class="hljs-number">0</span>]) * <span class="hljs-number">180</span> / Math.PI);<br><br>        <span class="hljs-type">Matrix</span> <span class="hljs-variable">matrix</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Matrix</span>();<br><span class="hljs-comment">//        matrix.postRotate(degrees,icChevronRight.getWidth()/2,icChevronRight.getHeight()/2);</span><br><span class="hljs-comment">//        matrix.postTranslate(pos[0] -icChevronRight.getWidth()/2,pos[1]-icChevronRight.getHeight()/2);</span><br><br>        pathMeasure.getMatrix(stop, matrix, PathMeasure.POSITION_MATRIX_FLAG | PathMeasure.TANGENT_MATRIX_FLAG);<br>        matrix.preTranslate(-icChevronRight.getWidth() / <span class="hljs-number">2</span>, -icChevronRight.getHeight() / <span class="hljs-number">2</span>);<br>        canvas.drawBitmap(icChevronRight, matrix, paint);<br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这里主要用到了Matrix和getPosTan(),用来得到路径上某一长度的位置以及该位置的正切值。函数原型如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * Pins distance to 0 &lt;= distance &lt;= getLength(), and then computes the</span><br><span class="hljs-comment"> * corresponding position and tangent. Returns false if there is no path,</span><br><span class="hljs-comment"> * or a zero-length path was specified, in which case position and tangent</span><br><span class="hljs-comment"> * are unchanged.</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> distance The distance along the current contour to sample</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> pos If not null, returns the sampled position (x==[0], y==[1])</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> tan If not null, returns the sampled tangent (x==[0], y==[1])</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@return</span> false if there was no path associated with this measure object</span><br><span class="hljs-comment">*/</span><br><span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">getPosTan</span><span class="hljs-params">(<span class="hljs-type">float</span> distance, <span class="hljs-type">float</span> pos[], <span class="hljs-type">float</span> tan[])</span> <br></code></pre></td></tr></table></figure>
+
+<p>参数解释：</p>
+<ul>
+<li>float distance: 距离Path起点的长度，取值范围0&lt;&#x3D;distance&lt;&#x3D;getLength</li>
+<li>float[] pos:该点的坐标值，pos[0]表示x坐标，pos[y]表示y坐标</li>
+<li>float[] tan:该点的正切值。</li>
+</ul>
+<p>在上面的代码中需要注意的是</p>
+<ul>
+<li>pos、tan数组在使用时必须先使用new关键词分配存储空间，而PathMeasure.getPosTan函数只会向数组中的元素赋值。</li>
+<li>通过Math.atan2(tan[1],tan[0])得到的是弧度值，而不是角度</li>
+<li>先利用matrix.postRotate将图片旋转指定角度，然后用matix.postTranslate将图片移动到当前路径最前端(注释掉的那两句)</li>
+</ul>
+<p>pathMeasure有个getMatrix函数，是对我们自己实现的那种方式的封装，我们只需要将图片移动一下就好了</p>
+<h4 id="山寨支付宝支付成功动画"><a href="#山寨支付宝支付成功动画" class="headerlink" title="山寨支付宝支付成功动画"></a>山寨支付宝支付成功动画</h4><p>就是先画一个圆，然后圆形里面画个对勾。。。。。很简陋的一种实现方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AliPaySuccess</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">View</span> &#123;<br><br>    <span class="hljs-keyword">private</span> Paint paint;<br>    <span class="hljs-keyword">private</span> Path dstPath;<br>    <span class="hljs-keyword">private</span> Path circlePath;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-variable">centerX</span> <span class="hljs-operator">=</span> <span class="hljs-number">500</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-variable">centerY</span> <span class="hljs-operator">=</span> <span class="hljs-number">500</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-variable">radius</span> <span class="hljs-operator">=</span> <span class="hljs-number">250</span>;<br>    <span class="hljs-keyword">private</span> PathMeasure pathMeasure;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">float</span> currentAnimValue;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">boolean</span> switchLine;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">AliPaySuccess</span><span class="hljs-params">(Context context)</span> &#123;<br>        <span class="hljs-built_in">super</span>(context);<br>        init();<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">AliPaySuccess</span><span class="hljs-params">(Context context, <span class="hljs-meta">@Nullable</span> AttributeSet attrs)</span> &#123;<br>        <span class="hljs-built_in">super</span>(context, attrs);<br>        init();<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">AliPaySuccess</span><span class="hljs-params">(Context context, <span class="hljs-meta">@Nullable</span> AttributeSet attrs, <span class="hljs-type">int</span> defStyleAttr)</span> &#123;<br>        <span class="hljs-built_in">super</span>(context, attrs, defStyleAttr);<br>        init();<br>    &#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">init</span><span class="hljs-params">()</span>&#123;<br>        setLayerType(LAYER_TYPE_SOFTWARE, <span class="hljs-literal">null</span>);<br>        paint = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Paint</span>(Paint.ANTI_ALIAS_FLAG);<br>        paint.setColor(Color.BLACK);<br>        paint.setStrokeWidth(<span class="hljs-number">4</span>);<br>        paint.setStyle(Paint.Style.STROKE);<br>        dstPath = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Path</span>();<br>        circlePath = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Path</span>();<br>        circlePath.addCircle(centerX,centerY,radius,Path.Direction.CW);<br>        circlePath.moveTo(centerX-radius/<span class="hljs-number">2</span>,centerY);<br>        circlePath.lineTo(centerX,centerY+radius/<span class="hljs-number">2</span>);<br>        circlePath.lineTo(centerX+radius/<span class="hljs-number">2</span>,centerY-radius/<span class="hljs-number">3</span>);<br>        pathMeasure = <span class="hljs-keyword">new</span> <span class="hljs-title class_">PathMeasure</span>(circlePath,<span class="hljs-literal">false</span>);<br>        <span class="hljs-type">ValueAnimator</span> <span class="hljs-variable">animator</span> <span class="hljs-operator">=</span> ValueAnimator.ofFloat(<span class="hljs-number">0</span>,<span class="hljs-number">2</span>);<br>        animator.addUpdateListener(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ValueAnimator</span>.AnimatorUpdateListener() &#123;<br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onAnimationUpdate</span><span class="hljs-params">(ValueAnimator animation)</span> &#123;<br>                currentAnimValue = (<span class="hljs-type">float</span>) animation.getAnimatedValue();<br>                invalidate();<br>            &#125;<br>        &#125;);<br>        animator.setDuration(<span class="hljs-number">2000</span>);<br>        animator.setInterpolator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">AccelerateInterpolator</span>());<br>        animator.start();<br>    &#125;<br><br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onDraw</span><span class="hljs-params">(Canvas canvas)</span> &#123;<br>        <span class="hljs-built_in">super</span>.onDraw(canvas);<br>        <span class="hljs-keyword">if</span>(currentAnimValue&lt;<span class="hljs-number">1</span>)&#123;<br>            <span class="hljs-type">float</span> <span class="hljs-variable">stop</span> <span class="hljs-operator">=</span> pathMeasure.getLength()*currentAnimValue;<br>            pathMeasure.getSegment(<span class="hljs-number">0</span>,stop,dstPath,<span class="hljs-literal">true</span>);<br>        &#125;<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (currentAnimValue &gt;<span class="hljs-number">1</span> &amp;&amp; !switchLine)&#123;<br>            pathMeasure.getSegment(<span class="hljs-number">0</span>,pathMeasure.getLength(),dstPath,<span class="hljs-literal">true</span>);<br>            switchLine = <span class="hljs-literal">true</span>;<br>            pathMeasure.nextContour();<br>        &#125;<span class="hljs-keyword">else</span>   &#123;<br>            <span class="hljs-type">float</span> <span class="hljs-variable">stop</span> <span class="hljs-operator">=</span> pathMeasure.getLength()*(currentAnimValue-<span class="hljs-number">1</span>);<br>            pathMeasure.getSegment(<span class="hljs-number">0</span>,stop,dstPath,<span class="hljs-literal">true</span>);<br>        &#125;<br>        canvas.drawPath(dstPath,paint);<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<ol>
+<li><p>首先初始化各种参数：画笔、路径和动画</p>
+<p> 初始化路径时，先添加了外面的圆形，然后是里面的对勾。设置动画从0～2，0-1时画圆，1-2时画对勾。</p>
+</li>
+<li><p>重写onDraw，判断当前的动画值，在0-1时画圆，当动画值第一次大于1时，切换到对号那条线上。</p>
+<p>这里的<code>currentAnimValue</code>不一定会有等于1的时候，至少我执行了十几遍也没出现一次。所以取的是第一次大于时切换。</p>
+</li>
+<li><p>这里面的数值和颜色之类的属性都是直接写死的，应该通过xml文件读取。</p>
+</li>
+</ol>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+        <a href="/tags/animator/" class="print-no-link">#animator</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>利用PathMeasure实现路径动画</div>
+      <div>https://blog.huangyuanlove.com/2019/01/04/利用PathMeasure实现路径动画/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年1月4日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/01/20/%E8%87%AA%E5%AE%9A%E4%B9%89View-%E8%B4%9D%E5%A1%9E%E5%B0%94%E6%9B%B2%E7%BA%BF%E3%80%81Shader/" title="自定义View--贝塞尔曲线、Shader">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">自定义View--贝塞尔曲线、Shader</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/01/03/%E5%86%99%E5%9C%A82019%E5%B9%B4%E5%88%9D-2018%E6%80%BB%E7%BB%93/" title="2018总结">
+                        <span class="hidden-mobile">2018总结</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '48b6eaf422b50ff133fba1f6ca6fe267'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

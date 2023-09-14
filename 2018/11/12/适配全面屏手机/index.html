@@ -1,0 +1,644 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="适配全面屏手机">
+  
+    <meta name="description" content="放个图感受一下，上面的图是折叠屏，并非是全面屏，全面屏是手机业界对于超高屏占比手机设计的一个宽泛的定义。全面屏手机屏幕的宽高比例比较特殊，不再是以前的16:9了。比如三星的Galaxy S8屏幕分辨率是：2960×1440，对应的屏幕比例为:18.5:9。VIVO X20手机屏幕分辨率是2160x1080，对应的屏幕比例:18:9。由于全面屏手机的高宽比比之前大，如果不适配的话，Android默认">
+<meta property="og:type" content="article">
+<meta property="og:title" content="适配全面屏手机">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2018/11/12/%E9%80%82%E9%85%8D%E5%85%A8%E9%9D%A2%E5%B1%8F%E6%89%8B%E6%9C%BA/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="放个图感受一下，上面的图是折叠屏，并非是全面屏，全面屏是手机业界对于超高屏占比手机设计的一个宽泛的定义。全面屏手机屏幕的宽高比例比较特殊，不再是以前的16:9了。比如三星的Galaxy S8屏幕分辨率是：2960×1440，对应的屏幕比例为:18.5:9。VIVO X20手机屏幕分辨率是2160x1080，对应的屏幕比例:18:9。由于全面屏手机的高宽比比之前大，如果不适配的话，Android默认">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/Android/maxAspect/FoldablesAndInfinityFlex.gif">
+<meta property="article:published_time" content="2018-11-12T12:05:56.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.246Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="Android爬坑之旅">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/Android/maxAspect/FoldablesAndInfinityFlex.gif">
+  
+  
+  
+  <title>适配全面屏手机 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="适配全面屏手机"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2018-11-12 20:05" pubdate>
+          2018年11月12日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.4k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">适配全面屏手机</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>放个图感受一下，上面的图是折叠屏，并非是全面屏，全面屏是手机业界对于超高屏占比手机设计的一个宽泛的定义。全面屏手机屏幕的宽高比例比较特殊，不再是以前的16:9了。比如三星的Galaxy S8屏幕分辨率是：2960×1440，对应的屏幕比例为:18.5:9。VIVO X20手机屏幕分辨率是2160x1080，对应的屏幕比例:18:9。由于全面屏手机的高宽比比之前大，如果不适配的话，Android默认为最大的宽高比是1.86，小于全面屏手机的宽高比，因此，在全面屏手机上打开部分App时，上下就会留有空间，显示为黑条。</p>
+<p>本文关于适配问题参考 <a target="_blank" rel="noopener" href="https://blog.csdn.net/weelyy/article/details/79284332">https://blog.csdn.net/weelyy/article/details/79284332</a></p>
+<span id="more"></span>
+
+<h4 id="显示问题"><a href="#显示问题" class="headerlink" title="显示问题"></a>显示问题</h4><img src="/image/Android/maxAspect/max_aspect.png" srcset="/img/loading.gif" lazyload height="500" width="240" />
+<img src="/image/Android/maxAspect/max_aspect1.jpg" srcset="/img/loading.gif" lazyload height="500" width="240" />
+
+
+<p>第一张图是在小米mix3上显示的问题，不得不说用户也是紧跟潮流，刚出新手机就直接入手。<br>下面一张图是在华为荣耀10上显示的问题，可以明显的看出，在屏幕底部都有一块黑色区域，不同的是华为荣耀10上有全屏显示的提示，点击之后可以强制全屏显示，不会留下黑框。</p>
+<h4 id="在AndroidManifest-xml声明max-aspect值"><a href="#在AndroidManifest-xml声明max-aspect值" class="headerlink" title="在AndroidManifest.xml声明max_aspect值"></a>在AndroidManifest.xml声明max_aspect值</h4><p>针对此问题，Android官方提供了适配方案，即提高App所支持的最大屏幕纵横比，实现起来也比较简单，在AndroidManifest.xml中做如下配置即可：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">meta-data</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;android.max_aspect&quot;</span>  <span class="hljs-attr">android:value</span>=<span class="hljs-string">&quot;ratio_float&quot;</span>/&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>其中ratio_float为浮点数，官方建议为2.1或更大，因为18.5：9&#x3D;2.055555555……，如果日后出现纵横比更大的手机，此值将需要设为更大。在我司项目中设置的值为4.1，当设置该值为2.1时，在华为荣耀10上未生效。  因此，建议开发者在自己App AndroidManifest的Application标签下面增加下面一段代码：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">meta-data</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;android.max_aspect&quot;</span> <span class="hljs-attr">android:value</span>=<span class="hljs-string">&quot;2.1&quot;</span> /&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>另外，在AndroidManifest中针对Activity标签添加<code>android:resizeableActivity = ”true”</code>，也可以实现全屏显示，但此设置只针对Activity生效，且增加了此属性该activity也会支持分屏显示。</p>
+<p>当然max_aspect值也可以在代码中动态设置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setMaxAspect</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-type">ApplicationInfo</span> <span class="hljs-variable">applicationInfo</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;<br>        <span class="hljs-keyword">try</span> &#123;<br>            applicationInfo = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);<br>        &#125; <span class="hljs-keyword">catch</span> (PackageManager.NameNotFoundException e) &#123;<br>            e.printStackTrace();<br>        &#125;<br>        <span class="hljs-keyword">if</span>(applicationInfo == <span class="hljs-literal">null</span>)&#123;<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>(<span class="hljs-string">&quot; get application info = null, has no meta data! &quot;</span>);<br>        &#125;<br>        applicationInfo.metaData.putString(<span class="hljs-string">&quot;android.max_aspect&quot;</span>, <span class="hljs-string">&quot;2.1&quot;</span>);<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>具体情况可以参考谷歌官方文档</p>
+<p><a target="_blank" rel="noopener" href="https://android-developers.googleblog.com/2017/03/update-your-app-to-take-advantage-of.html">https://android-developers.googleblog.com/2017/03/update-your-app-to-take-advantage-of.html</a></p>
+<h4 id="更换资源文件"><a href="#更换资源文件" class="headerlink" title="更换资源文件"></a>更换资源文件</h4><p>在较大高宽比的手机上，由于屏幕比例的改变(从16:9变成了18:9)，对于一些铺满全屏的图片(如开屏广告页或者引导页)会出现图片拉伸的情况，如果可以接受，就不用管了。接受不了就需要适配，针对这种问题，我们以分辨率为2160X1080，像素密度为480dpi的VIVO X20Plus手机为例，可以在资源目录下面增加一个文件夹，drawable-h642dp-port-xxhdpi，并将GUI切好的分辨率为2160X1080资源图片放在这个目录下，系统就能自动使用这种图片，便不会出现拉伸的问题。关于<code>h&lt;N&gt;dp</code>的详细用法，google开发者文档也有详细介绍：</p>
+<p><a target="_blank" rel="noopener" href="https://developer.android.com/guide/practices/screens_support">https://developer.android.com/guide/practices/screens_support</a></p>
+<h4 id="关于折叠屏"><a href="#关于折叠屏" class="headerlink" title="关于折叠屏"></a>关于折叠屏</h4><p>北京时间 11 月 8 日，三星在旧金山向开发者发布了一款可折叠屏幕手机。并表示，新技术需要开发者调整其 App，以确保在手机被摊开成平板电脑时，能够运行流畅。三星的这款手机，还处于原型机的状态，正式发布日期尚未确定。这种折叠的技术，三星将其称之为 Infinity Flex Display。不过 Google 也有其应对的策略，在今年的 Android Dev Summit 上，Google 就已经宣布将要对折叠屏提供“Screen Continuity（屏幕连续性）”的原生系统支持，并将这项技术称之为：<strong>Foldables</strong>。利用这种柔性显示技术，App 可以做到折叠屏设备上的适配工作。</p>
+<p>具体情况可以参考<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/yz5dxQyG3jvhUuDRrdNzbg">https://mp.weixin.qq.com/s/yz5dxQyG3jvhUuDRrdNzbg</a></p>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+        <a href="/tags/Android%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85/" class="print-no-link">#Android爬坑之旅</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>适配全面屏手机</div>
+      <div>https://blog.huangyuanlove.com/2018/11/12/适配全面屏手机/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2018年11月12日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/11/19/gradle%E4%BB%BB%E5%8A%A1/" title="gradle任务">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">gradle任务</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/11/11/gradle%E5%9F%BA%E7%A1%80/" title="gradle基础">
+                        <span class="hidden-mobile">gradle基础</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'bc1e23ebfbd51b2a7823d7b855cc1f75'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

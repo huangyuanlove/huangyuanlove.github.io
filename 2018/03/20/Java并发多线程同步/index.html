@@ -1,0 +1,638 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="多线程同步类">
+  
+    <meta name="description" content="最近遇到了多线程并发同步问题，找到了java.util.concurrent包下的CountDownLatch、CyclicBarrier、Semaphore这三个类。CountDownLatch可以实现类似计数器的功能，例如线程A需要等待B、C、D三个线程执行完成之后才可以执行。CyclicBarrier可以实现让一组(多个)线程等待至某个状态之后再全部同时执行，当所有线程都被释放以后，Cycl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java并发多线程同步">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2018/03/20/Java%E5%B9%B6%E5%8F%91%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="最近遇到了多线程并发同步问题，找到了java.util.concurrent包下的CountDownLatch、CyclicBarrier、Semaphore这三个类。CountDownLatch可以实现类似计数器的功能，例如线程A需要等待B、C、D三个线程执行完成之后才可以执行。CyclicBarrier可以实现让一组(多个)线程等待至某个状态之后再全部同时执行，当所有线程都被释放以后，Cycl">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-03-20T02:43:39.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.221Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Java并发多线程同步 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Java并发多线程同步"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2018-03-20 10:43" pubdate>
+          2018年3月20日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.8k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Java并发多线程同步</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>最近遇到了多线程并发同步问题，找到了<code>java.util.concurrent</code>包下的<code>CountDownLatch</code>、<code>CyclicBarrier</code>、<code>Semaphore</code>这三个类。<br><code>CountDownLatch</code>可以实现类似计数器的功能，例如线程A需要等待B、C、D三个线程执行完成之后才可以执行。<br><code>CyclicBarrier</code>可以实现让一组(多个)线程等待至某个状态之后再全部同时执行，当所有线程都被释放以后，CyclicBarrier可以被重用。<br><code>Semaphore</code>可以控制同时访问的线程个数，通过<code>acquire()</code>获取一个许可，如果没有就等待，而<code>release()</code>释放一个许可。</p>
+<span id="more"></span>
+<h4 id="CountDownLatch"><a href="#CountDownLatch" class="headerlink" title="CountDownLatch"></a>CountDownLatch</h4><p>CountDownLatch类只有一个构造方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-title function_">CountDownLatch</span><span class="hljs-params">(<span class="hljs-type">int</span> count)</span> &#123;<br>        <span class="hljs-keyword">if</span> (count &lt; <span class="hljs-number">0</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>(<span class="hljs-string">&quot;count &lt; 0&quot;</span>);<br>        <span class="hljs-built_in">this</span>.sync = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Sync</span>(count);<br>    &#125;<br></code></pre></td></tr></table></figure>
+<p>这里的count是一个计数值，表示要等待多少任务，每次调用该对象示例的<code>countDown()</code>方法，该值都会减1，当count为0时表示没有需要等待的任务。常用的方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">await</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> InterruptedException &#123; &#125;;   <span class="hljs-comment">//调用await()方法的线程会被挂起，它会等待直到count值为0才继续执行</span><br><span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">await</span><span class="hljs-params">(<span class="hljs-type">long</span> timeout, TimeUnit unit)</span> <span class="hljs-keyword">throws</span> InterruptedException &#123; &#125;;  <span class="hljs-comment">//和await()类似，只不过等待一定的时间后count值还没变为0的话就会继续执行</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">countDown</span><span class="hljs-params">()</span> &#123; &#125;;  <span class="hljs-comment">//将count值减1</span><br></code></pre></td></tr></table></figure>
+<p>示例如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCountDownLatch</span><span class="hljs-params">()</span> &#123;<br>	<span class="hljs-keyword">final</span> <span class="hljs-type">CountDownLatch</span> <span class="hljs-variable">latch</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CountDownLatch</span>(<span class="hljs-number">2</span>);<br>	<span class="hljs-keyword">new</span> <span class="hljs-title class_">Thread</span>(<span class="hljs-string">&quot;one&quot;</span>) &#123;<br>		<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>			<span class="hljs-keyword">try</span> &#123;<br>				System.out.println(<span class="hljs-string">&quot;子线程&quot;</span> + Thread.currentThread().getName() + <span class="hljs-string">&quot;正在执行&quot;</span>);<br>				Thread.sleep(<span class="hljs-number">3000</span>);<br>				System.out.println(<span class="hljs-string">&quot;子线程&quot;</span> + Thread.currentThread().getName() + <span class="hljs-string">&quot;执行完毕&quot;</span>);<br>				latch.countDown();<br>			&#125; <span class="hljs-keyword">catch</span> (InterruptedException e) &#123;<br>				e.printStackTrace();<br>			&#125;<br>		&#125;;<br>	&#125;.start();<br>	<span class="hljs-keyword">new</span> <span class="hljs-title class_">Thread</span>(<span class="hljs-string">&quot;two&quot;</span>) &#123;<br>		<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>			<span class="hljs-keyword">try</span> &#123;<br>				System.out.println(<span class="hljs-string">&quot;子线程&quot;</span> + Thread.currentThread().getName() + <span class="hljs-string">&quot;正在执行&quot;</span>);<br>				Thread.sleep(<span class="hljs-number">3000</span>);<br>				System.out.println(<span class="hljs-string">&quot;子线程&quot;</span> + Thread.currentThread().getName() + <span class="hljs-string">&quot;执行完毕&quot;</span>);<br>				latch.countDown();<br>			&#125; <span class="hljs-keyword">catch</span> (InterruptedException e) &#123;<br>				e.printStackTrace();<br>			&#125;<br>		&#125;;<br>	&#125;.start();<br><br>	<span class="hljs-keyword">try</span> &#123;<br>		System.out.println(<span class="hljs-string">&quot;等待2个线程执行完成&quot;</span>);<br>		latch.await();<br>		System.out.println(<span class="hljs-string">&quot;子线程已经执行完毕&quot;</span>);<br>	&#125; <span class="hljs-keyword">catch</span> (InterruptedException e) &#123;<br>		e.printStackTrace();<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="CyclicBarrier"><a href="#CyclicBarrier" class="headerlink" title="CyclicBarrier"></a>CyclicBarrier</h4><p>该类有两个构造方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-title function_">CyclicBarrier</span><span class="hljs-params">(<span class="hljs-type">int</span> parties, Runnable barrierAction)</span><br><span class="hljs-keyword">public</span> <span class="hljs-title function_">CyclicBarrier</span><span class="hljs-params">(<span class="hljs-type">int</span> parties)</span><br></code></pre></td></tr></table></figure>
+<p>参数parties是指让多少个线程或者任务等待至barrier状态，参数barrierAction是当这些线程都到达barrier状态后会执行的内容。<br>该类里面有两个比较重要的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">await</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> InterruptedException, BrokenBarrierException &#123; &#125;;<br><span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">await</span><span class="hljs-params">(<span class="hljs-type">long</span> timeout, TimeUnit unit)</span><span class="hljs-keyword">throws</span> InterruptedException,BrokenBarrierException,TimeoutException &#123; &#125;;<br></code></pre></td></tr></table></figure>
+<p>无参的方法比较常用，用来挂起当前线程，直到所有线程都达到barrier状态再同时执行后续任务。<br>有参的方法是让线程等待一定时间，如果线程还没有达到barrier状态，就让到达barrier状态的线程执行后续任务。<br>示例如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><code class="hljs java"><br><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCyclicBarrier</span><span class="hljs-params">()</span> &#123;<br><span class="hljs-comment">//	CyclicBarrier barrier = new CyclicBarrier(5);</span><br>	<span class="hljs-type">CyclicBarrier</span> <span class="hljs-variable">barrier</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CyclicBarrier</span>(<span class="hljs-number">5</span>,<span class="hljs-keyword">new</span> <span class="hljs-title class_">Runnable</span>() &#123;<br>		<br>		<span class="hljs-meta">@Override</span><br>	<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>			System.out.println(<span class="hljs-string">&quot;所有线程执行完毕，随机挑选一个线程来执行打印&quot;</span>);<br>			System.out.println(<span class="hljs-string">&quot;挑选的线程为&quot;</span> + Thread.currentThread().getName());<br>				<br>		&#125;<br>	&#125;);<br>	<span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">5</span>; i++) &#123;<br>		<span class="hljs-keyword">new</span> <span class="hljs-title class_">Writer</span>(barrier, <span class="hljs-string">&quot;thread:&quot;</span> + i).start();<br>	&#125;<br><br>&#125;<br><br><span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Writer</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Thread</span> &#123;<br>	<span class="hljs-keyword">private</span> CyclicBarrier cyclicBarrier;<br><br>	<span class="hljs-keyword">public</span> <span class="hljs-title function_">Writer</span><span class="hljs-params">(CyclicBarrier cyclicBarrier, String threadName)</span> &#123;<br>		<span class="hljs-built_in">this</span>.cyclicBarrier = cyclicBarrier;<br>		<span class="hljs-keyword">if</span> (threadName != <span class="hljs-literal">null</span>) &#123;<br>			<span class="hljs-built_in">this</span>.setName(threadName);<br>		&#125;<br><br>	&#125;<br><br>	<span class="hljs-meta">@Override</span><br>	<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br><br>		<span class="hljs-keyword">try</span> &#123;<br>			System.out.println(<span class="hljs-string">&quot;线程&quot;</span> + Thread.currentThread().getName() + <span class="hljs-string">&quot;正在作业中&quot;</span>);<br>			Thread.sleep(<span class="hljs-number">5000</span>);<br>			System.out.println(<span class="hljs-string">&quot;线程&quot;</span> + Thread.currentThread().getName() + <span class="hljs-string">&quot;作业完成&quot;</span>);<br>			cyclicBarrier.await();<br>			System.out.println(<span class="hljs-string">&quot;所有线程作业完毕，线程&quot;</span> + Thread.currentThread().getName() + <span class="hljs-string">&quot;继续理其他任务&quot;</span>);<br><br>		&#125; <span class="hljs-keyword">catch</span> (InterruptedException e) &#123;<br>			e.printStackTrace();<br>		&#125; <span class="hljs-keyword">catch</span> (BrokenBarrierException e) &#123;<br>			<br>			e.printStackTrace();<br>		&#125;<br><br>	&#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>值得注意的是，CyclicBarrier是可以<strong>重用</strong>的。</p>
+<h4 id="Semaphore"><a href="#Semaphore" class="headerlink" title="Semaphore"></a>Semaphore</h4><p>该类提供了两个构造器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-title function_">Semaphore</span><span class="hljs-params">(<span class="hljs-type">int</span> permits)</span> &#123;          <span class="hljs-comment">//参数permits表示许可数目，即同时可以允许多少线程进行访问</span><br>    sync = <span class="hljs-keyword">new</span> <span class="hljs-title class_">NonfairSync</span>(permits);<br>&#125;<br><span class="hljs-keyword">public</span> <span class="hljs-title function_">Semaphore</span><span class="hljs-params">(<span class="hljs-type">int</span> permits, <span class="hljs-type">boolean</span> fair)</span> &#123;    <span class="hljs-comment">//这个多了一个参数fair表示是否是公平的，即等待时间越久的越先获取许可</span><br>    sync = (fair)? <span class="hljs-keyword">new</span> <span class="hljs-title class_">FairSync</span>(permits) : <span class="hljs-keyword">new</span> <span class="hljs-title class_">NonfairSync</span>(permits);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>下面是该类中比较重要的几个方法，首先是acquire()、release()：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">acquire</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> InterruptedException &#123;  &#125;     <span class="hljs-comment">//获取一个许可</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">acquire</span><span class="hljs-params">(<span class="hljs-type">int</span> permits)</span> <span class="hljs-keyword">throws</span> InterruptedException &#123; &#125;    <span class="hljs-comment">//获取permits个许可</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">release</span><span class="hljs-params">()</span> &#123; &#125;          <span class="hljs-comment">//释放一个许可</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">release</span><span class="hljs-params">(<span class="hljs-type">int</span> permits)</span> &#123; &#125;    <span class="hljs-comment">//释放permits个许可</span><br></code></pre></td></tr></table></figure>
+<p>acquire()用来获取一个许可，若无许可能够获得，则会一直等待，直到获得许可。<br>release()用来释放许可。注意，在释放许可之前，必须先获获得许可。<br>这4个方法都会被阻塞，如果想立即得到执行结果，可以使用下面几个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">tryAcquire</span><span class="hljs-params">()</span> &#123; &#125;;    <span class="hljs-comment">//尝试获取一个许可，若获取成功，则立即返回true，若获取失败，则立即返回false</span><br><span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">tryAcquire</span><span class="hljs-params">(<span class="hljs-type">long</span> timeout, TimeUnit unit)</span> <span class="hljs-keyword">throws</span> InterruptedException &#123; &#125;;  <span class="hljs-comment">//尝试获取一个许可，若在指定的时间内获取成功，则立即返回true，否则则立即返回false</span><br><span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">tryAcquire</span><span class="hljs-params">(<span class="hljs-type">int</span> permits)</span> &#123; &#125;; <span class="hljs-comment">//尝试获取permits个许可，若获取成功，则立即返回true，若获取失败，则立即返回false</span><br><span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">tryAcquire</span><span class="hljs-params">(<span class="hljs-type">int</span> permits, <span class="hljs-type">long</span> timeout, TimeUnit unit)</span> <span class="hljs-keyword">throws</span> InterruptedException &#123; &#125;; <span class="hljs-comment">//尝试获取permits个许可，若在指定的时间内获取成功，则立即返回true，否则则立即返回false</span><br></code></pre></td></tr></table></figure>
+<p>另外还可以通过availablePermits()方法得到可用的许可数目。<br>假如5个线程要使用3个资源，示例如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSemaphore</span><span class="hljs-params">()</span> &#123;<br>		<span class="hljs-type">int</span> <span class="hljs-variable">N</span> <span class="hljs-operator">=</span> <span class="hljs-number">5</span>;            <span class="hljs-comment">//线程数</span><br>        <span class="hljs-type">Semaphore</span> <span class="hljs-variable">semaphore</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Semaphore</span>(<span class="hljs-number">3</span>); <span class="hljs-comment">//资源数目</span><br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;N;i++)<br>            <span class="hljs-keyword">new</span> <span class="hljs-title class_">Worker</span>(<span class="hljs-string">&quot;线程&quot;</span> +i,semaphore).start();<br>	&#125;<br>	<br>	<span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Worker</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Thread</span> &#123;<br><br>		<span class="hljs-keyword">private</span> Semaphore semaphore;<br>		<br>		<span class="hljs-keyword">public</span> <span class="hljs-title function_">Worker</span><span class="hljs-params">(String name, Semaphore semaphore)</span> &#123;<br>			<span class="hljs-built_in">super</span>();<br>			<span class="hljs-built_in">this</span>.setName(name);<br>			<span class="hljs-built_in">this</span>.semaphore = semaphore;<br>		&#125;<br><br>		<span class="hljs-meta">@Override</span><br>		<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>			<span class="hljs-keyword">try</span> &#123;<br>				semaphore.acquire();<br>				System.out.println(<span class="hljs-string">&quot;线程：&quot;</span> + Thread.currentThread().getName() + <span class="hljs-string">&quot;占用一个资源&quot;</span>);<br>				Thread.sleep(<span class="hljs-number">3000</span>);<br>				System.out.println(<span class="hljs-string">&quot;线程：&quot;</span> + Thread.currentThread().getName() + <span class="hljs-string">&quot;释放一个资源&quot;</span>);<br>				semaphore.release();<br>			&#125; <span class="hljs-keyword">catch</span> (InterruptedException e) &#123;<br>				e.printStackTrace();<br>			&#125;<br>		&#125;<br><br>	&#125;<br></code></pre></td></tr></table></figure>
+<p>CountDownLatch和CyclicBarrier都能够实现线程之间的等待，只不过它们侧重点不同：<br>CountDownLatch一般用于某个线程等待若干个其他线程执行完任务之后，它才执行；而CyclicBarrier一般用于一组线程互相等待至某个状态，然后这一组线程再同时执行；另外，CountDownLatch是不能够重用的，而CyclicBarrier是可以重用的。Semaphore其实和锁有点类似，它一般用于控制对某组资源的访问权限。</p>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/java/" class="print-no-link">#java</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Java并发多线程同步</div>
+      <div>https://blog.huangyuanlove.com/2018/03/20/Java并发多线程同步/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2018年3月20日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/04/01/%E7%BD%91%E7%AB%99%E5%85%8D%E8%B4%B9%E5%8D%87%E7%BA%A7https/" title="网站免费升级https">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">网站免费升级https</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/03/10/Tinker%E5%88%9D%E6%8E%A2/" title="Tinker初探">
+                        <span class="hidden-mobile">Tinker初探</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '6560d0d62358c400b373500b064ad661'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,689 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="静态路由,动态路由">
+  
+    <meta name="description" content="学习过程中的笔记，比较零散">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CCNA-静态路由和动态路由">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2014/05/19/CCNA-%E9%9D%99%E6%80%81%E8%B7%AF%E7%94%B1%E5%92%8C%E5%8A%A8%E6%80%81%E8%B7%AF%E7%94%B1/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="学习过程中的笔记，比较零散">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/ccna/Classlessrouting_ad.png">
+<meta property="article:published_time" content="2014-05-19T14:52:49.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.217Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="CCNA">
+<meta property="article:tag" content="笔记">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/ccna/Classlessrouting_ad.png">
+  
+  
+  
+  <title>CCNA-静态路由和动态路由 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="CCNA-静态路由和动态路由"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2014-05-19 22:52" pubdate>
+          2014年5月19日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.4k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">CCNA-静态路由和动态路由</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>学习过程中的笔记，比较零散</p>
+<span id="more"></span>
+
+<h4 id="静态路由"><a href="#静态路由" class="headerlink" title="静态路由"></a>静态路由</h4><h5 id="路由功能"><a href="#路由功能" class="headerlink" title="路由功能"></a>路由功能</h5><ul>
+<li><p>负责在不同网段之间进行数据转发(三层路由)</p>
+</li>
+<li><p>通过路由表进行三层数据转发(基于路由表)</p>
+</li>
+<li><p>维护路由表信息</p>
+</li>
+<li><p>在冗余路径中进行最优路径判断</p>
+</li>
+<li><p>在三层转发时应用特定的转发策略</p>
+</li>
+</ul>
+<h5 id="静态路由-static-routes"><a href="#静态路由-static-routes" class="headerlink" title="静态路由 static routes"></a>静态路由 static routes</h5><ul>
+<li><p>管理员手动输入</p>
+</li>
+<li><p>占用路由器资源小</p>
+</li>
+<li><p>可以严格控制路由转发</p>
+</li>
+<li><p>支持广泛</p>
+</li>
+<li><p>出现网络拓扑变动的时候无法自动更新</p>
+</li>
+<li><p>当网络很大的时候管理复杂</p>
+</li>
+</ul>
+<h5 id="静态路由配置"><a href="#静态路由配置" class="headerlink" title="静态路由配置"></a>静态路由配置</h5><p>在全局配置模式下</p>
+<p>Router(config)# Ip route network [mask]</p>
+<p>(目标网络   子网掩码  下一跳出口)</p>
+<p>跟下一跳出接口在一定条件下有备份作用,冗余.</p>
+<p>缺省路由   0.0.0.0 0.0.0.0  </p>
+<h5 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h5><p>当我们拥有到达目标网络的多个路径的时候,我们可以配置中间的路由器在这些路径上进行负载均衡</p>
+<p>底层网络的负载均衡:</p>
+<p>1、基于数据包</p>
+<p>2、基于数据流</p>
+<h4 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h4><p>路由协议用在不同路由器之间,用来判断到远程网络的路径并维护路由器的路由表</p>
+<p>当路径决定之后,路由器会将被路由协议转发到目的网络</p>
+<p>动态路由协议是运行在路由器上的一个程序,相同的动态路由协议通过在不同的路由器之间交换此动态路由协议规定的数据包来交换各自的路由信息,从而达到学习路由,维护路由表,发现拓扑变动的目的.</p>
+<h4 id="动态路由协议分类"><a href="#动态路由协议分类" class="headerlink" title="动态路由协议分类"></a>动态路由协议分类</h4><h5 id="按应用范围分-IGP-amp-EGP-现在使用BGPv4"><a href="#按应用范围分-IGP-amp-EGP-现在使用BGPv4" class="headerlink" title="按应用范围分 IGP &amp; EGP(现在使用BGPv4)"></a>按应用范围分 IGP &amp; EGP(现在使用BGPv4)</h5><p>IGP（内部网关协议）应用于普通企业(在一个自治系统(as)之内路由)</p>
+<p>EGP（外部网关协议）路由整个互联网(在多个自治系统（as）之间路由)</p>
+<p>自治系统autonomous system是处在同一个管理范围的网络集合（管理范围比网络范围大）</p>
+<p>as有个编号 0<del>65535    64512</del>65535是私有的，不能出现在公网中</p>
+<h5 id="按算法分"><a href="#按算法分" class="headerlink" title="按算法分"></a>按算法分</h5><p>距离矢量型 distance vector（贝尔曼 福特）</p>
+<p>高级距离矢量型  advanced distance vector（DUAL cisoc私有）</p>
+<p>链路状态型link-state（SPF 最短路径优先）</p>
+<h4 id="Classful-roting-有类别路由协议"><a href="#Classful-roting-有类别路由协议" class="headerlink" title="Classful roting  有类别路由协议"></a>Classful roting  有类别路由协议</h4><p>有类别路由选择协议在路由更新中不携带子网掩码</p>
+<p>在一个网络中只能使用相同的子网掩码(不支持不连续的子网)</p>
+<p>在主类网的边界会进行自动汇总</p>
+<p>常见有类别路由协议</p>
+<p>1 ripv1</p>
+<p>2 IGRP</p>
+<h5 id="有类别路由协议学习路由的规则"><a href="#有类别路由协议学习路由的规则" class="headerlink" title="有类别路由协议学习路由的规则"></a>有类别路由协议学习路由的规则</h5><p>有类别路由协议在更新时不携带子网掩码,在学习路由过程中:</p>
+<p>1 首先判断接口接受的路由与接受接口配置的IP地址是否处于同一个主类网.</p>
+<p>2如果处于同一个主类网,则使用接受接口配置的子网掩码做为接受路由的子网掩码</p>
+<p>3如果接收路由与接收接口配置的IP地址不在同一个主类网中,则使用接收路由自身所属的主类网子网掩码作为该路由子网掩码(在主类网边界出现自动汇总)</p>
+<h4 id="Classlessrouting-无类别路由协议"><a href="#Classlessrouting-无类别路由协议" class="headerlink" title="Classlessrouting 无类别路由协议"></a>Classlessrouting 无类别路由协议</h4><p>在路由更新中携带子网掩码(CIDR 无类别域间路由 classless Internet domain route)</p>
+<p>支持VLSM,在同一个网络中可以拥有不同的子网掩码</p>
+<p>在网络中支持手工汇总</p>
+<p>常见的无类别路由选择协议</p>
+<p>RIPv2  EIGRP  OSPF ISIS  BGPv4</p>
+<p>RIPv2和EIGRP默认会在主类网边界进行自动汇总,需要手工关闭</p>
+<h5 id="最佳路由判定标准"><a href="#最佳路由判定标准" class="headerlink" title="最佳路由判定标准"></a>最佳路由判定标准</h5><p>RIP  根据跳数（hop count）（经过几个路由器）</p>
+<p>OSPF 根据带宽（cost）线路的速度</p>
+<p>带宽 bandwidth</p>
+<p>延时 delay</p>
+<p>可靠性  reliable</p>
+<p>负载 load</p>
+<p>度量值不能变</p>
+<p><img src="/image/ccna/Classlessrouting_ad.png" srcset="/img/loading.gif" lazyload alt="geocoderSearch"></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/CCNA/" class="print-no-link">#CCNA</a>
+      
+        <a href="/tags/%E7%AC%94%E8%AE%B0/" class="print-no-link">#笔记</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>CCNA-静态路由和动态路由</div>
+      <div>https://blog.huangyuanlove.com/2014/05/19/CCNA-静态路由和动态路由/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2014年5月19日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2014/05/19/CCNA-rip%E5%8D%8F%E8%AE%AE/" title="CCNA-rip协议">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">CCNA-rip协议</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2014/05/19/CCNA-%E7%BD%91%E7%BB%9C%E6%8B%93%E6%89%91%E7%BB%93%E6%9E%84/" title="CCNA-网络拓扑结构">
+                        <span class="hidden-mobile">CCNA-网络拓扑结构</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'a43b8b4e4945d207ec371d6e3d20c47f'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,671 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="Android慢网络监控,用户行为监控,OkHttp拦截器">
+  
+    <meta name="description" content="最近在搞Android应用大盘监控，目前需要监控的是慢网络请求及页面的打开和关闭。由于应用中使用的OkHttp进行网络请求，着重看了一下OkHttp源码，还有别人写的一些总结。对于页面的打开关闭行为，我们可以搞个BaseActivity或者在Application中注册生命周期回调就好了。问题在于慢网络监控需要实时上报，而用户行为监控则需要本地落盘保存，在需要的时候再上报，所以如何落盘保存则是一个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android慢网络及页面监控">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2021/06/19/Android%E6%85%A2%E7%BD%91%E7%BB%9C%E5%8F%8A%E9%A1%B5%E9%9D%A2%E7%9B%91%E6%8E%A7/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="最近在搞Android应用大盘监控，目前需要监控的是慢网络请求及页面的打开和关闭。由于应用中使用的OkHttp进行网络请求，着重看了一下OkHttp源码，还有别人写的一些总结。对于页面的打开关闭行为，我们可以搞个BaseActivity或者在Application中注册生命周期回调就好了。问题在于慢网络监控需要实时上报，而用户行为监控则需要本地落盘保存，在需要的时候再上报，所以如何落盘保存则是一个">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/Android/okhttp/OkHttp%E6%B5%81%E7%A8%8B%E5%9B%BE.png">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/Android/okhttp/OkHttp%E6%8B%A6%E6%88%AA%E5%99%A8.png">
+<meta property="article:published_time" content="2021-06-19T06:55:29.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.213Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/Android/okhttp/OkHttp%E6%B5%81%E7%A8%8B%E5%9B%BE.png">
+  
+  
+  
+  <title>Android慢网络及页面监控 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Android慢网络及页面监控"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-06-19 14:55" pubdate>
+          2021年6月19日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.6k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Android慢网络及页面监控</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>最近在搞Android应用大盘监控，目前需要监控的是慢网络请求及页面的打开和关闭。由于应用中使用的OkHttp进行网络请求，着重看了一下OkHttp源码，还有别人写的一些总结。对于页面的打开关闭行为，我们可以搞个BaseActivity或者在Application中注册生命周期回调就好了。问题在于慢网络监控需要实时上报，而用户行为监控则需要本地落盘保存，在需要的时候再上报，所以如何落盘保存则是一个问题，为此了解了java IO和mmap。</p>
+<span id="more"></span>
+
+<h2 id="慢网络监控"><a href="#慢网络监控" class="headerlink" title="慢网络监控"></a>慢网络监控</h2><p><strong>嫌长不看直接看结论，代码在这一段的最后。</strong></p>
+<p>在构建<code>OkHttpClient</code>对象时加入<code>eventListener</code>即可，如果会有多个异步网络同时请求，就添加<code>eventListenerFactory</code>。不论是不是同时会有多个异步网络请求，使用<code>eventListenerFactory</code>差距不大。</p>
+<p><strong>比较啰嗦的详解篇</strong></p>
+<p>我们先来看下网络基础内容：</p>
+<ul>
+<li>OSI七层模型和实际应用中的五层模型</li>
+<li>什么是Http</li>
+<li>请求方式、报文结构</li>
+<li>TCP的三次握手、四次挥手</li>
+<li>一次完整的http请求过程</li>
+<li>Http不同版本的差异、优缺点</li>
+<li>http和https的区别</li>
+</ul>
+<p>相关的知识点放在这里了，别人已经写得比较全面了，再抄一遍也没啥意思 :smiley:</p>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6877362691350986766">面试官的这份HTTP灵魂追问你Hold住吗？</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/b0aa797608c0">关于HTTP请求你需要知道的一切</a></p>
+<p>当我们使用OkHttp进行网络请求的时候，过程一般是这样的：</p>
+<ol>
+<li>构建<code>OkHttpClient</code></li>
+<li>构建<code>Request</code></li>
+<li>构建<code>Call</code></li>
+<li>使用<code>Call</code>对象进行网络请求</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">OkHttpClient</span> <span class="hljs-variable">okHttpClient</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">OkHttpClient</span>.Builder()<br>        .eventListenerFactory(NetworkListener.get())<br>		.addInterceptor(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Interceptor</span>() &#123;<br>		    <span class="hljs-meta">@NotNull</span><br>		    <span class="hljs-meta">@Override</span><br>		    <span class="hljs-keyword">public</span> Response <span class="hljs-title function_">intercept</span><span class="hljs-params">(<span class="hljs-meta">@NotNull</span> Chain chain)</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>		        Log.e(TAG,<span class="hljs-string">&quot;addInterceptor before proceed&quot;</span>);<br>		        <span class="hljs-type">Response</span> <span class="hljs-variable">response</span> <span class="hljs-operator">=</span> chain.proceed(chain.request());<br>		        Log.e(TAG,<span class="hljs-string">&quot;addInterceptor after proceed &quot;</span>);<br>		        <span class="hljs-keyword">return</span> response;<br>		    &#125;<br>		&#125;)<br>		.addNetworkInterceptor(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Interceptor</span>() &#123;<br>		    <span class="hljs-meta">@NotNull</span><br>		    <span class="hljs-meta">@Override</span><br>		    <span class="hljs-keyword">public</span> Response <span class="hljs-title function_">intercept</span><span class="hljs-params">(<span class="hljs-meta">@NotNull</span> Chain chain)</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>		        Log.e(TAG,<span class="hljs-string">&quot;addNetworkInterceptor before proceed&quot;</span>);<br>		        <span class="hljs-type">Response</span> <span class="hljs-variable">response</span> <span class="hljs-operator">=</span> chain.proceed(chain.request());<br>		        Log.e(TAG,<span class="hljs-string">&quot;addNetworkInterceptor after proceed &quot;</span>);<br>		        <span class="hljs-keyword">return</span> response;<br>		    &#125;<br>		&#125;)<br>        .build();<br><br><span class="hljs-type">Request</span> <span class="hljs-variable">request</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Request</span>.Builder()<br>        .url(<span class="hljs-string">&quot;.....&quot;</span>)<br>        .build();<br><span class="hljs-type">Call</span> <span class="hljs-variable">call</span> <span class="hljs-operator">=</span> okHttpClient.newCall(request);<br>call.enqueue(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Callback</span>() &#123;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onFailure</span><span class="hljs-params">(<span class="hljs-meta">@NotNull</span> Call call, <span class="hljs-meta">@NotNull</span> IOException e)</span> &#123;<br>        <br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onResponse</span><span class="hljs-params">(<span class="hljs-meta">@NotNull</span> Call call, <span class="hljs-meta">@NotNull</span> Response response)</span> <span class="hljs-keyword">throws</span> IOException &#123;<br><br>    &#125;<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<p>流程图如下：</p>
+<p><img src="/image/Android/okhttp/OkHttp%E6%B5%81%E7%A8%8B%E5%9B%BE.png" srcset="/img/loading.gif" lazyload alt="OkHttp流程图"></p>
+<p>最经典的应该是拦截器部分了，网络对拦截器的分析也挺多了，可以自己翻一下源码总结一下，我也写不出花来 :hushed:</p>
+<p><img src="/image/Android/okhttp/OkHttp%E6%8B%A6%E6%88%AA%E5%99%A8.png" srcset="/img/loading.gif" lazyload alt="OkHttp流程图"></p>
+<p>图片我是用drawio画的，源文件放在了github上，路径 <a target="_blank" rel="noopener" href="https://github.com/huangyuanlove/huangyuanlove.github.io/tree/master/image/Android/okhttp">https://github.com/huangyuanlove/huangyuanlove.github.io/tree/master/image/Android/okhttp</a></p>
+<p>下面的源码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs java"><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">NetworkListener</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">EventListener</span> &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">TAG</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;NetworkListener&quot;</span>;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Factory <span class="hljs-title function_">get</span><span class="hljs-params">()</span>&#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Factory</span>() &#123;<br>            <span class="hljs-meta">@NotNull</span><br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> EventListener <span class="hljs-title function_">create</span><span class="hljs-params">(<span class="hljs-meta">@NotNull</span> Call call)</span> &#123;<br>                <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NetworkListener</span>();<br>            &#125;<br>        &#125;;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">callStart</span><span class="hljs-params">(<span class="hljs-meta">@NotNull</span> Call call)</span> &#123;<br>        <span class="hljs-built_in">super</span>.callStart(call);<br>        Log.e(TAG,<span class="hljs-string">&quot;-------callStart---requestId-----&quot;</span>+mRequestId);<br>    &#125;<br><br><span class="hljs-comment">//重写的N个回调方法</span><br>  .<br>  .<br>  .<br>  .<br>  .<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">callFailed</span><span class="hljs-params">(<span class="hljs-meta">@NotNull</span> Call call, <span class="hljs-meta">@NotNull</span> IOException ioe)</span> &#123;<br>        <span class="hljs-built_in">super</span>.callFailed(call, ioe);<br>        ioe.printStackTrace();<br>        Log.e(TAG, <span class="hljs-string">&quot;callFailed&quot;</span>);<br><br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>我们可以在这些回调方法中做时间统计，超过指定时长则认为是慢网络请求。</p>
+<h2 id="页面打开关闭监控"><a href="#页面打开关闭监控" class="headerlink" title="页面打开关闭监控"></a>页面打开关闭监控</h2><p>结论：在自定义的application中调用一下<code>registerActivityLifecycleCallbacks(ActivityLifecycleCallbacks callback);</code>就好。在每个Activity的生命周期执行的时候都会回调<code>callback</code>.</p>
+<h4 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h4><p>在Application中注册一下生命周期回调接口:<code>registerActivityLifecycleCallbacks(ActivityLifecycleCallbacks callback);</code>并重写各种回调方法，记录对应的时间戳+类名。由于生命周期都是在主线程回调，我们不必担心多线程竞争问题。搞个list直接存。</p>
+<h4 id="落盘保存"><a href="#落盘保存" class="headerlink" title="落盘保存"></a>落盘保存</h4><ol>
+<li>在什么时机保存</li>
+<li>如何保存</li>
+</ol>
+<p>对于问题1，我们在了解Handler机制的时候，提到过在<code>MessageQueue</code>里面有个开发过程中不常用的对象:<code>IdleHandle</code>r，查看源码和注释我们得知，是在线程的MessageQueue中没有消息的时候，会去调用这个类的”queueIdle()”方法，并且该方法返回true时，不会被移除队列。</p>
+<p>我们在Application中向MainLooper的MessageQueue中添加一个IdleHandler</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java">Looper.myQueue().addIdleHandler(<span class="hljs-keyword">new</span> <span class="hljs-title class_">MessageQueue</span>.IdleHandler() &#123;<br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">queueIdle</span><span class="hljs-params">()</span> &#123;<br>                Log.e(TAG,<span class="hljs-string">&quot;queueIdle,当前线程名称&quot;</span> + Thread.currentThread().getName()+<span class="hljs-string">&quot;,线程id:&quot;</span> +Thread.currentThread().getId());<br>                BehaviorRepository.getInstance(MyApplication.<span class="hljs-built_in">this</span>).storeLifeEvent();<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>            &#125;<br>        &#125;);<br></code></pre></td></tr></table></figure>
+
+
+
+<p>对于如何保存，一开始考虑的是写到数据库，因为有事务。后来结合业务发现并不需要这么搞，直接写文件就好，需要的时候直接上传文件到服务器，那么我们如何去写文件？想到了mmap这货。当使用mmap方式写文件失败再考虑使用普通java io。于是有了下面：下面代码来源于：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/rustfisher/p/11551372.html">https://www.cnblogs.com/rustfisher/p/11551372.html</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br></pre></td><td class="code"><pre><code class="hljs java"><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">LogWriter</span> &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">TAG</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;activityLifeRecorder&quot;</span>;<br><br><br>    <span class="hljs-comment">// 注意申请SD卡读写权限</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> String logFileDir;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> String fileName;<br><br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> HandlerThread handlerThread;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Handler writerHandler;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">LOG_FILE_GROW_SIZE</span> <span class="hljs-operator">=</span> <span class="hljs-number">1024</span> * <span class="hljs-number">10</span>; <span class="hljs-comment">// log文件每次增长的大小</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-type">long</span> <span class="hljs-variable">gCurrentLogPos</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;                  <span class="hljs-comment">// log文件当前写到的位置 - 注意要单线程处理</span><br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 使用前必须调用此方法进行准备</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">init</span><span class="hljs-params">(Context context)</span>&#123;<br>        gCurrentLogPos = <span class="hljs-number">0</span>;<br>        logFileDir = context.getCacheDir() + File.separator + <span class="hljs-string">&quot;logs&quot;</span>;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-literal">null</span> == handlerThread) &#123;<br>            handlerThread = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HandlerThread</span>(<span class="hljs-string">&quot;LL&quot;</span>);<br>            handlerThread.start();<br>        &#125;<br>        writerHandler = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Handler</span>(handlerThread.getLooper());<br><br><br>        <span class="hljs-comment">//可以保存本次打开的日志，只保存三五次打开的日志</span><br>        fileName = <span class="hljs-string">&quot;_&quot;</span> +  <span class="hljs-keyword">new</span> <span class="hljs-title class_">SimpleDateFormat</span>(<span class="hljs-string">&quot;yyyy-MM-dd&quot;</span>,Locale.CHINA).format(System.currentTimeMillis()) + <span class="hljs-string">&quot;.txt&quot;</span>;<br>        Log.d(TAG, <span class="hljs-string">&quot;[prepare] file: &quot;</span> + fileName);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title function_">getFileName</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> fileName;<br>    &#125;<br><br>    <span class="hljs-comment">// 退出</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">quit</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">if</span> (writerHandler != <span class="hljs-literal">null</span>) &#123;<br>            writerHandler.removeCallbacksAndMessages(<span class="hljs-literal">null</span>);<br>        &#125;<br>        <span class="hljs-keyword">if</span> (handlerThread != <span class="hljs-literal">null</span>) &#123;<br>            handlerThread.quit();<br>        &#125;<br>    &#125;<br><br><br><br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">writeToFile</span><span class="hljs-params">(String content)</span>&#123;<br>        <span class="hljs-keyword">if</span> (writerHandler != <span class="hljs-literal">null</span>) &#123;<br>            writerHandler.post(<span class="hljs-keyword">new</span> <span class="hljs-title class_">WriteRunnable</span>(content));<br>        &#125;<br>    &#125;<br><br><br><br>    <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">WriteRunnable</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> &#123;<br>        String  content;<br><br>        WriteRunnable( String content) &#123;<br>            <span class="hljs-built_in">this</span>.content = content;<br>        &#125;<br><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>            <span class="hljs-keyword">try</span> &#123;<br>                <span class="hljs-type">File</span> <span class="hljs-variable">dir</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">File</span>(logFileDir);<br>                <span class="hljs-keyword">if</span> (!dir.exists()) &#123;<br>                    <span class="hljs-type">boolean</span> <span class="hljs-variable">mk</span> <span class="hljs-operator">=</span> dir.mkdirs();<br>                    Log.d(TAG, <span class="hljs-string">&quot;make dir &quot;</span> + mk);<br>                &#125;<br>                <span class="hljs-type">File</span> <span class="hljs-variable">eFile</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">File</span>(logFileDir + File.separator + fileName);<br>                <span class="hljs-type">byte</span>[] strBytes = content.getBytes();<br>                <span class="hljs-keyword">try</span> &#123;<br>                    <span class="hljs-type">RandomAccessFile</span> <span class="hljs-variable">randomAccessFile</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RandomAccessFile</span>(eFile, <span class="hljs-string">&quot;rw&quot;</span>);<br>                    MappedByteBuffer mappedByteBuffer;<br>                    <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">inputLen</span> <span class="hljs-operator">=</span> strBytes.length;<br>                    <span class="hljs-keyword">if</span> (!eFile.exists()) &#123;<br>                        <span class="hljs-type">boolean</span> <span class="hljs-variable">nf</span> <span class="hljs-operator">=</span> eFile.createNewFile();<br>                        Log.d(TAG, <span class="hljs-string">&quot;new log file &quot;</span> + nf);<br>                        mappedByteBuffer = randomAccessFile.getChannel().map(FileChannel.MapMode.READ_WRITE, gCurrentLogPos, LOG_FILE_GROW_SIZE);<br>                    &#125; <span class="hljs-keyword">else</span> &#123;<br>                        mappedByteBuffer = randomAccessFile.getChannel().map(FileChannel.MapMode.READ_WRITE, gCurrentLogPos, inputLen);<br>                    &#125;<br>                    <span class="hljs-keyword">if</span> (mappedByteBuffer.remaining() &lt; inputLen) &#123;<br>                        mappedByteBuffer = randomAccessFile.getChannel().map(FileChannel.MapMode.READ_WRITE, gCurrentLogPos, LOG_FILE_GROW_SIZE + inputLen);<br>                    &#125;<br>                    mappedByteBuffer.put(strBytes);<br>                    gCurrentLogPos += inputLen;<br>                &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>                    Log.e(TAG, <span class="hljs-string">&quot;WriteRunnable run: &quot;</span>, e);<br>                    <span class="hljs-keyword">if</span> (!eFile.exists()) &#123;<br>                        <span class="hljs-type">boolean</span> <span class="hljs-variable">nf</span> <span class="hljs-operator">=</span> eFile.createNewFile();<br>                        Log.d(TAG, <span class="hljs-string">&quot;new log file &quot;</span> + nf);<br>                    &#125;<br>                    <span class="hljs-type">FileOutputStream</span> <span class="hljs-variable">os</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">FileOutputStream</span>(eFile, <span class="hljs-literal">true</span>);<br>                    os.write(content.getBytes());<br>                    os.flush();<br>                    os.close();<br>                &#125;<br>            &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>                e.printStackTrace();<br>                Log.e(TAG, <span class="hljs-string">&quot;写log文件出错: &quot;</span>, e);<br>            &#125;<br>        &#125;<br>    &#125;<br><br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Android慢网络及页面监控</div>
+      <div>https://blog.huangyuanlove.com/2021/06/19/Android慢网络及页面监控/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年6月19日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/01/01/%E5%86%99%E5%9C%A82022%E5%B9%B4%E5%88%9D-2021%E6%80%BB%E7%BB%93/" title="写在2022年初--2021总结">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">写在2022年初--2021总结</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/05/22/Sentry%E6%90%AD%E5%BB%BA%E5%8F%8AAndroid%E6%8E%A5%E5%85%A5/" title="Sentry搭建及Android接入">
+                        <span class="hidden-mobile">Sentry搭建及Android接入</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '60423ce2ac41bab2536130161790e7f9'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

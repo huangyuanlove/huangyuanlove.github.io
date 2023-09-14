@@ -1,0 +1,688 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="广域网,wan,acl,访问控制列表">
+  
+    <meta name="description" content="学习过程中的笔记，比较零散">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CCNA-广域网和ACL">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2014/05/19/CCNA-%E5%B9%BF%E5%9F%9F%E7%BD%91%E5%92%8CACL/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="学习过程中的笔记，比较零散">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2014-05-19T15:28:04.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.216Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="CCNA">
+<meta property="article:tag" content="笔记">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>CCNA-广域网和ACL - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="CCNA-广域网和ACL"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2014-05-19 23:28" pubdate>
+          2014年5月19日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">CCNA-广域网和ACL</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>学习过程中的笔记，比较零散</p>
+<span id="more"></span>
+
+<h4 id="广域网"><a href="#广域网" class="headerlink" title="广域网"></a>广域网</h4><p>局域网内基本上是以太网相连，通常最大传输距离为100米。</p>
+<p>广域网技术一般是用来节约成本的</p>
+<p>广域网不等于Internet  Internet只是广域网的一种</p>
+<p>广域网技术往往只涉及下OSI两层（数据链路层和物理层）对上层没有影响 </p>
+<p>分为DTE端（客户端）  DCE端（服务商端，在配置的时候时钟频率只能配置在DCE端）</p>
+<p>在局域网中二层使用的是mac协议 </p>
+<p>wan数据链路层协议：</p>
+<p>HDLC</p>
+<p>PPP</p>
+<p>Frame Relay（帧中继） </p>
+<p>ATM（异步传输网络）　</p>
+<p>ISDN</p>
+<p>WAN分为专用线路（租用线路）和</p>
+<p>交换线路（电路交换，PSTN，家用电话，属于模拟信号传输；包交换（廉价，信号一般），数字信号交换；信源交换（速度快，费用高），数字信号交换，AMT，异步传输网络）</p>
+<p>广域网分为闭网和开网</p>
+<h4 id="ACL-访问控制列表（access-control-list）"><a href="#ACL-访问控制列表（access-control-list）" class="headerlink" title="ACL-访问控制列表（access control list）"></a>ACL-访问控制列表（access control list）</h4><p>对IP网络流量进行配置，允许或者不允许某些包连接某些服务器</p>
+<p>对流量进行分类</p>
+<p>可以把它简单认为是一个防火墙</p>
+<p>当把ACL当作过滤器来使用的时候</p>
+<p>允许或者不允许某些包通过路由器</p>
+<p>没有ACL的时候，所有的包都是允许到所有的地方去的</p>
+<p>ACL所能分辨的信息到4层，ACL也称为包防火墙，可以根据流量的TCP&#x2F;IP或者UDP或者端口号来进行过滤，但是并不能进行内容过滤</p>
+<p>ACL可以对流量进行分类，不会对流量进行过滤，只能起到分检器的作用</p>
+<p>当数据包进去路由器的时候，先检查路由表，有的话去检查出接口是够挂载ACL（ACL当做过滤器来使用的时候，是需要绑定接口的，两个方向：出向还是入向，即检测进来的还是检测出去的包。一个接口上最多挂两个ACL，也就是说每个方向挂载一个，可以在一个ACL上设定多个规则），是的话进行ACL控制测试，ACL允许该包通过的话就转发。若其中任意过程为否，该包丢弃。</p>
+<p>一个ACL可以设定多个判定条件，只要匹配一个就可以转发，多个条件之间的逻辑关系是或，当匹配到其中一个判定条件的时候，立即执行该条件后的动作，若全部不匹配，则将该包丢弃。</p>
+<p>ACL分为两种类型：</p>
+<p>标准ACL：速度快，只能基于发送的源IP地址进行判断</p>
+<p>扩展ACL：扩展的ACL较为精细一点，可以基于源地址，目标地址，协议，端口号进行判断。速度相对来说慢一点。</p>
+<p>怎么区分两种ACL：基于编号：当编号在1-99，1300-1999就是标准的</p>
+<p>当编号是100-199，2000-2699就是扩展的</p>
+<p>基于命名：明确指出ACL类型</p>
+<p>标准访问控制列表的语法格式</p>
+<p>Access-list access-list-number</p>
+<p>｛permit | deny | remark｝source 【mask】</p>
+<p>示例：</p>
+<p>拒绝所有来自1.1.1.1的数据包</p>
+<p>Access-list 1 deny 1.1.1.1 0.0.0.0（反码，0表示匹配，1表示无所谓）</p>
+<p>Access-list 1 permit 0.0.0.0 255.255.255.255 （因为默认是拒绝所有，没有这条命令数据包是无法通过的）</p>
+<p>或者： access-list 1 deny host 1.1.1.1</p>
+<p>Access-list 1 permit any  （host和any是预先设定好的通配符）</p>
+<p>允许所有来自192.168.1.0&#x2F;24的数据包</p>
+<p>Access-list 1 permit 192.168.1.0 0.0.0.255</p>
+<p>配置完之后还要绑定到端口。</p>
+<p>（规则顺序很重要，但是编号ACL不允许删除单独的一条规则</p>
+<p>例如 </p>
+<p>Access-list 1 deny 1.1.1.0 0.0.0.255</p>
+<p>Access-list 1 permit 1.1.1.1 0.0.0.0</p>
+<p>这样的话第二条规则永远不会生效，因为在匹配了第一条规则后，就会立即执行第一条规则之后的动作，不再向下进行匹配）</p>
+<p>在接口配置模式下：</p>
+<p>Ip access-group access-list-number ｛in | out｝</p>
+<p>标准ACL配置大体分为两步：</p>
+<p>①：在全局配置模式下创建访问控制列表，并且设定规则</p>
+<p>②：在接口配置模式下挂载ACL，并指定方向。</p>
+<p>扩展访问控制列表语法格式</p>
+<p>示例</p>
+<p>拒绝所有从1.1.1.1 到2.2.2.2 的ping包（ping使用的是ICMP协议）</p>
+<p>Access-list 100 deny icmp host 1.1.1.1 host 2.2.2.2</p>
+<p>Access-list 100 permit ip any any</p>
+<p>拒绝所有从1.1.1.0&#x2F;24 到2.2.2.0&#x2F;24的http流量</p>
+<p>Access-list 100 deny tcp 1.1.1.0 0.0.0.255 2.2.2.0 0.0.0.255 eq（端口号） 80</p>
+<p>命名访问控制列表（可以单独删除其中的一条规则）</p>
+<p>示例：</p>
+<p>Ip access-list standard name</p>
+<p>Deny host 172.16.4.13</p>
+<p>Permit 172.16.4.0 0.0.0.255</p>
+<p>Interface e0</p>
+<p>Ip access-group name ｛out | in｝</p>
+<p>删除的时候可以直接no其中一条</p>
+<p>Remark 注释  没有什么意义，只是简单的注释</p>
+<p>可以通过 show access-list 查看</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/CCNA/" class="print-no-link">#CCNA</a>
+      
+        <a href="/tags/%E7%AC%94%E8%AE%B0/" class="print-no-link">#笔记</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>CCNA-广域网和ACL</div>
+      <div>https://blog.huangyuanlove.com/2014/05/19/CCNA-广域网和ACL/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2014年5月19日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2014/05/19/CCNA-Internet-connection/" title="CCNA-Internet connection">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">CCNA-Internet connection</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2014/05/19/CCNA-DHCP%E5%92%8CNAT/" title="CCNA-DHCP和NAT">
+                        <span class="hidden-mobile">CCNA-DHCP和NAT</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '1517d4174f6ea622dacc04c70c1d8ab1'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

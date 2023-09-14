@@ -1,0 +1,796 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="Android,Jetpack,WorkManager">
+  
+    <meta name="description" content="2018年谷歌I&#x2F;O 发布了一系列辅助android开发者的实用工具，合称Jetpack，以帮助开发者构建出色的 Android 应用。这次发布的 Android Jetpack 组件覆盖以下 4 个方面：Architecture、Foundation、Behavior 以及 UI。该系列博客介绍一下Jetpack中常用组件，本篇介绍LiveData、ViewModel、LifeCycl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JetPack中的WorkManager">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2020/02/25/JetPack%E4%B8%AD%E7%9A%84WorkManager/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="2018年谷歌I&#x2F;O 发布了一系列辅助android开发者的实用工具，合称Jetpack，以帮助开发者构建出色的 Android 应用。这次发布的 Android Jetpack 组件覆盖以下 4 个方面：Architecture、Foundation、Behavior 以及 UI。该系列博客介绍一下Jetpack中常用组件，本篇介绍LiveData、ViewModel、LifeCycl">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-02-25T14:31:04.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.223Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>JetPack中的WorkManager - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="JetPack中的WorkManager"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-02-25 22:31" pubdate>
+          2020年2月25日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          17k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">JetPack中的WorkManager</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>2018年谷歌I&#x2F;O 发布了一系列辅助android开发者的实用工具，合称Jetpack，以帮助开发者构建出色的 Android 应用。<br>这次发布的 Android Jetpack 组件覆盖以下 4 个方面：Architecture、Foundation、Behavior 以及 UI。<br>该系列博客介绍一下Jetpack中常用组件，本篇介绍LiveData、ViewModel、LifeCycle。最后借助于<a target="_blank" rel="noopener" href="https://github.com/android/sunflower">https://github.com/android/sunflower</a> 来写一个完整的应用</p>
+<span id="more"></span>
+
+<p>原文 <a target="_blank" rel="noopener" href="https://developer.android.com/topic/libraries/architecture/workmanager?hl=zh-cn">https://developer.android.com/topic/libraries/architecture/workmanager?hl=zh-cn</a></p>
+<p>使用 WorkManager API 可以轻松地调度即使在应用退出或设备重启时仍应运行的可延迟异步任务。</p>
+<p><strong>主要功能</strong>：</p>
+<ul>
+<li>最高向后兼容到 API 14<ul>
+<li>在运行 API 23 及以上级别的设备上使用 JobScheduler</li>
+<li>在运行 API 14-22 的设备上结合使用 BroadcastReceiver 和 AlarmManager</li>
+</ul>
+</li>
+<li>添加网络可用性或充电状态等工作约束</li>
+<li>调度一次性或周期性异步任务</li>
+<li>监控和管理计划任务</li>
+<li>将任务链接起来</li>
+<li>确保任务执行，即使应用或设备重启也同样执行任务</li>
+<li>遵循低电耗模式等省电功能</li>
+</ul>
+<p>WorkManager 旨在用于<strong>可延迟</strong>运行（即不需要立即运行）并且在应用退出或设备重启时必须能够可靠运行的任务。例如：</p>
+<ul>
+<li>向后端服务发送日志或分析数据</li>
+<li>定期将应用数据与服务器同步</li>
+</ul>
+<h3 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h3><p>相关类：</p>
+<ul>
+<li><p>Worker<br> 任务的执行者，是一个抽象类，需要继承它实现要执行的任务。</p>
+</li>
+<li><p>WorkRequest<br> 指定让哪个 Woker 执行任务，指定执行的环境，执行的顺序等。<br> 要使用它的子类 OneTimeWorkRequest 或 PeriodicWorkRequest。</p>
+</li>
+<li><p>WorkManager<br> 管理任务请求和任务队列，发起的 WorkRequest 会进入它的任务队列。</p>
+</li>
+<li><p>WorkStatus<br> 包含有任务的状态和任务的信息，以 LiveData 的形式提供给观察者。</p>
+</li>
+</ul>
+<h3 id="入门指南"><a href="#入门指南" class="headerlink" title="入门指南"></a>入门指南</h3><h4 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h4><p><code>implementation &quot;androidx.work:work-runtime:2.3.2&quot;</code></p>
+<h4 id="创建后台任务"><a href="#创建后台任务" class="headerlink" title="创建后台任务"></a>创建后台任务</h4><p>创建一个类，继承自<code>androidx.work.Worker</code>，并覆写其<code>public Result doWork()</code>方法，从 <code>doWork()</code> 返回的 <code>Result</code>会通知 WorkManager 任务是否：</p>
+<ul>
+<li>已成功完成：<code>Result.success()</code></li>
+<li>已失败：<code>Result.failure()</code></li>
+<li>需要稍后重试：<code>Result.retry()</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UploadWorker</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Worker</span> &#123;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">UploadWorker</span><span class="hljs-params">(<span class="hljs-meta">@NonNull</span> Context context, <span class="hljs-meta">@NonNull</span> WorkerParameters workerParams)</span> &#123;<br>        <span class="hljs-built_in">super</span>(context, workerParams);<br>    &#125;<br><br>    <span class="hljs-meta">@NonNull</span><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> Result <span class="hljs-title function_">doWork</span><span class="hljs-params">()</span> &#123;<br>        Log.e(<span class="hljs-string">&quot;UploadWorker input&quot;</span>,getInputData().getString(<span class="hljs-string">&quot;time&quot;</span>));<br>				<span class="hljs-comment">//do something</span><br>  	    <span class="hljs-keyword">return</span> Result.success();<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h4 id="配置运行任务的方式和时间"><a href="#配置运行任务的方式和时间" class="headerlink" title="配置运行任务的方式和时间"></a>配置运行任务的方式和时间</h4><p><code>Worker</code> 定义工作单元，<a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkRequest?hl=zh-cn"><code>WorkRequest</code></a> 则定义工作的运行方式和时间。任务可以是一次性的，也可以是周期性的。对于一次性 <code>WorkRequest</code>，请使用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/OneTimeWorkRequest?hl=zh-cn"><code>OneTimeWorkRequest</code></a>，对于周期性工作，请使用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/PeriodicWorkRequest?hl=zh-cn"><code>PeriodicWorkRequest</code></a>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">OneTimeWorkRequest</span> <span class="hljs-variable">uploadWorkRequest</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">OneTimeWorkRequest</span>.Builder(UploadWorker.class)<br>            .build()<br>    <br></code></pre></td></tr></table></figure>
+
+<h4 id="将任务提交给系统"><a href="#将任务提交给系统" class="headerlink" title="将任务提交给系统"></a>将任务提交给系统</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">WorkManager.getInstance(myContext).enqueue(uploadWorkRequest);<br></code></pre></td></tr></table></figure>
+
+<p>执行 Worker 的确切时间取决于 <code>WorkRequest</code> 中使用的约束以及系统优化。</p>
+<h3 id="定义工作请求"><a href="#定义工作请求" class="headerlink" title="定义工作请求"></a>定义工作请求</h3><h4 id="工作约束"><a href="#工作约束" class="headerlink" title="工作约束"></a>工作约束</h4><p>可以向工作添加 <code>Constraints</code>，以指明工作何时可以运行。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java">Constraints constraints=    <span class="hljs-keyword">new</span> <span class="hljs-title class_">Constraints</span>.Builder()<br>  .setRequiredNetworkType(NetworkType.CONNECTED)  <span class="hljs-comment">// 网络状态</span><br>  .setRequiresBatteryNotLow(<span class="hljs-literal">true</span>)                 <span class="hljs-comment">// 不在电量不足时执行</span><br>  .setRequiresCharging(<span class="hljs-literal">true</span>)                      <span class="hljs-comment">// 在充电时执行</span><br>  .setRequiresStorageNotLow(<span class="hljs-literal">true</span>)                 <span class="hljs-comment">// 不在存储容量不足时执行</span><br>  <span class="hljs-comment">//.setRequiresDeviceIdle(true)                    // 在待机状态下执行，需要 API 23</span><br>  .build();<br><span class="hljs-type">OneTimeWorkRequest</span> <span class="hljs-variable">compressionWork</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">OneTimeWorkRequest</span>.Builder(UploadWorker.class)<br>  .setConstraints(constraints)<br>  .build();<br></code></pre></td></tr></table></figure>
+
+<p>如果指定了多个约束，任务将仅在满足所有约束时才会运行。</p>
+<p>如果在任务运行期间某个约束不再得到满足，则 WorkManager 将停止工作器。当约束继续得到满足时，系统将重新尝试执行该任务。</p>
+<h4 id="初始延迟"><a href="#初始延迟" class="headerlink" title="初始延迟"></a>初始延迟</h4><p>如果Worker没有约束，或者工作加入队列时所有约束均已得到满足，则系统可能会选择立即运行任务。如果不希望任务立即运行，则可以将工作指定为在经过最短的初始延迟后启动。</p>
+<p>下面的示例展示了如何将任务设置为在加入队列后至少经过 10 分钟再运行。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">OneTimeWorkRequest</span> <span class="hljs-variable">uploadWorkRequest</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">OneTimeWorkRequest</span>.Builder(UploadWorker.class)<br>  .setInitialDelay(<span class="hljs-number">10</span>, TimeUnit.MINUTES)<br>  .build();<br></code></pre></td></tr></table></figure>
+
+<h4 id="重试和退避政策"><a href="#重试和退避政策" class="headerlink" title="重试和退避政策"></a>重试和退避政策</h4><p>如果需要让 WorkManager 重新尝试执行任务，可以从工作器返回 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/ListenableWorker.Result?hl=zh-cn#retry()"><code>Result.retry()</code></a>。</p>
+<p>然后，系统会根据默认的退避延迟时间和政策重新调度工作。退避延迟时间指定重试工作前的最短等待时间。<a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/BackoffPolicy?hl=zh-cn">退避政策</a>定义了在后续重试的尝试过程中，退避延迟时间随时间以怎样的方式增长；默认情况下按 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/BackoffPolicy?hl=zh-cn"><code>EXPONENTIAL</code></a> 延长。</p>
+<p>以下是自定义退避延迟时间和政策的示例。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">OneTimeWorkRequest</span> <span class="hljs-variable">uploadWorkRequest</span> <span class="hljs-operator">=</span><br>  <span class="hljs-keyword">new</span> <span class="hljs-title class_">OneTimeWorkRequest</span>.Builder(UploadWorker.class)<br>  .setBackoffCriteria(BackoffPolicy.LINEAR,<br>  OneTimeWorkRequest.MIN_BACKOFF_MILLIS,<br>  TimeUnit.MILLISECONDS)<br>  .build();<br></code></pre></td></tr></table></figure>
+
+<h4 id="定义任务的输入-x2F-输出"><a href="#定义任务的输入-x2F-输出" class="headerlink" title="定义任务的输入&#x2F;输出"></a>定义任务的输入&#x2F;输出</h4><p>可以通过使用<code>androidx.work.Data</code>来定义输入或者输出</p>
+<p>在<code>UploadWorker</code>中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> Result <span class="hljs-title function_">doWork</span><span class="hljs-params">()</span> &#123;<br>  Log.e(<span class="hljs-string">&quot;UploadWorker input&quot;</span>,getInputData().getString(<span class="hljs-string">&quot;time&quot;</span>));<br>  <span class="hljs-type">Data</span> <span class="hljs-variable">outputData</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Data</span>.Builder()<br>    .putLong(<span class="hljs-string">&quot;timestamp&quot;</span>,System.currentTimeMillis())<br>    .build();<br>  <span class="hljs-keyword">return</span> Result.success(outputData); <br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>在调用时 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Data</span> <span class="hljs-variable">data</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Data</span>.Builder()<br>  .putString(<span class="hljs-string">&quot;time&quot;</span>,simpleDateFormat.format(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>()))<br>  .build();<br><br><span class="hljs-type">OneTimeWorkRequest</span> <span class="hljs-variable">uploadWorkRequest</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">OneTimeWorkRequest</span>.Builder(UploadWorker.class)<br>  .setConstraints(constraints)<br>  .setInputData(data) <span class="hljs-comment">//定义输入</span><br>  .build();<br>WorkManager.getInstance(<span class="hljs-built_in">this</span>).enqueue(uploadWorkRequest);<br>        WorkManager.getInstance(<span class="hljs-built_in">this</span>).getWorkInfoByIdLiveData(uploadWorkRequest.getId()).observe(<span class="hljs-built_in">this</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Observer</span>&lt;WorkInfo&gt;() &#123;<br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onChanged</span><span class="hljs-params">(WorkInfo workInfo)</span> &#123;<br><br>                 <span class="hljs-type">long</span> <span class="hljs-variable">timeStamp</span> <span class="hljs-operator">=</span> workInfo.getOutputData().getLong(<span class="hljs-string">&quot;timestamp&quot;</span>,<span class="hljs-number">0</span>);<br>                Log.e(<span class="hljs-string">&quot;UploadWorker output&quot;</span>,simpleDateFormat.format(timeStamp) +<span class="hljs-string">&quot;---&gt;&quot;</span>+workInfo.getState());<br>            &#125;<br>        &#125;);<br></code></pre></td></tr></table></figure>
+
+<p>非常重要的一点：</p>
+<p><strong>按照设计，<code>Data</code> 对象应该很小，值可以是字符串、基元类型或数组变体。如果需要将更多数据传入和传出工作器，应该将数据放在其他位置，例如 Room 数据库。Data 对象的大小上限为 10KB。</strong></p>
+<h4 id="标记工作"><a href="#标记工作" class="headerlink" title="标记工作"></a>标记工作</h4><p>可以通过为任意 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkRequest?hl=zh-cn"><code>WorkRequest</code></a> 对象分配标记字符串，按逻辑对任务进行分组。这样就可以对使用特定标记的所有任务执行操作。</p>
+<p>例如，<a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkManager?hl=zh-cn#cancelAllWorkByTag(java.lang.String)"><code>WorkManager.cancelAllWorkByTag(String)</code></a> 会取消使用特定标记的所有任务，而 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkManager?hl=zh-cn#getWorkInfosByTagLiveData(java.lang.String)"><code>WorkManager.getWorkInfosByTagLiveData(String)</code></a> 会返回 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/lifecycle/LiveData?hl=zh-cn"><code>LiveData</code></a> 和具有该标记的所有任务的状态列表。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">OneTimeWorkRequest</span> <span class="hljs-variable">cacheCleanupTask</span> <span class="hljs-operator">=</span><br>  <span class="hljs-keyword">new</span> <span class="hljs-title class_">OneTimeWorkRequest</span>.Builder(CacheCleanupWorker.class)<br>  .setConstraints(constraints)<br>  .addTag(<span class="hljs-string">&quot;cleanup&quot;</span>)<br>  .build();<br></code></pre></td></tr></table></figure>
+
+<h4 id="工作状态"><a href="#工作状态" class="headerlink" title="工作状态"></a>工作状态</h4><ul>
+<li>如果有尚未完成的<a target="_blank" rel="noopener" href="https://developer.android.com/topic/libraries/architecture/workmanager/how-to/chain-work?hl=zh-cn">前提性工作</a>，则工作处于 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkInfo.State?hl=zh-cn#BLOCKED"><code>BLOCKED</code></a> <code>State</code>。</li>
+<li>如果工作能够在满足 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/Constraints?hl=zh-cn"><code>Constraints</code></a> 和时机条件后立即运行，则被视为处于 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkInfo.State?hl=zh-cn#ENQUEUED"><code>ENQUEUED</code></a> 状态。</li>
+<li>当工作器在活跃地执行时，其处于 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkInfo.State?hl=zh-cn#RUNNING"><code>RUNNING</code></a> <code>State</code>。</li>
+<li>如果工作器返回 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/ListenableWorker.Result?hl=zh-cn#success()"><code>Result.success()</code></a>，则被视为处于 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkInfo.State?hl=zh-cn#SUCCEEDED"><code>SUCCEEDED</code></a> 状态。这是一种终止 <code>State</code>；只有 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/OneTimeWorkRequest?hl=zh-cn"><code>OneTimeWorkRequest</code></a> 可以进入这种 <code>State</code>。</li>
+<li>相反，如果工作器返回 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/ListenableWorker.Result?hl=zh-cn#failure()"><code>Result.failure()</code></a>，则被视为处于 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkInfo.State?hl=zh-cn#FAILED"><code>FAILED</code></a> 状态。这也是一个终止 <code>State</code>；只有 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/OneTimeWorkRequest?hl=zh-cn"><code>OneTimeWorkRequest</code></a> 可以进入这种 <code>State</code>。所有依赖工作也会被标记为 <code>FAILED</code>，并且不会运行。</li>
+<li>当明确<a target="_blank" rel="noopener" href="https://developer.android.com/topic/libraries/architecture/workmanager/how-to/cancel-stop-work?hl=zh-cn">取消</a>尚未终止的 <code>WorkRequest</code> 时，它会进入 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkInfo.State?hl=zh-cn#CANCELLED"><code>CANCELLED</code></a> <code>State</code>。所有依赖工作也会被标记为 <code>CANCELLED</code>，并且不会运行。</li>
+</ul>
+<h4 id="观察工作"><a href="#观察工作" class="headerlink" title="观察工作"></a>观察工作</h4><p>将工作加入队列后，可以通过 WorkManager 检查其状态。相关信息在 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkInfo?hl=zh-cn"><code>WorkInfo</code></a> 对象中提供，包括工作的 <code>id</code>、标签、当前 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkInfo.State?hl=zh-cn"><code>State</code></a> 和任何输出数据。</p>
+<p>可以通过以下三种方式之一来获取 <code>WorkInfo</code>：</p>
+<ul>
+<li>对于特定的 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkRequest?hl=zh-cn"><code>WorkRequest</code></a>，可以利用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkManager?hl=zh-cn#getWorkInfoById(java.util.UUID)"><code>WorkManager.getWorkInfoById(UUID)</code></a> 或 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkManager?hl=zh-cn#getWorkInfoByIdLiveData(java.util.UUID)"><code>WorkManager.getWorkInfoByIdLiveData(UUID)</code></a> 来通过 <code>WorkRequest</code> <code>id</code> 检索其 <code>WorkInfo</code>。</li>
+<li>对于指定的<a target="_blank" rel="noopener" href="https://developer.android.com/topic/libraries/architecture/workmanager/how-to/define-work?hl=zh-cn#tag">标记</a>，可以利用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkManager?hl=zh-cn#getWorkInfosByTag(java.lang.String)"><code>WorkManager.getWorkInfosByTag(String)</code></a> 或 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkManager?hl=zh-cn#getWorkInfosByTagLiveData(java.lang.String)"><code>WorkManager.getWorkInfosByTagLiveData(String)</code></a> 检索所有匹配的 <code>WorkRequest</code> 的 <code>WorkInfo</code> 对象。</li>
+<li>对于<a target="_blank" rel="noopener" href="https://developer.android.com/topic/libraries/architecture/workmanager/how-to/unique-work?hl=zh-cn">唯一工作名称</a>，可以利用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkManager?hl=zh-cn#getWorkInfosForUniqueWork(java.lang.String)"><code>WorkManager.getWorkInfosForUniqueWork(String)</code></a> 或 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkManager?hl=zh-cn#getWorkInfosForUniqueWorkLiveData(java.lang.String)"><code>WorkManager.getWorkInfosForUniqueWorkLiveData(String)</code></a> 检索所有匹配的 <code>WorkRequest</code> 的 <code>WorkInfo</code> 对象。</li>
+</ul>
+<p>利用每个方法的 <a target="_blank" rel="noopener" href="https://developer.android.com/topic/libraries/architecture/livedata?hl=zh-cn"><code>LiveData</code></a> 变量，可以通过注册监听器来观察 <code>WorkInfo</code> 的变化。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java">WorkManager.getInstance(myContext).getWorkInfoByIdLiveData(uploadWorkRequest.getId())<br>  .observe(lifecycleOwner, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Observer</span>&lt;WorkInfo&gt;() &#123;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onChanged</span><span class="hljs-params">(<span class="hljs-meta">@Nullable</span> WorkInfo workInfo)</span> &#123;<br>      <span class="hljs-keyword">if</span> (workInfo != <span class="hljs-literal">null</span> &amp;&amp; workInfo.state == WorkInfo.State.SUCCEEDED) &#123;<br>        displayMessage(<span class="hljs-string">&quot;Work finished!&quot;</span>)<br>      &#125;<br>    &#125;<br>  &#125;);<br></code></pre></td></tr></table></figure>
+
+<h4 id="更新进度"><a href="#更新进度" class="headerlink" title="更新进度"></a>更新进度</h4><p>对于使用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/ListenableWorker?hl=zh-cn"><code>ListenableWorker</code></a> 或 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/Worker?hl=zh-cn"><code>Worker</code></a> 的 Java 开发者，<a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/ListenableWorker?hl=zh-cn#setProgressAsync(androidx.work.Data)"><code>setProgressAsync()</code></a> API 会返回 <code>ListenableFuture</code>；更新进度是异步过程，因为更新过程包括将进度信息存储在数据库中。</p>
+<p>此示例展示了一个简单的 <code>ProgressWorker</code>。该 <code>Worker</code> 启动时将进度设置为 0，完成时将进度值更新为 100。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ProgressWorker</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Worker</span> &#123;<br><br>  <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">PROGRESS</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;PROGRESS&quot;</span>;<br>  <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">long</span> <span class="hljs-variable">DELAY</span> <span class="hljs-operator">=</span> <span class="hljs-number">1000L</span>;<br><br>  <span class="hljs-keyword">public</span> <span class="hljs-title function_">ProgressWorker</span><span class="hljs-params">(</span><br><span class="hljs-params">    <span class="hljs-meta">@NonNull</span> Context context,</span><br><span class="hljs-params">    <span class="hljs-meta">@NonNull</span> WorkerParameters parameters)</span> &#123;<br>    <span class="hljs-built_in">super</span>(context, parameters);<br>    <span class="hljs-comment">// Set initial progress to 0</span><br>    setProgressAsync(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Data</span>.Builder().putInt(PROGRESS, <span class="hljs-number">0</span>).build());<br>  &#125;<br><br>  <span class="hljs-meta">@NonNull</span><br>  <span class="hljs-meta">@Override</span><br>  <span class="hljs-keyword">public</span> Result <span class="hljs-title function_">doWork</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">try</span> &#123;<br>      <span class="hljs-comment">// Doing work.</span><br>      Thread.sleep(DELAY);<br>    &#125; <span class="hljs-keyword">catch</span> (InterruptedException exception) &#123;<br>      <span class="hljs-comment">// ... handle exception</span><br>    &#125;<br>    <span class="hljs-comment">// Set progress to 100 after you are done doing your work.</span><br>    setProgressAsync(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Data</span>.Builder().putInt(PROGRESS, <span class="hljs-number">100</span>).build());<br>    <span class="hljs-keyword">return</span> Result.success();<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="观察进度"><a href="#观察进度" class="headerlink" title="观察进度"></a>观察进度</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java">WorkManager.getInstance(getApplicationContext())<br>  .getWorkInfoByIdLiveData(uploadWorkRequest.getId())<br>  .observe(lifecycleOwner, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Observer</span>&lt;WorkInfo&gt;() &#123;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onChanged</span><span class="hljs-params">(<span class="hljs-meta">@Nullable</span> WorkInfo workInfo)</span> &#123;<br>      <span class="hljs-keyword">if</span> (workInfo != <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-type">Data</span> <span class="hljs-variable">progress</span> <span class="hljs-operator">=</span> workInfo.getProgress();<br>        <span class="hljs-type">int</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> progress.getInt(PROGRESS, <span class="hljs-number">0</span>)<br>          <span class="hljs-comment">// Do something with progress</span><br>      &#125;<br>    &#125;<br>  &#125;);<br>    <br></code></pre></td></tr></table></figure>
+
+<h3 id="链接工作"><a href="#链接工作" class="headerlink" title="链接工作"></a>链接工作</h3><p>就像动画的执行可以确定顺序、依赖一样，Worker的执行也可以这么操作</p>
+<p>可以使用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkManager?hl=zh-cn">WorkManager</a> 创建工作链并为其排队。工作链用于指定多个关联任务并定义这些任务的运行顺序。当需要以特定的顺序运行多个任务时，这尤其有用。</p>
+<p>要创建工作链，可以使用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkManager?hl=zh-cn#beginWith(androidx.work.OneTimeWorkRequest)"><code>WorkManager.beginWith(OneTimeWorkRequest)</code></a> 或 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkManager?hl=zh-cn#beginWith(java.util.List)"><code>WorkManager.beginWith(List)</code></a>，这会返回 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkContinuation?hl=zh-cn"><code>WorkContinuation</code></a> 实例。</p>
+<p>然后，可以通过 <code>WorkContinuation</code> 使用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkContinuation?hl=zh-cn#then(androidx.work.OneTimeWorkRequest)"><code>WorkContinuation.then(OneTimeWorkRequest)</code></a> 或 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkContinuation?hl=zh-cn#then(java.util.List)"><code>WorkContinuation.then(List)</code></a> 来添加从属 <code>OneTimeWorkRequest</code>。</p>
+<p>每次调用 <code>WorkContinuation.then(...)</code> 都会返回一个新的 <code>WorkContinuation</code> 实例。如果添加了 <code>OneTimeWorkRequest</code> 的 <code>List</code>，这些请求可能会并行运行。</p>
+<p>最后，可以使用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkContinuation?hl=zh-cn#enqueue()"><code>WorkContinuation.enqueue()</code></a> 方法为 <code>WorkContinuation</code> 链排队。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java">WorkManager.getInstance(myContext)<br>  .beginWith(Arrays.asList(filter1, filter2, filter3)) <br>  .then(compress)<br>  .then(upload)<br>  .enqueue();<br></code></pre></td></tr></table></figure>
+
+<p>这里的filter是OneTimeWorkRequest实例对象</p>
+<h4 id="Input-Merger"><a href="#Input-Merger" class="headerlink" title="Input Merger"></a>Input Merger</h4><p>在使用 <code>OneTimeWorkRequest</code> 链时，父级 <code>OneTimeWorkRequest</code> 的输出将作为输入传递给子级。因此在上面的示例中，<code>filter1</code>、<code>filter2</code> 和 <code>filter3</code> 的输出将作为输入传递给 <code>compress</code> 请求。</p>
+<p>为了管理来自多个父级 <code>OneTimeWorkRequest</code> 的输入，WorkManager 使用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/InputMerger?hl=zh-cn"><code>InputMerger</code></a>。</p>
+<p>WorkManager 提供两种不同类型的 <code>InputMerger</code>：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/OverwritingInputMerger?hl=zh-cn"><code>OverwritingInputMerger</code></a> 会尝试将所有输入中的所有键添加到输出中。如果发生冲突，它会覆盖先前设置的键。</li>
+<li><a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/ArrayCreatingInputMerger?hl=zh-cn"><code>ArrayCreatingInputMerger</code></a> 会尝试合并输入，并在必要时创建数组。</li>
+</ul>
+<p>对于上面的示例，假设我们要保留所有图像滤镜的输出，则应使用 <code>ArrayCreatingInputMerger</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">OneTimeWorkRequest</span> <span class="hljs-variable">compress</span> <span class="hljs-operator">=</span><br>  <span class="hljs-keyword">new</span> <span class="hljs-title class_">OneTimeWorkRequest</span>.Builder(CompressWorker.class)<br>  .setInputMerger(ArrayCreatingInputMerger.class)<br>  .setConstraints(constraints)<br>  .build();<br></code></pre></td></tr></table></figure>
+
+<h4 id="链接和工作状态"><a href="#链接和工作状态" class="headerlink" title="链接和工作状态"></a>链接和工作状态</h4><p>创建 <code>OneTimeWorkRequest</code> 链时，需要注意以下几点：</p>
+<ul>
+<li>从属 <code>OneTimeWorkRequest</code> 仅在其所有父级 <code>OneTimeWorkRequest</code> 都成功完成（即返回 <code>Result.success()</code>）时才会被解除阻塞（变为 <code>ENQUEUED</code> 状态）。</li>
+<li>如果有任何父级 <code>OneTimeWorkRequest</code> 失败（返回 <code>Result.failure()</code>），则所有从属 <code>OneTimeWorkRequest</code> 也会被标记为 <code>FAILED</code>。</li>
+<li>如果有任何父级 <code>OneTimeWorkRequest</code> 被取消，则所有从属 <code>OneTimeWorkRequest</code> 也会被标记为 <code>CANCELLED</code></li>
+</ul>
+<h3 id="取消和停止工作"><a href="#取消和停止工作" class="headerlink" title="取消和停止工作"></a>取消和停止工作</h3><p>如果不再需要运行先前加入队列的作业，则可以申请取消。最简单的方法是使用其 <code>id</code> 并调用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkManager?hl=zh-cn#cancelWorkById(java.util.UUID)"><code>WorkManager.cancelWorkById(UUID)</code></a> 来取消单个 WorkRequest：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">WorkManager.cancelWorkById(workRequest.getId());<br></code></pre></td></tr></table></figure>
+
+<p>在后台，WorkManager 会检查工作的 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkInfo.State?hl=zh-cn"><code>State</code></a>。如果工作已经<a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkInfo.State?hl=zh-cn#isFinished()">完成</a>，则不会发生任何变化。否则，其状态将更改为 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkInfo.State?hl=zh-cn#CANCELLED"><code>CANCELLED</code></a>，之后就不会运行这个工作。任何<a target="_blank" rel="noopener" href="https://developer.android.com/topic/libraries/architecture/workmanager/how-to/chain-work?hl=zh-cn">依赖于这项工作</a>的 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkRequest?hl=zh-cn"><code>WorkRequests</code></a> 的状态也将变为 <code>CANCELLED</code>。</p>
+<p>此外，如果工作当前的状态为 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkInfo.State?hl=zh-cn#RUNNING"><code>RUNNING</code></a>，则工作器也会收到对 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/ListenableWorker?hl=zh-cn#onStopped()"><code>ListenableWorker.onStopped()</code></a> 的调用。替换此方法以处理任何可能的清理操作。</p>
+<p>也可以使用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkManager?hl=zh-cn#cancelAllWorkByTag(java.lang.String)"><code>WorkManager.cancelAllWorkByTag(String)</code></a> 按标记取消 WorkRequest。请注意，此方法会取消所有具有此标记的工作。此外，还可以使用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkManager?hl=zh-cn#cancelUniqueWork(java.lang.String)"><code>WorkManager.cancelUniqueWork(String)</code></a> 取消具有唯一名称的所有工作。</p>
+<h4 id="停止正在运行的工作器"><a href="#停止正在运行的工作器" class="headerlink" title="停止正在运行的工作器"></a>停止正在运行的工作器</h4><p>WorkManager 停止正在运行的工作器可能有几种不同的原因：</p>
+<ul>
+<li>明确要求取消它（例如，通过调用 <code>WorkManager.cancelWorkById(UUID)</code> 取消）。</li>
+<li>如果是<a target="_blank" rel="noopener" href="https://developer.android.com/topic/libraries/architecture/workmanager/how-to/unique-work?hl=zh-cn">唯一工作</a>，使用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/ExistingWorkPolicy?hl=zh-cn"><code>ExistingWorkPolicy</code></a> <a target="_blank" rel="noopener" href="https://developer.android.com/topic/libraries/architecture/workmanager/how-to/'reference/androidx/work/ExistingWorkPolicy#REPLACE"><code>REPLACE</code></a> 明确地将新的 <code>WorkRequest</code> 加入队列。旧的 <code>WorkRequest</code> 会立即被视为已终止。</li>
+<li>工作约束已不再得到满足。</li>
+<li>系统出于某种原因指示您的应用停止工作。如果超过 10 分钟的执行期限，可能会发生这种情况。系统将工作安排在稍后重试。</li>
+</ul>
+<p>在这些情况下，会收到对 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/ListenableWorker?hl=zh-cn#onStopped()"><code>ListenableWorker.onStopped()</code></a> 的调用。如果操作系统决定关闭应用，应执行清理工作并以协作方式完成工作器。例如，应该在此时或者尽早关闭数据库和文件的打开句柄。此外，如果想要确认系统是否已经停止你应用，都可以调用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/ListenableWorker?hl=zh-cn#isStopped()"><code>ListenableWorker.isStopped()</code></a>。即使通过在调用 <code>onStopped()</code> 后返回 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/Result?hl=zh-cn"><code>Result</code></a> 来指示工作已完成，WorkManager 都会忽略该 <code>Result</code>，因为工作器已经被视为停止。</p>
+<h3 id="重复性工作"><a href="#重复性工作" class="headerlink" title="重复性工作"></a>重复性工作</h3><p>应用有时可能需要定期运行某些任务。例如，您可能要定期备份数据、下载应用中的新鲜内容，或者上传日志到服务器。 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/PeriodicWorkRequest?hl=zh-cn"><code>PeriodicWorkRequest</code></a> 用于这种需要定期执行的任务。需要注意的是<code>PeriodicWorkRequest</code> 无法和其他任务进行链接。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Constraints</span> <span class="hljs-variable">constraints</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Constraints</span>.Builder().setRequiresCharging(<span class="hljs-literal">true</span>).build();<br><br><span class="hljs-type">PeriodicWorkRequest</span> <span class="hljs-variable">saveRequest</span> <span class="hljs-operator">=</span><br>  <span class="hljs-keyword">new</span> <span class="hljs-title class_">PeriodicWorkRequest</span>.Builder(SaveImageFileWorker.class, <span class="hljs-number">1</span>, TimeUnit.HOURS)<br>  .setConstraints(constraints)<br>  .build();<br><br>WorkManager.getInstance(myContext)<br>  .enqueue(saveRequest);<br></code></pre></td></tr></table></figure>
+
+<h3 id="唯一工作"><a href="#唯一工作" class="headerlink" title="唯一工作"></a>唯一工作</h3><p>唯一工作是一个概念性非常强的术语，可确保一次只有一个具有特定名称的工作链。与 <code>id</code> 不同的是，唯一名称是人类可读的，由开发者指定，而不是由 WorkManager 自动生成。与<a target="_blank" rel="noopener" href="https://developer.android.com/topic/libraries/architecture/workmanager/how-to/define-work?hl=zh-cn#tag">标记</a>不同，唯一名称仅与“一个”工作链关联。</p>
+<p>可以通过调用 [<code>WorkManager.enqueueUniqueWork(String, ExistingWorkPolicy, OneTimeWorkRequest)</code>](<a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkManager?hl=zh-cn#enqueueUniqueWork">https://developer.android.com/reference/androidx/work/WorkManager?hl=zh-cn#enqueueUniqueWork</a>(java.lang.String, androidx.work.ExistingWorkPolicy, androidx.work.OneTimeWorkRequest)) 或 [<code>WorkManager.enqueueUniquePeriodicWork(String, ExistingPeriodicWorkPolicy, PeriodicWorkRequest)</code>](<a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkManager?hl=zh-cn#enqueueUniquePeriodicWork">https://developer.android.com/reference/androidx/work/WorkManager?hl=zh-cn#enqueueUniquePeriodicWork</a>(java.lang.String, androidx.work.ExistingPeriodicWorkPolicy, androidx.work.PeriodicWorkRequest)) 创建唯一工作序列。第一个参数是唯一名称 - 这是我们用来标识 <code>WorkRequest</code> 的键。第二个参数是冲突解决策略，它指定了如果已经存在一个具有该唯一名称的未完成工作链，WorkManager 应该如何处理：</p>
+<ul>
+<li>取消现有工作链，并将其 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/ExistingWorkPolicy?hl=zh-cn#REPLACE"><code>REPLACE</code></a> 为新工作链。</li>
+<li><a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/ExistingWorkPolicy?hl=zh-cn#KEEP"><code>KEEP</code></a> 现有序列并忽略您的新请求。</li>
+<li>将新序列 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/ExistingWorkPolicy?hl=zh-cn#APPEND"><code>APPEND</code></a> 到现有序列，在现有序列的最后一个任务完成后运行新序列的第一个任务。您不能将 <code>APPEND</code> 与 <code>PeriodicWorkRequest</code> 一起使用。</li>
+</ul>
+<p>当有不能够多次排队的任务时，唯一工作将非常有用。例如，如果应用需要将其数据同步到网络，可能需要对一个名为“sync”的序列进行排队，并指定当已经存在具有该名称的序列时，应该忽略新的任务。当需要逐步构建一个长任务链时，也可以利用唯一工作序列。例如，照片编辑应用可能允许用户撤消一长串操作。其中的每一项撤消操作可能都需要一些时间来完成，但必须按正确的顺序执行。在这种情况下，应用可以创建一个“撤消”链，并根据需要将每个撤消操作附加到该链上。</p>
+<p>最后，如果需要创建一个唯一工作链，可以使用 [<code>WorkManager.beginUniqueWork(String, ExistingWorkPolicy, OneTimeWorkRequest)</code>](<a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/WorkManager?hl=en#beginUniqueWork">https://developer.android.com/reference/androidx/work/WorkManager?hl=en#beginUniqueWork</a>(java.lang.String, androidx.work.ExistingWorkPolicy, androidx.work.OneTimeWorkRequest)) 代替 <code>beginWith()</code>。</p>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p><a target="_blank" rel="noopener" href="https://developer.android.com/topic/libraries/architecture/workmanager/how-to/testing?hl=zh-cn">https://developer.android.com/topic/libraries/architecture/workmanager/how-to/testing?hl=zh-cn</a></p>
+<h4 id="简介与设置"><a href="#简介与设置" class="headerlink" title="简介与设置"></a>简介与设置</h4><p><a target="_blank" rel="noopener" href="https://developer.android.com/topic/libraries/architecture/workmanager?hl=zh-cn">WorkManager</a> 提供了一个 <code>work-testing</code> 工件，可以协助进行 Android 插桩测试中的工作器单元测试。</p>
+<p>要使用 <code>work-testing</code> 工件，您应该将它作为 <code>androidTestImplementation</code> 依赖项添加到 <code>build.gradle</code> 中。</p>
+<h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><p><code>work-testing</code> 为测试模式提供了一种特殊的 WorkManager 实现，它通过使用 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/testing/WorkManagerTestInitHelper?hl=zh-cn"><code>WorkManagerTestInitHelper</code></a> 来初始化。</p>
+<p><code>work-testing</code> 工件还提供了 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/testing/SynchronousExecutor?hl=zh-cn"><code>SynchronousExecutor</code></a>，让您可以更加轻松地以同步方式编写测试，而无需处理多个线程、锁定或锁存。</p>
+<p>以下示例展示了如何将所有这些类一起使用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@RunWith(AndroidJUnit4.class)</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">BasicInstrumentationTest</span> &#123;<br>  <span class="hljs-meta">@Before</span><br>  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setup</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-type">Context</span> <span class="hljs-variable">context</span> <span class="hljs-operator">=</span> InstrumentationRegistry.getTargetContext();<br>    <span class="hljs-type">Configuration</span> <span class="hljs-variable">config</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Configuration</span>.Builder()<br>      <span class="hljs-comment">// Set log level to Log.DEBUG to</span><br>      <span class="hljs-comment">// make it easier to see why tests failed</span><br>      .setMinimumLoggingLevel(Log.DEBUG)<br>      <span class="hljs-comment">// Use a SynchronousExecutor to make it easier to write tests</span><br>      .setExecutor(<span class="hljs-keyword">new</span> <span class="hljs-title class_">SynchronousExecutor</span>())<br>      .build();<br><br>    <span class="hljs-comment">// Initialize WorkManager for instrumentation tests.</span><br>    WorkManagerTestInitHelper.initializeTestWorkManager(<br>      context, config);<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="构造测试"><a href="#构造测试" class="headerlink" title="构造测试"></a>构造测试</h4><p>现在 WorkManager 已在测试模式中初始化，您可以测试您的工作器了。</p>
+<p>假设您有一个 <code>EchoWorker</code>，它需要一些 <code>inputData</code> 并简单地将其输入复制（回显）到其 <code>outputData</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EchoWorker</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Worker</span> &#123;<br>  <span class="hljs-keyword">public</span> <span class="hljs-title function_">EchoWorker</span><span class="hljs-params">(Context context, WorkerParameters parameters)</span> &#123;<br>    <span class="hljs-built_in">super</span>(context, parameters);<br>  &#125;<br><br>  <span class="hljs-meta">@NonNull</span><br>  <span class="hljs-meta">@Override</span><br>  <span class="hljs-keyword">public</span> Result <span class="hljs-title function_">doWork</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-type">Data</span> <span class="hljs-variable">input</span> <span class="hljs-operator">=</span> getInputData();<br>    <span class="hljs-keyword">if</span> (input.size() == <span class="hljs-number">0</span>) &#123;<br>      <span class="hljs-keyword">return</span> Result.failure();<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      <span class="hljs-keyword">return</span> Result.success(input);<br>    &#125;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="基本测试"><a href="#基本测试" class="headerlink" title="基本测试"></a>基本测试</h4><p>以下是一个对 <code>EchoWorker</code> 进行测试的 Android 插桩测试。这里的要点是，在测试模式中测试 <code>EchoWorker</code> 与在真实应用中使用 <code>EchoWorker</code> 非常相似。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSimpleEchoWorker</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>  <span class="hljs-comment">// Define input data</span><br>  <span class="hljs-type">Data</span> <span class="hljs-variable">input</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Data</span>.Builder()<br>    .put(KEY_1, <span class="hljs-number">1</span>)<br>    .put(KEY_2, <span class="hljs-number">2</span>)<br>    .build();<br><br>  <span class="hljs-comment">// Create request</span><br>  <span class="hljs-type">OneTimeWorkRequest</span> <span class="hljs-variable">request</span> <span class="hljs-operator">=</span><br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">OneTimeWorkRequest</span>.Builder(EchoWorker.class)<br>    .setInputData(input)<br>    .build();<br><br>  <span class="hljs-type">WorkManager</span> <span class="hljs-variable">workManager</span> <span class="hljs-operator">=</span> WorkManager.getInstance(getApplicationContext());<br>  <span class="hljs-comment">// Enqueue and wait for result. This also runs the Worker synchronously</span><br>  <span class="hljs-comment">// because we are using a SynchronousExecutor.</span><br>  workManager.enqueue(request).getResult().get();<br>  <span class="hljs-comment">// Get WorkInfo and outputData</span><br>  <span class="hljs-type">WorkInfo</span> <span class="hljs-variable">workInfo</span> <span class="hljs-operator">=</span> workManager.getWorkInfoById(request.getId()).get();<br>  <span class="hljs-type">Data</span> <span class="hljs-variable">outputData</span> <span class="hljs-operator">=</span> workInfo.getOutputData();<br>  <span class="hljs-comment">// Assert</span><br>  assertThat(workInfo.getState(), is(WorkInfo.State.SUCCEEDED));<br>  assertThat(outputData, is(input));<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们来编写另一个测试，它将确保在 <code>EchoWorker</code> 没有获得任何输入数据时，其预期的 <code>Result</code> 为 <code>Result.failure()</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEchoWorkerNoInput</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>  <span class="hljs-comment">// Create request</span><br>  <span class="hljs-type">OneTimeWorkRequest</span> <span class="hljs-variable">request</span> <span class="hljs-operator">=</span><br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">OneTimeWorkRequest</span>.Builder(EchoWorker.class)<br>    .build();<br><br>  <span class="hljs-type">WorkManager</span> <span class="hljs-variable">workManager</span> <span class="hljs-operator">=</span> WorkManager.getInstance(getApplicationContext());<br>  <span class="hljs-comment">// Enqueue and wait for result. This also runs the Worker synchronously</span><br>  <span class="hljs-comment">// because we are using a SynchronousExecutor.</span><br>  workManager.enqueue(request).getResult().get();<br>  <span class="hljs-comment">// Get WorkInfo</span><br>  <span class="hljs-type">WorkInfo</span> <span class="hljs-variable">workInfo</span> <span class="hljs-operator">=</span> workManager.getWorkInfoById(request.getId()).get();<br>  <span class="hljs-comment">// Assert</span><br>  assertThat(workInfo.getState(), is(WorkInfo.State.FAILED));<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="模拟约束、延迟和定期工作"><a href="#模拟约束、延迟和定期工作" class="headerlink" title="模拟约束、延迟和定期工作"></a>模拟约束、延迟和定期工作</h4><p><code>WorkManagerTestInitHelper</code> 为您提供了一个 <a target="_blank" rel="noopener" href="https://developer.android.com/reference/androidx/work/testing/TestDriver?hl=zh-cn"><code>TestDriver</code></a> 实例，可用于模拟 <code>initialDelay</code>、<code>ListenableWorker</code> 满足 <code>Constraint</code> 的条件，以及 <code>PeriodicWorkRequest</code> 的间隔。</p>
+<p>测试初始延迟</p>
+<p><code>Worker</code> 可以具有初始延迟。要测试含有 <code>EchoWorker</code> 的 <code>initialDelay</code>，而不必在测试中等待 <code>initialDelay</code>，您可以使用 <code>TestDriver</code> 将 <code>WorkRequest</code> 初始延迟标记为已满足条件。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testWithInitialDelay</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>  <span class="hljs-comment">// Define input data</span><br>  <span class="hljs-type">Data</span> <span class="hljs-variable">input</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Data</span>.Builder()<br>    .put(KEY_1, <span class="hljs-number">1</span>)<br>    .put(KEY_2, <span class="hljs-number">2</span>)<br>    .build();<br><br>  <span class="hljs-comment">// Create request</span><br>  <span class="hljs-type">OneTimeWorkRequest</span> <span class="hljs-variable">request</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">OneTimeWorkRequest</span>.Builder(EchoWorker.class)<br>    .setInputData(input)<br>    .setInitialDelay(<span class="hljs-number">10</span>, TimeUnit.SECONDS)<br>    .build();<br><br>  <span class="hljs-type">WorkManager</span> <span class="hljs-variable">workManager</span> <span class="hljs-operator">=</span> WorkManager.getInstance(myContext);<br>  <span class="hljs-comment">// Get the TestDriver</span><br>  <span class="hljs-type">TestDriver</span> <span class="hljs-variable">testDriver</span> <span class="hljs-operator">=</span> WorkManagerTestInitHelper.getTestDriver();<br>  <span class="hljs-comment">// Enqueue</span><br>  workManager.enqueue(request).getResult().get();<br>  <span class="hljs-comment">// Tells the WorkManager test framework that initial delays are now met.</span><br>  testDriver.setInitialDelayMet(request.getId());<br>  <span class="hljs-comment">// Get WorkInfo and outputData</span><br>  <span class="hljs-type">WorkInfo</span> <span class="hljs-variable">workInfo</span> <span class="hljs-operator">=</span> workManager.getWorkInfoById(request.getId()).get();<br>  <span class="hljs-type">Data</span> <span class="hljs-variable">outputData</span> <span class="hljs-operator">=</span> workInfo.getOutputData();<br>  <span class="hljs-comment">// Assert</span><br>  assertThat(workInfo.getState(), is(WorkInfo.State.SUCCEEDED));<br>  assertThat(outputData, is(input));<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="测试约束"><a href="#测试约束" class="headerlink" title="测试约束"></a>测试约束</h4><p><code>TestDriver</code> 也可用于利用 <code>setAllConstraintsMet</code> 将约束标记为已满足条件。以下示例展示了如何测试含有约束的 <code>Worker</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testWithConstraints</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>  <span class="hljs-comment">// Define input data</span><br>  <span class="hljs-type">Data</span> <span class="hljs-variable">input</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Data</span>.Builder()<br>    .put(KEY_1, <span class="hljs-number">1</span>)<br>    .put(KEY_2, <span class="hljs-number">2</span>)<br>    .build();<br><br>  <span class="hljs-comment">// Define constraints</span><br>  <span class="hljs-type">Constraints</span> <span class="hljs-variable">constraints</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Constraints</span>.Builder()<br>    .setRequiresDeviceIdle(<span class="hljs-literal">true</span>)<br>    .build();<br><br>  <span class="hljs-comment">// Create request</span><br>  <span class="hljs-type">OneTimeWorkRequest</span> <span class="hljs-variable">request</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">OneTimeWorkRequest</span>.Builder(EchoWorker.class)<br>    .setInputData(input)<br>    .setConstraints(constraints)<br>    .build();<br><br>  <span class="hljs-type">WorkManager</span> <span class="hljs-variable">workManager</span> <span class="hljs-operator">=</span> WorkManager.getInstance(myContext);<br>  <span class="hljs-type">TestDriver</span> <span class="hljs-variable">testDriver</span> <span class="hljs-operator">=</span> WorkManagerTestInitHelper.getTestDriver();<br>  <span class="hljs-comment">// Enqueue</span><br>  workManager.enqueue(request).getResult().get();<br>  <span class="hljs-comment">// Tells the testing framework that all constraints are met.</span><br>  testDriver.setAllConstraintsMet(request.getId());<br>  <span class="hljs-comment">// Get WorkInfo and outputData</span><br>  <span class="hljs-type">WorkInfo</span> <span class="hljs-variable">workInfo</span> <span class="hljs-operator">=</span> workManager.getWorkInfoById(request.getId()).get();<br>  <span class="hljs-type">Data</span> <span class="hljs-variable">outputData</span> <span class="hljs-operator">=</span> workInfo.getOutputData();<br>  <span class="hljs-comment">// Assert</span><br>  assertThat(workInfo.getState(), is(WorkInfo.State.SUCCEEDED));<br>  assertThat(outputData, is(input));<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="测试定期工作"><a href="#测试定期工作" class="headerlink" title="测试定期工作"></a>测试定期工作</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPeriodicWork</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>  <span class="hljs-comment">// Define input data</span><br>  <span class="hljs-type">Data</span> <span class="hljs-variable">input</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Data</span>.Builder()<br>    .put(KEY_1, <span class="hljs-number">1</span>)<br>    .put(KEY_2, <span class="hljs-number">2</span>)<br>    .build();<br><br>  <span class="hljs-comment">// Create request</span><br>  <span class="hljs-type">PeriodicWorkRequest</span> <span class="hljs-variable">request</span> <span class="hljs-operator">=</span><br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">PeriodicWorkRequest</span>.Builder(EchoWorker.class, <span class="hljs-number">15</span>, MINUTES)<br>    .setInputData(input)<br>    .build();<br><br>  <span class="hljs-type">WorkManager</span> <span class="hljs-variable">workManager</span> <span class="hljs-operator">=</span> WorkManager.getInstance(myContext);<br>  <span class="hljs-type">TestDriver</span> <span class="hljs-variable">testDriver</span> <span class="hljs-operator">=</span> WorkManagerTestInitHelper.getTestDriver();<br>  <span class="hljs-comment">// Enqueue</span><br>  workManager.enqueue(request).getResult().get();<br>  <span class="hljs-comment">// Tells the testing framework the period delay is met</span><br>  testDriver.setPeriodDelayMet(request.getId());<br>  <span class="hljs-comment">// Get WorkInfo and outputData</span><br>  <span class="hljs-type">WorkInfo</span> <span class="hljs-variable">workInfo</span> <span class="hljs-operator">=</span> workManager.getWorkInfoById(request.getId()).get();<br>  <span class="hljs-comment">// Assert</span><br>  assertThat(workInfo.getState(), is(WorkInfo.State.ENQUEUED));<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>JetPack中的WorkManager</div>
+      <div>https://blog.huangyuanlove.com/2020/02/25/JetPack中的WorkManager/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年2月25日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/03/12/JetPack-sunflower/" title="JetPack-sunflower">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">JetPack-sunflower</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/02/25/JetPack%E4%B8%AD%E7%9A%84Navigation/" title="JetPack中的Navigation">
+                        <span class="hidden-mobile">JetPack中的Navigation</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '4add8adc2bcd113489293b2daf5ab37b'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

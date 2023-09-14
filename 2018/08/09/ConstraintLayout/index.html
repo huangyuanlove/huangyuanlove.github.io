@@ -1,0 +1,778 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="ConstraintLayout">
+  
+    <meta name="description" content="https:&#x2F;&#x2F;developer.android.google.cn&#x2F;reference&#x2F;android&#x2F;support&#x2F;constraint&#x2F;ConstraintLayoutA ConstraintLayout is a ViewGroup which allows you to position and size widgets in a flexible way.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ConstraintLayout">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2018/08/09/ConstraintLayout/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="https:&#x2F;&#x2F;developer.android.google.cn&#x2F;reference&#x2F;android&#x2F;support&#x2F;constraint&#x2F;ConstraintLayoutA ConstraintLayout is a ViewGroup which allows you to position and size widgets in a flexible way.">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/Android/ConstraintLayout/class_summary.png">
+<meta property="article:published_time" content="2018-08-09T02:40:53.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.217Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/Android/ConstraintLayout/class_summary.png">
+  
+  
+  
+  <title>ConstraintLayout - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="ConstraintLayout"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2018-08-09 10:40" pubdate>
+          2018年8月9日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          16k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">ConstraintLayout</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><a target="_blank" rel="noopener" href="https://developer.android.google.cn/reference/android/support/constraint/ConstraintLayout">https://developer.android.google.cn/reference/android/support/constraint/ConstraintLayout</a><br>A ConstraintLayout is a ViewGroup which allows you to position and size widgets in a flexible way.</p>
+<span id="more"></span>
+<h3 id="版本支持"><a href="#版本支持" class="headerlink" title="版本支持"></a>版本支持</h3><p>ConstraintLayout是一个支持库，向前兼容到Android9，以后还会添加更多的新特性。现在公司的产品的最低版本支持都在2.3之上，部分产品最低版本支持保持在4.4之上。这就意味着我们不需要关心最低版本支持的事情。</p>
+<h3 id="新特性"><a href="#新特性" class="headerlink" title="新特性"></a>新特性</h3><p>在使用新特性的时候是不能有循环依赖的，比如相对定位，不能A依赖于B的位置，B依赖C的位置，而C又依赖A的位置</p>
+<h4 id="Relative-positioning"><a href="#Relative-positioning" class="headerlink" title="Relative positioning"></a>Relative positioning</h4><p>相对定位是ConstraintLayout中最基本的构建方式，也就是一个空间相对于另外一个空间进行位置确定，可以在横向和竖向上进行约束：</p>
+<blockquote>
+<p>Horizontal Axis: left, right, start and end sides<br>  Vertical Axis: top, bottom sides and text baseline</p>
+</blockquote>
+<p>如果我们需要让ButtonB在ButtonA的右侧，如下图：<br><img src="/image/Android/ConstraintLayout/relative_positioning_example.png" srcset="/img/loading.gif" lazyload alt="Relative Positioning Example"></p>
+<p>在布局文件中只需要：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">Button</span> <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/buttonA&quot;</span> <span class="hljs-attr">...</span> /&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">Button</span> <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/buttonB&quot;</span> <span class="hljs-attr">...</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintLeft_toRightOf</span>=<span class="hljs-string">&quot;@+id/buttonA&quot;</span> /&gt;</span><br></code></pre></td></tr></table></figure>
+<p>这就告诉系统 让buttonB的左边约束于buttonA的右边<br>下面列出了所有可用的约束方式：</p>
+<ul>
+<li>layout_constraintLeft_toLeftOf</li>
+<li>layout_constraintLeft_toRightOf</li>
+<li>layout_constraintRight_toLeftOf</li>
+<li>layout_constraintRight_toRightOf</li>
+<li>layout_constraintTop_toTopOf</li>
+<li>layout_constraintTop_toBottomOf</li>
+<li>layout_constraintBottom_toTopOf</li>
+<li>layout_constraintBottom_toBottomOf</li>
+<li>layout_constraintBaseline_toBaselineOf</li>
+<li>layout_constraintStart_toEndOf</li>
+<li>layout_constraintStart_toStartOf</li>
+<li>layout_constraintEnd_toStartOf</li>
+<li>layout_constraintEnd_toEndOf</li>
+</ul>
+<p>各约束位置如下：<br><img src="/image/Android/ConstraintLayout/relative_position_constraint.png" srcset="/img/loading.gif" lazyload alt="relative_position_constraint"><br>上面这些约束关系全部都是本身相对于另外一个控件(使用@id方式引用另外控件)或者父布局(使用parent方式引用父控件)进行约束</p>
+<h4 id="Margins"><a href="#Margins" class="headerlink" title="Margins"></a>Margins</h4><p><img src="/image/Android/ConstraintLayout/relative_positioning_margins.png" srcset="/img/loading.gif" lazyload alt="Relative Positioning Margins"><br>这里的外边距和其他布局方式的外边距一样，不能是负数，属性如下：</p>
+<ul>
+<li>android:layout_marginStart</li>
+<li>android:layout_marginEnd</li>
+<li>android:layout_marginLeft</li>
+<li>android:layout_marginTop</li>
+<li>android:layout_marginRight</li>
+<li>android:layout_marginBottom</li>
+</ul>
+<p>添加的一个新属性是 <code>maiginGone</code>,当一个约束目标的可见性为GONE的时候(View.GONE)，可以改变当前控件的外边距，比如B是相对于A进行约束，当A不可见的时候，可以改变B的外边距，也就是B的外边距可以根据Ade可见性设置不同的值，属性如下</p>
+<ul>
+<li>layout_goneMarginStart</li>
+<li>layout_goneMarginEnd</li>
+<li>layout_goneMarginLeft</li>
+<li>layout_goneMarginTop</li>
+<li>layout_goneMarginRight</li>
+<li>layout_goneMarginBottom</li>
+</ul>
+<h4 id="Centering-positioning-and-bias"><a href="#Centering-positioning-and-bias" class="headerlink" title="Centering positioning and bias"></a>Centering positioning and bias</h4><p>** Centering Positioning **<br>如果对一个控件的左右(上下)都添加的约束，那么ConstraintLayout的表现就像有两个大小相等方向相反的力在拉这个控件一个样，比如</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">android.support.constraint.ConstraintLayout</span> <span class="hljs-attr">...</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">Button</span> <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/button&quot;</span> <span class="hljs-attr">...</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintLeft_toLeftOf</span>=<span class="hljs-string">&quot;parent&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintRight_toRightOf</span>=<span class="hljs-string">&quot;parent/&gt;</span></span><br><span class="hljs-string"><span class="hljs-tag">&lt;/&gt;</span></span><br></code></pre></td></tr></table></figure>
+<p>表现如下：<br><img src="/image/Android/ConstraintLayout/centering_positioning.png" srcset="/img/loading.gif" lazyload alt="Centering Positioning"><br>这样就会产生居中效果，如果子控件和父控件的尺寸相同，这写属性就没有意义了</p>
+<p>** bias **<br>当遇到上面这种约束的时候，我们可以使用<code>bias</code>属性让控件偏向于哪一个方向,属性如下：</p>
+<ul>
+<li>layout_constraintHorizontal_bias</li>
+<li>layout_constraintVertical_bias<br>例如，如下代码：<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">android.support.constraint.ConstraintLayout</span> <span class="hljs-attr">...</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">Button</span> <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/button&quot;</span> <span class="hljs-attr">...</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintHorizontal_bias</span>=<span class="hljs-string">&quot;0.3&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintLeft_toLeftOf</span>=<span class="hljs-string">&quot;parent&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintRight_toRightOf</span>=<span class="hljs-string">&quot;parent/&gt;</span></span><br><span class="hljs-string"><span class="hljs-tag">&lt;/&gt;</span></span><br></code></pre></td></tr></table></figure>
+表现如下：<br><img src="/image/Android/ConstraintLayout/centering_positioning_with_bias.png" srcset="/img/loading.gif" lazyload alt="Centering Positioning with Bias"></li>
+</ul>
+<h4 id="Circular-positioning-Added-in-1-1"><a href="#Circular-positioning-Added-in-1-1" class="headerlink" title="Circular positioning (Added in 1.1)"></a>Circular positioning (Added in 1.1)</h4><p>这个属性是1.1版本添加进去的，可以使用<code>angle</code>和<code>distance</code>来约束一个控件的中心点和另外一个空间的中心点的位置关系，这样就可以把空间定位在一个圆上，可用属性如下：</p>
+<ul>
+<li>**layout_constraintCircle ** : references another widget id</li>
+<li>**layout_constraintCircleRadius ** : the distance to the other widget center</li>
+<li>**layout_constraintCircleAngle ** : which angle the widget should be at (in degrees, from 0 to 360)</li>
+</ul>
+<p>示例如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">Button</span> <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/buttonA&quot;</span> <span class="hljs-attr">...</span> /&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">Button</span> <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/buttonB&quot;</span> <span class="hljs-attr">...</span></span><br><span class="hljs-tag">      <span class="hljs-attr">app:layout_constraintCircle</span>=<span class="hljs-string">&quot;@+id/buttonA&quot;</span></span><br><span class="hljs-tag">      <span class="hljs-attr">app:layout_constraintCircleRadius</span>=<span class="hljs-string">&quot;100dp&quot;</span></span><br><span class="hljs-tag">      <span class="hljs-attr">app:layout_constraintCircleAngle</span>=<span class="hljs-string">&quot;45&quot;</span> /&gt;</span><br></code></pre></td></tr></table></figure>
+<p>表现如下：<br><img src="/image/Android/ConstraintLayout/circular_positioning.png" srcset="/img/loading.gif" lazyload alt="Circular Positioning"></p>
+<h4 id="Visibility-behavior"><a href="#Visibility-behavior" class="headerlink" title="Visibility behavior"></a>Visibility behavior</h4><p>ConstraintLayout对于被标记为GONE的控件有特殊的处理。一般布局中，GONE控件是不会展示在界面上并且不再属于布局的一部分，但是在布局计算上，ConstraintLayout和传统布局有很大的区别</p>
+<ol>
+<li>传统布局下，GONE控件会被认为大小是0，也就是一个点</li>
+<li>在ConstraintLayout中其大小仍然按照可见大小计算，但是其外边距为0</li>
+</ol>
+<p><img src="/image/Android/ConstraintLayout/visibility_behavior.png" srcset="/img/loading.gif" lazyload alt="Visibility Behavior"></p>
+<h4 id="Dimension-constraints"><a href="#Dimension-constraints" class="headerlink" title="Dimension constraints"></a>Dimension constraints</h4><h5 id="Minimum-dimensions-on-ConstraintLayout"><a href="#Minimum-dimensions-on-ConstraintLayout" class="headerlink" title="Minimum dimensions on ConstraintLayout"></a>Minimum dimensions on ConstraintLayout</h5><p>可以像普通控件一样设置最小最大尺寸,属性如下：</p>
+<ul>
+<li>** android:minWidth ** set the minimum width for the layout</li>
+<li>** android:minHeight ** set the minimum height for the layout</li>
+<li>** android:maxWidth ** set the maximum width for the layout</li>
+<li>** android:maxHeight ** set the maximum height for the layout</li>
+</ul>
+<p>这些属性当ConstraintLayout的宽高为<code>WRAP_CONTENT</code>时有效。</p>
+<h5 id="Widgets-dimension-constraints"><a href="#Widgets-dimension-constraints" class="headerlink" title="Widgets dimension constraints"></a>Widgets dimension constraints</h5><p>可以通过<code>android:layout_width</code>和<code>android:layout_height</code>设置控件的尺寸，有三种方式：</p>
+<ul>
+<li>固定值</li>
+<li>WRAP_CONTENT</li>
+<li>0dp, 相当于<code>MATCH_CONSTRAINT</code></li>
+</ul>
+<p>前两种方式和普通布局表现出来的行为一样。最后一种会通过约束来重新设置控件尺寸，如果设置了margin，在布局计算的时候也会被考虑进去。<br> <img src="/image/Android/ConstraintLayout/dimension_constraints.png" srcset="/img/loading.gif" lazyload alt="Dimension Constraints"><br>上图中的a是wrap_content,b是0dp，c是设置了margin的0dp。需要注意的是，在ConstraintLayout中，MATCH_PARENT是不推荐使用的。</p>
+<h5 id="WRAP-CONTENT-enforcing-constraints-Added-in-1-1"><a href="#WRAP-CONTENT-enforcing-constraints-Added-in-1-1" class="headerlink" title="WRAP_CONTENT:enforcing constraints (Added in 1.1)"></a>WRAP_CONTENT:enforcing constraints (Added in 1.1)</h5><p>如果控件实际尺寸超过了约束的尺寸，那么约束就会失效，这时候可以添加如下属性来限制：</p>
+<ul>
+<li>app:layout_constrainedWidth&#x3D;”true|false”</li>
+<li>app:layout_constrainedHeight&#x3D;”true|false”</li>
+</ul>
+<p>将B控件约束于A控件和父控件的中间，尺寸都为<code>wrap_content</code><br><img src="/image/Android/ConstraintLayout/wrap_content_enforcing_constraints1.png" srcset="/img/loading.gif" lazyload alt="enforcing constraints"><br>这时候如果将B控件填充很长的文件，那么B控件的左侧则会突破约束，和A控件的中心对齐，如果我们不想要这种方式，还是要求B的左侧和Ade右侧对齐，则可以天剑<br><code>layout_constrainedWidth=&quot;true&quot;</code>属性进行约束，实例如下：<br><img src="/image/Android/ConstraintLayout/wrap_content_enforcing_constraints2.png" srcset="/img/loading.gif" lazyload alt="约束失效"><br><img src="/image/Android/ConstraintLayout/wrap_content_enforcing_constraints3.png" srcset="/img/loading.gif" lazyload alt="添加强制约束属性"></p>
+<h5 id="MATCH-CONSTRAINT-dimensions-Added-in-1-1"><a href="#MATCH-CONSTRAINT-dimensions-Added-in-1-1" class="headerlink" title="MATCH_CONSTRAINT dimensions (Added in 1.1)"></a>MATCH_CONSTRAINT dimensions (Added in 1.1)</h5><p>当控件的尺寸被设置为<code>MATCH_CONSTRAINT</code>时，默认的行为是占据所有的剩余空间，可以使用如下属性来更改此行为：</p>
+<ul>
+<li>** layout_constraintWidth_min ** 和 ** layout_constraintHeight_min ** : will set the minimum size for this dimension</li>
+<li>** layout_constraintWidth_max ** 和 ** layout_constraintHeight_max ** : will set the maximum size for this dimension</li>
+<li>** layout_constraintWidth_percent ** 和 ** layout_constraintHeight_percent ** : will set the size of this dimension as a percentage of the parent</li>
+</ul>
+<h5 id="Percent-dimension"><a href="#Percent-dimension" class="headerlink" title="Percent dimension"></a>Percent dimension</h5><p>To use percent, you need to set the following:<br>想要使用百分比布局，需要设置如下属性：</p>
+<ol>
+<li>控件宽高设置为 <code>MATCH_CONSTRAINT</code> (0dp)</li>
+<li><code>app:layout_constraintWidth_default</code>属性值设置为<code>percent</code> </li>
+<li>设置 <code>layout_constraintWidth_percent</code>或者<code>layout_constraintHeight_percent</code>属性值(0-1之间)</li>
+</ol>
+<p>下面的TextView控件将占据剩余宽度的50%和剩余高度的50%,示例：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">TextView</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/textView6&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;0dp&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;0dp&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:background</span>=<span class="hljs-string">&quot;@color/colorAccent&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintHeight_default</span>=<span class="hljs-string">&quot;percent&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintHeight_percent</span>=<span class="hljs-string">&quot;0.5&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintWidth_default</span>=<span class="hljs-string">&quot;percent&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintWidth_percent</span>=<span class="hljs-string">&quot;0.5&quot;</span> /&gt;</span><br></code></pre></td></tr></table></figure>
+<h5 id="Ratio"><a href="#Ratio" class="headerlink" title="Ratio"></a>Ratio</h5><p>可以设置控件的宽高比例，为了实现这种方式，需要让控件的宽或者高设置为0dp(MATCH_CONSTRAINT)，如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">Button</span> <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;0dp&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintDimensionRatio</span>=<span class="hljs-string">&quot;1:1&quot;</span> /&gt;</span><br></code></pre></td></tr></table></figure>
+<p>这样的话，高度会随着宽度的改变而改变，并且大小和宽度一致。设置宽高比的方式有两种：</p>
+<ol>
+<li>一个浮点数，<code>受约束的一方的尺寸/另一方尺寸</code>得到的数字</li>
+<li>宽度:高度</li>
+</ol>
+<p>如果宽高两个方向同时设置了0dp(MATCH_CONSTRAINT)，系统会设置满足比例的最大尺寸，这种情况下还要保持宽高比例，需要在比例前面添加W或者H以确定受约束的是高还是宽。</p>
+<blockquote>
+<p>You can also use ratio if both dimensions are set to MATCH_CONSTRAINT (0dp). In this case the system sets the largest dimensions the satisfies all constraints and maintains the    aspect ratio specified. To constrain one specific side based on the dimensions of another, you can pre append W,” or H, to constrain the width or height respectively. For          example, If one dimension is constrained by two targets (e.g. width is 0dp and centered on parent) you can indicate which side should be constrained, by adding the letter W (for   constraining the width) or H (for constraining the height) in front of the ratio, separated by a comma:<br>  <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">Button</span> <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;0dp&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;0dp&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintDimensionRatio</span>=<span class="hljs-string">&quot;H,16:9&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintBottom_toBottomOf</span>=<span class="hljs-string">&quot;parent&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintTop_toTopOf</span>=<span class="hljs-string">&quot;parent&quot;</span>/&gt;</span><br></code></pre></td></tr></table></figure><br>will set the height of the button following a 16:9 ratio, while the width of the button will match the constraints to parent.</p>
+</blockquote>
+<h4 id="Chains"><a href="#Chains" class="headerlink" title="Chains"></a>Chains</h4><p>Chains 在单轴（水平或垂直）上提供类似组的行为。另一个轴可以独立地约束。</p>
+<h5 id="Creating-a-chain"><a href="#Creating-a-chain" class="headerlink" title="Creating a chain"></a>Creating a chain</h5><p>如果一组小部件通过双向连接链接在一起，则它们被视为链（参见下图，显示最小链，具有两个小部件）。<br><img src="/image/Android/ConstraintLayout/chain.png" srcset="/img/loading.gif" lazyload alt="chain"></p>
+<h5 id="Chain-heads"><a href="#Chain-heads" class="headerlink" title="Chain heads"></a>Chain heads</h5><p>横向上，Chain头部是Chain最左边的控件；纵向上，Chain头部是Chain最顶部的控件。<br><img src="/image/Android/ConstraintLayout/chain_head.png" srcset="/img/loading.gif" lazyload alt="chain head"></p>
+<h5 id="Margins-in-chains"><a href="#Margins-in-chains" class="headerlink" title="Margins in chains"></a>Margins in chains</h5><p>如果连接时定义了外边距，Chain就会发生变化。在SPREAD CHAIN中，外边距会从已经分配好的空间中去掉。原文如下：</p>
+<blockquote>
+<p>If margins are specified on connections, they will be taken in account. In the case of spread chains, margins will be deducted from the allocated space.</p>
+</blockquote>
+<h5 id="Chain-Style"><a href="#Chain-Style" class="headerlink" title="Chain Style"></a>Chain Style</h5><p>当对Chain的第一个元素设置layout_constraintHorizontal_chainStyle或layout_constraintVertical_chainStyle属性，Chain就会根据特定的样式（默认样式为CHAIN_SPREAD）进行相应变化，样式类型如下：</p>
+<ul>
+<li>CHAIN_SPREAD – 元素呗分散开 (默认样式) </li>
+<li>Weighted chain – 在 CHAIN_SPREAD mo样式中,如果某些控件设置了<code>MATCH_CONSTRAINT</code>属性, 他们将平分剩余空间 </li>
+<li>CHAIN_SPREAD_INSIDE – Chain的头尾元素紧贴父容器</li>
+<li>CHAIN_PACKED – Chain中的所有控件合并在一起后在剩余的空间中居中</li>
+</ul>
+<p>图示如下：<br><img src="/image/Android/ConstraintLayout/chain_styles.png" srcset="/img/loading.gif" lazyload alt="chain styles"></p>
+<h5 id="Weighted-chains"><a href="#Weighted-chains" class="headerlink" title="Weighted chains"></a>Weighted chains</h5><p>默认的Chain会在空间里平均散开。如果其中有一个或多个元素使用了MATCH_CONSTRAINT属性，那么他们会将剩余的空间平均填满。属性layout_constraintHorizontal_height和layout_constraintVertical_weight控制使用MATCH_CONSTRAINT的元素如何均分空间。 例如，一个Chain中包含两个使用MATCH_CONSTRAINT的元素，第一个元素使用的权重为2，第二个元素使用的权重为1，那么被第一个元素占用的空间是第二个元素的2倍。</p>
+<h5 id="Margins-and-chains-in-1-1"><a href="#Margins-and-chains-in-1-1" class="headerlink" title="Margins and chains (in 1.1)"></a>Margins and chains (in 1.1)</h5><p>在chain中是可以使用margin属性的，例如，在一个水平的chain中，一个元素定义了right_magin&#x3D;10dp,下一个元素定义了margin_left&#x3D;5dp，那么两者之间的间距就是15dp.</p>
+<h4 id="Virtual-Helpers-objects"><a href="#Virtual-Helpers-objects" class="headerlink" title="Virtual Helpers objects"></a>Virtual Helpers objects</h4><h5 id="Guideline"><a href="#Guideline" class="headerlink" title="Guideline"></a>Guideline</h5><p><code>Guideline</code>是只能用在<code>ConstraintLayout</code>布局里面的一个工具类，用于辅助布局，类似为辅助线，可以设置<code>android:orientation</code>属性来确定是横向的还是纵向的。 </p>
+<ul>
+<li>当设置为vertical的时候，Guideline的宽度为0，高度是parent也就是ConstraintLayout的高度 </li>
+<li>同样设置为horizontal的时候，高度为0，宽度是parent的宽度</li>
+</ul>
+<p>定位Guideline有三种方式，这三种方式只能选择一个</p>
+<ul>
+<li>指定距离左侧或顶部的固定距离（layout_constraintGuide_begin） </li>
+<li>指定距离右侧或底部的固定距离（layout_constraintGuide_end） </li>
+<li>指定在父控件中的宽度或高度的百分比（layout_constraintGuide_percent）</li>
+</ul>
+<p>示例如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">android.support.constraint.Guideline</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/vertical_guideline&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:orientation</span>=<span class="hljs-string">&quot;vertical&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintGuide_percent</span>=<span class="hljs-string">&quot;0.5&quot;</span> /&gt;</span><br><br><br>    <span class="hljs-tag">&lt;<span class="hljs-name">android.support.constraint.Guideline</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/horizontal_guideline&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:orientation</span>=<span class="hljs-string">&quot;horizontal&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintGuide_percent</span>=<span class="hljs-string">&quot;0.5&quot;</span> /&gt;</span><br></code></pre></td></tr></table></figure>
+<p>声明了一个垂直居中，一个水平居中的GuideLine，效果如下，这两个控件在View上是不可见的。<br><img src="/image/Android/ConstraintLayout/guideLine_declaration.png" srcset="/img/loading.gif" lazyload alt="guideline declaration"></p>
+<p>接着就可以根据这两条辅助线来定位其他控件了</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">Button</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:text</span>=<span class="hljs-string">&quot;top_left&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/top_left_button&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">app:layout_constraintBottom_toBottomOf</span>=<span class="hljs-string">&quot;@id/horizontal_guideline&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">app:layout_constraintLeft_toLeftOf</span>=<span class="hljs-string">&quot;parent&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">app:layout_constraintRight_toLeftOf</span>=<span class="hljs-string">&quot;@id/vertical_guideline&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">app:layout_constraintTop_toTopOf</span>=<span class="hljs-string">&quot;parent&quot;</span> /&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">Button</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:text</span>=<span class="hljs-string">&quot;top_right&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/top_right_button&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">app:layout_constraintBottom_toBottomOf</span>=<span class="hljs-string">&quot;@id/horizontal_guideline&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">app:layout_constraintLeft_toLeftOf</span>=<span class="hljs-string">&quot;@id/vertical_guideline&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">app:layout_constraintRight_toRightOf</span>=<span class="hljs-string">&quot;parent&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">app:layout_constraintTop_toTopOf</span>=<span class="hljs-string">&quot;parent&quot;</span> /&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">Button</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:text</span>=<span class="hljs-string">&quot;bottom_right&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/bottom_right_button&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">app:layout_constraintBottom_toBottomOf</span>=<span class="hljs-string">&quot;parent&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">app:layout_constraintLeft_toLeftOf</span>=<span class="hljs-string">&quot;@id/vertical_guideline&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">app:layout_constraintRight_toRightOf</span>=<span class="hljs-string">&quot;parent&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">app:layout_constraintTop_toTopOf</span>=<span class="hljs-string">&quot;@id/horizontal_guideline&quot;</span> /&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">Button</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:text</span>=<span class="hljs-string">&quot;bottom_left&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/bottom_left_button&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">app:layout_constraintBottom_toBottomOf</span>=<span class="hljs-string">&quot;parent&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">app:layout_constraintLeft_toLeftOf</span>=<span class="hljs-string">&quot;parent&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">app:layout_constraintRight_toRightOf</span>=<span class="hljs-string">&quot;@id/vertical_guideline&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">app:layout_constraintTop_toTopOf</span>=<span class="hljs-string">&quot;@id/horizontal_guideline&quot;</span> /&gt;</span><br><br></code></pre></td></tr></table></figure>
+<p>效果如下：<br><img src="/image/Android/ConstraintLayout/guideline_relative.png" srcset="/img/loading.gif" lazyload alt="guideline_relative"></p>
+<h5 id="Barrier"><a href="#Barrier" class="headerlink" title="Barrier"></a>Barrier</h5><p>Barrier可以引用多个控件，根据他们之中最大的宽高来创建一个虚拟的guideline，<br>假设我们有两个按钮，<code>@id/button1</code>和<code>@id/button2</code>,让Barrier的constraint_referenced_ids属性引用这两个id，如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">android.support.constraint.Barrier</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/barrier&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">app:barrierDirection</span>=<span class="hljs-string">&quot;end&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">app:constraint_referenced_ids</span>=<span class="hljs-string">&quot;button1,button2&quot;</span> /&gt;</span><br></code></pre></td></tr></table></figure>
+<p>示例如下：<br><img src="/image/Android/ConstraintLayout/barrier1.png" srcset="/img/loading.gif" lazyload alt="barrier"><br>图中蓝色的线就是<code>Barrier</code>，<code>Barrier</code>所在问的方位由<code>barrierDirection</code>确定，可以设置为<code>start</code>,<code>end</code>,<code>top</code>,<code>bottom</code>,<code>right</code>,<code>left</code><br>这时候我们改变一个两个按钮的宽度，让button2的宽度小于button1，则效果如下：<br><img src="/image/Android/ConstraintLayout/barrier2.png" srcset="/img/loading.gif" lazyload alt="barrier"><br>这样我们就可以把其他控件约束于barrier的右侧，使得button1和button2不会覆盖(被覆盖)其他控件</p>
+<h5 id="Group"><a href="#Group" class="headerlink" title="Group"></a>Group</h5><p>Group可以包含多个对其他控件的引用，这样我们操作这个group就相当于操作引用的控件</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">android.support.constraint.Group</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:visibility</span>=<span class="hljs-string">&quot;gone&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/button_group&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:constraint_referenced_ids</span>=<span class="hljs-string">&quot;login,register,modify_password&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;wrap_content&quot;</span> /&gt;</span><br></code></pre></td></tr></table></figure>
+<p>像上面这样，只要操作Group的<code>visibility</code>属性，就相当于同时操作<code>@id/login</code>,<code>@id/register</code>,<code>@id/modify_password</code>这三个控件的<code>visibility</code>属性。</p>
+<h5 id="Placeholders"><a href="#Placeholders" class="headerlink" title="Placeholders"></a>Placeholders</h5><p>顾名思义就是一个用来占位的东西，对于样式相同，功能不同的界面，可以把样式做成style或者使用PlaceHolders来做：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-meta">&lt;?xml version=<span class="hljs-string">&quot;1.0&quot;</span> encoding=<span class="hljs-string">&quot;utf-8&quot;</span>?&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">merge</span> <span class="hljs-attr">xmlns:android</span>=<span class="hljs-string">&quot;http://schemas.android.com/apk/res/android&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">xmlns:app</span>=<span class="hljs-string">&quot;http://schemas.android.com/apk/res-auto&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">xmlns:tools</span>=<span class="hljs-string">&quot;http://schemas.android.com/tools&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;match_parent&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;match_parent&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">tools:layout_editor_absoluteX</span>=<span class="hljs-string">&quot;0dp&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">tools:layout_editor_absoluteY</span>=<span class="hljs-string">&quot;81dp&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">tools:parentTag</span>=<span class="hljs-string">&quot;android.support.constraint.ConstraintLayout&quot;</span>&gt;</span><br> <br>    <span class="hljs-tag">&lt;<span class="hljs-name">android.support.constraint.Placeholder</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/template_main_image&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;0dp&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;0dp&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_marginTop</span>=<span class="hljs-string">&quot;16dp&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:content</span>=<span class="hljs-string">&quot;@+id/top_image&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintDimensionRatio</span>=<span class="hljs-string">&quot;16:9&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintLeft_toLeftOf</span>=<span class="hljs-string">&quot;parent&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintRight_toRightOf</span>=<span class="hljs-string">&quot;parent&quot;</span> /&gt;</span><br> <br>    <span class="hljs-tag">&lt;<span class="hljs-name">android.support.constraint.Placeholder</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/template_save&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;48dp&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;48dp&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:content</span>=<span class="hljs-string">&quot;@+id/save&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintEnd_toStartOf</span>=<span class="hljs-string">&quot;@+id/template_delete&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintHorizontal_bias</span>=<span class="hljs-string">&quot;0.5&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintStart_toStartOf</span>=<span class="hljs-string">&quot;parent&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">tools:layout_editor_absoluteY</span>=<span class="hljs-string">&quot;460dp&quot;</span> /&gt;</span><br> <br>    <span class="hljs-tag">&lt;<span class="hljs-name">android.support.constraint.Placeholder</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/template_delete&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;48dp&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;48dp&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:content</span>=<span class="hljs-string">&quot;@+id/delete&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintEnd_toStartOf</span>=<span class="hljs-string">&quot;@+id/template_cancel&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintHorizontal_bias</span>=<span class="hljs-string">&quot;0.5&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintStart_toEndOf</span>=<span class="hljs-string">&quot;@+id/template_save&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">tools:layout_editor_absoluteY</span>=<span class="hljs-string">&quot;460dp&quot;</span> /&gt;</span><br> <br>    <span class="hljs-tag">&lt;<span class="hljs-name">android.support.constraint.Placeholder</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/template_cancel&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;48dp&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;48dp&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:content</span>=<span class="hljs-string">&quot;@+id/cancel&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintEnd_toStartOf</span>=<span class="hljs-string">&quot;@+id/template_edit&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintHorizontal_bias</span>=<span class="hljs-string">&quot;0.5&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintStart_toEndOf</span>=<span class="hljs-string">&quot;@+id/template_delete&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">tools:layout_editor_absoluteY</span>=<span class="hljs-string">&quot;460dp&quot;</span> /&gt;</span><br> <br>    <span class="hljs-tag">&lt;<span class="hljs-name">android.support.constraint.Placeholder</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/template_edit&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;48dp&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;48dp&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:content</span>=<span class="hljs-string">&quot;@+id/edit&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintEnd_toEndOf</span>=<span class="hljs-string">&quot;parent&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintHorizontal_bias</span>=<span class="hljs-string">&quot;0.5&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintStart_toEndOf</span>=<span class="hljs-string">&quot;@+id/template_cancel&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">tools:layout_editor_absoluteY</span>=<span class="hljs-string">&quot;460dp&quot;</span> /&gt;</span><br> <br><span class="hljs-tag">&lt;/<span class="hljs-name">merge</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<p>如果想要在预览界面看起来像是在ConstraintLayout里面的话就加上<code>tools:parentTag=&quot;android.support.constraint.ConstraintLayout&quot;</code><br>预览如下：<br><img src="/image/Android/ConstraintLayout/constraint_layout_placeholder_preview.png" srcset="/img/loading.gif" lazyload alt="constraintLayout placeholder preview"><br>在上面的布局文件中，每一个Placeholder都添加了<code>app:content</code>属性，表示要用这个属性指定的id对应的控件来替换<code>Placeholder</code>，<br>在其他布局文件中：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">android.support.constraint.ConstraintLayout</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;match_parent&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;match_parent&quot;</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">include</span> <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/root&quot;</span> <span class="hljs-attr">layout</span>=<span class="hljs-string">&quot;@layout/constraint_layout_placeholder&quot;</span>/&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">ImageButton</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/main_title_image&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:src</span>=<span class="hljs-string">&quot;@drawable/main_title_image&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;wrap_content&quot;</span> /&gt;</span><br><br><br>    <span class="hljs-tag">&lt;<span class="hljs-name">ImageButton</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/save&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_marginBottom</span>=<span class="hljs-string">&quot;16dp&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:layout_constraintBottom_toBottomOf</span>=<span class="hljs-string">&quot;parent&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:srcCompat</span>=<span class="hljs-string">&quot;@drawable/ic_save_black_24dp&quot;</span> /&gt;</span><br><br>    <span class="hljs-tag">&lt;<span class="hljs-name">ImageButton</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/edit&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">app:srcCompat</span>=<span class="hljs-string">&quot;@drawable/ic_edit_black_24dp&quot;</span> /&gt;</span><br><br>    <span class="hljs-tag">&lt;<span class="hljs-name">ImageButton</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/cancel&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_marginBottom</span>=<span class="hljs-string">&quot;16dp&quot;</span></span><br><span class="hljs-tag"></span><br><span class="hljs-tag">        <span class="hljs-attr">app:srcCompat</span>=<span class="hljs-string">&quot;@drawable/ic_cancel_black_24dp&quot;</span> /&gt;</span><br><br>    <span class="hljs-tag">&lt;<span class="hljs-name">ImageButton</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:id</span>=<span class="hljs-string">&quot;@+id/delete&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_width</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_height</span>=<span class="hljs-string">&quot;wrap_content&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:layout_marginBottom</span>=<span class="hljs-string">&quot;16dp&quot;</span></span><br><span class="hljs-tag"></span><br><span class="hljs-tag">        <span class="hljs-attr">app:srcCompat</span>=<span class="hljs-string">&quot;@drawable/ic_delete_black_24dp&quot;</span> /&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">android.support.constraint.ConstraintLayout</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<p>首先使用<code>include</code>标签将模板包含进来，然后创建其他需要替换的控件：<br><img src="/image/Android/ConstraintLayout/merge_constraint_layout_placeholder_preview.png" srcset="/img/loading.gif" lazyload alt="merge constraintLayout placeholder preview"><br>当然也可以在代码中调用<code>Placeholder.setContent(id)</code>动态替换，配合<code>CoordinatorLayout</code>可以做出比较好玩的动画效果：<br><img src="/image/Android/ConstraintLayout/constraintLayout_placeholderand_CoordinatorLayout.gif" srcset="/img/loading.gif" lazyload alt="constraintLayout placeholder + CoordinatorLayout"><br>代码在这里<br><a target="_blank" rel="noopener" href="https://github.com/Thumar/Placeholder">https://github.com/Thumar/Placeholder</a></p>
+<p><code>ConstraintLayout</code> 1.1版本之后的东西常用的差不多就这些了</p>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>ConstraintLayout</div>
+      <div>https://blog.huangyuanlove.com/2018/08/09/ConstraintLayout/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2018年8月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/08/20/Coordinatorlayout/" title="Coordinatorlayout">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Coordinatorlayout</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/08/06/Android-hook-%E7%A4%BA%E4%BE%8B/" title="Android hook--示例">
+                        <span class="hidden-mobile">Android hook--示例</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'ba0898f33c7189cf06445d258aa530de'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

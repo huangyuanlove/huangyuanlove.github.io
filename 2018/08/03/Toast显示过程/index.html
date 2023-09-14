@@ -1,0 +1,643 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="Toast显示过程">
+  
+    <meta name="description" content="抄书抄的有点烦，自己也学着分析一下源码，挑了个在我看来比较简单的Toast显示过程来玩一玩。 1Toast.makeText(context, text, duration).show(); 先了解一下makeText过程，该过程最终都会调用下面的方法： 1234567891011121314151617181920&#x2F;**     * Make a standard toast to displa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Toast显示过程">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2018/08/03/Toast%E6%98%BE%E7%A4%BA%E8%BF%87%E7%A8%8B/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="抄书抄的有点烦，自己也学着分析一下源码，挑了个在我看来比较简单的Toast显示过程来玩一玩。 1Toast.makeText(context, text, duration).show(); 先了解一下makeText过程，该过程最终都会调用下面的方法： 1234567891011121314151617181920&#x2F;**     * Make a standard toast to displa">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-08-03T03:35:14.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.227Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Toast显示过程 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Toast显示过程"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2018-08-03 11:35" pubdate>
+          2018年8月3日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.4k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Toast显示过程</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>抄书抄的有点烦，自己也学着分析一下源码，挑了个在我看来比较简单的Toast显示过程来玩一玩。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">Toast.makeText(context, text, duration).show();<br></code></pre></td></tr></table></figure>
+<p>先了解一下makeText过程，该过程最终都会调用下面的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Make a standard toast to display using the specified looper.</span><br><span class="hljs-comment">     * If looper is null, Looper.myLooper() is used.</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@hide</span></span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Toast <span class="hljs-title function_">makeText</span><span class="hljs-params">(<span class="hljs-meta">@NonNull</span> Context context, <span class="hljs-meta">@Nullable</span> Looper looper,</span><br><span class="hljs-params">            <span class="hljs-meta">@NonNull</span> CharSequence text, <span class="hljs-meta">@Duration</span> <span class="hljs-type">int</span> duration)</span> &#123;<br>        <span class="hljs-type">Toast</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Toast</span>(context, looper);<br><br>        <span class="hljs-type">LayoutInflater</span> <span class="hljs-variable">inflate</span> <span class="hljs-operator">=</span> (LayoutInflater)<br>                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);<br>        <span class="hljs-type">View</span> <span class="hljs-variable">v</span> <span class="hljs-operator">=</span> inflate.inflate(com.android.internal.R.layout.transient_notification, <span class="hljs-literal">null</span>);<br>        <span class="hljs-type">TextView</span> <span class="hljs-variable">tv</span> <span class="hljs-operator">=</span> (TextView)v.findViewById(com.android.internal.R.id.message);<br>        tv.setText(text);<br><br>        result.mNextView = v;<br>        result.mDuration = duration;<br><br>        <span class="hljs-keyword">return</span> result;<br>    &#125;<br></code></pre></td></tr></table></figure>
+<p>创建一个新的Toast对象，在Toast的构造方法中有一个TN类型的mTN对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">mTN = <span class="hljs-keyword">new</span> <span class="hljs-title class_">TN</span>(context.getPackageName(), looper);<br></code></pre></td></tr></table></figure>
+<p><code>TN</code>是<code>ITransientNotification.Stub</code>的子类，注意一下这个对象，这对后面的过程很重要。</p>
+<span id="more"></span>
+<p>得到Toast对象后接着调用<code>show</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Show the view for the specified duration.</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">show</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">if</span> (mNextView == <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RuntimeException</span>(<span class="hljs-string">&quot;setView must have been called&quot;</span>);<br>        &#125;<br><br>        <span class="hljs-type">INotificationManager</span> <span class="hljs-variable">service</span> <span class="hljs-operator">=</span> getService();<br>        <span class="hljs-type">String</span> <span class="hljs-variable">pkg</span> <span class="hljs-operator">=</span> mContext.getOpPackageName();<br>        <span class="hljs-type">TN</span> <span class="hljs-variable">tn</span> <span class="hljs-operator">=</span> mTN;<br>        tn.mNextView = mNextView;<br><br>        <span class="hljs-keyword">try</span> &#123;<br>            service.enqueueToast(pkg, tn, mDuration);<br>        &#125; <span class="hljs-keyword">catch</span> (RemoteException e) &#123;<br>            <span class="hljs-comment">// Empty</span><br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+<p>重点在<code>service</code>上，它是<code>INotificationManager</code>的实例对象，是个用于Binder机制IPC通信的接口，实际上getService返回了一个以”notification”为标记的远程服务对象的代理。这个远程服务对象就是NotificationManagerService，以下简称NMS。NMS中的enqueueToast方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">enqueueToast</span><span class="hljs-params">(String pkg, ITransientNotification callback, <span class="hljs-type">int</span> duration)</span><br>&#123;<br>    ......<br>    <span class="hljs-keyword">synchronized</span> (mToastQueue) &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">callingPid</span> <span class="hljs-operator">=</span> Binder.getCallingPid();<br>        <span class="hljs-type">long</span> <span class="hljs-variable">callingId</span> <span class="hljs-operator">=</span> Binder.clearCallingIdentity();<br>        <span class="hljs-keyword">try</span> &#123;<br>            ToastRecord record;<br>            <span class="hljs-type">int</span> index;<br>            <span class="hljs-comment">// All packages aside from the android package can enqueue one toast at a time</span><br>            <span class="hljs-keyword">if</span> (!isSystemToast) &#123;<br>                index = indexOfToastPackageLocked(pkg);<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                index = indexOfToastLocked(pkg, callback);<br>            &#125;<br><br>            <span class="hljs-comment">// If the package already has a toast, we update its toast</span><br>            <span class="hljs-comment">// in the queue, we don&#x27;t move it to the end of the queue.</span><br>            <span class="hljs-keyword">if</span> (index &gt;= <span class="hljs-number">0</span>) &#123;<br>                record = mToastQueue.get(index);<br>                record.update(duration);<br>                record.update(callback);<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                <span class="hljs-type">Binder</span> <span class="hljs-variable">token</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Binder</span>();<br>                mWindowManagerInternal.addWindowToken(token, TYPE_TOAST, DEFAULT_DISPLAY);<br>                record = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ToastRecord</span>(callingPid, pkg, callback, duration, token);<br>                mToastQueue.add(record);<br>                index = mToastQueue.size() - <span class="hljs-number">1</span>;<br>            &#125;<br>            keepProcessAliveIfNeededLocked(callingPid);<br>            <span class="hljs-comment">// If it&#x27;s at index 0, it&#x27;s the current toast.  It doesn&#x27;t matter if it&#x27;s</span><br>            <span class="hljs-comment">// new or just been updated.  Call back and tell it to show itself.</span><br>            <span class="hljs-comment">// If the callback fails, this will remove it from the list, so don&#x27;t</span><br>            <span class="hljs-comment">// assume that it&#x27;s valid after this.</span><br>            <span class="hljs-keyword">if</span> (index == <span class="hljs-number">0</span>) &#123;<br>                showNextToastLocked();<br>            &#125;<br>        &#125; <span class="hljs-keyword">finally</span> &#123;<br>            Binder.restoreCallingIdentity(callingId);<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>方法中的第二个参数callBack就是上面的TN对象，关键在于下面的index的判断：<br>mToastQueue是个list，如果是非系统tost，并且该taost存在于list中(根据pkg判断)，就取出该ToastRecord并且更新，如果不存在，则新建一个ToastRecord存入list中。<br>如果ToastRecord是在list的第一个位置，接着调用<code>showNextToastLocaked</code>方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@GuardedBy(&quot;mToastQueue&quot;)</span><br><span class="hljs-keyword">void</span> <span class="hljs-title function_">showNextToastLocked</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-type">ToastRecord</span> <span class="hljs-variable">record</span> <span class="hljs-operator">=</span> mToastQueue.get(<span class="hljs-number">0</span>);<br>    <span class="hljs-keyword">while</span> (record != <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-keyword">if</span> (DBG) Slog.d(TAG, <span class="hljs-string">&quot;Show pkg=&quot;</span> + record.pkg + <span class="hljs-string">&quot; callback=&quot;</span> + record.callback);<br>        <span class="hljs-keyword">try</span> &#123;<br>            record.callback.show(record.token);<br>            scheduleTimeoutLocked(record);<br>            <span class="hljs-keyword">return</span>;<br>        &#125; <span class="hljs-keyword">catch</span> (RemoteException e) &#123;<br>            Slog.w(TAG, <span class="hljs-string">&quot;Object died trying to show notification &quot;</span> + record.callback<br>                    + <span class="hljs-string">&quot; in package &quot;</span> + record.pkg);<br>            <span class="hljs-comment">// remove it from the list and let the process die</span><br>            <span class="hljs-type">int</span> <span class="hljs-variable">index</span> <span class="hljs-operator">=</span> mToastQueue.indexOf(record);<br>            <span class="hljs-keyword">if</span> (index &gt;= <span class="hljs-number">0</span>) &#123;<br>                mToastQueue.remove(index);<br>            &#125;<br>            keepProcessAliveIfNeededLocked(record.pid);<br>            <span class="hljs-keyword">if</span> (mToastQueue.size() &gt; <span class="hljs-number">0</span>) &#123;<br>                record = mToastQueue.get(<span class="hljs-number">0</span>);<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                record = <span class="hljs-literal">null</span>;<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>关键的两行代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java">record.callback.show(record.token);<br>scheduleTimeoutLocked(record);<br></code></pre></td></tr></table></figure>
+<p>第一行负责显示，第二行负责超时关闭并显示队列中的下一个Toast。<br>在第一行中，callBack就是我们上面提到的TN对象的实例mTN：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">* schedule handleShow into the right thread</span><br><span class="hljs-comment">*/</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">show</span><span class="hljs-params">(IBinder windowToken)</span> &#123;<br>    <span class="hljs-keyword">if</span> (localLOGV) Log.v(TAG, <span class="hljs-string">&quot;SHOW: &quot;</span> + <span class="hljs-built_in">this</span>);<br>    mHandler.obtainMessage(SHOW, windowToken).sendToTarget();<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>在<code>mHandler</code>中调用了<code>handleShow</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">handleShow</span><span class="hljs-params">(IBinder windowToken)</span> &#123;<br>            <span class="hljs-keyword">if</span> (localLOGV) Log.v(TAG, <span class="hljs-string">&quot;HANDLE SHOW: &quot;</span> + <span class="hljs-built_in">this</span> + <span class="hljs-string">&quot; mView=&quot;</span> + mView<br>                    + <span class="hljs-string">&quot; mNextView=&quot;</span> + mNextView);<br>            <span class="hljs-comment">// If a cancel/hide is pending - no need to show - at this point</span><br>            <span class="hljs-comment">// the window token is already invalid and no need to do any work.</span><br>            <span class="hljs-keyword">if</span> (mHandler.hasMessages(CANCEL) || mHandler.hasMessages(HIDE)) &#123;<br>                <span class="hljs-keyword">return</span>;<br>            &#125;<br>            <span class="hljs-keyword">if</span> (mView != mNextView) &#123;<br>                <span class="hljs-comment">// remove the old view if necessary</span><br>                handleHide();<br>                mView = mNextView;<br>                <span class="hljs-type">Context</span> <span class="hljs-variable">context</span> <span class="hljs-operator">=</span> mView.getContext().getApplicationContext();<br>                <span class="hljs-type">String</span> <span class="hljs-variable">packageName</span> <span class="hljs-operator">=</span> mView.getContext().getOpPackageName();<br>                <span class="hljs-keyword">if</span> (context == <span class="hljs-literal">null</span>) &#123;<br>                    context = mView.getContext();<br>                &#125;<br>                mWM = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);<br>                <span class="hljs-comment">// We can resolve the Gravity here by using the Locale for getting</span><br>                <span class="hljs-comment">// the layout direction</span><br>                <span class="hljs-keyword">final</span> <span class="hljs-type">Configuration</span> <span class="hljs-variable">config</span> <span class="hljs-operator">=</span> mView.getContext().getResources().getConfiguration();<br>                <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">gravity</span> <span class="hljs-operator">=</span> Gravity.getAbsoluteGravity(mGravity, config.getLayoutDirection());<br>                mParams.gravity = gravity;<br>                <span class="hljs-keyword">if</span> ((gravity &amp; Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.FILL_HORIZONTAL) &#123;<br>                    mParams.horizontalWeight = <span class="hljs-number">1.0f</span>;<br>                &#125;<br>                <span class="hljs-keyword">if</span> ((gravity &amp; Gravity.VERTICAL_GRAVITY_MASK) == Gravity.FILL_VERTICAL) &#123;<br>                    mParams.verticalWeight = <span class="hljs-number">1.0f</span>;<br>                &#125;<br>                mParams.x = mX;<br>                mParams.y = mY;<br>                mParams.verticalMargin = mVerticalMargin;<br>                mParams.horizontalMargin = mHorizontalMargin;<br>                mParams.packageName = packageName;<br>                mParams.hideTimeoutMilliseconds = mDuration ==<br>                    Toast.LENGTH_LONG ? LONG_DURATION_TIMEOUT : SHORT_DURATION_TIMEOUT;<br>                mParams.token = windowToken;<br>                <span class="hljs-keyword">if</span> (mView.getParent() != <span class="hljs-literal">null</span>) &#123;<br>                    <span class="hljs-keyword">if</span> (localLOGV) Log.v(TAG, <span class="hljs-string">&quot;REMOVE! &quot;</span> + mView + <span class="hljs-string">&quot; in &quot;</span> + <span class="hljs-built_in">this</span>);<br>                    mWM.removeView(mView);<br>                &#125;<br>                <span class="hljs-keyword">if</span> (localLOGV) Log.v(TAG, <span class="hljs-string">&quot;ADD! &quot;</span> + mView + <span class="hljs-string">&quot; in &quot;</span> + <span class="hljs-built_in">this</span>);<br>                <span class="hljs-comment">// Since the notification manager service cancels the token right</span><br>                <span class="hljs-comment">// after it notifies us to cancel the toast there is an inherent</span><br>                <span class="hljs-comment">// race and we may attempt to add a window after the token has been</span><br>                <span class="hljs-comment">// invalidated. Let us hedge against that.</span><br>                <span class="hljs-keyword">try</span> &#123;<br>                    mWM.addView(mView, mParams);<br>                    trySendAccessibilityEvent();<br>                &#125; <span class="hljs-keyword">catch</span> (WindowManager.BadTokenException e) &#123;<br>                    <span class="hljs-comment">/* ignore */</span><br>                &#125;<br>            &#125;<br>        &#125;<br></code></pre></td></tr></table></figure>
+<p>上面的一坨是获取到<code>WindowManager</code>然后通过<code>mWM.addView</code>将Toast显示到窗口上。<br>至于<code>WindowManager</code>如何添加view的，可以看这个：<a href="http://blog.huangyuanlove.com/2017/03/21/Window%E5%92%8CCWindowManager/">http://blog.huangyuanlove.com/2017/03/21/Window和CWindowManager/</a><br>接下来看一下怎么取消Toast弹窗，上面提到了调用了<code>scheduleTimeoutLocked</code>方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@GuardedBy(&quot;mToastQueue&quot;)</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">scheduleTimeoutLocked</span><span class="hljs-params">(ToastRecord r)</span>&#123;<br>    mHandler.removeCallbacksAndMessages(r);<br>    <span class="hljs-type">Message</span> <span class="hljs-variable">m</span> <span class="hljs-operator">=</span> Message.obtain(mHandler, MESSAGE_TIMEOUT, r);<br>    <span class="hljs-type">long</span> <span class="hljs-variable">delay</span> <span class="hljs-operator">=</span> r.duration == Toast.LENGTH_LONG ? LONG_DELAY : SHORT_DELAY;<br>    mHandler.sendMessageDelayed(m, delay);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>调用mHandler发送了一个延时消息去调用<code>handleTimeout</code>方法，延迟时间就是根据duration来判断的。这里的<code>mHandler</code>是<code>WorkerHandler</code>继承自<code>Handler</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">handleTimeout</span><span class="hljs-params">(ToastRecord record)</span><br>    &#123;<br>        <span class="hljs-keyword">if</span> (DBG) Slog.d(TAG, <span class="hljs-string">&quot;Timeout pkg=&quot;</span> + record.pkg + <span class="hljs-string">&quot; callback=&quot;</span> + record.callback);<br>        <span class="hljs-keyword">synchronized</span> (mToastQueue) &#123;<br>            <span class="hljs-type">int</span> <span class="hljs-variable">index</span> <span class="hljs-operator">=</span> indexOfToastLocked(record.pkg, record.callback);<br>            <span class="hljs-keyword">if</span> (index &gt;= <span class="hljs-number">0</span>) &#123;<br>                cancelToastLocked(index);<br>            &#125;<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+<p>接着调用了<code>cancelToastLocked</code>方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@GuardedBy(&quot;mToastQueue&quot;)</span><br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">cancelToastLocked</span><span class="hljs-params">(<span class="hljs-type">int</span> index)</span> &#123;<br>        <span class="hljs-type">ToastRecord</span> <span class="hljs-variable">record</span> <span class="hljs-operator">=</span> mToastQueue.get(index);<br>        <span class="hljs-keyword">try</span> &#123;<br>            record.callback.hide();<br>        &#125; <span class="hljs-keyword">catch</span> (RemoteException e) &#123;<br>            Slog.w(TAG, <span class="hljs-string">&quot;Object died trying to hide notification &quot;</span> + record.callback<br>                    + <span class="hljs-string">&quot; in package &quot;</span> + record.pkg);<br>            <span class="hljs-comment">// don&#x27;t worry about this, we&#x27;re about to remove it from</span><br>            <span class="hljs-comment">// the list anyway</span><br>        &#125;<br><br>        <span class="hljs-type">ToastRecord</span> <span class="hljs-variable">lastToast</span> <span class="hljs-operator">=</span> mToastQueue.remove(index);<br>        mWindowManagerInternal.removeWindowToken(lastToast.token, <span class="hljs-literal">true</span>, DEFAULT_DISPLAY);<br><br>        keepProcessAliveIfNeededLocked(record.pid);<br>        <span class="hljs-keyword">if</span> (mToastQueue.size() &gt; <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-comment">// Show the next one. If the callback fails, this will remove</span><br>            <span class="hljs-comment">// it from the list, so don&#x27;t assume that the list hasn&#x27;t changed</span><br>            <span class="hljs-comment">// after this point.</span><br>            showNextToastLocked();<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+<p>在该方法中调用了<code>callback.hide()</code>方法移除toast的显示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"> <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">handleHide</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">if</span> (localLOGV) Log.v(TAG, <span class="hljs-string">&quot;HANDLE HIDE: &quot;</span> + <span class="hljs-built_in">this</span> + <span class="hljs-string">&quot; mView=&quot;</span> + mView);<br>    <span class="hljs-keyword">if</span> (mView != <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-comment">// note: checking parent() just to make sure the view has</span><br>        <span class="hljs-comment">// been added...  i have seen cases where we get here when</span><br>        <span class="hljs-comment">// the view isn&#x27;t yet added, so let&#x27;s try not to crash.</span><br>        <span class="hljs-keyword">if</span> (mView.getParent() != <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-keyword">if</span> (localLOGV) Log.v(TAG, <span class="hljs-string">&quot;REMOVE! &quot;</span> + mView + <span class="hljs-string">&quot; in &quot;</span> + <span class="hljs-built_in">this</span>);<br>            mWM.removeViewImmediate(mView);<br>        &#125;<br><br>        mView = <span class="hljs-literal">null</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>如果这时候mToastQueue中还有ToastRecord，则调用<code>showNextToastLocked</code>方法显示下一个。</p>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Toast显示过程</div>
+      <div>https://blog.huangyuanlove.com/2018/08/03/Toast显示过程/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2018年8月3日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/08/06/Android-hook--%E5%8F%8D%E5%B0%84%E5%9F%BA%E7%A1%80/" title="Android hook--反射基础">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Android hook--反射基础</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/08/02/Android-ContentProvider/" title="Android ContentProvider">
+                        <span class="hidden-mobile">Android ContentProvider</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'cdf595c97400a8646b327d49ccc75ac0'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

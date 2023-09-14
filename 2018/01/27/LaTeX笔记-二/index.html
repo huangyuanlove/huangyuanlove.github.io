@@ -1,0 +1,719 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="LaTeX">
+  
+    <meta name="description" content="接上篇，写好的tex文件在这 https:&#x2F;&#x2F;github.com&#x2F;huangyuanlove&#x2F;latex_practice&#x2F;blob&#x2F;master&#x2F;latex(1)&#x2F;chapter_one.tex 写个框架既然有目标了，我们先写个大概的框架，然后往里面填充内容 1234567891011121314151617181920% coding:UTF-8\documentclass[UTF8]&amp;#1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LaTeX笔记(二)(开篇)">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2018/01/27/LaTeX%E7%AC%94%E8%AE%B0-%E4%BA%8C/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="接上篇，写好的tex文件在这 https:&#x2F;&#x2F;github.com&#x2F;huangyuanlove&#x2F;latex_practice&#x2F;blob&#x2F;master&#x2F;latex(1)&#x2F;chapter_one.tex 写个框架既然有目标了，我们先写个大概的框架，然后往里面填充内容 1234567891011121314151617181920% coding:UTF-8\documentclass[UTF8]&amp;#1">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-01-27T14:59:42.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.224Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="LaTeX">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>LaTeX笔记(二)(开篇) - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LaTeX笔记(二)(开篇)"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2018-01-27 22:59" pubdate>
+          2018年1月27日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.6k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LaTeX笔记(二)(开篇)</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>接上篇，写好的tex文件在这 <a target="_blank" rel="noopener" href="https://github.com/huangyuanlove/latex_practice/blob/master/latex(1)/chapter_one.tex">https://github.com/huangyuanlove/latex_practice/blob/master/latex(1)/chapter_one.tex</a></p>
+<h5 id="写个框架"><a href="#写个框架" class="headerlink" title="写个框架"></a>写个框架</h5><p>既然有目标了，我们先写个大概的框架，然后往里面填充内容</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-comment">% coding:UTF-8</span><br><br><br><span class="hljs-keyword">\documentclass</span>[UTF8]&#123;ctexart&#125;<br><br><span class="hljs-keyword">\title</span>&#123;杂谈勾股定理&#125;<br><span class="hljs-keyword">\author</span>&#123;xuan&#125;<br><span class="hljs-keyword">\date</span>&#123;<span class="hljs-keyword">\today</span>&#125;<br><br><span class="hljs-keyword">\bibliographystyle</span>&#123;plain&#125;<br><br><span class="hljs-keyword">\begin</span>&#123;document&#125;<br><br><span class="hljs-keyword">\maketitle</span><br><span class="hljs-keyword">\tableofcontents</span><br><span class="hljs-keyword">\section</span>&#123;勾股定理在古代&#125;<br><span class="hljs-keyword">\section</span>&#123;勾股定理的近代形式&#125;<br><span class="hljs-keyword">\bibliography</span>&#123;math&#125;<br><br><span class="hljs-keyword">\end</span>&#123;document&#125;<br></code></pre></td></tr></table></figure>
+<span id="more"></span>
+<ul>
+<li>以 <code>%</code>开头的行是注释，源文件一行中百分号后面的内容都会被忽略。</li>
+<li>第<strong>4</strong>行是文档类，因为是中文的短文，所以用的是<code>ctexart</code>，并用[UTF8]选项说明编码方式。</li>
+<li>第<strong>6-8</strong>行声明了文章的标题、作者、日期。其中的<code>\today</code>是当前日期。但是这些信息是通过<strong>14</strong>行的<code>\maketitle</code>排版的。</li>
+<li>第<strong>10</strong>行的<code>\bibliographystyle</code>声明参考文献的格式。<br>以上在<code>\begin&#123;document&#125;</code>之前的部分称为<code>导言区(preamble)</code>，导言区通常用来对文档的性质做一些设置，或自定义一些命令。</li>
+<li>第<strong>12-20</strong>行以<code>\begin&#123;document&#125;</code>和<code>\end&#123;socument&#125;</code>声明了一个document环境，里面是论文的正文部分，也就是直接输出的部分。</li>
+<li>第<strong>14</strong>行的<code>\maketitle</code>输出论文标题。</li>
+<li>第<strong>15</strong>行的<code>\tableofcontents</code>输出目录。</li>
+<li>第<strong>16-17</strong>行两个<code>\section</code>开始新的一节。</li>
+<li>第<strong>18</strong>行的<code>\bibliography&#123;math&#125;</code>则是从文献数据库math(这里的math文献数据库是我们自己编辑的一个文件)中获取文献信息，打印参考文献列表。<blockquote>
+<p>为了格式清晰，源文件使用了一些空行作为分隔，在正文外的部分，空行不代表任何意义</p>
+</blockquote>
+</li>
+</ul>
+<h5 id="填写正文"><a href="#填写正文" class="headerlink" title="填写正文"></a>填写正文</h5><p>自己把大段的文字先写上再说，自己试试查看排版之后格式。</p>
+<ul>
+<li>使用空行分段，</li>
+<li>段落的第一行缩进不需要自己打空格<h5 id="命令与环境"><a href="#命令与环境" class="headerlink" title="命令与环境"></a>命令与环境</h5><h6 id="脚注"><a href="#脚注" class="headerlink" title="脚注"></a>脚注</h6>脚注是在正文<strong>欧几里得</strong>的后面用脚注命令<code>\footnote</code>得到的。<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs tex">该定理的严格表述和证明则见于欧几里得<br><span class="hljs-keyword">\footnote</span>&#123;欧几里得，约公元前330--275年。&#125;<br></code></pre></td></tr></table></figure>
+在这里，<code>\footnote</code>后面花括号内的部分是命令的参数，也就是脚注的内容。<br>注意一个细节，在表示起止年份时，用两个减号(–)，通常用来表示数字的范围。<br>文中还使用<code>\emph</code>命令改变字体的形状，表示强调的内容：<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tex">的整数称为<span class="hljs-keyword">\emph</span>&#123;勾股数&#125;<br></code></pre></td></tr></table></figure>
+一个LaTeX命令(宏)的格式为：<br>无参数：<code>\command</code><br>有n个参数:<code>\command&lt;arg1&gt;&lt;arg2&gt;&lt;arg3&gt;</code><br>有可选参数:<code>\command&lt;arg——opt&gt;&lt;arg2&gt;&lt;arg3&gt;</code><br>命令都一反斜线<code>\</code>开头，后接命令名，可以带一些参数，必选参数使用花括号括起来，可选参数使用方括号括起来。<br>引用的内容这是在正文中使用<code>quote</code>环境得到的。<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs tex">我国《周髀算经》载商高（约公元前12世纪）答周公问：<br><span class="hljs-keyword">\begin</span>&#123;quote&#125;<br>勾广三，股修四，经隅五。<br><span class="hljs-keyword">\end</span>&#123;quote&#125;<br></code></pre></td></tr></table></figure>
+quote环境即以<code>\begin&#123;quote&#125;</code>和<code>\end&#123;quote&#125;</code>为起止位置的部分，突出引用部分。但是quote环境不能改变引用内容的字体，因此还需要再使用改变字体的命令<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\begin</span>&#123;quote&#125;<br><span class="hljs-keyword">\kaishu</span><span class="hljs-keyword">\zihao</span>&#123;-5&#125; 引用的内容<br><span class="hljs-keyword">\end</span>&#123;quote&#125;<br></code></pre></td></tr></table></figure>
+这里<code>\zihao</code>是一个有参数的命令，选择字号(-5就是小五号)，而<code>\kaishu</code>则是没有参数的命令，把字体切换为楷书，注意用空格把命令和后面的文字分开。<br>文章的摘要也是在<code>\maketitle</code>之后用<code>abstract</code>环境生成的：<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\begin</span>&#123;abstract&#125;<br>刚开始学<span class="hljs-keyword">\LaTeX</span>,如果学习不是为了装逼，那一切将毫无意义。<br><span class="hljs-keyword">\end</span>&#123;abstract&#125;<br></code></pre></td></tr></table></figure>
+当然我们也可以自定义环境，比如上面的突出引用的环境：<br>在导言区<code>\maketitle</code>之后<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\newenvironment</span>&#123;myquote&#125;&#123;<span class="hljs-keyword">\begin</span>&#123;quote&#125;<span class="hljs-keyword">\kaishu</span><span class="hljs-keyword">\zihao</span>&#123;-5&#125;&#125;&#123;<span class="hljs-keyword">\end</span>&#123;quote&#125;&#125;<br></code></pre></td></tr></table></figure>
+之后我们在突出引用的时候就可以这么写：<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs tex">我国《周髀算经》载商高（约公元前12世纪）答周公问：<br><span class="hljs-keyword">\begin</span>&#123;myquote&#125;<br>勾广三，股修四，经隅五。<br><span class="hljs-keyword">\end</span>&#123;myquote&#125;<br></code></pre></td></tr></table></figure>
+文章第二节的定理，是用一类定理环境输出的，定理环境是一类环境，在使用前需要先在导言区做定义：<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\newtheorem</span>&#123;thm&#125;&#123;定理&#125;<br></code></pre></td></tr></table></figure>
+这就定义了一个<code>thm</code>环境，定理环境可以有一个可选参数，就是定理的名字，所以文章中的勾股定义就可以由新定义的<code>thm</code>环境得到：<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\begin</span>&#123;thm&#125;[勾股定理]<br>直角三角形斜边的平方等于两腰的平方和。<br><span class="hljs-keyword">\end</span>&#123;thm&#125;<br></code></pre></td></tr></table></figure>
+<h6 id="数学公式"><a href="#数学公式" class="headerlink" title="数学公式"></a>数学公式</h6>最简单的方式就是把公式用<code>$</code>符号括起来，比如<code>$a+b$</code>就可以得到斜体的<em>a+b</em>，这种夹在行文中的公式称为”正文公式(in-text formula)”或”行内公式(inline formula)”。为了方便引用，经常会给公式编号，这种公式被称为”显式公式”或”列表公式(display formula)”,使用<code>equation</code>环境就可以方便地输入这种公式。<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\begin</span>&#123;equation&#125;<br>a(a+b) = ab + ac<br><span class="hljs-keyword">\end</span>&#123;equation&#125;<br></code></pre></td></tr></table></figure>
+ 键盘上没有的符号，就需要使用命令来输入，”角”符号”∠”,就可以用<code>\angle</code>输入(虽然有的输入法也提供了数学符号的选项，但是不建议这么做，可以自己试试有什么区别)。<br> 数学公式还有上线标、分式、根式等，在勾股定理的表达中，就用到了上标表示乘方：<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\begin</span>&#123;equation&#125;<br>AB<span class="hljs-built_in">^</span>2 = BC<span class="hljs-built_in">^</span>2 + AC<span class="hljs-built_in">^</span>2<br><span class="hljs-keyword">\end</span>&#123;equation&#125;<br></code></pre></td></tr></table></figure>
+ 符号<code>^</code>用来引入一个上标，<code>_</code>医用一个下标，如果上下标识多个字符，则需要使用花括号分组：<code>2^&#123;10&#125;</code>。<br> 所以90°怎么输入，在latex默认的字体中，并没有专用于表示角度的符号，输入角度的时候是通过上标输入的:<code>^\circ</code>，其中<code>\circ</code>通常用来表示函数符号的二元运算符<code>○</code>，我们把它的上标借用来表示角度。</li>
+</ul>
+<h6 id="插入图片"><a href="#插入图片" class="headerlink" title="插入图片"></a>插入图片</h6><p> 使用图片有两种途径：一个是插入事先准备好的图片，二是使用latex代码直接在文档中画图。<br> 插图功能不是由latex内核直接提供，而是有<strong>graphicx</strong>宏包提供的，要使用<strong>graphicx</strong>宏包的插图功能呢个，需要在导言区使用<code>\usepackage</code>命令引入宏包：<br> <figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\documentclass</span>&#123;ctexart&#125;<br><span class="hljs-keyword">\usepackage</span>&#123;graphicx&#125;<br></code></pre></td></tr></table></figure><br> 引入<strong>graphicx</strong>宏包后，就可以使用<code>\includegraphics</code>命令插图了：<br> <figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\includegraphic</span>[width=3cm]&#123;gougu.png&#125;<br></code></pre></td></tr></table></figure></p>
+<p>这里<code>\includegraphic</code>有两个参数，方括号中可选参数<code>width=3cm</code>设置图形在文档中显示的宽度为3cm，第二个参数则是图片的文件名(和源文件同级)，还有一些类似的参数如scale(缩放)、height等。<br>除了一些很小的图标，我们很少进行图文混排，而是使用单独的环境列出，而且很大的图形如果位置是固定，会给分页造成困难，因此，通常都把图像放在一个可以变动相对位置的环境中，称为浮动体。在浮动体中还可以给图片加入说明性标题。</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\begin</span>&#123;figure&#125;[ht]<br>  <span class="hljs-keyword">\centering</span><br>  <span class="hljs-keyword">\includegraphics</span>[width=3cm]&#123;gougu.png&#125;<br>  <span class="hljs-keyword">\caption</span> &#123;<span class="hljs-keyword">\kaishu</span><span class="hljs-keyword">\zihao</span>&#123;-5&#125; 宋赵爽在《周髀算经》注中做的弦图（仿制），该图给出了勾股定理的一个极具对称美德证明。&#125;<br>  <span class="hljs-keyword">\label</span>&#123;fig:gougu&#125;<br><span class="hljs-keyword">\end</span>&#123;figure&#125;<br></code></pre></td></tr></table></figure>
+<p>在上面的代码中，第1行和第6行使用了<code>figure</code>环境，就是插图使用的浮动体环境，<code>figure</code>环境有可选参数<code>[ht]</code>，表示浮动体可以出现在环境周围的文本所在处和一页的顶部。<code>figure</code>环境内部相当于普通的段落(默认没有缩进)；第二行用生命<code>\centering</code>表示后面的内容居中；第3行插入图片；第4行使用<code>\caption</code>命令给插图加上自动编号和标题；第5行的<code>\lable</code>命令则给图形定义一个标签，这个标签就可以在文章的其他地方引用<code>\caption</code>产生的编号。</p>
+<h6 id="使用表格"><a href="#使用表格" class="headerlink" title="使用表格"></a>使用表格</h6><p>制作表格，需要确定是表格的行、列、对齐模式和表格线，这是由<code>tabular</code>环境完成的：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\begin</span>&#123;table&#125;[h]<br><span class="hljs-keyword">\begin</span>&#123;tabular&#125;&#123;|lcr|&#125;<br><span class="hljs-keyword">\hline</span><br>直角边 <span class="hljs-built_in">$</span>a<span class="hljs-built_in">$</span> <span class="hljs-built_in">&amp;</span> 直角边 <span class="hljs-built_in">$</span>b<span class="hljs-built_in">$</span> <span class="hljs-built_in">&amp;</span> 斜边 <span class="hljs-built_in">$</span>c<span class="hljs-built_in">$</span><span class="hljs-keyword">\\</span><br><span class="hljs-keyword">\hline</span><br>3 <span class="hljs-built_in">&amp;</span>  4 <span class="hljs-built_in">&amp;</span> 5<span class="hljs-keyword">\\</span><br>5 <span class="hljs-built_in">&amp;</span>  12<span class="hljs-built_in">&amp;</span>  13<span class="hljs-keyword">\\</span><br><span class="hljs-keyword">\hline</span><br><span class="hljs-keyword">\end</span>&#123;tabular&#125;<span class="hljs-comment">%</span><br><span class="hljs-keyword">\qquad</span><br>(<span class="hljs-built_in">$</span>a<span class="hljs-built_in">^</span>2 + b<span class="hljs-built_in">^</span>2 = c<span class="hljs-built_in">^</span>2<span class="hljs-built_in">$</span>)<br><span class="hljs-keyword">\end</span>&#123;table&#125;<br></code></pre></td></tr></table></figure>
+<p>表格和插图一样，一般也放在浮动环境中，即<code>table</code>环境中，参数大致和<code>figure</code>差不多；<br><code>tabular</code>环境有一个参数，里面声明了表格中列的模式，在上面的表格中<code>|lcr|</code>表示第一列的内容左对齐，第二类居中对齐，第三列居中对齐，在第一列前面和第三列后面各有一条垂直的表格线。<br>在<code>tabular</code>环境中，行与行之间用命令<code>\\</code>隔开，每一行内的表项使用符号<code>$</code>隔开，表格中的横线是用命令<code>\hline</code>生成。<br>这里并没有给表格加标题，也没有把内容居中，而是把表格个一个公式并排排开，中间使用一个<code>\qquad</code>分割，这个命令产生长为2em(大约两个’M’的宽度)的空白。因为已经使用<code>\qquad</code>生成足够长度的空格了，所以再用<code>\end&#123;tabular&#125;</code>后的注释符取消换行产生的一个多余空格。又因为表格是和正文连在一起的，不允许再浮动了，所以在<code>table</code>环境中的表示位置参数处使用了<code>[H]</code>，但是这个参数是由<strong>float</strong>宏包提供的，所以还要在导言区使用<code>\usepackage&#123;float&#125;</code>。</p>
+<h6 id="文献引用"><a href="#文献引用" class="headerlink" title="文献引用"></a>文献引用</h6><p>上面提到了引用文献，是在<code>math.bib</code>这个文件中指定的，下面是<code>math.bib</code>文件的内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs bib">% Encoding: UTF-8<br><br>@Book&#123;Shiye,<br>  title  = &#123;几何的有名定理&#125;,<br>  year   = &#123;1986&#125;,<br>  author = &#123;矢野健太郎&#125;,<br>&#125;<br><br>@Book&#123;Kline,<br>  title  = &#123;古今数学思想&#125;,<br>  year   = &#123;2002&#125;,<br>  author = &#123;克莱因&#125;,<br>&#125;<br><br>@Book&#123;quanjing,<br>  title   = &#123;商高、赵爽与刘徽关于勾股定理的证明&#125;,<br>  year    = &#123;1998&#125;,<br>  author  = &#123;曲安京&#125;,<br>  volume  = &#123;20&#125;,<br>  number  = &#123;3&#125;,<br>  journal = &#123;数学传播&#125;,<br>&#125;<br><br>@Comment&#123;jabref-meta: databaseType:bibtex;&#125;<br></code></pre></td></tr></table></figure>
+<p>一个文献数据文件的格式并不复杂，每一个条目包括类型、引用标签、标题、年限、作者等信息，可以手工输入，也可以通过jabref制作。<br>在实际应用中，BIBTEX数据并不需要我们自己录入，可以从相关的学科网站直接现在或是从其他类型的文献数据库转换得到。<br>BIBTEX是一个专门用于处理LATEX文档文献列表的程序，使用BIBTEX处理文献时，编译源文件需要增加为四次运行程序(在TexWorks中点击四次按钮)<br><code>pdflatex ***.tex</code><br><code>bibtex ***.aux</code><br><code>pdflatex ***.tex</code><br><code>pdflatex ***.tex</code><br>第一次运行为BIBTEX准备好辅助文件，确定数据库中的哪些文献将被列出来，然后bibtex处理辅助文件aux，从文献数据库中选取文件，按指定的格式生成文献列表的latex代码，后面两次再读入文献列表代码并生成正确的引用信息。<br>latex只选择被引用的文献，引用文献的方法是在正文中使用<code>\cite</code>命令，如：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs tex">将勾股定理的发现归功于公元前 6 世纪的毕达哥拉斯学派<span class="hljs-keyword">\cite</span>&#123;Kline&#125;。该学派得到了一个法则...<br>...是我国古代对勾股定理的一种证明<span class="hljs-keyword">\cite</span>&#123;quanjing&#125;。 <br></code></pre></td></tr></table></figure>
+<p><code>\cite</code>命令的参数<code>Kline</code>和<code>quanjing</code>分别是其中两篇的引用标签，也就是在<code>math.bib</code>中每个条目第一行出现的星系，使用<code>\cite</code>命令会在引用的文字显示文献在列表中的标号(它在第3次pdflatex编译后才能确定)，同时在辅助文件中说明某文献将被引用。如果要在列表中显示并不直接引用的文献，可以使用<code>\nocite</code>命令，一般是把它放在<code>\bibliography</code>之前：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\nocite</span>&#123;Shiye&#125;<br><span class="hljs-keyword">\bibliography</span>&#123;math&#125;<br></code></pre></td></tr></table></figure>
+<p>目录也是自动从章节命令中提取并写入目录文件中的，在文章中我们就使用了<code>\tableofcontents</code>命令，它将在第二次编译时生效。<br>引用并不仅限于参考文献，图表、公式的编号，只要事先设定了标签，同样可以引用。基本的交叉引用命令是<code>\ref</code>，它以标签问参数，得到被引用标号。比如在这篇文章中，在插入图片时是引用<code>\label</code>命令为弦图定义了标签<code>\label&#123;fig:gougu&#125;</code>，这样在正文中就可以使用</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tex">图<span class="hljs-keyword">\ref</span>&#123;fig:gougu&#125;是我国古代对勾股定理的一种证明<span class="hljs-keyword">\cite</span>&#123;quanjing&#125;。<br></code></pre></td></tr></table></figure>
+<p>公式编号的引用也可照此做法，不过需要先在公式中定义标签：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\begin</span>&#123;equation&#125; <span class="hljs-keyword">\label</span>&#123;eq:gougu&#125;<br>AB<span class="hljs-built_in">^</span>2 = BC<span class="hljs-built_in">^</span>2 + AC<span class="hljs-built_in">^</span>2<br><span class="hljs-keyword">\end</span>&#123;equation&#125;<br></code></pre></td></tr></table></figure>
+<p>引用数学公式的时候一般使用数学宏包<code>amsmath</code>就定义了<code>\eqref</code>命令，专门用于公式的引用，并能产生括号：<br>导言区引入包</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tex"><span class="hljs-keyword">\usepackage</span>&#123;amsmath&#125;<br></code></pre></td></tr></table></figure>
+<p>正文中引用公式：</p>
+<figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs tex">满足式<span class="hljs-keyword">\eqref</span>&#123;eq:gougu&#125;的整数称为<span class="hljs-keyword">\emph</span>&#123;勾股数&#125;。<br></code></pre></td></tr></table></figure>
+
+<hr>
+<p>以上。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/LaTeX/" class="print-no-link">#LaTeX</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LaTeX笔记(二)(开篇)</div>
+      <div>https://blog.huangyuanlove.com/2018/01/27/LaTeX笔记-二/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2018年1月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/02/11/LaTeX%E7%AC%94%E8%AE%B0-%E4%B8%89/" title="LaTeX笔记(三)(杂)">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LaTeX笔记(三)(杂)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/01/18/LaTeX%E7%AC%94%E8%AE%B0-%E4%B8%80/" title="LaTeX笔记(一)(准备工作)">
+                        <span class="hidden-mobile">LaTeX笔记(一)(准备工作)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '1b85f7ab276ed0450766007980a227d1'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.1/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

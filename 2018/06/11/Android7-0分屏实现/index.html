@@ -1,0 +1,676 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="分屏模式,多窗口,MultiWindow">
+  
+    <meta name="description" content="Android7.0推出了多窗口(分屏)模式，允许一个屏幕下显示两个应用，可以一边追剧一边看电子书，不过在小一点的手机屏幕上看起来可能有点鸡肋。但是在TV端(这个屏幕就比较大了，一般都是40寸起步)中，画中画模式可以让我们同时进行多个任务了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android7.0 MultiWindow">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2018/06/11/Android7-0%E5%88%86%E5%B1%8F%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="Android7.0推出了多窗口(分屏)模式，允许一个屏幕下显示两个应用，可以一边追剧一边看电子书，不过在小一点的手机屏幕上看起来可能有点鸡肋。但是在TV端(这个屏幕就比较大了，一般都是40寸起步)中，画中画模式可以让我们同时进行多个任务了。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/Android/MultiWindow/1.png">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/Android/MultiWindow/2.png">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/Android/MultiWindow/3.png">
+<meta property="article:published_time" content="2018-06-11T07:17:54.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.209Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/Android/MultiWindow/1.png">
+  
+  
+  
+  <title>Android7.0 MultiWindow - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Android7.0 MultiWindow"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2018-06-11 15:17" pubdate>
+          2018年6月11日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.1k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Android7.0 MultiWindow</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>Android7.0推出了多窗口(分屏)模式，允许一个屏幕下显示两个应用，可以一边追剧一边看电子书，不过在小一点的手机屏幕上看起来可能有点鸡肋。但是在TV端(这个屏幕就比较大了，一般都是40寸起步)中，画中画模式可以让我们同时进行多个任务了。</p>
+<span id="more"></span>
+<h4 id="开启分屏"><a href="#开启分屏" class="headerlink" title="开启分屏"></a>开启分屏</h4><p>只要你编译使用sdk版本大于等于7.0就可以支持分屏了：<code>compileSdkVersion 25</code>，如果想要禁用分屏，只需要在<code>AndroidManifest.xml</code>添加属性：android:resizeableActivity&#x3D;”false”，这个属性使用于application和Activity标签。<br>7.0中默认是true。<br>除了分屏模式之外，还有自由模式(Freeform,常见于桌面设备，类似于windows的应用窗口，可以拖拽边缘改变大小)。</p>
+<h4 id="生命周期"><a href="#生命周期" class="headerlink" title="生命周期"></a>生命周期</h4><p>开启多窗口模式不会更改Activity的生命周期，<br>在多窗口模式中，在指定时间只有最近与用户交互过的 Activity 为活动状态。 该 Activity 将被视为顶级 Activity。 所有其他 Activity 虽然可见，但均处于暂停状态。 但是，这些已暂停但可见的 Activity 在系统中享有比不可见 Activity 更高的优先级。 如果用户与其中一个暂停的 Activity 交互，该 Activity 将恢复，而之前的顶级 Activity 将暂停。</p>
+<p>例如：<br><img src="/image/Android/MultiWindow/1.png" srcset="/img/loading.gif" lazyload alt="MultiWindow"><br>在上图中，我先打开了上面的Activity，然后又打开了下面Gmail的Activity，这时下面的Activity处于可交互(顶级Activity)状态，上面的Activity虽然课件，但是处于暂停状态，这时按下back键是对下面Activity进行操作。当点击上面的Activity时，上面的Activity处于可交互状态，下面的Activity处于暂停状态。<br>PS：在多窗口模式中，用户仍可以看到处于暂停状态的应用。 应用在暂停状态下可能仍需要继续其操作。 例如，处于暂停模式但可见的视频播放应用应继续显示视频。 因此，我们建议播放视频的 Activity 不要暂停其 onPause() 处理程序中的视频。 应暂停 onStop() 中的视频，并恢复 onStart() 中的视频播放。</p>
+<p>用户使用多窗口模式显示应用时，系统将通知 Activity 发生配置变更。 该变更与系统通知应用设备从纵向模式切换到横向模式时的 Activity 生命周期影响基本相同，但设备不仅仅是交换尺寸，而是会变更尺寸。您的 Activity 可以自行处理配置变更，或允许系统销毁 Activity，并以新的尺寸重新创建该 Activity。<br>给Activity加上如下配置可以保证切换成多屏模式或者画中画模式时Activity不会销毁重建。<br>android:configChanges&#x3D;”screenSize|smallestScreenSize|screenLayout|orientation”</p>
+<h4 id="针对多窗口模式配置应用"><a href="#针对多窗口模式配置应用" class="headerlink" title="针对多窗口模式配置应用"></a>针对多窗口模式配置应用</h4><p>如果应用支持 Android N，您可以对应用的 Activity 是否支持多窗口显示以及显示方式进行配置。 您可以在清单文件中设置属性，以控制大小和布局。 根 Activity 的属性设置适用于其任务栈中的所有 Activity。 例如，如果根 Activity 中 <code>android:resizeableActivity</code> 设定为 true，则任务栈中的所有 Activity 都将可以调整大小。<br>如果使用低于 Android N 版本的 SDK 构建多向应用，则用户在多窗口模式中使用应用时，系统将强制调整应用大小。 系统将显示对话框，提醒用户应用可能会发生异常。 系统不会调整定向应用的大小；如果用户尝试在多窗口模式下打开定向应用，应用将全屏显示。</p>
+<p>** android:resizeableActivity **<br>在清单的 <code>&lt;activity&gt;</code> 或 <code>&lt;application&gt;</code> 节点中设置该属性，启用或禁用多窗口显示：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs xml">android:resizeableActivity=[&quot;true&quot; | &quot;false&quot;] <br></code></pre></td></tr></table></figure>
+<p>如果该属性设置为 true，Activity 将能以分屏和自由形状模式启动。 如果此属性设置为 false，Activity 将不支持多窗口模式。 如果该值为 false，且用户尝试在多窗口模式下启动 Activity，该 Activity 将全屏显示。<br>如果应用面向 Android N，但未对该属性指定值，则该属性的值默认设为 true。</p>
+<p>** android:supportsPictureInPicture **<br>在清单文件的 <code>&lt;activity&gt;</code> 节点中设置该属性，指明 Activity 是否支持画中画显示。 如果 <code>android:resizeableActivity</code> 为 false，将忽略该属性。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs xml">android:supportsPictureInPicture=[&quot;true&quot; | &quot;false&quot;]<br></code></pre></td></tr></table></figure>
+
+<h4 id="布局属性"><a href="#布局属性" class="headerlink" title="布局属性"></a>布局属性</h4><p>对于 Android N，<code>&lt;layout&gt;</code> 清单元素支持以下几种属性，这些属性影响 Activity 在多窗口模式中的行为：</p>
+<p><code>android:defaultWidth</code><br>以自由形状模式启动时 Activity 的默认宽度。<br><code>android:defaultHeight</code><br>以自由形状模式启动时 Activity 的默认高度。<br><code>android:gravity</code><br>以自由形状模式启动时 Activity 的初始位置。请参阅 Gravity 参考资料，了解合适的值设置。<br><code>android:minimalHeight、android:minimalWidth</code><br>分屏和自由形状模式中 Activity 的最小高度和最小宽度。 如果用户在分屏模式中移动分界线，使 Activity 尺寸低于指定的最小值，系统会将 Activity 裁剪为用户请求的尺寸。<br>例如，以下节点显示了如何指定 Activity 在自由形状模式中显示时 Activity 的默认大小、位置和最小尺寸：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">activity</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;.MyActivity&quot;</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">layout</span> <span class="hljs-attr">android:defaultHeight</span>=<span class="hljs-string">&quot;500dp&quot;</span></span><br><span class="hljs-tag">          <span class="hljs-attr">android:defaultWidth</span>=<span class="hljs-string">&quot;600dp&quot;</span></span><br><span class="hljs-tag">          <span class="hljs-attr">android:gravity</span>=<span class="hljs-string">&quot;top|end&quot;</span></span><br><span class="hljs-tag">          <span class="hljs-attr">android:minimalHeight</span>=<span class="hljs-string">&quot;450dp&quot;</span></span><br><span class="hljs-tag">          <span class="hljs-attr">android:minimalWidth</span>=<span class="hljs-string">&quot;300dp&quot;</span> /&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">activity</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="在多窗口模式中运行应用"><a href="#在多窗口模式中运行应用" class="headerlink" title="在多窗口模式中运行应用"></a>在多窗口模式中运行应用</h4><p>** 多窗口模式中被禁用的功能 **<br>在设备处于多窗口模式中时，某些功能会被禁用或忽略，因为这些功能对与其他 Activity 或应用共享设备屏幕的 Activity 而言没有意义。 此类功能包括：</p>
+<ol>
+<li>某些系统 UI 自定义选项将被禁用；例如，在非全屏模式中，应用无法隐藏状态栏。</li>
+<li>系统将忽略对 android:screenOrientation 属性所作的更改。</li>
+</ol>
+<p>** 多窗口变更通知和查询 **</p>
+<ol>
+<li>Activity.isInMultiWindowMode()<br>调用该方法以确认 Activity 是否处于多窗口模式。</li>
+<li>Activity.isInPictureInPictureMode()<br>调用该方法以确认 Activity 是否处于画中画模式。<blockquote>
+<p>画中画模式是多窗口模式的特例。 如果 myActivity.isInPictureInPictureMode() 返回 true，<br>myActivity.isInMultiWindowMode() 也返回 true。</p>
+</blockquote>
+</li>
+<li>Activity.onMultiWindowModeChanged()<br>Activity 进入或退出多窗口模式时系统将调用此方法。 在 Activity 进入多窗口模式时，系统向该方法传递 true 值，在退出多窗口模式时，则传递 false 值。</li>
+<li>Activity.onPictureInPictureModeChanged()<br>Activity 进入或退出画中画模式时系统将调用此方法。 在 Activity 进入画中画模式时，系统向该方法传递 true 值，在退出画中画模式时，则传递 false 值。</li>
+</ol>
+<p>每个方法还有 Fragment 版本，例如 Fragment.isInMultiWindowMode()。</p>
+<h4 id="进入画中画模式"><a href="#进入画中画模式" class="headerlink" title="进入画中画模式"></a>进入画中画模式</h4><p>如需在画中画模式中启动 Activity，请调用新方法 Activity.enterPictureInPictureMode()。 如果设备不支持画中画模式，则此方法无效。 如需了解详细信息，请参阅<a target="_blank" rel="noopener" href="https://developer.android.com/guide/topics/ui/picture-in-picture">画中画</a>文档。<br><a target="_blank" rel="noopener" href="https://developer.android.com/guide/topics/ui/picture-in-picture">https://developer.android.com/guide/topics/ui/picture-in-picture</a></p>
+<h4 id="在多窗口模式中启动新-Activity"><a href="#在多窗口模式中启动新-Activity" class="headerlink" title="在多窗口模式中启动新 Activity"></a>在多窗口模式中启动新 Activity</h4><p>如果只是简单的开启Activity，和在非多窗口模式下是一致的。如果想要在当前Activity的旁边启动Activity，可以添加<code>FLAG_ACTIVITY_LAUNCH_ADJACENT</code>标志位(官方文档说是<code>Intent.FLAG_ACTIVITY_LAUNCH_TO_ADJACENT</code>,但在实际操作中这个标志位不存在)，传递此标志将请求以下行为：</p>
+<ol>
+<li>如果设备处于分屏模式，系统会尝试在启动系统的 Activity 旁创建新 Activity，这样两个 Activity 将共享屏幕。 系统并不一定能实现此操作，但如果可以，系统将使两个 Activity 处于相邻的位置。</li>
+<li>如果设备不处于分屏模式，则该标志无效。<br>如果设备处于自由形状模式，则在启动新 Activity 时，用户可通过调用 ActivityOptions.setLaunchBounds() 指定新 Activity 的尺寸和屏幕位置。 如果设备不处于多窗口模式，则该方法无效。<br>PS:如果在任务栈中启动 Activity，该 Activity 将替换屏幕上的 Activity，并继承其所有的多窗口属性。 如果要在多窗口模式中以单独的窗口启动新 Activity，则必须在新的任务栈中启动此 Activity。</li>
+</ol>
+<h4 id="支持拖放"><a href="#支持拖放" class="headerlink" title="支持拖放"></a>支持拖放</h4><p>用户可以在两个 Activity 共享屏幕的同时在这两个 Activity 之间拖放数据 （在此之前，用户只能在一个 Activity 内部拖放数据）。 </p>
+<ol>
+<li>android.view.DropPermissions<br>令牌对象，负责指定对接收拖放数据的应用授予的权限。</li>
+<li>View.startDragAndDrop()<br>View.startDrag() 的新别名。要启用跨 Activity 拖放，请传递新标志 View.DRAG_FLAG_GLOBAL。 如需对接收拖放数据的 Activity 授予 URI 权限，可根据情况传递新标志 View.DRAG_FLAG_GLOBAL_URI_READ 或 View.DRAG_FLAG_GLOBAL_URI_WRITE。</li>
+<li>View.cancelDragAndDrop()<br>取消当前正在进行的拖动操作。只能由发起拖动操作的应用调用。</li>
+<li>View.updateDragShadow()<br>替换当前正在进行的拖动操作的拖动阴影。只能由发起拖动操作的应用调用。</li>
+<li>Activity.requestDropPermissions()<br>请求使用 DragEvent 中包含的 ClipData 传递的内容 URI 的权限。</li>
+</ol>
+<h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><p>** 在当前Activity旁边开启新界面 **<br>如下图所示，上面的界面是MainActivity，下面的Activity是在MainActivity中点击<code>获取实时天气</code>开启的界面<br><img src="/image/Android/MultiWindow/2.png" srcset="/img/loading.gif" lazyload alt="MultiWindow"><br>在MainActivity中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java">findViewById(R.id.get_weather).setOnClickListener(<span class="hljs-keyword">new</span> <span class="hljs-title class_">View</span>.OnClickListener() &#123;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onClick</span><span class="hljs-params">(View v)</span> &#123;<br>        <span class="hljs-type">Intent</span> <span class="hljs-variable">intent</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Intent</span>(MainActivity.<span class="hljs-built_in">this</span>,Main2Activity.class);<br>        intent.addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT | Intent.FLAG_ACTIVITY_NEW_TASK);<br>        startActivity(intent);<br>    &#125;<br>&#125;);<br></code></pre></td></tr></table></figure>
+<p>为什么需要 <code>FLAG_ACTIVITY_NEW_TASK</code>:<br>官方解释</p>
+<blockquote>
+<p>在同一个Activity返回栈中，打开一个新的Activity时，这个Activity将会继承上一个Activity所有和分屏模式有关的属性。如果你想要在一个独立的窗口以分屏模式打开一个新的Activity，那么必须新建一个Activity返回栈。</p>
+</blockquote>
+<p>** 拖拽 **<br>首先在多窗口模式下打开新界面，如上面的代码所示。<br>在MainActivity中发起拖拽</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">final</span> <span class="hljs-type">Button</span> <span class="hljs-variable">dragedButton</span> <span class="hljs-operator">=</span> findViewById(R.id.drag_to_another);<span class="hljs-comment">//拖拽按钮</span><br>        dragedButton.setTag(<span class="hljs-string">&quot;this is a test&quot;</span>);<br><br>        dragedButton.setOnTouchListener(<span class="hljs-keyword">new</span> <span class="hljs-title class_">View</span>.OnTouchListener() &#123;<br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">onTouch</span><span class="hljs-params">(View v, MotionEvent event)</span> &#123;<br><br>                <span class="hljs-keyword">if</span>(event.getAction() == MotionEvent.ACTION_DOWN)&#123;<br><br>                    ClipData.<span class="hljs-type">Item</span> <span class="hljs-variable">item</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ClipData</span>.Item((CharSequence) dragedButton.getTag());<br>                    String[] mimeTypes = &#123;ClipDescription.MIMETYPE_TEXT_PLAIN&#125;;<br>                    <span class="hljs-type">ClipData</span> <span class="hljs-variable">dragData</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ClipData</span>(v.getTag().toString(), mimeTypes, item);<br>                    View.<span class="hljs-type">DragShadowBuilder</span> <span class="hljs-variable">shadow</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">View</span>.DragShadowBuilder(dragedButton);<br>                    <span class="hljs-comment">/** startDragAndDrop是Android N SDK中的新方法，替代了以前的startDrag，flag需要设置为DRAG_FLAG_GLOBAL */</span><br>                    v.startDragAndDrop(dragData, shadow, <span class="hljs-literal">null</span>, View.DRAG_FLAG_GLOBAL);<br>                    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>                &#125;<br>                <span class="hljs-keyword">else</span> &#123;<br>                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>                &#125;<br>            &#125;<br>        &#125;);<br></code></pre></td></tr></table></figure>
+<p>在第二个界面中接收拖拽结果</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">final</span> <span class="hljs-type">TextView</span> <span class="hljs-variable">textView</span> <span class="hljs-operator">=</span> findViewById(R.id.show_drag_view_tag);<br>        textView.setText(<span class="hljs-string">&quot;拖拽到这里&quot;</span>);<br>        textView.setOnDragListener(<span class="hljs-keyword">new</span> <span class="hljs-title class_">View</span>.OnDragListener() &#123;<br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">onDrag</span><span class="hljs-params">(View view, DragEvent dragEvent)</span> &#123;<br>                <span class="hljs-keyword">switch</span> (dragEvent.getAction()) &#123;<br>                    <span class="hljs-keyword">case</span> DragEvent.ACTION_DRAG_STARTED:<br>                        Log.d(TAG, <span class="hljs-string">&quot;Action is DragEvent.ACTION_DRAG_STARTED&quot;</span>);<br>                        <span class="hljs-keyword">break</span>;<br><br>                    <span class="hljs-keyword">case</span> DragEvent.ACTION_DRAG_ENTERED:<br>                        Log.d(TAG, <span class="hljs-string">&quot;Action is DragEvent.ACTION_DRAG_ENTERED&quot;</span>);<br>                        <span class="hljs-keyword">break</span>;<br><br>                    <span class="hljs-keyword">case</span> DragEvent.ACTION_DRAG_EXITED:<br>                        Log.d(TAG, <span class="hljs-string">&quot;Action is DragEvent.ACTION_DRAG_EXITED&quot;</span>);<br>                        <span class="hljs-keyword">break</span>;<br><br>                    <span class="hljs-keyword">case</span> DragEvent.ACTION_DRAG_LOCATION:<br>                        <span class="hljs-keyword">break</span>;<br><br>                    <span class="hljs-keyword">case</span> DragEvent.ACTION_DRAG_ENDED:<br>                        Log.d(TAG, <span class="hljs-string">&quot;Action is DragEvent.ACTION_DRAG_ENDED&quot;</span>);<br>                        <span class="hljs-keyword">break</span>;<br><br>                    <span class="hljs-keyword">case</span> DragEvent.ACTION_DROP:<br>                        Log.d(TAG, <span class="hljs-string">&quot;ACTION_DROP event&quot;</span>);<br>                        <span class="hljs-comment">/** 3.在这里显示接收到的结果 */</span><br>                        textView.setText(dragEvent.getClipData().getItemAt(<span class="hljs-number">0</span>).getText());<br>                        <span class="hljs-keyword">break</span>;<br><br>                    <span class="hljs-keyword">default</span>:<br>                        <span class="hljs-keyword">break</span>;<br>                &#125;<br><br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>            &#125;<br>        &#125;);<br>    &#125;<br></code></pre></td></tr></table></figure>
+<p>将MainActivity中的拖拽按钮拖放的第二个界面中<code>拖拽到这里</code>view上之后<br><img src="/image/Android/MultiWindow/3.png" srcset="/img/loading.gif" lazyload alt="MultiWindow"><br>关于startDragAndDrop，官方参考文档在这里<br><a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/view/View?hl=zh-cn#startDrag">startDragAndDrop</a><br><a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/view/View?hl=zh-cn#startDrag">https://developer.android.com/reference/android/view/View?hl=zh-cn#startDrag</a></p>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Android7.0 MultiWindow</div>
+      <div>https://blog.huangyuanlove.com/2018/06/11/Android7-0分屏实现/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2018年6月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/06/21/Android%E5%A4%9A%E8%BF%9B%E7%A8%8B-%E4%B8%80/" title="Android多进程(一)">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Android多进程(一)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/06/03/%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/" title="面试总结">
+                        <span class="hidden-mobile">面试总结</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '717a559b6271a23935a6f536560aed36'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

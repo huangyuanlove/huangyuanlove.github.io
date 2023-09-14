@@ -1,0 +1,662 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="Android,unit test,TDD,测试驱动开发,Junit,Mockito,Robolectric">
+  
+    <meta name="description" content="纯java代码的单元测试这里的纯java代码指的是不包含Android包中的代码，我们使用Junit写单元测试即可。 比如我们有一个方法是用来格式化数字，返回保留两位小数后的字符串，方法如下 123public static String numberFormat(double number)&amp;#123;  return String.format(Locale.getDefault(),&amp;quo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android中的单元测试">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2021/04/25/Android%E4%B8%AD%E7%9A%84%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="纯java代码的单元测试这里的纯java代码指的是不包含Android包中的代码，我们使用Junit写单元测试即可。 比如我们有一个方法是用来格式化数字，返回保留两位小数后的字符串，方法如下 123public static String numberFormat(double number)&amp;#123;  return String.format(Locale.getDefault(),&amp;quo">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-25T02:18:51.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.211Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Android中的单元测试 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Android中的单元测试"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-04-25 10:18" pubdate>
+          2021年4月25日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.3k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Android中的单元测试</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h4 id="纯java代码的单元测试"><a href="#纯java代码的单元测试" class="headerlink" title="纯java代码的单元测试"></a>纯java代码的单元测试</h4><p>这里的纯java代码指的是不包含Android包中的代码，我们使用Junit写单元测试即可。</p>
+<p>比如我们有一个方法是用来格式化数字，返回保留两位小数后的字符串，方法如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title function_">numberFormat</span><span class="hljs-params">(<span class="hljs-type">double</span> number)</span>&#123;<br>  <span class="hljs-keyword">return</span> String.format(Locale.getDefault(),<span class="hljs-string">&quot;%.2f&quot;</span>,number);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>那么我们的单元测试可以这么写，依赖一下junit测试框架<code>testImplementation &#39;junit:junit:4.+&#39;</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> org.junit.Test;<br><span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.*;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ExampleUnitTest</span> &#123;<br>    <span class="hljs-meta">@Test</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testNumberFormat</span><span class="hljs-params">()</span>&#123;<br>        assertEquals(<span class="hljs-string">&quot;0.23&quot;</span>,Util.numberFormat(<span class="hljs-number">0.232323</span>));<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<p>这里说明一下，我们在写单元测试的时候，经常会需要初始化一些数据，但我们又不想在每个测试方法中都调用一遍初始化的方法，这里测试框架给出了四个注解</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@BeforeClass</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">init</span><span class="hljs-params">()</span> &#123;<br><br>&#125;<br><span class="hljs-meta">@Before</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setUp</span><span class="hljs-params">()</span>&#123;<br><br>&#125;<br><span class="hljs-meta">@After</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">tearDown</span><span class="hljs-params">()</span>&#123;<br><br>&#125;<br><span class="hljs-meta">@AfterClass</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">destroy</span><span class="hljs-params">()</span>&#123;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>@BeforeClass:只会执行一次，修饰的方法必须是静态的</li>
+<li>@AfterClass：只会执行一次，修饰的方法必须是静态的</li>
+<li>@Before：每次调用测试方法时都会执行一次</li>
+<li>@After：每次测试方法执行完成后都会执行一次</li>
+</ul>
+<h4 id="代码中包含Android代码"><a href="#代码中包含Android代码" class="headerlink" title="代码中包含Android代码"></a>代码中包含Android代码</h4><p>但是，假如我们的代码中不小心”混入”了一些调用Android包的功能，比如验证邮箱的有效性，代码可能是这样的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> android.util.Patterns;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">isEmailAddress</span><span class="hljs-params">(String address)</span>&#123;<br>  <span class="hljs-keyword">return</span> Patterns.EMAIL_ADDRESS.matcher(address).matches();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这里导入了 android.util包，如果使用junit的话，在单元测试代码中会报一个空指针异常</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEmailAddress</span><span class="hljs-params">()</span>&#123;<br>  Assert.assertTrue(Util.isEmailAddress(<span class="hljs-string">&quot;gg@gg.com&quot;</span>));<br>  Assert.assertTrue(Util.isEmailAddress(<span class="hljs-string">&quot;huangyuan@chunyu.me&quot;</span>));<br>  Assert.assertFalse(Util.isEmailAddress(<span class="hljs-string">&quot;wwww&quot;</span>));<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs verilog">java<span class="hljs-variable">.lang</span><span class="hljs-variable">.NullPointerException</span><br>	at com<span class="hljs-variable">.huangyuanlove</span><span class="hljs-variable">.tdd_demo</span><span class="hljs-variable">.Util</span><span class="hljs-variable">.isEmailAddress</span>(Util<span class="hljs-variable">.java</span>:<span class="hljs-number">15</span>)<br>	at com<span class="hljs-variable">.huangyuanlove</span><span class="hljs-variable">.tdd_demo</span><span class="hljs-variable">.ExampleUnitTest</span><span class="hljs-variable">.testEmailAddress</span>(ExampleUnitTest<span class="hljs-variable">.java</span>:<span class="hljs-number">27</span>)<br>	at sun<span class="hljs-variable">.reflect</span><span class="hljs-variable">.NativeMethodAccessorImpl</span><span class="hljs-variable">.invoke0</span>(Native Method)<br>	at sun<span class="hljs-variable">.reflect</span><span class="hljs-variable">.NativeMethodAccessorImpl</span><span class="hljs-variable">.invoke</span>(NativeMethodAccessorImpl<span class="hljs-variable">.java</span>:<span class="hljs-number">62</span>)<br>	at sun<span class="hljs-variable">.reflect</span><span class="hljs-variable">.DelegatingMethodAccessorImpl</span><span class="hljs-variable">.invoke</span>(DelegatingMethodAccessorImpl<span class="hljs-variable">.java</span>:<span class="hljs-number">43</span>)<br>	at java<span class="hljs-variable">.lang</span><span class="hljs-variable">.reflect</span><span class="hljs-variable">.Method</span><span class="hljs-variable">.invoke</span>(Method<span class="hljs-variable">.java</span>:<span class="hljs-number">498</span>)<br>	at org<span class="hljs-variable">.junit</span><span class="hljs-variable">.runners</span><span class="hljs-variable">.model</span><span class="hljs-variable">.FrameworkMethod</span>$<span class="hljs-number">1</span><span class="hljs-variable">.runReflectiveCall</span>(FrameworkMethod<span class="hljs-variable">.java</span>:<span class="hljs-number">59</span>)<br>	at org<span class="hljs-variable">.junit</span><span class="hljs-variable">.internal</span><span class="hljs-variable">.runners</span><span class="hljs-variable">.model</span><span class="hljs-variable">.ReflectiveCallable</span><span class="hljs-variable">.run</span>(ReflectiveCallable<span class="hljs-variable">.java</span>:<span class="hljs-number">12</span>)<br>	at org<span class="hljs-variable">.junit</span><span class="hljs-variable">.runners</span><span class="hljs-variable">.model</span><span class="hljs-variable">.FrameworkMethod</span><span class="hljs-variable">.invokeExplosively</span>(FrameworkMethod<span class="hljs-variable">.java</span>:<span class="hljs-number">56</span>)<br>	at org<span class="hljs-variable">.junit</span><span class="hljs-variable">.internal</span><span class="hljs-variable">.runners</span><span class="hljs-variable">.statements</span><span class="hljs-variable">.InvokeMethod</span><span class="hljs-variable">.evaluate</span>(InvokeMethod<span class="hljs-variable">.java</span>:<span class="hljs-number">17</span>)<br>	at org<span class="hljs-variable">.junit</span><span class="hljs-variable">.runners</span><span class="hljs-variable">.ParentRunner</span>$<span class="hljs-number">3</span><span class="hljs-variable">.evaluate</span>(ParentRunner<span class="hljs-variable">.java</span>:<span class="hljs-number">306</span>)<br>	at org<span class="hljs-variable">.junit</span><span class="hljs-variable">.runners</span><span class="hljs-variable">.BlockJUnit4ClassRunner</span>$<span class="hljs-number">1</span><span class="hljs-variable">.evaluate</span>(BlockJUnit4ClassRunner<span class="hljs-variable">.java</span>:<span class="hljs-number">100</span>)<br>	at org<span class="hljs-variable">.junit</span><span class="hljs-variable">.runners</span><span class="hljs-variable">.ParentRunner</span><span class="hljs-variable">.runLeaf</span>(ParentRunner<span class="hljs-variable">.java</span>:<span class="hljs-number">366</span>)<br>	at org<span class="hljs-variable">.junit</span><span class="hljs-variable">.runners</span><span class="hljs-variable">.BlockJUnit4ClassRunner</span><span class="hljs-variable">.runChild</span>(BlockJUnit4ClassRunner<span class="hljs-variable">.java</span>:<span class="hljs-number">103</span>)<br>	at org<span class="hljs-variable">.junit</span><span class="hljs-variable">.runners</span><span class="hljs-variable">.BlockJUnit4ClassRunner</span><span class="hljs-variable">.runChild</span>(BlockJUnit4ClassRunner<span class="hljs-variable">.java</span>:<span class="hljs-number">63</span>)<br>	at org<span class="hljs-variable">.junit</span><span class="hljs-variable">.runners</span><span class="hljs-variable">.ParentRunner</span>$<span class="hljs-number">4</span><span class="hljs-variable">.run</span>(ParentRunner<span class="hljs-variable">.java</span>:<span class="hljs-number">331</span>)<br>	at org<span class="hljs-variable">.junit</span><span class="hljs-variable">.runners</span><span class="hljs-variable">.ParentRunner</span>$<span class="hljs-number">1</span><span class="hljs-variable">.schedule</span>(ParentRunner<span class="hljs-variable">.java</span>:<span class="hljs-number">79</span>)<br>	at org<span class="hljs-variable">.junit</span><span class="hljs-variable">.runners</span><span class="hljs-variable">.ParentRunner</span><span class="hljs-variable">.runChildren</span>(ParentRunner<span class="hljs-variable">.java</span>:<span class="hljs-number">329</span>)<br>	at org<span class="hljs-variable">.junit</span><span class="hljs-variable">.runners</span><span class="hljs-variable">.ParentRunner</span><span class="hljs-variable">.access</span>$<span class="hljs-number">100</span>(ParentRunner<span class="hljs-variable">.java</span>:<span class="hljs-number">66</span>)<br>	at org<span class="hljs-variable">.junit</span><span class="hljs-variable">.runners</span><span class="hljs-variable">.ParentRunner</span>$<span class="hljs-number">2</span><span class="hljs-variable">.evaluate</span>(ParentRunner<span class="hljs-variable">.java</span>:<span class="hljs-number">293</span>)<br>	at org<span class="hljs-variable">.junit</span><span class="hljs-variable">.runners</span><span class="hljs-variable">.ParentRunner</span>$<span class="hljs-number">3</span><span class="hljs-variable">.evaluate</span>(ParentRunner<span class="hljs-variable">.java</span>:<span class="hljs-number">306</span>)<br>	at org<span class="hljs-variable">.junit</span><span class="hljs-variable">.runners</span><span class="hljs-variable">.ParentRunner</span><span class="hljs-variable">.run</span>(ParentRunner<span class="hljs-variable">.java</span>:<span class="hljs-number">413</span>)<br>	at org<span class="hljs-variable">.junit</span><span class="hljs-variable">.runner</span><span class="hljs-variable">.JUnitCore</span><span class="hljs-variable">.run</span>(JUnitCore<span class="hljs-variable">.java</span>:<span class="hljs-number">137</span>)<br>	at com<span class="hljs-variable">.intellij</span><span class="hljs-variable">.junit4</span><span class="hljs-variable">.JUnit4IdeaTestRunner</span><span class="hljs-variable">.startRunnerWithArgs</span>(JUnit4IdeaTestRunner<span class="hljs-variable">.java</span>:<span class="hljs-number">68</span>)<br>	at com<span class="hljs-variable">.intellij</span><span class="hljs-variable">.rt</span><span class="hljs-variable">.junit</span><span class="hljs-variable">.IdeaTestRunner</span>$Repeater<span class="hljs-variable">.startRunnerWithArgs</span>(IdeaTestRunner<span class="hljs-variable">.java</span>:<span class="hljs-number">33</span>)<br>	at com<span class="hljs-variable">.intellij</span><span class="hljs-variable">.rt</span><span class="hljs-variable">.junit</span><span class="hljs-variable">.JUnitStarter</span><span class="hljs-variable">.prepareStreamsAndStart</span>(JUnitStarter<span class="hljs-variable">.java</span>:<span class="hljs-number">230</span>)<br>	at com<span class="hljs-variable">.intellij</span><span class="hljs-variable">.rt</span><span class="hljs-variable">.junit</span><span class="hljs-variable">.JUnitStarter</span><span class="hljs-variable">.main</span>(JUnitStarter<span class="hljs-variable">.java</span>:<span class="hljs-number">58</span>)<br></code></pre></td></tr></table></figure>
+
+<p>因为我们的junit是跑在jvm上的，默认并没有加载android的包，这时候我们可以使用<a target="_blank" rel="noopener" href="http://robolectric.org/">Robolectric</a>这个三方包来做测试。在gradle中添加一下依赖<code>testImplementation &#39;org.robolectric:robolectric:4.2&#39;</code>,<strong>别问为啥不用4.4,因为我还没整明白，Shadows方法不能用</strong></p>
+<p>在我们的单元测试类上加下注解，如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@RunWith(RobolectricTestRunner.class)</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UtilTestWithRobolectric</span> &#123;<br>    <span class="hljs-meta">@Test</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEmailAddress</span><span class="hljs-params">()</span>&#123;<br>        Assert.assertTrue(Util.isEmailAddress(<span class="hljs-string">&quot;gg@gg.com&quot;</span>));<br>        Assert.assertTrue(Util.isEmailAddress(<span class="hljs-string">&quot;huangyuan@chunyu.me&quot;</span>));<br>        Assert.assertFalse(Util.isEmailAddress(<span class="hljs-string">&quot;wwww&quot;</span>));<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>除了这个，我们还可以使用Robolectric来测试一些页面行为</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> androidx.test.core.app.ActivityScenario;<br><span class="hljs-keyword">import</span> androidx.test.core.app.ApplicationProvider;<br><span class="hljs-keyword">import</span> org.junit.Assert;<br><span class="hljs-keyword">import</span> org.junit.Before;<br><span class="hljs-keyword">import</span> org.junit.Test;<br><span class="hljs-keyword">import</span> org.junit.runner.RunWith;<br><span class="hljs-keyword">import</span> org.robolectric.RobolectricTestRunner;<br><span class="hljs-keyword">import</span> org.robolectric.Shadows;<br><span class="hljs-keyword">import</span> org.robolectric.shadows.ShadowAlertDialog;<br><span class="hljs-keyword">import</span> org.robolectric.shadows.ShadowToast;<br><span class="hljs-meta">@RunWith(RobolectricTestRunner.class)</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UtilTestWithRobolectric</span> &#123;<br>    <span class="hljs-keyword">private</span> ActivityScenario&lt;MainActivity&gt; scenario;<br><br>    <span class="hljs-meta">@Before</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">initScenario</span><span class="hljs-params">()</span>&#123;<br>         scenario = ActivityScenario.launch(MainActivity.class);<br>    &#125;<br>    <span class="hljs-meta">@Test</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testScenario</span><span class="hljs-params">()</span>&#123;<br>        Assert.assertNotNull(scenario);<br>    &#125;<br><br>    <span class="hljs-meta">@Test</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEmailAddress</span><span class="hljs-params">()</span>&#123;<br>        Assert.assertTrue(Util.isEmailAddress(<span class="hljs-string">&quot;gg@gg.com&quot;</span>));<br>        Assert.assertTrue(Util.isEmailAddress(<span class="hljs-string">&quot;huangyuan@chunyu.me&quot;</span>));<br>        Assert.assertFalse(Util.isEmailAddress(<span class="hljs-string">&quot;wwww&quot;</span>));<br>    &#125;<br><br>    <span class="hljs-meta">@Test</span><br>    <span class="hljs-comment">//是否弹出toast</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testShowToast</span><span class="hljs-params">()</span>&#123;<br>        scenario.onActivity(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ActivityScenario</span>.ActivityAction&lt;MainActivity&gt;() &#123;<br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">perform</span><span class="hljs-params">(MainActivity activity)</span> &#123;<br>                <span class="hljs-type">Toast</span> <span class="hljs-variable">toast</span> <span class="hljs-operator">=</span> ShadowToast.getLatestToast();<br>                Assert.assertNull(toast);<br><br>                activity.findViewById(R.id.show_toast).performClick();<br>                toast = ShadowToast.getLatestToast();<br>                Assert.assertNotNull(toast);<br><br>                <span class="hljs-type">ShadowToast</span> <span class="hljs-variable">shadowToast</span> <span class="hljs-operator">=</span> Shadows.shadowOf(toast);<br>                Assert.assertEquals(<span class="hljs-string">&quot;show_toast&quot;</span>,ShadowToast.getTextOfLatestToast());<br>                Assert.assertEquals(Toast.LENGTH_SHORT,toast.getDuration());<br><br>            &#125;<br>        &#125;);<br>    &#125;<br><br>    <span class="hljs-meta">@Test</span><br>  	<span class="hljs-comment">//是否展示Dialog</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testShowDialog</span><span class="hljs-params">()</span>&#123;<br>        scenario.onActivity(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ActivityScenario</span>.ActivityAction&lt;MainActivity&gt;() &#123;<br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">perform</span><span class="hljs-params">(MainActivity activity)</span> &#123;<br>                <span class="hljs-type">AlertDialog</span> <span class="hljs-variable">dialog</span> <span class="hljs-operator">=</span> ShadowAlertDialog.getLatestAlertDialog();<br>                Assert.assertNull(dialog);<br>                activity.findViewById(R.id.show_toast).performClick();<br><br>                dialog = ShadowAlertDialog.getLatestAlertDialog();<br>                Assert.assertNotNull(dialog);<br><br>                <span class="hljs-type">ShadowAlertDialog</span> <span class="hljs-variable">shadowDialog</span> <span class="hljs-operator">=</span> Shadows.shadowOf(dialog);<br>                Assert.assertEquals(<span class="hljs-string">&quot;Hello！&quot;</span>, shadowDialog.getMessage());<br><br>            &#125;<br>        &#125;);<br><br>    &#125;<br><br><br>    <span class="hljs-meta">@Test</span><br>  	<span class="hljs-comment">//是否跳转到了指定页面</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGoToLogin</span><span class="hljs-params">()</span>&#123;<br><br>        scenario.onActivity(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ActivityScenario</span>.ActivityAction&lt;MainActivity&gt;() &#123;<br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">perform</span><span class="hljs-params">(MainActivity activity)</span> &#123;<br>                activity.findViewById(R.id.login).performClick();<br>                <span class="hljs-type">Intent</span> <span class="hljs-variable">expectedIntent</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Intent</span>(activity, LoginActivity.class);<br>                <span class="hljs-type">Intent</span> <span class="hljs-variable">actual</span> <span class="hljs-operator">=</span> Shadows.shadowOf(activity).getNextStartedActivity();<br>                Assert.assertEquals(expectedIntent.getComponent(),actual.getComponent());<br>            &#125;<br>        &#125;);<br><br>    &#125;<br><br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>这里的<code>ActivityScenario</code>是使用的 androidx.test.core.app包下的类，需要依赖<code>testImplementation &#39;androidx.test:core:1.1.0&#39;</code></p>
+<p>当然在<code>Robolectric</code>中也有对应的创建Activity的方法，不过在4.4版本中被废弃了，也推荐使用androidx.test包中创建Activity的方法。</p>
+<h4 id="Mock和Mockito"><a href="#Mock和Mockito" class="headerlink" title="Mock和Mockito"></a>Mock和Mockito</h4><p>如何测试一个没有返回值的方法，一般是来看这个方法有没有得到调用。<br>假如我们有如下代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">LoginPresenter</span> &#123;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setUserManager</span><span class="hljs-params">(UserManager userManager)</span> &#123;<br>        <span class="hljs-built_in">this</span>.userManager = userManager;<br>    &#125;<br>	  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">login</span><span class="hljs-params">(String userName,String password)</span>&#123;<br>        userManager.performLogin(userName,password);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们要验证<code>mUserManager</code>的一些行为，首先要 mock UserManager 这个类，mock 这个类的方式是：<br><code>Mockito.mock(UserManager.class);</code><br>mock 了<code>UserManager</code>类之后，我们就可以开始测试了,验证一个对象的方法调用情况的方法是：<br><code>Mockito.verify(objectToVerify).methodToVerify(arguments);</code><br>其中，<code>objectToVerify</code>和<code>methodToVerify</code>分别是你想要验证的对象和方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testLogin</span><span class="hljs-params">()</span> &#123;<br>  <span class="hljs-type">UserManager</span> <span class="hljs-variable">userManager</span> <span class="hljs-operator">=</span> Mockito.mock(UserManager.class);<br>  <span class="hljs-type">LoginPresenter</span> <span class="hljs-variable">loginPresenter</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">LoginPresenter</span>();<br>  loginPresenter.setUserManager(userManager);<br>  loginPresenter.login(<span class="hljs-string">&quot;a&quot;</span>, <span class="hljs-string">&quot;b&quot;</span>);<br>  Mockito.verify(userManager).performLogin(<span class="hljs-string">&quot;a&quot;</span>, <span class="hljs-string">&quot;b&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>再假如我们在登录的时候需要先验证密码强度，但是我们测试的时候不关心这个验证逻辑，希望不管传入的密码是啥，都可以通过验证。我们就需要干预某些mock对象的方法行为</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">loginWithVerifyPassword</span><span class="hljs-params">(PasswordValidator passwordValidator, String userName,String password)</span>&#123;<br>  <span class="hljs-keyword">if</span>(passwordValidator.verifyPassword(password))&#123;<br>    userManager.performLogin(userName,password);<br>  &#125;<span class="hljs-keyword">else</span>&#123;<br>    System.out.println(<span class="hljs-string">&quot;密码不正确&quot;</span>);<br>  &#125;<br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">PasswordValidator</span>&#123;<br>  <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">verifyPassword</span><span class="hljs-params">(String password)</span>&#123;<br>    <span class="hljs-keyword">return</span> password != <span class="hljs-literal">null</span> &amp;&amp; password.length() &gt;<span class="hljs-number">5</span>;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们需要mock一下PasswordValidator这个类中verifyPassword的行为,这种指定 mock 对象的某个方法，让它返回特定值的写法如下：<br><code>Mockito.when(mockObject.targetMethod(args)).thenReturn(desiredReturnValue);</code>代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testLoginWithPasswordValidator</span><span class="hljs-params">()</span> &#123;<br>  LoginPresenter.<span class="hljs-type">PasswordValidator</span> <span class="hljs-variable">passwordValidator</span> <span class="hljs-operator">=</span> Mockito.mock(LoginPresenter.PasswordValidator.class);<br>  <span class="hljs-comment">//验证方法行为是否被改变</span><br>  Mockito.when(passwordValidator.verifyPassword(ArgumentMatchers.any())).thenReturn(<span class="hljs-literal">true</span>);<br>  Assert.assertTrue(passwordValidator.verifyPassword(<span class="hljs-string">&quot;&quot;</span>));<br>  Assert.assertTrue(passwordValidator.verifyPassword(<span class="hljs-literal">null</span>));<br>  Assert.assertTrue(passwordValidator.verifyPassword(<span class="hljs-string">&quot;123&quot;</span>));<br>  Assert.assertTrue(passwordValidator.verifyPassword(<span class="hljs-string">&quot;321321321&quot;</span>));<br><br>  <span class="hljs-comment">//验证登录方法是否被调用</span><br>  <span class="hljs-type">UserManager</span> <span class="hljs-variable">userManager</span> <span class="hljs-operator">=</span> Mockito.mock(UserManager.class);<br>  <span class="hljs-type">LoginPresenter</span> <span class="hljs-variable">loginPresenter</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">LoginPresenter</span>();<br>  loginPresenter.setUserManager(userManager);<br>  loginPresenter.loginWithVerifyPassword(passwordValidator, <span class="hljs-string">&quot;a&quot;</span>, <span class="hljs-string">&quot;b&quot;</span>);<br>  Mockito.verify(userManager).performLogin(<span class="hljs-string">&quot;a&quot;</span>, <span class="hljs-string">&quot;b&quot;</span>);<br><br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="Androidx-test"><a href="#Androidx-test" class="headerlink" title="Androidx.test"></a>Androidx.test</h4><p>最近在看Androidx包下的测试框架，对于我们来讲，单元测试不是很多，测试代码跑在模拟器或者真机上带来的时间消耗还是可以接受的。有时间撸一下对应的代码</p>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Android中的单元测试</div>
+      <div>https://blog.huangyuanlove.com/2021/04/25/Android中的单元测试/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年4月25日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/05/22/Sentry%E6%90%AD%E5%BB%BA%E5%8F%8AAndroid%E6%8E%A5%E5%85%A5/" title="Sentry搭建及Android接入">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Sentry搭建及Android接入</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/04/05/PMS%E5%8F%8Aapk%E5%AE%89%E8%A3%85%E8%BF%87%E7%A8%8B/" title="PMS及apk安装过程">
+                        <span class="hidden-mobile">PMS及apk安装过程</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '4cce64df8f725a4f33057538dd817bd0'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

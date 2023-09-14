@@ -1,0 +1,725 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="Android,适配,Android P">
+  
+    <meta name="description" content="Android P,Q 版本适配常见问题 项目地址 https:&#x2F;&#x2F;github.com&#x2F;huangyuanlove&#x2F;AdaptationAndroidP  文件操作 拍照选择图片 存储访问框架(SAF) 通知 权限申请 快捷方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="适配Android高版本系统常见问题">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2019/04/17/%E9%80%82%E9%85%8DAndroid%E9%AB%98%E7%89%88%E6%9C%AC%E7%B3%BB%E7%BB%9F%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="Android P,Q 版本适配常见问题 项目地址 https:&#x2F;&#x2F;github.com&#x2F;huangyuanlove&#x2F;AdaptationAndroidP  文件操作 拍照选择图片 存储访问框架(SAF) 通知 权限申请 快捷方式">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/Android/adaptation/uninstall_apk_dialog.png">
+<meta property="article:published_time" content="2019-04-17T10:03:41.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.245Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/Android/adaptation/uninstall_apk_dialog.png">
+  
+  
+  
+  <title>适配Android高版本系统常见问题 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="适配Android高版本系统常见问题"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-04-17 18:03" pubdate>
+          2019年4月17日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          13k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">适配Android高版本系统常见问题</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>Android P,Q 版本适配常见问题</p>
+<p>项目地址 <a target="_blank" rel="noopener" href="https://github.com/huangyuanlove/AdaptationAndroidP">https://github.com/huangyuanlove/AdaptationAndroidP</a></p>
+<ol>
+<li>文件操作</li>
+<li>拍照选择图片</li>
+<li>存储访问框架(SAF)</li>
+<li>通知</li>
+<li>权限申请</li>
+<li>快捷方式</li>
+</ol>
+<span id="more"></span>
+
+<p>Android P,Q 版本适配常见问题</p>
+<p>项目地址 <a target="_blank" rel="noopener" href="https://github.com/huangyuanlove/AdaptationAndroidP">https://github.com/huangyuanlove/AdaptationAndroidP</a></p>
+<h4 id="文件操作-FileOperationActivity"><a href="#文件操作-FileOperationActivity" class="headerlink" title="文件操作(FileOperationActivity)"></a>文件操作(FileOperationActivity)</h4><p>先看几个常用的文件路径，这里说明一下，应用的id是<code>com.huangyuanlove.adaptationhighversion</code></p>
+<ul>
+<li><p><strong>getFilesDir()</strong></p>
+<p>得到的路径是 <code>/data/user/0/com.huangyuanlove.adaptationhighversion/files</code>,读写该文件夹下的文件<strong>不需要</strong>申请文件读写权限。卸载应用时<strong>会被删除</strong>。对用户<strong>不可见</strong>，我们在AndroidStudio中使用<code>Device File Explorer</code>查看是在<code>/data/data/com.huangyuanlove.adaptationhighversion/files</code></p>
+</li>
+<li><p><strong>getCacheDir()</strong><br>得到的路径是<code>/data/user/0/com.huangyuanlove.adaptationhighversion/cache</code>，读写该文件夹下的文件<strong>不需要</strong>申请文件读写权限。卸载应用时<strong>会被删除</strong>。对用户<strong>不可见</strong>，我们在AndroidStudio中使用<code>Device File Explorer</code>查看是在<code>/data/data/com.huangyuanlove.adaptationhighversion/cache</code></p>
+</li>
+<li><p>getExternalCacheDir()</p>
+<p>得到的路径是<code>/storage/emulated/0/Android/data/com.huangyuanlove.adaptationhighversion/cache</code></p>
+<p>读写该文件夹下的文件<strong>不需要</strong>申请文件读写权限。卸载应用时<strong>会被删除</strong>。对用户<strong>可见</strong>，无法使用<code>Device File Explorer</code>查看，因为<code>/storage/emulated</code>下的文件没有操作权限，可以用过<code>adb shell</code>切换进去查看，路径为<code>/storage/emulated/0/Android/data/com.huangyuanlove.adaptationhighversion/cache</code>。用户使用手机的文件管理器查看时路径为<code>/Android/data/com.huangyuanlove.adaptationhighversion/cache</code></p>
+</li>
+<li><p>getExternalFilesDir(null)</p>
+<p>得到的路径是<code>/storage/emulated/0/Android/data/com.huangyuanlove.adaptationhighversion/files</code>,</p>
+<p>读写该文件夹下的文件<strong>不需要</strong>申请文件读写权限。卸载应用时<strong>会被删除</strong>。对用户<strong>可见</strong>，无法使用<code>Device File Explorer</code>查看，因为<code>/storage/emulated</code>下的文件没有操作权限，可以用过<code>adb shell</code>切换进去查看，路径为<code>/storage/emulated/0/Android/data/com.huangyuanlove.adaptationhighversion/file</code>。用户使用手机的文件管理器查看时路径为<code>/Android/data/com.huangyuanlove.adaptationhighversion/file</code></p>
+</li>
+<li><p>Environment.getExternalStorageDirectory();</p>
+<p>得到的路径是<code>/storage/emulated/0</code></p>
+<p>读写该文件夹下的文件<strong>需要</strong>申请文件读写权限。卸载应用时不会被删除。对用户<strong>可见</strong>，也就是外部存储的根路径。</p>
+</li>
+<li><p>Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);</p>
+<p>得到的路径是<code>/storage/emulated/0/Download</code></p>
+<p>该方法的参数可以查看<code>Environment</code>类来详细了解。读写该文件夹下的文件<strong>不需要</strong>申请文件读写权限。卸载应用时不会被删除。对用户可以，上述就是外部存储根路径下的Download文件夹。</p>
+</li>
+</ul>
+<p>P版本应用在sd卡根目录保存的应用数据卸载时不会被清除，但是Q版本这部分数据实际保存的是应用的沙箱目录 下，卸载的时候回全部被清除;<br>应用不想卸载删除的文件通过SAF或者是MediaProvider的接口保存在公共目录，不要放在应用的沙箱目录，公共目录文件卸载删除默认会弹框提示，对应弹框的第一 个勾选，默认保留，勾选删除，<strong>谷歌后续的版本计划把这 个勾选去掉，意味着应用保存到公共集合目录的文件卸载 的时候不会提示用户删除</strong>;<br>对于应用的沙箱文件，应用如果不想卸载的时候被删除，需要应用在manifest文件增加:<application android:fragileUserData="true" />，这样卸载应用的时候，系统弹出的对话框中才会有第二个勾选框出现(不增加该属性是不会有第二个勾选出现)，默认删除，勾选保留。</p>
+<p><img src="/image/Android/adaptation/uninstall_apk_dialog.png" srcset="/img/loading.gif" lazyload alt="卸载app提示"></p>
+<h4 id="拍照、选择图片-TakePhotoOrChoosePhotoActivity"><a href="#拍照、选择图片-TakePhotoOrChoosePhotoActivity" class="headerlink" title="拍照、选择图片(TakePhotoOrChoosePhotoActivity)"></a>拍照、选择图片(TakePhotoOrChoosePhotoActivity)</h4><p>在Android6.0动态申请权限，Android7.0严格模式之后，拍照出现了问题，要么是没有权限存储图片，要么是返回的uri是空的，或者抛出如下异常：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java">android.os.FileUriExposedException: file:<span class="hljs-comment">///storage/emulated/0/test.txt exposed beyond app through Intent.getData()</span><br>java.lang.SecurityException: Permission Denial: reading com.android.providers.media.MediaProvider uri<br></code></pre></td></tr></table></figure>
+
+<p>出现上面的问题是因为Android7.0提高私有目录的安全性，防止应用信息的泄漏，从 Android 7.0 开始，应用私有目录的访问权限被做限制。具体表现为，开发人员不能够再简单地通过 file:&#x2F;&#x2F; URI 访问其他应用的私有目录文件或者让其他应用访问自己的私有目录文件。对于面向 Android 7.0 的应用，Android 框架执行的 StrictMode API 政策禁止在您的应用外部公开 file:&#x2F;&#x2F; URI。如果一项包含文件 URI 的 intent 离开您的应用，则应用出现故障，并出现 FileUriExposedException 异常。</p>
+<p>我们可以通过配置FileProvider方式来避免这种问题。</p>
+<p>配置方式网上一堆，这里不再抄一遍了：</p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ac5fe346a5b7">https://www.jianshu.com/p/ac5fe346a5b7</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/121bbb07cb07">https://www.jianshu.com/p/121bbb07cb07</a></p>
+<p>在项目中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"> <span class="hljs-comment">//指定Uri，拍照返回的data为空</span><br><span class="hljs-type">String</span> <span class="hljs-variable">tempImagePath</span> <span class="hljs-operator">=</span> getFilesDir().getPath();<br>tempImageFile = File.createTempFile(<span class="hljs-string">&quot;image_&quot;</span>, <span class="hljs-string">&quot;.jpg&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">File</span>(tempImagePath));<br><span class="hljs-type">Intent</span> <span class="hljs-variable">intent</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Intent</span>(MediaStore.ACTION_IMAGE_CAPTURE);<br><br><span class="hljs-keyword">if</span> (Build.VERSION.SDK_INT &gt;= <span class="hljs-number">24</span>) &#123;<br>  intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);<br>  intent.putExtra(MediaStore.EXTRA_OUTPUT,<br>  FileProvider.getUriForFile(TakePhotoOrChoosePhotoActivity.<span class="hljs-built_in">this</span>,<br>                                        <span class="hljs-string">&quot;com.huangyuanlove.adaptationhighversion.fileprovider&quot;</span>, tempImageFile));<br>&#125; <span class="hljs-keyword">else</span> &#123;<br>  intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempImageFile));<br>&#125;<br>startActivityForResult(intent, TAKE_PHOTO_CODE);<br></code></pre></td></tr></table></figure>
+
+<p>当拍照返回之后</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java">bitmap = BitmapFactory.decodeFile(tempImageFile.getPath());<br>showImage.setImageBitmap(bitmap);<br></code></pre></td></tr></table></figure>
+
+<p>选择图片的时候：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Intent</span> <span class="hljs-variable">albumIntent</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Intent</span>(Intent.ACTION_PICK);<br>albumIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, <span class="hljs-string">&quot;image/*&quot;</span>);<br>startActivityForResult(albumIntent, CHOOSE_PHOTO_CODE);<br></code></pre></td></tr></table></figure>
+
+<p>选择图片返回的时候</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">if</span> (data != <span class="hljs-literal">null</span>) &#123;<br>  <span class="hljs-type">Uri</span> <span class="hljs-variable">selectedImage</span> <span class="hljs-operator">=</span> data.getData();<br>  String[] filePathColumn = &#123;MediaStore.Images.Media.DATA&#125;;<br><br>  <span class="hljs-type">Cursor</span> <span class="hljs-variable">cursor</span> <span class="hljs-operator">=</span> getContentResolver().query(selectedImage,<br>                                             filePathColumn, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>);<br>  cursor.moveToFirst();<br>  <span class="hljs-type">int</span> <span class="hljs-variable">columnIndex</span> <span class="hljs-operator">=</span> cursor.getColumnIndex(filePathColumn[<span class="hljs-number">0</span>]);<br>  <span class="hljs-type">String</span> <span class="hljs-variable">picturePath</span> <span class="hljs-operator">=</span> cursor.getString(columnIndex);<br>  cursor.close();<br><br>  bitmap = BitmapFactory.decodeFile(picturePath);<br>  showImage.setImageBitmap(bitmap);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="存储访问框架-SAFActivity"><a href="#存储访问框架-SAFActivity" class="headerlink" title="存储访问框架(SAFActivity)"></a>存储访问框架(SAFActivity)</h4><p>官方有最佳实践：<a target="_blank" rel="noopener" href="https://developer.android.com/guide/topics/providers/document-provider?hl=zh-cn">https://developer.android.com/guide/topics/providers/document-provider?hl=zh-cn</a></p>
+<h4 id="通知管理-NotificationActivity"><a href="#通知管理-NotificationActivity" class="headerlink" title="通知管理(NotificationActivity)"></a>通知管理(NotificationActivity)</h4><p>主要是8.0之后的NotificationChannel问题，可以参考这个 </p>
+<p><a href="http://blog.huangyuanlove.com/2018/12/27/Android-O-%E9%80%82%E9%85%8DNotificationChannel/">http://blog.huangyuanlove.com/2018/12/27/Android-O-%E9%80%82%E9%85%8DNotificationChannel/</a></p>
+<h4 id="权限申请-MainActivity"><a href="#权限申请-MainActivity" class="headerlink" title="权限申请(MainActivity)"></a>权限申请(MainActivity)</h4><p>6.0之后的动态权限申请问题。大部分应用是在基类中一次性申请所有可能用到的权限，而不关心当前界面是否需要这个权限。</p>
+<p>比如应用中需要用到相机、访问存储空间、读写通讯录、录音权限，则在BaseActivity中去申请这四种高危权限，这种做法对开发人员来说比较简单粗暴，不需要关心每次点击事件是否有权限。但对于用户来讲，刚打开应用就申请这么多权限，体验是不好的。推荐做法还是在需要时去申请权限。</p>
+<p>比如更换头像时，点击按钮之后才会去申请相机权限，而不是打开资料设置界面的时候去申请。并且建议只申请用到的权限，而不是一次性全部申请。</p>
+<p>这里需要注意的是，国产手机中对于权限的判定和在设置里面看到的权限可能不一致。</p>
+<ol>
+<li><p>当我们点击了拍照按钮之后，首先检查权限：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED<br></code></pre></td></tr></table></figure>
+
+<p>这里需要判断一下版本，大于6.0(Build.VERSION.SDK_INT &gt;&#x3D; Build.VERSION_CODES.M)才需要去判断。</p>
+<p>有权限直接到拍照界面，没有权限则申请权限：</p>
+</li>
+<li><p>申请权限</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">requestPermissions(<span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>[]&#123;Manifest.permission.CAMERA&#125;, REQUEST_PERMISSION_CAMERA);<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>权限申请返回结果</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><code class="hljs java">   <br><span class="hljs-meta">@RequiresApi(api = Build.VERSION_CODES.M)</span><br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onRequestPermissionsResult</span><span class="hljs-params">(<span class="hljs-type">int</span> requestCode, <span class="hljs-meta">@NonNull</span> String[] permissions, <span class="hljs-meta">@NonNull</span> <span class="hljs-type">int</span>[] grantResults)</span> &#123;<br>  <span class="hljs-built_in">super</span>.onRequestPermissionsResult(requestCode, permissions, grantResults);<br>  <span class="hljs-keyword">if</span> (permissions.length &lt;= <span class="hljs-number">0</span> || grantResults.length &lt;= <span class="hljs-number">0</span>) &#123;<br>    <span class="hljs-keyword">return</span>;<br>  &#125;<br>  <span class="hljs-keyword">switch</span> (requestCode) &#123;<br>    <span class="hljs-keyword">case</span> REQUEST_PERMISSION_CAMERA:<br>      <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">permission</span> <span class="hljs-operator">=</span> permissions[<span class="hljs-number">0</span>];<br><br>      <span class="hljs-keyword">if</span> (grantResults.length &gt; <span class="hljs-number">0</span> &amp;&amp; grantResults[<span class="hljs-number">0</span>] ==<br>    			PackageManager.PERMISSION_GRANTED) &#123;<br>        Toast.makeText(MainActivity.<span class="hljs-built_in">this</span>, <span class="hljs-string">&quot;授予拍照权限成功&quot;</span>, Toast.LENGTH_SHORT).show();<br>      &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">if</span> (shouldShowRequestPermissionRationale(permissions[<span class="hljs-number">0</span>])) &#123;<br>          <span class="hljs-comment">//用户只点击了禁止，没有选择不再提示</span><br>          Toast.makeText(MainActivity.<span class="hljs-built_in">this</span>, <span class="hljs-string">&quot;用户禁止了&quot;</span> + permission + <span class="hljs-string">&quot;权限&quot;</span>, Toast.LENGTH_SHORT).show();<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>          <span class="hljs-comment">//解释原因，并且引导用户至设置页手动授权</span><br>          <span class="hljs-keyword">new</span> <span class="hljs-title class_">AlertDialog</span>.Builder(<span class="hljs-built_in">this</span>)<br>            .setMessage(<span class="hljs-string">&quot;【用户选择了不在提示按钮，或者系统默认不在提示（如MIUI）。&quot;</span> +<br>                        <span class="hljs-string">&quot;引导用户到应用设置页去手动授权,注意提示用户具体需要哪些权限】\r\n&quot;</span> +<br>                        <span class="hljs-string">&quot;获取相关权限失败:xxxxxx,将导致部分功能无法正常使用，需要到设置页面手动授权&quot;</span>)<br>            .setPositiveButton(<span class="hljs-string">&quot;去授权&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">DialogInterface</span>.OnClickListener() &#123;<br>              <span class="hljs-meta">@Override</span><br>              <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onClick</span><span class="hljs-params">(DialogInterface dialog, <span class="hljs-type">int</span> which)</span> &#123;<br>                <span class="hljs-comment">//引导用户至设置页手动授权</span><br>                <span class="hljs-type">Intent</span> <span class="hljs-variable">intent</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Intent</span>(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);<br>                <span class="hljs-type">Uri</span> <span class="hljs-variable">uri</span> <span class="hljs-operator">=</span> Uri.fromParts(<span class="hljs-string">&quot;package&quot;</span>, getApplicationContext().getPackageName(), <span class="hljs-literal">null</span>);<br>                intent.setData(uri);<br>                startActivity(intent);<br>              &#125;<br>            &#125;)<br>            .setNegativeButton(<span class="hljs-string">&quot;取消&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">DialogInterface</span>.OnClickListener() &#123;<br>              <span class="hljs-meta">@Override</span><br>              <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onClick</span><span class="hljs-params">(DialogInterface dialog, <span class="hljs-type">int</span> which)</span> &#123;<br>                <span class="hljs-comment">//引导用户手动授权，权限请求失败</span><br>                Toast.makeText(MainActivity.<span class="hljs-built_in">this</span>, <span class="hljs-string">&quot;引导授权失败:&quot;</span> + permission, Toast.LENGTH_LONG).show();<br>              &#125;<br>            &#125;).setOnCancelListener(<span class="hljs-keyword">new</span> <span class="hljs-title class_">DialogInterface</span>.OnCancelListener() &#123;<br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onCancel</span><span class="hljs-params">(DialogInterface dialog)</span> &#123;<br>              <span class="hljs-comment">//引导用户手动授权，权限请求失败</span><br>              Toast.makeText(MainActivity.<span class="hljs-built_in">this</span>, <span class="hljs-string">&quot;引导授权失败:&quot;</span> + permission, Toast.LENGTH_LONG).show();<br>            &#125;<br>          &#125;).show();<br>        &#125;<br>      &#125;<br><br>      <span class="hljs-keyword">break</span>;<br>    <span class="hljs-keyword">default</span>:<br>      <span class="hljs-keyword">break</span>;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这里需要注意的是，官方文档说第一申请权限的时候不会有”禁止后不再询问”的复选框，但是在很多国内rom上第一次就会有这个提示。当用户勾选了”禁止后不再询问”，这时候我们申请权限会立刻调用<code>onRequestPermissionsResult</code>方法，并且<code>shouldShowRequestPermissionRationale</code>返回false。这时候我们需要引导用户到设置界面开启权限。</p>
+</li>
+</ol>
+<h4 id="快捷方式-ShortCutActivity"><a href="#快捷方式-ShortCutActivity" class="headerlink" title="快捷方式(ShortCutActivity)"></a>快捷方式(ShortCutActivity)</h4><p>Android 7.1之后提供了快捷方式的API，在长按应用图标后会弹出定义的快捷方式(个数有限)。但在国产rom中有可能会把这个功能干掉。</p>
+<p>快捷方式有分为动态注册和静态注册(配置文件)，动态注册的快捷方式可以动态删除，静态注册的快捷方式不可动态删除。</p>
+<ol>
+<li><p>静态注册</p>
+<p>在res文件夹下新建xml文件夹，在其中新建<code>shortcuts.xml</code>,内容如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">shortcuts</span> <span class="hljs-attr">xmlns:android</span>=<span class="hljs-string">&quot;http://schemas.android.com/apk/res/android&quot;</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">shortcut</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:enabled</span>=<span class="hljs-string">&quot;true&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:icon</span>=<span class="hljs-string">&quot;@mipmap/ic_launcher_round&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:shortcutDisabledMessage</span>=<span class="hljs-string">&quot;@string/permission_deny&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:shortcutId</span>=<span class="hljs-string">&quot;camera&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:shortcutLongLabel</span>=<span class="hljs-string">&quot;@string/take_photo_or_choose_image&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:shortcutShortLabel</span>=<span class="hljs-string">&quot;@string/camera&quot;</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">intent</span></span><br><span class="hljs-tag">            <span class="hljs-attr">android:action</span>=<span class="hljs-string">&quot;android.intent.action.VIEW&quot;</span></span><br><span class="hljs-tag">            <span class="hljs-attr">android:targetClass</span>=<span class="hljs-string">&quot;com.huangyuanlove.adaptationhighversion.TakePhotoOrChoosePhotoActivity&quot;</span></span><br><span class="hljs-tag">            <span class="hljs-attr">android:targetPackage</span>=<span class="hljs-string">&quot;com.huangyuanlove.adaptationhighversion&quot;</span> /&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">shortcut</span>&gt;</span><br><br><br>    <span class="hljs-tag">&lt;<span class="hljs-name">shortcut</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:enabled</span>=<span class="hljs-string">&quot;true&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:icon</span>=<span class="hljs-string">&quot;@mipmap/ic_launcher_round&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:shortcutDisabledMessage</span>=<span class="hljs-string">&quot;@string/permission_deny&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:shortcutId</span>=<span class="hljs-string">&quot;about_file&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:shortcutLongLabel</span>=<span class="hljs-string">&quot;@string/file_example&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:shortcutShortLabel</span>=<span class="hljs-string">&quot;@string/file&quot;</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">intent</span></span><br><span class="hljs-tag">            <span class="hljs-attr">android:action</span>=<span class="hljs-string">&quot;android.intent.action.VIEW&quot;</span></span><br><span class="hljs-tag">            <span class="hljs-attr">android:targetClass</span>=<span class="hljs-string">&quot;com.huangyuanlove.adaptationhighversion.FileOperationActivity&quot;</span></span><br><span class="hljs-tag">            <span class="hljs-attr">android:targetPackage</span>=<span class="hljs-string">&quot;com.huangyuanlove.adaptationhighversion&quot;</span> /&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">shortcut</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">shortcut</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:enabled</span>=<span class="hljs-string">&quot;true&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:icon</span>=<span class="hljs-string">&quot;@mipmap/ic_launcher_round&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:shortcutDisabledMessage</span>=<span class="hljs-string">&quot;@string/permission_deny&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:shortcutId</span>=<span class="hljs-string">&quot;notification_example&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:shortcutLongLabel</span>=<span class="hljs-string">&quot;@string/notification_example&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:shortcutShortLabel</span>=<span class="hljs-string">&quot;@string/notification&quot;</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">intent</span></span><br><span class="hljs-tag">            <span class="hljs-attr">android:action</span>=<span class="hljs-string">&quot;android.intent.action.VIEW&quot;</span></span><br><span class="hljs-tag">            <span class="hljs-attr">android:targetClass</span>=<span class="hljs-string">&quot;com.huangyuanlove.adaptationhighversion.NotificationActivity&quot;</span></span><br><span class="hljs-tag">            <span class="hljs-attr">android:targetPackage</span>=<span class="hljs-string">&quot;com.huangyuanlove.adaptationhighversion&quot;</span> /&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">shortcut</span>&gt;</span><br><br>    <span class="hljs-tag">&lt;<span class="hljs-name">shortcut</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:enabled</span>=<span class="hljs-string">&quot;true&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:icon</span>=<span class="hljs-string">&quot;@mipmap/ic_launcher_round&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:shortcutDisabledMessage</span>=<span class="hljs-string">&quot;@string/permission_deny&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:shortcutId</span>=<span class="hljs-string">&quot;saf_example&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:shortcutLongLabel</span>=<span class="hljs-string">&quot;@string/saf_example&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:shortcutShortLabel</span>=<span class="hljs-string">&quot;@string/saf&quot;</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">intent</span></span><br><span class="hljs-tag">            <span class="hljs-attr">android:action</span>=<span class="hljs-string">&quot;android.intent.action.VIEW&quot;</span></span><br><span class="hljs-tag">            <span class="hljs-attr">android:targetClass</span>=<span class="hljs-string">&quot;com.huangyuanlove.adaptationhighversion.SAFActivity&quot;</span></span><br><span class="hljs-tag">            <span class="hljs-attr">android:targetPackage</span>=<span class="hljs-string">&quot;com.huangyuanlove.adaptationhighversion&quot;</span> /&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">shortcut</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">shortcuts</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>这里需要注意的是<code>shortcutDisabledMessage</code>、<code>shortcutLongLabel</code>、<code>shortcutShortLabel</code>属性值只能使用引用，不能直接硬编码。<code>shortcutLongLabel</code>是在长按图标时弹出的快捷方式名称，<code>shortcutShortLabel</code>是讲该快捷方式拖放到桌面后显示的名称。<code>shortcutId</code>是该快捷方式的唯一标识符。</p>
+<p>然后在<code>AndroidManifest.xml</code>文件中配置一下，找到一个Activity，其<code>intent-filter</code>被设置为<code>android.intent.action.MAIN</code>和<code>android.intent.category.LAUNCHER</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">activity</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;.MainActivity&quot;</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">intent-filter</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">action</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;android.intent.action.MAIN&quot;</span> /&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">action</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;android.intent.action.VIEW&quot;</span> /&gt;</span><br><br>    <span class="hljs-tag">&lt;<span class="hljs-name">category</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;android.intent.category.LAUNCHER&quot;</span> /&gt;</span><br>  <span class="hljs-tag">&lt;/<span class="hljs-name">intent-filter</span>&gt;</span><br><br>  <span class="hljs-tag">&lt;<span class="hljs-name">meta-data</span></span><br><span class="hljs-tag">             <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;android.app.shortcuts&quot;</span></span><br><span class="hljs-tag">             <span class="hljs-attr">android:resource</span>=<span class="hljs-string">&quot;@xml/shortcuts&quot;</span> /&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">activity</span>&gt;</span><br></code></pre></td></tr></table></figure>
+</li>
+<li><p>动态注册</p>
+</li>
+</ol>
+<p>算了，看代码吧</p>
+<p>添加新的快捷方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">addShortcut</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.N_MR1) &#123;<br>            <span class="hljs-type">ShortcutManager</span> <span class="hljs-variable">shortcutManager</span> <span class="hljs-operator">=</span> getSystemService(ShortcutManager.class);<br>            <span class="hljs-type">Intent</span> <span class="hljs-variable">intent</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Intent</span>(ShortCutActivity.<span class="hljs-built_in">this</span>,ShortCutActivity.class);<br>            intent.setAction(Intent.ACTION_VIEW);<br>            <span class="hljs-type">ShortcutInfo</span> <span class="hljs-variable">shortcut</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShortcutInfo</span>.Builder(ShortCutActivity.<span class="hljs-built_in">this</span>, <span class="hljs-string">&quot;shortcut&quot;</span>)<br>                    .setIcon(Icon.createWithResource(<span class="hljs-built_in">this</span>, R.mipmap.ic_launcher))<br>                    .setShortLabel( getString( R.string.shortcut))<br>                    .setLongLabel(getString(R.string.shortcut_example))<br>                    .setIntent(intent)<br>                    .build();<br>            shortcutManager.addDynamicShortcuts(Arrays.asList( <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShortcutInfo</span>[]&#123; shortcut&#125;));<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>更新快捷方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">updateShortcut</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.N_MR1) &#123;<br>            <span class="hljs-type">ShortcutManager</span> <span class="hljs-variable">shortcutManager</span> <span class="hljs-operator">=</span> getSystemService(ShortcutManager.class);<br>            <span class="hljs-type">Intent</span> <span class="hljs-variable">intent</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Intent</span>(ShortCutActivity.<span class="hljs-built_in">this</span>,ShortCutActivity.class);<br>            intent.setAction(Intent.ACTION_VIEW);<br>            <span class="hljs-type">ShortcutInfo</span> <span class="hljs-variable">shortcut</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShortcutInfo</span>.Builder(ShortCutActivity.<span class="hljs-built_in">this</span>, <span class="hljs-string">&quot;shortcut&quot;</span>)<br>                    .setIcon(Icon.createWithResource(<span class="hljs-built_in">this</span>, R.mipmap.ic_launcher))<br>                    .setShortLabel( getString( R.string.shortcut) +<span class="hljs-string">&quot;new&quot;</span>)<br>                    .setLongLabel(getString(R.string.shortcut_example) +<span class="hljs-string">&quot;new&quot;</span>)<br>                    .setIntent(intent)<br>                    .build();<br>            shortcutManager.updateShortcuts(Arrays.asList( <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShortcutInfo</span>[]&#123; shortcut&#125;));<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>删除快捷方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">removeShortcut</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.N_MR1) &#123;<br>            <span class="hljs-type">ShortcutManager</span> <span class="hljs-variable">shortcutManager</span> <span class="hljs-operator">=</span> getSystemService(ShortcutManager.class);<br><br>            <span class="hljs-comment">//动态添加并且在桌面创建了快捷方式，删除之前，先disable一下.  或者判断</span><br>            List&lt;ShortcutInfo&gt; shortcutInfos = shortcutManager.getPinnedShortcuts();<br>            <br>            <span class="hljs-keyword">for</span>(ShortcutInfo si : shortcutInfos)&#123;<br>                <span class="hljs-keyword">if</span>(si.getId().equals(<span class="hljs-string">&quot;shortcut&quot;</span>))&#123;<br>                    shortcutManager.disableShortcuts(Arrays.asList(<span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>[]&#123;<span class="hljs-string">&quot;shortcut&quot;</span>&#125;));<br>                &#125;<br>            &#125;<br>            shortcutManager.removeDynamicShortcuts(Arrays.asList(<span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>[]&#123;<span class="hljs-string">&quot;shortcut&quot;</span>&#125;));<br><br>            Toast.makeText(ShortCutActivity.<span class="hljs-built_in">this</span>,<span class="hljs-string">&quot;共&quot;</span> + shortcutInfos.size() +<span class="hljs-string">&quot;个桌面快捷方式&quot;</span>,Toast.LENGTH_SHORT).show();<br><br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>被添加到桌面的快捷方式无法删除(可以从长按菜单中删除，但是桌面上图标无法删除，依然有效)，所以我们需要先查询一个桌面快捷方式有没有我们要删除的，如果有，先设置为不可以，由用户手动删除。设置为不可用时可以添加点击提示语(disableShortcuts的重载方法)</p>
+<p>持续更新</p>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>适配Android高版本系统常见问题</div>
+      <div>https://blog.huangyuanlove.com/2019/04/17/适配Android高版本系统常见问题/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年4月17日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/04/18/flutter%E6%80%A7%E8%83%BD%E7%93%B6%E9%A2%88/" title="flutter性能瓶颈">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">flutter性能瓶颈</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/03/13/flutter-Android%E6%B7%B7%E7%BC%96%E5%8F%8A%E4%BA%92%E7%9B%B8%E8%B0%83%E7%94%A8/" title="flutter-Android混编及互相调用">
+                        <span class="hidden-mobile">flutter-Android混编及互相调用</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '0bb4465f78ce74219f6ca9e53d4911a1'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

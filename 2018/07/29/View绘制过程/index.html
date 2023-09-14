@@ -1,0 +1,675 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="View绘制过程">
+  
+    <meta name="description" content="抄的《Android开发艺术探索》第四章ViewRoot对应于ViewRootImpl类，它是连接WindowManager和DecorView的纽带，View的三大流程均是通过ViewRoot来完成的。在ActivityThread中，当Activity对象被创建完毕后，会将DecorView添加到Window中，同时会创建ViewRootImpl对象，并将ViewRootImpl对象和Deco">
+<meta property="og:type" content="article">
+<meta property="og:title" content="View绘制过程">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2018/07/29/View%E7%BB%98%E5%88%B6%E8%BF%87%E7%A8%8B/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="抄的《Android开发艺术探索》第四章ViewRoot对应于ViewRootImpl类，它是连接WindowManager和DecorView的纽带，View的三大流程均是通过ViewRoot来完成的。在ActivityThread中，当Activity对象被创建完毕后，会将DecorView添加到Window中，同时会创建ViewRootImpl对象，并将ViewRootImpl对象和Deco">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-07-29T14:35:46.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.229Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>View绘制过程 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="View绘制过程"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2018-07-29 22:35" pubdate>
+          2018年7月29日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          19k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">View绘制过程</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>抄的《Android开发艺术探索》第四章<br><code>ViewRoot</code>对应于<code>ViewRootImpl</code>类，它是连接<code>WindowManager</code>和<code>DecorView</code>的纽带，<code>View</code>的三大流程均是通过<code>ViewRoot</code>来完成的。在<code>ActivityThread</code>中，当<code>Activity</code>对象被创建完毕后，会将<code>DecorView</code>添加到<code>Window</code>中，同时会创建<code>ViewRootImpl</code>对象，并将<code>ViewRootImpl</code>对象和<code>DecorView</code>建立关联，<code>View</code>的绘制流程是从<code>ViewRoot</code>的<code>performTraversals</code>方法开始的，它经过<code>measure</code>、<code>layout</code>和<code>draw</code>三个过程才能最终将一个<code>View</code>绘制出来，其中<code>measure</code>用来测量View的宽和高，<code>layout</code>用来确定View在父容器中的放置位置，而<code>draw</code>则负责将View绘制在屏幕上。</p>
+<span id="more"></span>
+<p><code>performTraversals</code>会依次调用<code>performMeasure</code>、p<code>erformLayout</code>和<code>performDraw</code>三个方法，这三个方法分别完成顶级<code>View</code>的<code>measure</code>、<code>layout</code>和<code>draw</code>这三大流程，其中在<code>performMeasure</code>中会调用<code>measure</code>方法，在<code>measure</code>方法中又会调用<code>onMeasure</code>方法，在<code>onMeasure</code>方法中则会对所有的子元素进行<code>measure</code>过程，这个时候<code>measure</code>流程就从父容器传递到子元素中了，这样就完成了一次<code>measure</code>过程。接着子元素会重复父容器的<code>measure</code>过程，如此反复就完成了整个<code>View</code>树的遍历。同理，<code>performLayout</code>和<code>performDraw</code>的传递流程和<code>performMeasure</code>是类似的，唯一不同的是，<code>performDraw</code>的传递过程是在<code>draw</code>方法中通过<code>dispatchDraw</code>来实现的，不过这并没有本质区别。</p>
+<p><code>measure</code>过程决定了<code>View</code>的宽&#x2F;高，<code>Measure</code>完成以后，可以通过<code>getMeasuredWidth</code>和<code>getMeasuredHeight</code>方法来获取到<code>View</code>测量后的宽&#x2F;高，在几乎所有的情况下它都等同于<code>View</code>最终的宽&#x2F;高，但是特殊情况除外，这点在本章后面会进行说明。<code>Layout</code>过程决定了<code>View</code>的四个顶点的坐标和实际的View的宽&#x2F;高，完成以后，可以通过<code>getTop</code>、<code>getBottom</code>、<code>getLeft</code>和<code>getRight</code>来拿到<code>View</code>的四个顶点的位置，并可以通过<code>getWidth</code>和<code>getHeight</code>方法来拿到<code>View</code>的最终宽&#x2F;高。<code>Draw</code>过程则决定了<code>View</code>的显示，只有<code>draw</code>方法完成以后<code>View</code>的内容才能呈现在屏幕上。</p>
+<p><code>DecorView</code>作为顶级<code>View</code>，一般情况下它内部会包含一个竖直方向的<code>LinearLayout</code>，在这个<code>LinearLayout</code>里面有上下两个部分（具体情况和Android版本及主题有关），上面是标题栏，下面是内容栏。在<code>Activity</code>中我们通过<code>setContentView</code>所设置的布局文件其实就是被加到内容栏之中的，而内容栏的id是<code>content</code>，因此可以理解为Activity指定布局的方法不叫setview而叫<code>setContentView</code>，因为我们的布局的确加到了<code>id</code>为<code>content</code>的<code>FrameLayout</code>中。如何得到<code>content</code>呢？可以这样：<code>ViewGroup  content=  findViewById(R.android.id.content)</code>。如何得到我们设置的<code>View</code>呢？可以这样：<code>content.getChildAt(0)</code>。同时，通过源码我们可以知道，<code>DecorView</code>其实是一个<code>FrameLayout</code>，<code>View</code>层的事件都先经过<code>DecorView</code>，然后才传递给我们的View。</p>
+<h4 id="MeasureSpec"><a href="#MeasureSpec" class="headerlink" title="MeasureSpec"></a>MeasureSpec</h4><p><code>MeasureSpec</code>在很大程度上决定了一个View的尺寸规格，之所以说是很大程度上是因为这个过程还受父容器的影响，因为父容器影响View的<code>MeasureSpec</code>的创建过程。在测量过程中，系统会将View的<code>LayoutParams</code>根据父容器所施加的规则转换成对应的<code>MeasureSpec</code>，然后再根据这个<code>measureSpec</code>来测量出<code>View</code>的宽&#x2F;高。这里的宽&#x2F;高是测量宽&#x2F;高，不一定等于<code>View</code>的最终宽&#x2F;高。<br><code>MeasureSpec</code>代表一个32位int值，高2位代表<code>SpecMode</code>，低30位代表<code>SpecSize</code>，<code>SpecMode</code>是指测量模式，而<code>SpecSize</code>是指在某种测量模式下的规格大小。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">MODE_SHIFT</span> <span class="hljs-operator">=</span> <span class="hljs-number">30</span>;<br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">MODE_MASK</span> <span class="hljs-operator">=</span> <span class="hljs-number">0x3</span> &lt;&lt; MODE_SHIFT;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">UNSPECIFIED</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span> &lt;&lt; MODE_SHIFT;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">EXACTLY</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span> &lt;&lt; MODE_SHIFT;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">AT_MOST</span> <span class="hljs-operator">=</span> <span class="hljs-number">2</span> &lt;&lt; MODE_SHIFT;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">makeMeasureSpec</span><span class="hljs-params">(<span class="hljs-type">int</span> size,<span class="hljs-type">int</span> mode)</span> &#123;<br>    <span class="hljs-keyword">if</span> (sUseBrokenMakeMeasureSpec) &#123;<br>        <span class="hljs-keyword">return</span> size + mode;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">return</span> (size &amp; ~MODE_MASK) | (mode &amp; MODE_MASK);<br>    &#125;<br>&#125;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getMode</span><span class="hljs-params">(<span class="hljs-type">int</span> measureSpec)</span> &#123;<br>    <span class="hljs-keyword">return</span> (measureSpec &amp; MODE_MASK);<br>&#125;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getSize</span><span class="hljs-params">(<span class="hljs-type">int</span> measureSpec)</span> &#123;<br>    <span class="hljs-keyword">return</span> (measureSpec &amp; ~MODE_MASK);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><code>MeasureSpec</code>通过将<code>SpecMode</code>和<code>SpecSize</code>打包成一个int值来避免过多的对象内存分配，为了方便操作，其提供了打包和解包方法。<code>SpecMode</code>和<code>SpecSize</code>也是一个int值，一组<code>SpecMode</code>和<code>SpecSize</code>可以打包为一个<code>MeasureSpec</code>，而一个<code>MeasureSpec</code>可以通过解包的形式来得出其原始的<code>SpecMode</code>和<code>SpecSize</code>，需要注意的是这里提到的<code>MeasureSpec</code>是指<code>MeasureSpec</code>所代表的int值，而并非<code>MeasureSpec</code>本身。<br>SpecMode有三类，每一类都表示特殊的含义，如下所示。<br>** UNSPECIFIED **<br>父容器不对View有任何限制，要多大给多大，这种情况一般用于系统内部，表示一种测量的状态。<br>** EXACTLY **<br>父容器已经检测出View所需要的精确大小，这个时候View的最终大小就是SpecSize所指定的值。它对应于LayoutParams中的match_parent和具体的数值这两种模式。<br>** AT_MOST **<br>父容器指定了一个可用大小即SpecSize，View的大小不能大于这个值，具体是什么值要看不同View的具体实现。它对应于LayoutParams中的wrap_content。</p>
+<h6 id="MeasureSpec和LayoutParams"><a href="#MeasureSpec和LayoutParams" class="headerlink" title="MeasureSpec和LayoutParams"></a>MeasureSpec和LayoutParams</h6><p>在View测量的时候，系统会将<code>LayoutParams</code>在父容器的约束下转换成对应的<code>MeasureSpec</code>，然后再根据这个<code>MeasureSpec</code>来确定View测量后的宽&#x2F;高。需要注意的是，<code>MeasureSpec</code>不是唯一由<code>LayoutParams</code>决定的，<code>LayoutParams</code>需要和父容器一起才能决定<code>View</code>的<code>MeasureSpec</code>，从而进一步决定View的宽&#x2F;高。另外，对于<code>顶级View</code>（即DecorView）和<code>普通View</code>来说，<code>MeasureSpec</code>的转换过程略有不同。对于<code>DecorView</code>，其<code>MeasureSpec</code>由窗口的尺寸和其自身的<code>LayoutParams</code>来共同确定；对于普通View，其<code>MeasureSpec</code>由父容器的<code>MeasureSpec</code>和自身的<code>LayoutParams</code>来共同决定，<code>MeasureSpec</code>一旦确定后，<code>onMeasure</code>中就可以确定<code>View</code>的测量宽&#x2F;高。<br>对于<code>DecorView</code>来说，在<code>ViewRootImpl</code>中的<code>measureHierarchy</code>方法中有如下一段代码，它展示了<code>DecorView</code>的<code>MeasureSpec</code>的创建过程，其中<code>desiredWindowWidth</code>和<code>desiredWindowHeight</code>是屏幕的尺寸:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs java">childWidthMeasureSpec = getRootMeasureSpec(desiredWindowWidth,lp.width);<br>childHeightMeasureSpec = getRootMeasureSpec(desiredWindowHeight,lp.height);<br>performMeasure(childWidthMeasureSpec,childHeightMeasureSpec);<br><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getRootMeasureSpec</span><span class="hljs-params">(<span class="hljs-type">int</span> windowSize,<span class="hljs-type">int</span> rootDimension)</span> &#123;<br>    <span class="hljs-type">int</span> measureSpec;<br>    <span class="hljs-keyword">switch</span> (rootDimension) &#123;<br>        <span class="hljs-keyword">case</span> ViewGroup.LayoutParams.MATCH_PARENT:<br>            <span class="hljs-comment">// Window can&#x27;t resize. Force root view to be windowSize.</span><br>            measureSpec = MeasureSpec.makeMeasureSpec(windowSize,MeasureSpec.EXACTLY);<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> ViewGroup.LayoutParams.WRAP_CONTENT:<br>            <span class="hljs-comment">// Window can resize. Set max size for root view.</span><br>            measureSpec = MeasureSpec.makeMeasureSpec(windowSize,MeasureSpec.AT_MOST);<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">default</span>:<br>            <span class="hljs-comment">// Window wants to be an exact size. Force root view to be that size.</span><br>            measureSpec = MeasureSpec.makeMeasureSpec(rootDimension,Measure-Spec.EXACTLY);<br>            <span class="hljs-keyword">break</span>;<br>    &#125;<br>    <span class="hljs-keyword">return</span> measureSpec;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>通过上述代码，<code>DecorView</code>的<code>MeasureSpec</code>的产生过程就很明确了，具体来说其遵守如下规则，根据它的<code>LayoutParams</code>中的宽&#x2F;高的参数来划分。</p>
+<ul>
+<li>LayoutParams.MATCH_PARENT：精确模式，大小就是窗口的大小；</li>
+<li>LayoutParams.WRAP_CONTENT：最大模式，大小不定，但是不能超过窗口的大小；</li>
+<li>固定大小（比如100dp）：精确模式，大小为LayoutParams中指定的大小。<br>对于普通<code>View</code>来说，这里是指我们布局中的<code>View</code>，<code>View</code>的<code>measure</code>过程由<code>ViewGroup</code>传递而来，先看一下<code>ViewGroup</code>的<code>measureChildWithMargins</code>方法：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">measureChildWithMargins</span><span class="hljs-params">(View child,<span class="hljs-type">int</span> parentWidthMeasureSpec,<span class="hljs-type">int</span> widthUsed,<span class="hljs-type">int</span> parentHeightMeasureSpec,<span class="hljs-type">int</span> heightUsed)</span> &#123;<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">MarginLayoutParams</span> <span class="hljs-variable">lp</span> <span class="hljs-operator">=</span> (MarginLayoutParams) child.getLayout-Params();<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">childWidthMeasureSpec</span> <span class="hljs-operator">=</span> getChildMeasureSpec(parentWidthMeasureSpec,mPaddingLeft + mPaddingRight + lp.leftMargin + lp.rightMargin+ widthUsed,lp.width);<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">childHeightMeasureSpec</span> <span class="hljs-operator">=</span> getChildMeasureSpec(parentHeight-MeasureSpec,mPaddingTop + mPaddingBottom + lp.topMargin + lp.bottomMargin+ heightUsed,lp.height);<br>    child.measure(childWidthMeasureSpec,childHeightMeasureSpec);<br>&#125;<br></code></pre></td></tr></table></figure>
+上述方法会对子元素进行<code>measure</code>，在调用子元素的<code>measure</code>方法之前会先通过<code>getChildMeasureSpec</code>方法来得到子元素的<code>MeasureSpec</code>。从代码来看，很显然，子元素的<code>MeasureSpec</code>的创建与父容器的<code>MeasureSpec</code>和子元素本身的<code>LayoutParam</code>s有关，此外还和<code>View</code>的<code>margin</code>及<code>padding</code>有关，具体情况可以看一下<code>ViewGroup</code>的<code>getChildMeasureSpec</code>方法，如下所示:<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getChildMeasureSpec</span><span class="hljs-params">(<span class="hljs-type">int</span> spec,<span class="hljs-type">int</span> padding,<span class="hljs-type">int</span> child-Dimension)</span> &#123;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">specMode</span> <span class="hljs-operator">=</span> MeasureSpec.getMode(spec);<br>    <span class="hljs-type">int</span> <span class="hljs-variable">specSize</span> <span class="hljs-operator">=</span> MeasureSpec.getSize(spec);<br>    <span class="hljs-type">int</span> <span class="hljs-variable">size</span> <span class="hljs-operator">=</span> Math.max(<span class="hljs-number">0</span>,specSize -padding);<br>    <span class="hljs-type">int</span> <span class="hljs-variable">resultSize</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">resultMode</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">switch</span> (specMode) &#123;<br>        <span class="hljs-comment">// Parent has imposed an exact size on us</span><br>        <span class="hljs-keyword">case</span> MeasureSpec.EXACTLY:<br>            <span class="hljs-keyword">if</span> (childDimension =&gt; <span class="hljs-number">0</span>) &#123;<br>                resultSize = childDimension;<br>                resultMode = MeasureSpec.EXACTLY;<br>            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (childDimension == LayoutParams.MATCH_PARENT) &#123;<br>                <span class="hljs-comment">// Child wants to be our size. So be it.</span><br>                resultSize = size;<br>                resultMode = MeasureSpec.EXACTLY;<br>            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (childDimension == LayoutParams.WRAP_CONTENT) &#123;<br>                <span class="hljs-comment">// Child wants to determine its own size. It can&#x27;t be</span><br>                <span class="hljs-comment">// bigger than us.</span><br>                resultSize = size;<br>                resultMode = MeasureSpec.AT_MOST;<br>            &#125;<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-comment">// Parent has imposed a maximum size on us</span><br>        <span class="hljs-keyword">case</span> MeasureSpec.AT_MOST:<br>            <span class="hljs-keyword">if</span> (childDimension =&gt; <span class="hljs-number">0</span>) &#123;<br>                <span class="hljs-comment">// Child wants a specific size... so be it</span><br>                resultSize = childDimension;<br>                resultMode = MeasureSpec.EXACTLY;<br>            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (childDimension == LayoutParams.MATCH_PARENT) &#123;<br>                <span class="hljs-comment">// Child wants to be our size,but our size is not fixed.</span><br>                <span class="hljs-comment">// Constrain child to not be bigger than us.</span><br>                resultSize = size;<br>                resultMode = MeasureSpec.AT_MOST;<br>            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (childDimension == LayoutParams.WRAP_CONTENT) &#123;<br>                <span class="hljs-comment">// Child wants to determine its own size. It can&#x27;t be</span><br>                <span class="hljs-comment">// bigger than us.</span><br>                resultSize = size;<br>                resultMode = MeasureSpec.AT_MOST;<br>            &#125;<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-comment">// Parent asked to see how big we want to be</span><br>        <span class="hljs-keyword">case</span> MeasureSpec.UNSPECIFIED:<br>            <span class="hljs-keyword">if</span> (childDimension =&gt; <span class="hljs-number">0</span>) &#123;<br>                <span class="hljs-comment">// Child wants a specific size... let him have it</span><br>                resultSize = childDimension;<br>                resultMode = MeasureSpec.EXACTLY;<br>            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (childDimension == LayoutParams.MATCH_PARENT) &#123;<br>                <span class="hljs-comment">// Child wants to be our size... find out how big it should</span><br>                <span class="hljs-comment">// be</span><br>                resultSize = <span class="hljs-number">0</span>;<br>                resultMode = MeasureSpec.UNSPECIFIED;<br>            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (childDimension == LayoutParams.WRAP_CONTENT) &#123;<br>                <span class="hljs-comment">// Child wants to determine its own size.... find out how</span><br>                <span class="hljs-comment">// big it should be</span><br>                resultSize = <span class="hljs-number">0</span>;<br>                resultMode = MeasureSpec.UNSPECIFIED;<br>            &#125;<br>            <span class="hljs-keyword">break</span>;<br>        &#125;<br>    <span class="hljs-keyword">return</span> MeasureSpec.makeMeasureSpec(resultSize,resultMode);<br>&#125;<br></code></pre></td></tr></table></figure>
+它的主要作用是根据父容器的<code>MeasureSpec</code>同时结合View本身的<code>LayoutParams</code>来确定子元素的<code>MeasureSpec</code>，参数中的<code>padding</code>是指父容器中已占用的空间大小，因此子元素可用的大小为父容器的尺寸减去<code>padding</code>，具体代码如下所示:<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">int</span> <span class="hljs-variable">specSize</span> <span class="hljs-operator">=</span> MeasureSpec.getSize(spec);<br><span class="hljs-type">int</span> <span class="hljs-variable">size</span> <span class="hljs-operator">=</span> Math.max(<span class="hljs-number">0</span>,specSize -padding);<br></code></pre></td></tr></table></figure>
+这里简单说一下，当View采用固定宽&#x2F;高的时候，不管父容器的<code>MeasureSpec</code>是什么，<code>View</code>的<code>MeasureSpec</code>都是精确模式并且其大小遵循<code>Layoutparams</code>中的大小。当<code>View</code>的宽&#x2F;高是<code>match_parent</code>时，如果父容器的模式是精准模式，那么<code>View</code>也是精准模式并且其大小是父容器的剩余空间；如果父容器是最大模式，那么<code>View</code>也是最大模式并且其大小不会超过父容器的剩余空间。当<code>View</code>的宽&#x2F;高是<code>wrap_content</code>时，不管父容器的模式是精准还是最大化，<code>View</code>的模式总是最大化并且大小不能超过父容器的剩余空间。在我们的分析中漏掉了<code>UNSPECIFIED</code>模式，那是因为这个模式主要用于系统内部多次Measure的情形，一般来说，我们不需要关注此模式。</li>
+</ul>
+<h4 id="View的工作流程"><a href="#View的工作流程" class="headerlink" title="View的工作流程"></a>View的工作流程</h4><h5 id="measure过程"><a href="#measure过程" class="headerlink" title="measure过程"></a>measure过程</h5><p>measure过程要分情况来看，如果只是一个原始的<code>View</code>，那么通过<code>measure</code>方法就完成了其测量过程，如果是一个<code>ViewGroup</code>，除了完成自己的测量过程外，还会遍历去调用所有子元素的<code>measure</code>方法，各个子元素再递归去执行这个流程。<br>** View的measure过程 **<br><code>View</code>的<code>measure</code>过程由其<code>measure</code>方法来完成，<code>measure</code>方法是一个<code>final</code>类型的方法，这意味着子类不能重写此方法，在<code>View</code>的<code>measure</code>方法中会去调用<code>View</code>的<code>onMeasure</code>方法，因此只需要看<code>onMeasure</code>的实现即可：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onMeasure</span><span class="hljs-params">(<span class="hljs-type">int</span> widthMeasureSpec,<span class="hljs-type">int</span> heightMeasureSpec)</span> &#123;<br>    setMeasuredDimension(getDefaultSize(getSuggestedMinimumWidth(),widthMeasureSpec),getDefaultSize(getSuggestedMinimumHeight(),heightMeasureSpec));<br>&#125;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getDefaultSize</span><span class="hljs-params">(<span class="hljs-type">int</span> size,<span class="hljs-type">int</span> measureSpec)</span> &#123;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> size;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">specMode</span> <span class="hljs-operator">=</span> MeasureSpec.getMode(measureSpec);<br>    <span class="hljs-type">int</span> <span class="hljs-variable">specSize</span> <span class="hljs-operator">=</span> MeasureSpec.getSize(measureSpec);<br>    <span class="hljs-keyword">switch</span> (specMode) &#123;<br>        <span class="hljs-keyword">case</span> MeasureSpec.UNSPECIFIED:<br>            result = size;<br>        <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> MeasureSpec.AT_MOST:<br>        <span class="hljs-keyword">case</span> MeasureSpec.EXACTLY:<br>            result = specSize;<br>        <span class="hljs-keyword">break</span>;<br>    &#125;<br>    <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>可以看出，<code>getDefaultSize</code>这个方法的逻辑很简单，对于我们来说，我们只需要看<code>AT_MOST</code>和<code>EXACTLY</code>这两种情况。简单地理解，其实<code>getDefaultSize</code>返回的大小就是<code>measureSpec</code>中的<code>specSize</code>，而这个<code>specSize</code>就是<code>View</code>测量后的大小，这里多次提到测量后的大小，是因为<code>View</code>最终的大小是在<code>layout</code>阶段确定的，所以这里必须要加以区分，但是几乎所有情况下<code>View</code>的测量大小和最终大小是相等的。<br>至于<code>UNSPECIFIED</code>这种情况，一般用于系统内部的测量过程，在这种情况下，<code>View</code>的大小为<code>getDefaultSize</code>的第一个参数<code>size</code>，即宽&#x2F;高分别为<code>getSuggestedMinimumWidth</code>和<code>getSuggestedMinimumHeight</code>这两个方法的返回值，看一下它们的源码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">protected</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getSuggestedMinimumWidth</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">return</span> (mBackground == <span class="hljs-literal">null</span>) ? mMinWidth : max(mMinWidth,mBackground.getMinimumWidth());<br>&#125;<br><span class="hljs-keyword">protected</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getSuggestedMinimumHeight</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">return</span> (mBackground == <span class="hljs-literal">null</span>) ? mMinHeight : max(mMinHeight,mBackground.getMinimumHeight());<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这里只分析<code>getSuggestedMinimumWidth</code>方法的实现，<code>getSuggestedMinimumHeight</code>和它的实现原理是一样的。从<code>getSuggestedMinimumWidth</code>的代码可以看出，如果<code>View</code>没有设置背景，那么<code>View</code>的宽度为<code>mMinWidth</code>，而<code>mMinWidth</code>对应于<code>android:minWidth</code>这个属性所指定的值，因此<code>View</code>的宽度即为<code>android:minWidth</code>属性所指定的值。这个属性如果不指定，那么<code>mMinWidth</code>则默认为0；如果<code>View</code>指定了背景，则<code>View</code>的宽度为<code>max(mMinWidth,mBackground.getMinimumWidth())</code>。<code>mMinWidth</code>的含义我们已经知道了，那么<code>mBackground.getMinimumWidth()</code>是什么呢？我们看一下<code>Drawable</code>的<code>getMinimumWidth</code>方法，如下所示:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getMinimumWidth</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">intrinsicWidth</span> <span class="hljs-operator">=</span> getIntrinsicWidth();<br>    <span class="hljs-keyword">return</span> intrinsicWidth &gt; <span class="hljs-number">0</span> ? intrinsicWidth : <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>可以看出，<code>getMinimumWidth</code>返回的就是<code>Drawable</code>的原始宽度，前提是这个<code>Drawable</code>有原始宽度，否则就返回0。<br>这里再总结一下<code>getSuggestedMinimumWidth</code>的逻辑：如果<code>View</code>没有设置背景，那么返回<code>android:minWidth</code>这个属性所指定的值，这个值可以为0；如果<code>View</code>设置了背景，则返回<code>android:minWidth</code>和背景的最小宽度这两者中的最大值，<code>getSuggestedMinimumWidth</code>和<code>getSuggestedMinimumHeight</code>的返回值就是<code>View</code>在<code>UNSPECIFIED</code>情况下的测量宽&#x2F;高。<br>从<code>getDefaultSize</code>方法的实现来看，<code>View</code>的宽&#x2F;高由<code>specSize</code>决定，所以我们可以得出如下结论：直接继承<code>View</code>的自定义控件需要重写<code>onMeasure</code>方法并设置<code>wrap_content</code>时的自身大小，否则在布局中使用<code>wrap_content</code>就相当于使用<code>match_parent</code>。<br>从上述代码中我们知道，如果<code>View</code>在布局中使用<code>wrap_content</code>，那么它的<code>specMode</code>是<code>AT_MOST</code>模式，在这种模式下，它的宽&#x2F;高等于<code>specSize</code>；这种情况下<code>View</code>的<code>specSize</code>是p<code>arentSize</code>，而<code>parentSize</code>是父容器中目前可以使用的大小，也就是父容器当前剩余的空间大小。很显然，<code>View</code>的宽&#x2F;高就等于父容器当前剩余的空间大小，这种效果和在布局中使用<code>match_parent</code>完全一致。如何解决这个问题呢？也很简单，代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onMeasure</span><span class="hljs-params">(<span class="hljs-type">int</span> widthMeasureSpec,<span class="hljs-type">int</span> heightMeasureSpec)</span> &#123;<br>    <span class="hljs-built_in">super</span>.onMeasure(widthMeasureSpec,heightMeasureSpec);<br>    <span class="hljs-type">int</span> <span class="hljs-variable">widthSpecMode</span> <span class="hljs-operator">=</span> MeasureSpec.getMode(widthMeasureSpec);<br>    <span class="hljs-type">int</span> <span class="hljs-variable">widthSpecSize</span> <span class="hljs-operator">=</span> MeasureSpec.getSize(widthMeasureSpec);<br>    <span class="hljs-type">int</span> <span class="hljs-variable">heightSpecMode</span> <span class="hljs-operator">=</span> MeasureSpec.getMode(heightMeasureSpec);<br>    <span class="hljs-type">int</span> <span class="hljs-variable">heightSpecSize</span> <span class="hljs-operator">=</span> MeasureSpec.getSize(heightMeasureSpec);<br>    <span class="hljs-keyword">if</span> (widthSpecMode == MeasureSpec.AT_MOST &amp;&amp; heightSpecMode == MeasureSpec.AT_MOST) &#123;<br>        setMeasuredDimension(mWidth,mHeight);<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (widthSpecMode == MeasureSpec.AT_MOST) &#123;<br>        setMeasuredDimension(mWidth,heightSpecSize);<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (heightSpecMode == MeasureSpec.AT_MOST) &#123;<br>        setMeasuredDimension(widthSpecSize,mHeight);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>在上面的代码中，我们只需要给<code>View</code>指定一个默认的内部宽&#x2F;高（<code>mWidth</code>和<code>mHeight</code>），并在<code>wrap_content</code>时设置此宽&#x2F;高即可。对于非<code>wrap_content</code>情形，我们沿用系统的测量值即可，至于这个默认的内部宽&#x2F;高的大小如何指定，这个没有固定的依据，根据需要灵活指定即可。如果查看<code>TextView</code>、<code>ImageView</code>等的源码就可以知道，针对<code>wrap_content</code>情形，它们的<code>onMeasure</code>方法均做了特殊处理。</p>
+<p>** ViewGroup的measure过程 **<br>对于<code>ViewGroup</code>来说，除了完成自己的<code>measure</code>过程以外，还会遍历去调用所有子元素的<code>measure</code>方法，各个子元素再递归去执行这个过程。和<code>View</code>不同的是，<code>ViewGroup</code>是一个抽象类，因此它没有重写<code>View</code>的<code>onMeasure</code>方法，但是它提供了一个叫<code>measureChildren</code>的方法，如下所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">measureChildren</span><span class="hljs-params">(<span class="hljs-type">int</span> widthMeasureSpec,<span class="hljs-type">int</span> heightMeasureSpec)</span> &#123;<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">size</span> <span class="hljs-operator">=</span> mChildrenCount;<br>    <span class="hljs-keyword">final</span> View[] children = mChildren;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; size; ++i) &#123;<br>        <span class="hljs-keyword">final</span> <span class="hljs-type">View</span> <span class="hljs-variable">child</span> <span class="hljs-operator">=</span> children[i];<br>        <span class="hljs-keyword">if</span> ((child.mViewFlags &amp; VISIBILITY_MASK) != GONE) &#123;<br>            measureChild(child,widthMeasureSpec,heightMeasureSpec);<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>从上述代码来看，<code>ViewGroup</code>在<code>measure</code>时，会对每一个子元素进行<code>measure</code>，<code>measureChild</code>这个方法的实现也很好理解，如下所示</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">measureChild</span><span class="hljs-params">(View child,<span class="hljs-type">int</span> parentWidthMeasureSpec,<span class="hljs-type">int</span> parentHeightMeasureSpec)</span> &#123;<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">LayoutParams</span> <span class="hljs-variable">lp</span> <span class="hljs-operator">=</span> child.getLayoutParams();<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">childWidthMeasureSpec</span> <span class="hljs-operator">=</span> getChildMeasureSpec(parentWidth-MeasureSpec,mPaddingLeft + mPaddingRight,lp.width);<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">childHeightMeasureSpec</span> <span class="hljs-operator">=</span> getChildMeasureSpec(parentHeight-MeasureSpec,mPaddingTop + mPaddingBottom,lp.height);<br>    child.measure(childWidthMeasureSpec,childHeightMeasureSpec);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>很显然，<code>measureChild</code>的思想就是取出子元素的<code>LayoutParams</code>，然后再通过<code>getChildMeasureSpec</code>来创建子元素的<code>MeasureSpec</code>，接着将<code>MeasureSpec</code>直接传递给<code>View</code>的<code>measure</code>方法来进行测量。我们知道，<code>ViewGroup</code>并没有定义其测量的具体过程，这是因为<code>ViewGroup</code>是一个抽象类，其测量过程的<code>onMeasure</code>方法需要各个子类去具体实现，比如<code>LinearLayout</code>、<code>RelativeLayout</code>等。</p>
+<h5 id="layout过程"><a href="#layout过程" class="headerlink" title="layout过程"></a>layout过程</h5><p><code>Layout</code>的作用是<code>ViewGroup</code>用来确定子元素的位置，当<code>ViewGroup</code>的位置被确定后，它在<code>onLayout</code>中会遍历所有的子元素并调用其<code>layout</code>方法，在<code>layout</code>方法中<code>onLayout</code>方法又会被调用。<code>Layout</code>过程和<code>measure</code>过程相比就简单多了，<code>layout</code>方法确定<code>View</code>本身的位置，而<code>onLayout</code>方法则会确定所有子元素的位置，先看<code>View</code>的<code>layout</code>方法，如下所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">layout</span><span class="hljs-params">(<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> t,<span class="hljs-type">int</span> r,<span class="hljs-type">int</span> b)</span> &#123;<br>    <span class="hljs-keyword">if</span> ((mPrivateFlags3 &amp; PFLAG3_MEASURE_NEEDED_BEFORE_LAYOUT) != <span class="hljs-number">0</span>) &#123;<br>        onMeasure(mOldWidthMeasureSpec,mOldHeightMeasureSpec);<br>        mPrivateFlags3 &amp;= ~PFLAG3_MEASURE_NEEDED_BEFORE_LAYOUT;<br>    &#125;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">oldL</span> <span class="hljs-operator">=</span> mLeft;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">oldT</span> <span class="hljs-operator">=</span> mTop;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">oldB</span> <span class="hljs-operator">=</span> mBottom;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">oldR</span> <span class="hljs-operator">=</span> mRight;<br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">changed</span> <span class="hljs-operator">=</span> isLayoutModeOptical(mParent) ?setOpticalFrame(l,t,r,b) : setFrame(l,t,r,b);<br>    <span class="hljs-keyword">if</span> (changed || (mPrivateFlags &amp; PFLAG_LAYOUT_REQUIRED) == PFLAG_LAYOUT_REQUIRED) &#123;<br>        onLayout(changed,l,t,r,b);<br>        mPrivateFlags &amp;= ~PFLAG_LAYOUT_REQUIRED;<br>        <span class="hljs-type">ListenerInfo</span> <span class="hljs-variable">li</span> <span class="hljs-operator">=</span> mListenerInfo;<br>        <span class="hljs-keyword">if</span> (li != <span class="hljs-literal">null</span> &amp;&amp; li.mOnLayoutChangeListeners != <span class="hljs-literal">null</span>) &#123;<br>            ArrayList&lt;OnLayoutChangeListener&gt; listenersCopy =(ArrayList&lt;OnLayoutChangeListener&gt;)li.mOnLayout-ChangeListeners.clone();<br>            <span class="hljs-type">int</span> <span class="hljs-variable">numListeners</span> <span class="hljs-operator">=</span> listenersCopy.size();<br>            <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; numListeners; ++i) &#123;<br>                listenersCopy.get(i).onLayoutChange(<span class="hljs-built_in">this</span>,l,t,r,b,oldL,oldT,oldR,oldB);<br>            &#125;<br>        &#125;<br>    &#125;<br>    mPrivateFlags &amp;= ~PFLAG_FORCE_LAYOUT;<br>    mPrivateFlags3 |= PFLAG3_IS_LAID_OUT;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><code>layout</code>方法的大致流程如下：首先会通过<code>setFrame</code>方法来设定<code>View</code>的四个顶点的位置，即初始化<code>mLeft</code>、<code>mRight</code>、<code>mTop</code>和<code>mBottom</code>这四个值，<code>View</code>的四个顶点一旦确定，那么<code>View</code>在父容器中的位置也就确定了；接着会调用<code>onLayout</code>方法，这个方法的用途是父容器确定子元素的位置，和<code>onMeasure</code>方法类似，<code>onLayout</code>的具体实现同样和具体的布局有关，所以<code>View</code>和<code>ViewGroup</code>均没有真正实现<code>onLayout</code>方法。接下来，我们可以看一下<code>LinearLayout</code>的<code>onLayout</code>方法，如下所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onLayout</span><span class="hljs-params">(<span class="hljs-type">boolean</span> changed,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> t,<span class="hljs-type">int</span> r,<span class="hljs-type">int</span> b)</span> &#123;<br>    <span class="hljs-keyword">if</span> (mOrientation == VERTICAL) &#123;<br>        layoutVertical(l,t,r,b);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        layoutHorizontal(l,t,r,b);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><code>LinearLayout</code>中<code>onLayout</code>的实现逻辑和<code>onMeasure</code>的实现逻辑类似，这里选择<code>layoutVertical</code>继续讲解，为了更好地理解其逻辑，这里只给出了主要的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">void</span> <span class="hljs-title function_">layoutVertical</span><span class="hljs-params">(<span class="hljs-type">int</span> left,<span class="hljs-type">int</span> top,<span class="hljs-type">int</span> right,<span class="hljs-type">int</span> bottom)</span> &#123;<br>    ......<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">count</span> <span class="hljs-operator">=</span> getVirtualChildCount();<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; count; i++) &#123;<br>        <span class="hljs-keyword">final</span> <span class="hljs-type">View</span> <span class="hljs-variable">child</span> <span class="hljs-operator">=</span> getVirtualChildAt(i);<br>        <span class="hljs-keyword">if</span> (child == <span class="hljs-literal">null</span>) &#123;<br>            childTop += measureNullChild(i);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (child.getVisibility() != GONE) &#123;<br>            <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">childWidth</span> <span class="hljs-operator">=</span> child.getMeasuredWidth();<br>            <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">childHeight</span> <span class="hljs-operator">=</span> child.getMeasuredHeight();<br>            <span class="hljs-keyword">final</span> LinearLayout.<span class="hljs-type">LayoutParams</span> <span class="hljs-variable">lp</span> <span class="hljs-operator">=</span>(LinearLayout.LayoutParams) child.getLayoutParams();<br>            ......<br>            <span class="hljs-keyword">if</span> (hasDividerBeforeChildAt(i)) &#123;<br>                childTop += mDividerHeight;<br>            &#125;<br>            childTop += lp.topMargin;<br>            setChildFrame(child,childLeft,childTop + getLocationOffset(child),childWidth,childHeight);<br>            childTop += childHeight + lp.bottomMargin + getNextLocation-Offset(child);<br>            i += getChildrenSkipCount(child,i);<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这里分析一下<code>layoutVertical</code>的代码逻辑，可以看到，此方法会遍历所有子元素并调用<code>setChildFrame</code>方法来为子元素指定对应的位置，其中<code>childTop</code>会逐渐增大，这就意味着后面的子元素会被放置在靠下的位置，这刚好符合竖直方向的<code>LinearLayout</code>的特性。至于<code>setChildFrame</code>，它仅仅是调用子元素的<code>layout</code>方法而已，这样父元素在<code>layout</code>方法中完成自己的定位以后，就通过<code>onLayout</code>方法去调用子元素的<code>layout</code>方法，子元素又会通过自己的<code>layout</code>方法来确定自己的位置，这样一层一层地传递下去就完成了整个<code>View</code>树的<code>layout</code>过程。<code>setChildFrame</code>方法的实现如下所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setChildFrame</span><span class="hljs-params">(View child,<span class="hljs-type">int</span> left,<span class="hljs-type">int</span> top,<span class="hljs-type">int</span> width,<span class="hljs-type">int</span> height)</span> &#123;<br>    child.layout(left,top,left + width,top + height);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>我们注意到，setChildFrame中的width和height实际上就是子元素的测量宽&#x2F;高，从下面的代码可以看出这一点：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">childWidth</span> <span class="hljs-operator">=</span> child.getMeasuredWidth();<br><span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">childHeight</span> <span class="hljs-operator">=</span> child.getMeasuredHeight();<br>setChildFrame(child,childLeft,childTop + getLocationOffset(child),childWidth,childHeight);<br></code></pre></td></tr></table></figure>
+
+<p>而在<code>layout</code>方法中会通过<code>setFrame</code>去设置子元素的四个顶点的位置，在<code>setFrame</code>中有如下几句赋值语句，这样一来子元素的位置就确定了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java">mLeft = left;<br>mTop = top;<br>mRight = right;<br>mBottom = bottom;<br></code></pre></td></tr></table></figure>
+<p><code>View</code>的测量宽&#x2F;高和最终&#x2F;宽高有什么区别？这个问题可以具体为：<code>View</code>的<code>getMeasuredWidth</code>和<code>getWidth</code>这两个方法有什么区别，至于<code>getMeasuredHeight</code>和<code>getHeight</code>的区别和前两者完全一样。为了回答这个问题，首先，我们看一下getwidth和getHeight这两个方法的具体实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getWidth</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">return</span> mRight -mLeft;<br>&#125;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getHeight</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">return</span> mBottom -mTop;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>从<code>getWidth</code>和<code>getHeight</code>的源码再结合<code>mLeft</code>、<code>mRight</code>、<code>mTop</code>和<code>mBottom</code>这四个变量的赋值过程来看，<code>getWidth</code>方法的返回值刚好就是<code>View</code>的测量宽度，而<code>getHeight</code>方法的返回值也刚好就是<code>View</code>的测量高度。经过上述分析，现在我们可以回答这个问题了：在<code>View</code>的默认实现中，<code>View</code>的测量宽&#x2F;高和最终宽&#x2F;高是相等的，只不过测量宽&#x2F;高形成于<code>View</code>的<code>measure</code>过程，而最终宽&#x2F;高形成于<code>View</code>的<code>layout</code>过程，即两者的赋值时机不同，测量宽&#x2F;高的赋值时机稍微早一些。因此，在日常开发中，我们可以认为<code>View</code>的<code>测量宽/高</code>就<code>等于``最终宽/高</code>，但是的确存在某些特殊情况会导致两者不一致.</p>
+<h5 id="draw过程"><a href="#draw过程" class="headerlink" title="draw过程"></a>draw过程</h5><p>Draw过程就比较简单了，它的作用是将View绘制到屏幕上面。View的绘制过程遵循<br>如下几步：</p>
+<ul>
+<li>绘制背景background.draw(canvas)。</li>
+<li>绘制自己（onDraw）。</li>
+<li>绘制children（dispatchDraw）。</li>
+<li>绘制装饰（onDrawScrollBars）。<br>这一点通过draw方法的源码可以明显看出来，如下所示。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs java">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">draw</span><span class="hljs-params">(Canvas canvas)</span> &#123;<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">privateFlags</span> <span class="hljs-operator">=</span> mPrivateFlags;<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">boolean</span> <span class="hljs-variable">dirtyOpaque</span> <span class="hljs-operator">=</span> (privateFlags &amp; PFLAG_DIRTY_MASK) == PFLAG_DIRTY_OPAQUE &amp;&amp;(mAttachInfo == <span class="hljs-literal">null</span> || !mAttachInfo.mIgnoreDirtyState);<br>    mPrivateFlags = (privateFlags &amp; ~PFLAG_DIRTY_MASK) | PFLAG_DRAWN;<br>    <span class="hljs-comment">/*</span><br><span class="hljs-comment">    * Draw traversal performs several drawing steps which must be executed</span><br><span class="hljs-comment">    * in the appropriate order:</span><br><span class="hljs-comment">    *</span><br><span class="hljs-comment">    * 1. Draw the background</span><br><span class="hljs-comment">    * 2. If necessary,save the canvas&#x27; layers to prepare for fading</span><br><span class="hljs-comment">    * 3. Draw view&#x27;s content</span><br><span class="hljs-comment">    * 4. Draw children</span><br><span class="hljs-comment">    * 5. If necessary,draw the fading edges and restore layers</span><br><span class="hljs-comment">    * 6. Draw decorations (scrollbars for instance)</span><br><span class="hljs-comment">    */</span><br>    <span class="hljs-comment">// Step 1,draw the background,if needed</span><br>    <span class="hljs-type">int</span> saveCount;<br>    <span class="hljs-keyword">if</span> (!dirtyOpaque) &#123;<br>        drawBackground(canvas);<br>    &#125;<br>    <span class="hljs-comment">// skip step 2 &amp; 5 if possible (common case)</span><br>    <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">viewFlags</span> <span class="hljs-operator">=</span> mViewFlags;<br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">horizontalEdges</span> <span class="hljs-operator">=</span> (viewFlags &amp; FADING_EDGE_HORIZONTAL) != <span class="hljs-number">0</span>;<br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">verticalEdges</span> <span class="hljs-operator">=</span> (viewFlags &amp; FADING_EDGE_VERTICAL) != <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span> (!verticalEdges &amp;&amp; !horizontalEdges) &#123;<br>        <span class="hljs-comment">// Step 3,draw the content</span><br>        <span class="hljs-keyword">if</span> (!dirtyOpaque) onDraw(canvas);<br>            <span class="hljs-comment">// Step 4,draw the children</span><br>        dispatchDraw(canvas);<br>        <span class="hljs-comment">// Step 6,draw decorations (scrollbars)</span><br>        onDrawScrollBars(canvas);<br>        <span class="hljs-keyword">if</span> (mOverlay != <span class="hljs-literal">null</span> &amp;&amp; !mOverlay.isEmpty()) &#123;<br>            mOverlay.getOverlayView().dispatchDraw(canvas);<br>        &#125;<br>        <span class="hljs-comment">// we&#x27;re done...</span><br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br>    ...<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>View绘制过程的传递是通过dispatchDraw来实现的，dispatchDraw会遍历调用所有子元素的draw方法，如此draw事件就一层层地传递了下去。View有一个特殊的方法setWillNotDraw，先看一下它的源码，如下所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">* If this view doesn&#x27;t do any drawing on its own,set this flag to</span><br><span class="hljs-comment">* allow further optimizations. By default,this flag is not set on</span><br><span class="hljs-comment">* View,but could be set on some View subclasses such as ViewGroup.</span><br><span class="hljs-comment">*</span><br><span class="hljs-comment">* Typically,if you override &#123;<span class="hljs-doctag">@link</span> #onDraw(android.graphics.Canvas)&#125;</span><br><span class="hljs-comment">* you should clear this flag.</span><br><span class="hljs-comment">*</span><br><span class="hljs-comment">* <span class="hljs-doctag">@param</span> willNotDraw whether or not this View draw on its own</span><br><span class="hljs-comment">*/</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setWillNotDraw</span><span class="hljs-params">(<span class="hljs-type">boolean</span> willNotDraw)</span> &#123;<br>    setFlags(willNotDraw ? WILL_NOT_DRAW : <span class="hljs-number">0</span>,DRAW_MASK);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>从<code>setWillNotDraw</code>这个方法的注释中可以看出，如果一个<code>View</code>不需要绘制任何内容，那么设置这个标记位为<code>true</code>以后，系统会进行相应的优化。默认情况下，<code>View</code>没有启用这个优化标记位，但是<code>ViewGroup</code>会默认启用这个优化标记位。这个标记位对实际开发的意义是：当我们的自定义控件继承于<code>ViewGroup</code>并且本身不具备绘制功能时，就可以开启这个标记位从而便于系统进行后续的优化。当然，当明确知道一个<code>ViewGroup</code>需要通过<code>onDraw</code>来绘制内容时，我们需要显式地关闭<code>WILL_NOT_DRAW</code>这个标记位。</p>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>View绘制过程</div>
+      <div>https://blog.huangyuanlove.com/2018/07/29/View绘制过程/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2018年7月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/07/31/Android%E5%B9%BF%E6%92%AD/" title="Android广播">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Android广播</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/07/29/View%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/" title="View事件分发">
+                        <span class="hidden-mobile">View事件分发</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '4985acf53cb81f6f03d03d43884d95de'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,663 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="自定义注解,Annotation,AutoService,AbstractProcessor,反射,javapoet">
+  
+    <meta name="description" content="该系列介绍自定义注解，完成如下功能。   @BindView 代替  findViewById   @ClickResponder 代替 setOnClickListener  @LongClickResponder 代替 setOnLongClickListener  @IntentValue 代替 getIntent().getXXX  @UriValue 代替 getQueryParamet">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自定义注解，打造自己的框架-下下篇">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2019/12/09/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3%EF%BC%8C%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%A1%86%E6%9E%B6-%E4%B8%8B%E4%B8%8B%E7%AF%87/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="该系列介绍自定义注解，完成如下功能。   @BindView 代替  findViewById   @ClickResponder 代替 setOnClickListener  @LongClickResponder 代替 setOnLongClickListener  @IntentValue 代替 getIntent().getXXX  @UriValue 代替 getQueryParamet">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-12-09T15:21:08.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.244Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>自定义注解，打造自己的框架-下下篇 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="自定义注解，打造自己的框架-下下篇"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-12-09 23:21" pubdate>
+          2019年12月9日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          12k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">自定义注解，打造自己的框架-下下篇</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>该系列介绍自定义注解，完成如下功能。</p>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> @BindView 代替  findViewById </li>
+<li><input checked="" disabled="" type="checkbox"> @ClickResponder 代替 setOnClickListener</li>
+<li><input checked="" disabled="" type="checkbox"> @LongClickResponder 代替 setOnLongClickListener</li>
+<li><input checked="" disabled="" type="checkbox"> @IntentValue 代替 getIntent().getXXX</li>
+<li><input checked="" disabled="" type="checkbox"> @UriValue 代替 getQueryParameter</li>
+<li><input disabled="" type="checkbox"> @BroadcastResponder 代替 registerReceiver</li>
+<li><input disabled="" type="checkbox"> @RouterModule、@RouterPath 来进行反依赖传递调用<br>该系列源码在<a target="_blank" rel="noopener" href="https://github.com/huangyuanlove/AndroidAnnotation">https://github.com/huangyuanlove/AndroidAnnotation</a><br>前几篇介绍了<code>@BindView</code>、<code>@ClickResponder</code>、<code>@LongClickResponder</code>的实现，这一篇介绍一下<code>@IntentValue</code> 和<code>@UriValue</code>的实现。</li>
+</ul>
+<span id="more"></span>
+
+<h4 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h4><p>我们知道执行<code>Intent.putExtra()</code>方法时，实际上是把数据塞进Bundle中的，并且该方法有不同的重载类型，方便开发这存储不同的数据。当我们从中取数据时，需要调用不同的方法来获取不同类型的数据，这就需要我们在生成辅助代码时，根据注解字段的类型来调用不同的方法。</p>
+<p>而Uri中的能传递的参数只有有限的几种类型，最常见的就是String和int</p>
+<h4 id="声明注解"><a href="#声明注解" class="headerlink" title="声明注解"></a>声明注解</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Target(ElementType.FIELD)</span><br><span class="hljs-meta">@Retention(RetentionPolicy.CLASS)</span><br><span class="hljs-keyword">public</span> <span class="hljs-meta">@interface</span> IntentValue &#123;<br><br>    <span class="hljs-type">int</span> <span class="hljs-variable">DEFAULT_TYPE</span> <span class="hljs-operator">=</span> -<span class="hljs-number">1</span>;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">PARCELABLE_OBJECT</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">PARCELABLE_ARRAY_OBJECT</span> <span class="hljs-operator">=</span> <span class="hljs-number">2</span>;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">PARCELABLE_ARRAYLIST_OBJECT</span> <span class="hljs-operator">=</span> <span class="hljs-number">3</span>;<br>    <span class="hljs-type">int</span> <span class="hljs-variable">SERIALIZABLE_OBJECT</span> <span class="hljs-operator">=</span> <span class="hljs-number">4</span>;<br><br><br>    String <span class="hljs-title function_">key</span><span class="hljs-params">()</span>;<br>    <span class="hljs-type">int</span> <span class="hljs-title function_">type</span><span class="hljs-params">()</span> <span class="hljs-keyword">default</span> DEFAULT_TYPE;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>这里在注解类中声明了几种类型，来配合注解使用，主要是为了在生成辅助代码时简单，因为<code>javax.lang.model.type.TypeKind</code>只声明了有限的几种类型，其余的需要我们自己取判断。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Target(ElementType.FIELD)</span><br><span class="hljs-meta">@Retention(RetentionPolicy.CLASS)</span><br><span class="hljs-keyword">public</span> <span class="hljs-meta">@interface</span> UriValue &#123;<br>    String <span class="hljs-title function_">key</span><span class="hljs-params">()</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<h4 id="处理注解逻辑"><a href="#处理注解逻辑" class="headerlink" title="处理注解逻辑"></a>处理注解逻辑</h4><p>我们还是使用上一篇中的注解处理器，需要添加两个属性</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> Map&lt;TypeElement, List&lt;Element&gt;&gt; intentValueMap = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;&gt;();<br><span class="hljs-keyword">private</span> Map&lt;TypeElement, List&lt;Element&gt;&gt; uriValueMap = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;&gt;();<br></code></pre></td></tr></table></figure>
+
+<p>在 <code>getSupportedAnnotationTypes</code>方法中添加支持</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java">set.add(IntentValue.class.getCanonicalName());<br>set.add(UriValue.class.getCanonicalName());<br></code></pre></td></tr></table></figure>
+
+<p>在<code>process</code>方法中加入我们的注解处理逻辑</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs java">intentValueMap.clear();<br>uriValueMap.clear();<br><br>Set&lt;? <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Element</span>&gt; intentValueSet = roundEnvironment.getElementsAnnotatedWith(IntentValue.class);<br>Set&lt;? <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Element</span>&gt; uriValueSet = roundEnvironment.getElementsAnnotatedWith(UriValue.class);<br><br>collectIntentValueInfo(intentValueSet);<br>collectUriValueMapInfo(uriValueSet);<br><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">collectIntentValueInfo</span><span class="hljs-params">(Set&lt;? extends Element&gt; elements)</span> &#123;<br>        <span class="hljs-keyword">for</span> (Element element : elements) &#123;<br>            <span class="hljs-type">TypeElement</span> <span class="hljs-variable">typeElement</span> <span class="hljs-operator">=</span> (TypeElement) element.getEnclosingElement();<br>            List&lt;Element&gt; elementList = intentValueMap.get(typeElement);<br>            <span class="hljs-keyword">if</span> (elementList == <span class="hljs-literal">null</span>) &#123;<br>                elementList = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>                intentValueMap.put(typeElement, elementList);<br>            &#125;<br>            elementList.add(element);<br>        &#125;<br>    &#125;<br><br><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">collectUriValueMapInfo</span><span class="hljs-params">(Set&lt;? extends Element&gt; elements)</span> &#123;<br>    <span class="hljs-keyword">for</span> (Element element : elements) &#123;<br>        <span class="hljs-type">TypeElement</span> <span class="hljs-variable">typeElement</span> <span class="hljs-operator">=</span> (TypeElement) element.getEnclosingElement();<br>        List&lt;Element&gt; elementList = uriValueMap.get(typeElement);<br>        <span class="hljs-keyword">if</span> (elementList == <span class="hljs-literal">null</span>) &#123;<br>            elementList = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>            uriValueMap.put(typeElement, elementList);<br>        &#125;<br>        elementList.add(element);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>上面的这些收集信息的工作都差不多，把我们需要的数据存放在map中。</p>
+<p>在<code>generateCode()</code>方法中调用</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs scss"><span class="hljs-built_in">generateIntentValueCode</span>();<br><span class="hljs-built_in">generateUriValueCode</span>();<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">generateIntentValueCode</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">for</span> (TypeElement typeElement : intentValueMap.keySet()) &#123;<br>        MethodSpec.<span class="hljs-type">Builder</span> <span class="hljs-variable">methodBuilder</span> <span class="hljs-operator">=</span> generateParseBundleMethodCode(typeElement);<br><br>        List&lt;Element&gt; elements = intentValueMap.get(typeElement);<br>        <span class="hljs-keyword">for</span> (Element element : elements) &#123;<br>            processorIntentValue(element, methodBuilder);<br>        &#125;<br>    &#125;<br><br>&#125;<br><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">generateUriValueCode</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">for</span> (TypeElement typeElement : uriValueMap.keySet()) &#123;<br>        MethodSpec.<span class="hljs-type">Builder</span> <span class="hljs-variable">methodBuilder</span> <span class="hljs-operator">=</span> generateParseUriMethodCode(typeElement);<br><br>        List&lt;Element&gt; elements = uriValueMap.get(typeElement);<br>        <span class="hljs-keyword">for</span> (Element element : elements) &#123;<br>            processorUriValue(element, methodBuilder);<br>        &#125;<br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们先来看一下比较简单的处理Uri参数的方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">processorUriValue</span><span class="hljs-params">(Element element, MethodSpec.Builder methodBuilder)</span> &#123;<br>    <span class="hljs-type">VariableElement</span> <span class="hljs-variable">variableElement</span> <span class="hljs-operator">=</span> (VariableElement) element;<br>    <br>    <span class="hljs-comment">//注解的字段名字</span><br>    <span class="hljs-type">String</span> <span class="hljs-variable">varName</span> <span class="hljs-operator">=</span> variableElement.getSimpleName().toString();<br><br>    <span class="hljs-type">UriValue</span> <span class="hljs-variable">uriValue</span> <span class="hljs-operator">=</span> variableElement.getAnnotation(UriValue.class);<br><br>    <span class="hljs-comment">//获取到注解的key，从Uri中获取对应的值</span><br>    methodBuilder.addStatement(<span class="hljs-string">&quot;temp = uri.getQueryParameter($S)&quot;</span>, uriValue.key());<br>    <br>    <span class="hljs-comment">//如果是String类型，直接赋值</span><br>    <span class="hljs-keyword">if</span> (element.asType().toString().equals(<span class="hljs-string">&quot;java.lang.String&quot;</span>)) &#123;<br>        methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L=temp&quot;</span>,varName);<br>    &#125;<span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-comment">//其他类型需要转换一下，然后再赋值</span><br>        <span class="hljs-keyword">switch</span> (element.asType().getKind())&#123;<br>            <span class="hljs-keyword">case</span> BOOLEAN:<br>                methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L=Boolean.valueOf(temp)&quot;</span>,varName);<br>                <span class="hljs-keyword">break</span>;<br>            <span class="hljs-keyword">case</span> INT:<br>                methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L= Integer.valueOf(temp)&quot;</span>,varName);<br>                <span class="hljs-keyword">break</span>;<br>            <span class="hljs-keyword">case</span> DOUBLE:<br>                methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L= Double.valueOf(temp)&quot;</span>,varName);<br>                <span class="hljs-keyword">break</span>;<br>            <span class="hljs-keyword">case</span> FLOAT:<br>                methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L= Float.valueOf(temp)&quot;</span>,varName);<br>                <span class="hljs-keyword">break</span>;<br><br>            <span class="hljs-keyword">case</span> LONG:<br>                methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L= Long.valueOf(temp)&quot;</span>,varName);<br>                <span class="hljs-keyword">break</span>;<br><br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>基于同样的方式，我们来处理一下IntentValue，因为Bundle中可以存储的数据类型较多，方法比较长，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br></pre></td><td class="code"><pre><code class="hljs java"><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">processorIntentValue</span><span class="hljs-params">(Element element, MethodSpec.Builder methodBuilder)</span> &#123;<br>    <span class="hljs-type">VariableElement</span> <span class="hljs-variable">variableElement</span> <span class="hljs-operator">=</span> (VariableElement) element;<br>    <br>    <span class="hljs-comment">//注解字段的名字</span><br>    <span class="hljs-type">String</span> <span class="hljs-variable">varName</span> <span class="hljs-operator">=</span> variableElement.getSimpleName().toString();<br>    <span class="hljs-comment">//注解字段的类型名</span><br>    <span class="hljs-type">String</span> <span class="hljs-variable">varType</span> <span class="hljs-operator">=</span> variableElement.asType().toString();<br><br><br>    <span class="hljs-type">IntentValue</span> <span class="hljs-variable">intentValue</span> <span class="hljs-operator">=</span> variableElement.getAnnotation(IntentValue.class);<br><br><br>    methodBuilder.beginControlFlow(<span class="hljs-string">&quot;if(bundle.containsKey($S))&quot;</span>, intentValue.key());<br><br>    <span class="hljs-keyword">if</span> (intentValue.type() == IntentValue.DEFAULT_TYPE) &#123;<br><br><span class="hljs-comment">//基本数据类型可以直接判断，不需要类型名</span><br>        <span class="hljs-keyword">switch</span> (element.asType().getKind()) &#123;<br>            <span class="hljs-keyword">case</span> BOOLEAN:<br>                methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getBoolean($S)&quot;</span>, varName, intentValue.key());<br>                <span class="hljs-keyword">break</span>;<br><br><br>            <span class="hljs-keyword">case</span> SHORT:<br>                methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getShort($S)&quot;</span>, varName, intentValue.key());<br>                <span class="hljs-keyword">break</span>;<br><br>            <span class="hljs-keyword">case</span> BYTE:<br>                methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getByte($S)&quot;</span>, varName, intentValue.key());<br>                <span class="hljs-keyword">break</span>;<br><br>            <span class="hljs-keyword">case</span> INT:<br>                methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getInt($S)&quot;</span>, varName, intentValue.key());<br>                <span class="hljs-keyword">break</span>;<br><br>            <span class="hljs-keyword">case</span> CHAR:<br>                methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getChar($S)&quot;</span>, varName, intentValue.key());<br>                <span class="hljs-keyword">break</span>;<br><br>            <span class="hljs-keyword">case</span> LONG:<br>                methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getLong($S)&quot;</span>, varName, intentValue.key());<br>                <span class="hljs-keyword">break</span>;<br><br>            <span class="hljs-keyword">case</span> FLOAT:<br>                methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getFloat($S)&quot;</span>, varName, intentValue.key());<br>                <span class="hljs-keyword">break</span>;<br><br>            <span class="hljs-keyword">case</span> DOUBLE:<br>                methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getDouble($S)&quot;</span>, varName, intentValue.key());<br>                <span class="hljs-keyword">break</span>;<br><br>                <span class="hljs-comment">//ARRAY类型分好多中，需要类型的名字具体判断</span><br>            <span class="hljs-keyword">case</span> ARRAY:<br>                <span class="hljs-keyword">switch</span> (element.asType().toString()) &#123;<br>                    <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;byte[]&quot;</span>:<br>                        methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getByteArray($S)&quot;</span>, varName, intentValue.key());<br>                        <span class="hljs-keyword">break</span>;<br>                    <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;short[]&quot;</span>:<br><br>                        methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getShortArray($S)&quot;</span>, varName, intentValue.key());<br>                        <span class="hljs-keyword">break</span>;<br>                    <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;boolean[]&quot;</span>:<br>                        methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getBooleanArray($S)&quot;</span>, varName, intentValue.key());<br>                        <span class="hljs-keyword">break</span>;<br>                    <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;int[]&quot;</span>:<br>                        methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getIntArray($S)&quot;</span>, varName, intentValue.key());<br>                        <span class="hljs-keyword">break</span>;<br>                    <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;long[]&quot;</span>:<br>                        methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getLongArray($S)&quot;</span>, varName, intentValue.key());<br>                        <span class="hljs-keyword">break</span>;<br>                    <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;char[]&quot;</span>:<br>                        methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getCharArray($S)&quot;</span>, varName, intentValue.key());<br>                        <span class="hljs-keyword">break</span>;<br>                    <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;java.lang.CharSequence[]&quot;</span>:<br>                        methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getCharSequenceArray($S)&quot;</span>, varName, intentValue.key());<br>                        <span class="hljs-keyword">break</span>;<br>                    <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;float[]&quot;</span>:<br>                        methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getFloatArray($S)&quot;</span>, varName, intentValue.key());<br>                        <span class="hljs-keyword">break</span>;<br>                    <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;double[]&quot;</span>:<br>                        methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getDoubleArray($S)&quot;</span>, varName, intentValue.key());<br>                        <span class="hljs-keyword">break</span>;<br>                    <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;java.lang.String[]&quot;</span>:<br>                        methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getStringArray($S)&quot;</span>, varName, intentValue.key());<br>                        <span class="hljs-keyword">break</span>;<br>                    <span class="hljs-keyword">default</span>:<br>                        methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = ($L) bundle.getParcelableArray($S)&quot;</span>, varName, varType, intentValue.key());<br>                        <span class="hljs-keyword">break</span>;<br><br>                &#125;<br>                <span class="hljs-keyword">break</span>;<br><br>                <span class="hljs-comment">//其余的会被当做`DECLARED`类型</span><br>            <span class="hljs-keyword">case</span> DECLARED:<br>                <span class="hljs-keyword">switch</span> (element.asType().toString()) &#123;<br>                    <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;java.util.ArrayList&lt;java.lang.Integer&gt;&quot;</span>:<br>                        methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getIntegerArrayList($S)&quot;</span>, varName, intentValue.key());<br>                        <span class="hljs-keyword">break</span>;<br>                    <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;java.lang.CharSequence&quot;</span>:<br><br>                        methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getCharSequence($S)&quot;</span>, varName, intentValue.key());<br>                        <span class="hljs-keyword">break</span>;<br>                    <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;java.util.ArrayList&lt;java.lang.CharSequence&gt;&quot;</span>:<br>                        methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getCharSequenceArrayList($S)&quot;</span>, varName, intentValue.key());<br>                        <span class="hljs-keyword">break</span>;<br>                    <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;java.lang.String&quot;</span>:<br>                        methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getString($S)&quot;</span>, varName, intentValue.key());<br>                        <span class="hljs-keyword">break</span>;<br>                    <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;java.util.ArrayList&lt;java.lang.String&gt;&quot;</span>:<br>                        methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = bundle.getStringArrayList($S)&quot;</span>, varName, intentValue.key());<br>                        <span class="hljs-keyword">break</span>;<br>                    <span class="hljs-keyword">default</span>:<br><br>                        <span class="hljs-keyword">break</span>;<br>                &#125;<br>                <span class="hljs-keyword">break</span>;<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-comment">//这里的就是方便通过类型或者类型名来判断的，通过我们自己定义的类型来做判断</span><br>        <span class="hljs-keyword">switch</span> (intentValue.type()) &#123;<br>            <span class="hljs-keyword">case</span> IntentValue.SERIALIZABLE_OBJECT:<br>                methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L  = ($L) bundle.getSerializable($S)&quot;</span>, varName, varType, intentValue.key());<br>                <span class="hljs-keyword">break</span>;<br>            <span class="hljs-keyword">case</span> IntentValue.PARCELABLE_OBJECT:<br>                methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L  = bundle.getParcelable($S)&quot;</span>, varName, intentValue.key());<br>                <span class="hljs-keyword">break</span>;<br>            <span class="hljs-keyword">case</span> IntentValue.PARCELABLE_ARRAY_OBJECT:<br><br>                methodBuilder.addStatement(<span class="hljs-string">&quot; android.os.Parcelable[] temp = bundle.getParcelableArray($S)&quot;</span>, intentValue.key());<br>                methodBuilder.beginControlFlow(<span class="hljs-string">&quot;if(temp!=null &amp;&amp; temp.length&gt;0)&quot;</span>);<br>                methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L = new $L[temp.length]&quot;</span>, varName, varType.substring(<span class="hljs-number">0</span>, varType.length() - <span class="hljs-number">2</span>));<br>                methodBuilder.beginControlFlow(<span class="hljs-string">&quot;for(int i = 0 ; i &lt; temp.length;i++)&quot;</span>);<br>                methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L[i] = ($L) temp[i]&quot;</span>, varName, varType.substring(<span class="hljs-number">0</span>, varType.length() - <span class="hljs-number">2</span>));<br>                methodBuilder.endControlFlow();<br>                methodBuilder.endControlFlow();<br><br><br>                <span class="hljs-keyword">break</span>;<br>            <span class="hljs-keyword">case</span> IntentValue.PARCELABLE_ARRAYLIST_OBJECT:<br>                methodBuilder.addStatement(<span class="hljs-string">&quot;target.$L  = bundle.getParcelableArrayList($S)&quot;</span>, varName, intentValue.key());<br><br>                <span class="hljs-keyword">break</span>;<br>        &#125;<br>    &#125;<br>    methodBuilder.endControlFlow();<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="给使用者提供调用方法"><a href="#给使用者提供调用方法" class="headerlink" title="给使用者提供调用方法"></a>给使用者提供调用方法</h4><p>还是在api模块中的<code>ViewInjector</code>类中添加如下方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Map&lt;Class&lt;?&gt;, Method&gt; BUNDLES = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedHashMap</span>&lt;&gt;();<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">parseBundle</span><span class="hljs-params">(Activity activity)</span> &#123;<br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-type">Method</span> <span class="hljs-variable">method</span> <span class="hljs-operator">=</span> findParseBundleMethodForClass(activity.getClass(),activity.getClass());<br>        method.invoke(<span class="hljs-literal">null</span>,activity,activity.getIntent()==<span class="hljs-literal">null</span>?<span class="hljs-literal">null</span>:activity.getIntent().getExtras());<br>    &#125;<span class="hljs-keyword">catch</span> (Exception e)&#123;<br>        e.printStackTrace();<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">parseBundle</span><span class="hljs-params">(Fragment fragment)</span> &#123;<br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-type">Method</span> <span class="hljs-variable">method</span> <span class="hljs-operator">=</span>findParseBundleMethodForClass(fragment.getClass(),fragment.getClass());<br>        method .invoke(<span class="hljs-literal">null</span>,fragment,fragment.getArguments());<br><br>    &#125;<span class="hljs-keyword">catch</span> (Exception e)&#123;<br>        e.printStackTrace();<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Method <span class="hljs-title function_">findParseBundleMethodForClass</span><span class="hljs-params">(Class&lt;?&gt; cls,Class clazz)</span> &#123;<br>    <span class="hljs-type">Method</span> <span class="hljs-variable">parseBundle</span> <span class="hljs-operator">=</span> BUNDLES.get(cls);<br>    <span class="hljs-keyword">if</span> (parseBundle == <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            Class&lt;?&gt; bindingClass = Class.forName(cls.getName() + <span class="hljs-string">&quot;$ViewInjector&quot;</span>);<br>            parseBundle=   bindingClass.getDeclaredMethod(<span class="hljs-string">&quot;parseBundle&quot;</span>,clazz, Bundle.class);<br>            BUNDLES.put(cls, parseBundle);<br>        &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>            e.printStackTrace();<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> parseBundle;<br>&#125;<br><br><br><span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Map&lt;Class&lt;?&gt;, Method&gt; URIS = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedHashMap</span>&lt;&gt;();<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">parseUri</span><span class="hljs-params">(Activity activity)</span> &#123;<br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-type">Method</span> <span class="hljs-variable">method</span> <span class="hljs-operator">=</span> findParseUriMethodForClass(activity.getClass(),activity.getClass());<br>        method.invoke(<span class="hljs-literal">null</span>,activity,activity.getIntent()==<span class="hljs-literal">null</span>?<span class="hljs-literal">null</span>:activity.getIntent().getData());<br>    &#125;<span class="hljs-keyword">catch</span> (Exception e)&#123;<br>        e.printStackTrace();<br>    &#125;<br>&#125;<br><br><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Method <span class="hljs-title function_">findParseUriMethodForClass</span><span class="hljs-params">(Class&lt;?&gt; cls,Class clazz)</span> &#123;<br>    <span class="hljs-type">Method</span> <span class="hljs-variable">parseUri</span> <span class="hljs-operator">=</span> URIS.get(cls);<br>    <span class="hljs-keyword">if</span> (parseUri == <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            Class&lt;?&gt; bindingClass = Class.forName(cls.getName() + <span class="hljs-string">&quot;$ViewInjector&quot;</span>);<br>            parseUri=  bindingClass.getDeclaredMethod(<span class="hljs-string">&quot;parseUri&quot;</span>,clazz, Uri.class);<br>            URIS.put(cls, parseUri);<br>        &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>            e.printStackTrace();<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> parseUri;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><p>只需要在对应的类中调用<code>ViewInjector.parseBundle(this);</code>和<code>ViewInjector.parseUri(this);</code>方法就好了</p>
+<p>其实应该把UriValue当成练手让大家自己写的。。。。</p>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>自定义注解，打造自己的框架-下下篇</div>
+      <div>https://blog.huangyuanlove.com/2019/12/09/自定义注解，打造自己的框架-下下篇/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年12月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/12/10/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3%EF%BC%8C%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%A1%86%E6%9E%B6-%E4%B8%8B%E4%B8%8B%E4%B8%8B%E7%AF%87/" title="自定义注解，打造自己的框架-下下下篇">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">自定义注解，打造自己的框架-下下下篇</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/12/04/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3%EF%BC%8C%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%A1%86%E6%9E%B6-%E4%B8%8B%E7%AF%87/" title="自定义注解，打造自己的框架-下篇">
+                        <span class="hidden-mobile">自定义注解，打造自己的框架-下篇</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '33ba4785987c28575203b432da0586ab'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

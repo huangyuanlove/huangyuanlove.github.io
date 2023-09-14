@@ -1,0 +1,715 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="串行接口封装,PPP协议,Frame Relay,帧中继协议">
+  
+    <meta name="description" content="学习过程中的笔记，比较零散">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CCNA-Internet connection">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2014/05/19/CCNA-Internet-connection/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="学习过程中的笔记，比较零散">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2014-05-19T15:32:26.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.215Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="CCNA">
+<meta property="article:tag" content="笔记">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>CCNA-Internet connection - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="CCNA-Internet connection"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2014-05-19 23:32" pubdate>
+          2014年5月19日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.6k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">CCNA-Internet connection</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>学习过程中的笔记，比较零散</p>
+<span id="more"></span>
+
+<h4 id="主流的广域网连接"><a href="#主流的广域网连接" class="headerlink" title="主流的广域网连接"></a>主流的广域网连接</h4><p>包交换：运行商可以将一条线路租给多个用户，因为他们的网络需要量小。</p>
+<p>DSL（数字用户线），家庭终端用户和中小型企业（ADSL非对称用户线，意思是上行流量和下行流量不相等，下行速率较高，上行速率较低）ADSL技术实际上只应用于家庭ADSL猫和网络运营商的DSLAM的边界部分，而运营商内部还是高速的交换网络。是一层技术。解决长距离传输问题</p>
+<p>再上层是PPP协议</p>
+<p>DSL的优点：</p>
+<p>速度较快，可以达到８Ｍ</p>
+<p>可同时进行声音和数据传输</p>
+<p>可以２４小时在线</p>
+<p>可以和传统的模拟电话线路兼容</p>
+<p>缺点：</p>
+<p>限制多</p>
+<p>需要本地电话公司的支持</p>
+<p>开放的线路，安全性较差</p>
+<h4 id="串行接口封装"><a href="#串行接口封装" class="headerlink" title="串行接口封装"></a>串行接口封装</h4><p>Circuit switching 电路交换：在通信之前，要先建立连接，建立好之后线路专属于某以用户。但是连接速率低，通常是在异步线缆上进行，通常基于PSTN（ puclic switched telephon newwork公共电话交换网络)：简单，可用性高，费用低</p>
+<p>租用线路（leased Line）：速度快，费用高。线路是专门为用户预留的</p>
+<p>WAN connection bandwidth：串行接口要配置始终频率，一般是在DCE端进行配置，DTE端是用户端（实验室环境下两台路由器之间的线缆是模拟的广域网网云的环境。）</p>
+<p>DTE和DCE端是线缆决定的，线缆的DCE端插到哪个端口，哪边就是DCE端。</p>
+<p>Point－to－point　considerations</p>
+<p>优点：</p>
+<p>简单、质量高、可用性高；</p>
+<p>缺点：</p>
+<p>费用高、灵活性差</p>
+<p>思科的设备和别的设备在二层封装是不一样的，假如思科的路由器和华为的路由器Ｗａｎ口相连，是连接不通的，因为思科的二层封装是修改过的。</p>
+<p>修改接口的封装类型命令如下：</p>
+<p>Interface　s０／０／０（要修改的接口）</p>
+<p>Encapsulation　封装类型（Ｈｄｌｃ　PPP　Ｓｔｕｎ等）</p>
+<p>默认是hdlc</p>
+<p>不同厂商的设备相连一半时PPP协议</p>
+<p>PPP协议：认证、压缩、多链路、回拨；</p>
+<h4 id="Frame-relay（帧中继协议）："><a href="#Frame-relay（帧中继协议）：" class="headerlink" title="Frame　relay（帧中继协议）："></a>Frame　relay（帧中继协议）：</h4><p>工作在用户端和运营商边界的协议</p>
+<p>ATM 异步传输模式 属于信源交换   将数据分为53字节的定长信源；通常是在硬件之内完成，通常运行于运营商内部高速网络</p>
+<p>ISDN。。。。大概只出现过一年的时间左右，就过度到adsl了</p>
+<p>工作在用户端到运营商的边界处（称为最后一公里）</p>
+<p>使用了虚电路的概念</p>
+<p>在一根电缆上通过多路复用技术划分出virtual circuits （虚拟电路）租用给多个用户，用户感觉就像租用了专线一样</p>
+<p>虚拟电路分为临时线路（SVC）和永久线路（PVC）</p>
+<p>帧中继通过DLCI号（只具有本地意义，不一定全局唯一，通常情况下做成全局唯一的）来分辨每个虚拟电路（二层编址技术  0-1024）</p>
+<p>帧中继有两种封装形式：cisco（思科设备私有的）和IETF封装</p>
+<p>LIM：本地管理接口，两个设备之间使用的信令标准。有三种类型：</p>
+<p>Cisco  ansi  Q933a  可以理解为设备之间的语言</p>
+<p>配置的时候注意设备间使用的封装类型和信令标准</p>
+<p>帧中继 是NBMA网络，不支持广播和组播 </p>
+<p>帧中继通过逆向ARP解决IP–&gt;DLCI号的映射</p>
+<p>帧中继互联拓扑结构：</p>
+<p>全互联、部分互联、星形连接</p>
+<p>可以将一个帧中继接口划分为多个子接口：可以将线路隔离，可以解决水平分割问题；</p>
+<p>点对点子接口可以解决水平分割问题，但是浪费IP地址</p>
+<p>多点子接口不可以解决水平分割问题，但是不浪费IP地址</p>
+<h4 id="PPP协议"><a href="#PPP协议" class="headerlink" title="PPP协议"></a>PPP协议</h4><p>PPP协议可以说是应用最广泛的广域网二层协议，分为两个部分：NCP（网络控制协议，在三层与二层做兼容转换），LCP（链路控制协议，建立拆除线路）；</p>
+<p>PPP协议的特点：（LCP的实现）（不同厂商的设备可以连接）</p>
+<p>1 支持认证（2层的认证机制）</p>
+<p>2 支持回拨（通常用于企业集中化管理账单）</p>
+<p>3支持压缩（启用压缩之后，所有通过线缆的数据都是被压缩，相当于侧面提高了传输速率）</p>
+<p>4支持多链路（允许将多个物理线路捆绑成一个逻辑线路，提高传输s速率）</p>
+<p>《TCP&#x2F;IP协议详解》80年代的书</p>
+<p>PPP连接建立的过程：</p>
+<p>1 请求建立连接；</p>
+<p>2 LCP控制连接（可能会有认证）</p>
+<p>3 NCP处理；</p>
+<p>PPP认证分为两种：PAP（明文认证）和CHAP（挑战握手认证协议（三次握手双向认证））使用的是路由器的全局用户名密码</p>
+<p>配置命令：（线路两端的封装协议必须一样）</p>
+<p>Interface　ｓ０／０／０</p>
+<p>Encapsulation　ppp</p>
+<p>认证：</p>
+<p>①PAP认证（有发起方和接收方）</p>
+<p>在全局模式下：</p>
+<p>Username name password passwd</p>
+<p>在要启用认证的接口上：</p>
+<p>Ppp authentication pap</p>
+<p>在线路另一端</p>
+<p>全局配置模式下：</p>
+<p>Ppp pap sent-usernam name password passed</p>
+<p>②CHAP认证：</p>
+<p>建立的用户名是对端的主机名，密码必须要一样</p>
+<p>在一端：</p>
+<p>全局配置模式：</p>
+<p>Username　对端的主机名　password　密码</p>
+<p>Ppp　authentication　CHAP</p>
+<p>另一端相同的配置</p>
+<p>查看过程可用　debug　ppp　negotiation</p>
+<h4 id="交换基础"><a href="#交换基础" class="headerlink" title="交换基础"></a>交换基础</h4><p>HUB连接：会产生数据冲突</p>
+<p>Bridges（网桥）：具有二层的过滤功能（基于二层的mac地址进行过滤），（还是属于软件处理）可以互联多个网段。</p>
+<p>switches（交换机）：属于硬件处理，可以线速转发。</p>
+<p>划分了多个冲突域，每个接口下的终端设备属于一个独立的冲突域，不会产生数据冲突。</p>
+<p>全双工模式，可以同时进行收和发允许线缆两端速度不一样。</p>
+<p>可以通过mac table 对数据进行智能转发，而且mac table是可以学习的</p>
+<p>交换机刚开机的时候mac table是空的，在转发过程中进行学习。当不知道目标mac地址在哪的时候，会把数据从其余的接口泛洪出去。对局域网的组播和广播数据进行泛洪操作。</p>
+<p>特点：</p>
+<p>多接口，很高冗余性，线速转发，可以混合不同的接口速度，快速转发</p>
+<p>三种工作模式：</p>
+<p>直通交换，无碎片交换，存储转发交换</p>
+<h4 id="VLAN和Trunks"><a href="#VLAN和Trunks" class="headerlink" title="VLAN和Trunks"></a>VLAN和Trunks</h4><p>划分冲突域，具有二层隔离性，一个vlan相当于一个冲突域，等于一个局域网。vlan隔离之后是两个子网，达到路由的隔离性。</p>
+<p>不同vlan通信需要通过三层设备。</p>
+<p>vlan的划分是在接口上划分的，不同的vlan是不同的逻辑子网</p>
+<p>划分出来的vlan就相当于两个处于不同网段的交换机</p>
+<p>vlan可以隔离广播域。</p>
+<p>Trunks 允许不同交换机的相同Vlan通信，允许在一根线路上承载多个vlan信息，这个接口就是Trunk接口。</p>
+<p>所有没打标记的数据包，统一划给native Vlan</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/CCNA/" class="print-no-link">#CCNA</a>
+      
+        <a href="/tags/%E7%AC%94%E8%AE%B0/" class="print-no-link">#笔记</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>CCNA-Internet connection</div>
+      <div>https://blog.huangyuanlove.com/2014/05/19/CCNA-Internet-connection/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2014年5月19日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2015/02/11/UNIX-linux%E7%9A%84find%E5%91%BD%E4%BB%A4%E7%BB%86%E8%8A%82/" title="UNIX/linux的find命令细节">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">UNIX/linux的find命令细节</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2014/05/19/CCNA-%E5%B9%BF%E5%9F%9F%E7%BD%91%E5%92%8CACL/" title="CCNA-广域网和ACL">
+                        <span class="hidden-mobile">CCNA-广域网和ACL</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '011d43beb9b23950c765d902963ceec8'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

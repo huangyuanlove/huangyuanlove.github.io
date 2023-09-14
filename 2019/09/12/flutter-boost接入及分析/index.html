@@ -1,0 +1,658 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="flutter_boost,跨平台,Android,flutter,flutter混合栈管理">
+  
+    <meta name="description" content="flutter_boost 地址：https:&#x2F;&#x2F;github.com&#x2F;alibaba&#x2F;flutter_boost集成之后的项目地址：https:&#x2F;&#x2F;github.com&#x2F;huangyuanlove&#x2F;flutter_boost_demoflutter版本： v1.5.4-hotfix.2flutter_boost版本：0.1.52">
+<meta property="og:type" content="article">
+<meta property="og:title" content="flutter_boost接入及分析">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2019/09/12/flutter-boost%E6%8E%A5%E5%85%A5%E5%8F%8A%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="flutter_boost 地址：https:&#x2F;&#x2F;github.com&#x2F;alibaba&#x2F;flutter_boost集成之后的项目地址：https:&#x2F;&#x2F;github.com&#x2F;huangyuanlove&#x2F;flutter_boost_demoflutter版本： v1.5.4-hotfix.2flutter_boost版本：0.1.52">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-09-12T06:13:43.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.231Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="Flutter">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>flutter_boost接入及分析 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="flutter_boost接入及分析"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-09-12 14:13" pubdate>
+          2019年9月12日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.4k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">flutter_boost接入及分析</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>flutter_boost 地址：<a target="_blank" rel="noopener" href="https://github.com/alibaba/flutter_boost">https://github.com/alibaba/flutter_boost</a><br>集成之后的项目地址：<a target="_blank" rel="noopener" href="https://github.com/huangyuanlove/flutter_boost_demo">https://github.com/huangyuanlove/flutter_boost_demo</a><br>flutter版本： v1.5.4-hotfix.2<br>flutter_boost版本：0.1.52</p>
+<span id="more"></span>
+
+<h4 id="集成过程"><a href="#集成过程" class="headerlink" title="集成过程"></a>集成过程</h4><p>前提：<strong>项目已经集成flutter，并且可以运行</strong></p>
+<h5 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h5><p>根据官方说法：<br>打开pubspec.yaml并将以下行添加到依赖项：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">flutter_boost:</span> <span class="hljs-string">^0.1.52</span><br></code></pre></td></tr></table></figure>
+<p>或者可以直接依赖github的项目的版本，Tag，pub发布会有延迟，推荐直接依赖Github项目</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><br><span class="hljs-attr">flutter_boost:</span><br>        <span class="hljs-attr">git:</span><br>            <span class="hljs-attr">url:</span> <span class="hljs-string">&#x27;https://github.com/alibaba/flutter_boost.git&#x27;</span><br>            <span class="hljs-attr">ref:</span> <span class="hljs-string">&#x27;0.1.52&#x27;</span><br>            <br></code></pre></td></tr></table></figure>
+<p>然后 <code>flutter packages get</code>一下</p>
+<p>在主工程的build.gradle中依赖一下<br><code>implementation project(path: &#39;:flutter_boost&#39;)</code>,官方没有提这个，但是我在项目中不添加这个依赖，找不到对应的类</p>
+<h5 id="在flutter-nodule侧"><a href="#在flutter-nodule侧" class="headerlink" title="在flutter_nodule侧"></a>在flutter_nodule侧</h5><p>在<code>main.dart</code>中注册一下路由，过程和使用命名路由相似</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs dart"><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">_MyAppState</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">State</span>&lt;<span class="hljs-title">MyApp</span>&gt; </span>&#123;<br>  <span class="hljs-meta">@override</span><br>  <span class="hljs-keyword">void</span> initState() &#123;<br>    <span class="hljs-keyword">super</span>.initState();<br><br>    FlutterBoost.singleton.registerPageBuilders(&#123;<br>      <span class="hljs-string">&#x27;first&#x27;</span>: (pageName, params, _) =&gt; FirstRouteWidget(),<br>      <span class="hljs-string">&#x27;second&#x27;</span>: (pageName, params, _) =&gt; SecondRouteWidget(params),<br>      <span class="hljs-string">&#x27;tab&#x27;</span>: (pageName, params, _) =&gt; TabRouteWidget(),<br>      <span class="hljs-string">&#x27;flutterFragment&#x27;</span>: (pageName, params, _) =&gt; FragmentRouteWidget(params),<br><br>      <span class="hljs-comment">///<span class="language-markdown">可以在native层通过 getContainerParams 来传递参数</span></span><br>      <span class="hljs-string">&#x27;flutterPage&#x27;</span>: (pageName, params, _) &#123;<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;flutterPage params:<span class="hljs-subst">$params</span>&quot;</span>);<br><br>        <span class="hljs-keyword">return</span> FlutterRouteWidget();<br>      &#125;,<br>    &#125;);<br>  &#125;<br><br>  <span class="hljs-meta">@override</span><br>  Widget build(BuildContext context) &#123;<br>    <span class="hljs-keyword">return</span> MaterialApp(<br>        title: <span class="hljs-string">&#x27;Flutter Boost example&#x27;</span>,<br>        builder: FlutterBoost.init(postPush: _onRoutePushed),<br>        home: Container());<br>  &#125;<br><br>  <span class="hljs-keyword">void</span> _onRoutePushed(<br>      <span class="hljs-built_in">String</span> pageName, <span class="hljs-built_in">String</span> uniqueId, <span class="hljs-built_in">Map</span> params, Route route, Future _) &#123;<br>  &#125;<br>  <br></code></pre></td></tr></table></figure>
+<p>其中 <code>FirstRouteWidget</code>、<code>SecondRouteWidget</code> 、<code>TabRouteWidget</code>、<code>FragmentRouteWidget</code>、<code>FlutterRouteWidget</code>代码可以在<code>simple_page_widgets.dart</code>中找到</p>
+<h5 id="在原生Android侧"><a href="#在原生Android侧" class="headerlink" title="在原生Android侧"></a>在原生Android侧</h5><p>修改<code>Application</code>继承<code>FlutterApplication</code>,并且在<code>onCreate</code>初始化<code>FlutterBoost</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs java">FlutterBoost.init(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Platform</span>() &#123;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> Application <span class="hljs-title function_">getApplication</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> MyApplication.<span class="hljs-built_in">this</span>;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">isDebug</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">openContainer</span><span class="hljs-params">(Context context, String url, Map&lt;String, Object&gt; urlParams, <span class="hljs-type">int</span> requestCode, Map&lt;String, Object&gt; exts)</span> &#123;<br>        <span class="hljs-comment">//在flutter中调用FlutterBoost.singleton.open()方法，最终会走到这里进行处理</span><br>        PageRouter.openPageByUrl(context,url,urlParams,requestCode);<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> IFlutterEngineProvider <span class="hljs-title function_">engineProvider</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BoostEngineProvider</span>()&#123;<br>            <span class="hljs-meta">@Override</span><br>            <span class="hljs-keyword">public</span> BoostFlutterEngine <span class="hljs-title function_">createEngine</span><span class="hljs-params">(Context context)</span> &#123;<br>                <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BoostFlutterEngine</span>(context, <span class="hljs-keyword">new</span> <span class="hljs-title class_">DartExecutor</span>.DartEntrypoint(<br>                        context.getResources().getAssets(),<br>                        FlutterMain.findAppBundlePath(context),<br>                        <span class="hljs-string">&quot;main&quot;</span>),<span class="hljs-string">&quot;/&quot;</span>);<br>            &#125;<br>        &#125;;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">whenEngineStart</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> ANY_ACTIVITY_CREATED;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">registerPlugins</span><span class="hljs-params">(PluginRegistry registry)</span> &#123;<br>        <span class="hljs-built_in">super</span>.registerPlugins(registry);<br>    &#125;<br>&#125;);<br></code></pre></td></tr></table></figure>
+<p>Android侧包含flutter_view的容器，比如Activity需要继承<code>BoostFlutterActivity</code>，并实现<code>getContainerUrl()</code>和<code>getContainerUrlParams()</code>方法<br>其中<code>getContainerUrl</code>方法返回的值就是在<code>main.dart</code>中注册的路由，<code>getContainerUrlParams</code>方法返回值则是对应的<code>params</code>。</p>
+<h4 id="尝试"><a href="#尝试" class="headerlink" title="尝试"></a>尝试</h4><p>目前的做法是在Android这边配置打开的协议，和iOS统一，打开页面之后传递的参数全部附加在Uri上，<br>比如在flutter中的调用打开另外一个flutter界面，第一个参数uri就是<code>sample://flutter/launch</code>,如果是打开native页面，则是<code>sample://native/launch</code><br>这样两端各自处理各自的逻辑就好了。<br>在Android端， <code>PageRouter</code>类用来处理native和flutter页面互相打开的逻辑，将传递进来的参数拼接成Uri的形式，通过Intent.setData()方式传递到下一个页面，而不用关系是打开native还是flutter，<br>在FlutterView的容器<code>FlutterPageActivity</code>中，我们通过解析Uri，还原一下要打开的flutter页面的router以及需要的参数，通过上面说的两个方法传递给flutter。</p>
+<h4 id="flutter-boost流程"><a href="#flutter-boost流程" class="headerlink" title="flutter_boost流程"></a>flutter_boost流程</h4><h5 id="在flutter中打开flutter或者原生"><a href="#在flutter中打开flutter或者原生" class="headerlink" title="在flutter中打开flutter或者原生"></a>在flutter中打开flutter或者原生</h5><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs dart">FlutterBoost.singleton.open(<span class="hljs-string">&quot;sample://nativePage&quot;</span>, urlParams:&#123;<br>  <span class="hljs-string">&quot;query&quot;</span>: &#123;<span class="hljs-string">&quot;aaa&quot;</span>: <span class="hljs-string">&quot;bbb&quot;</span>&#125;<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs dart">Future&lt;<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>,<span class="hljs-built_in">dynamic</span>&gt;&gt; open(<span class="hljs-built_in">String</span> url,&#123;<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>,<span class="hljs-built_in">dynamic</span>&gt; urlParams,<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>,<span class="hljs-built_in">dynamic</span>&gt; exts&#125;)&#123;<br><br>  <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; properties = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;();<br>  properties[<span class="hljs-string">&quot;url&quot;</span>] = url;<br>  properties[<span class="hljs-string">&quot;urlParams&quot;</span>] = urlParams;<br>  properties[<span class="hljs-string">&quot;exts&quot;</span>] = exts;<br>  <span class="hljs-keyword">return</span> channel.invokeMethod&lt;<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>,<span class="hljs-built_in">dynamic</span>&gt;&gt;(<br>      <span class="hljs-string">&#x27;openPage&#x27;</span>, properties);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这里也是通过channel调用原生的方法，方法名字是<strong>openPage</strong></p>
+<p>在FlutterBoost.BoostMethodHandler中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">case</span> <span class="hljs-string">&quot;openPage&quot;</span>:<br>                &#123;<br>                    <span class="hljs-keyword">try</span> &#123;<br>                        Map&lt;String,Object&gt; params = methodCall.argument(<span class="hljs-string">&quot;urlParams&quot;</span>);<br>                        Map&lt;String,Object&gt; exts = methodCall.argument(<span class="hljs-string">&quot;exts&quot;</span>);<br>                        <span class="hljs-type">String</span> <span class="hljs-variable">url</span> <span class="hljs-operator">=</span> methodCall.argument(<span class="hljs-string">&quot;url&quot;</span>);<br><br>                        mManager.openContainer(url, params, exts, <span class="hljs-keyword">new</span> <span class="hljs-title class_">FlutterViewContainerManager</span>.OnResult() &#123;<br>                            <span class="hljs-meta">@Override</span><br>                            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onResult</span><span class="hljs-params">(Map&lt;String, Object&gt; rlt)</span> &#123;<br>                                <span class="hljs-keyword">if</span> (result != <span class="hljs-literal">null</span>) &#123;<br>                                    result.success(rlt);<br>                                &#125;<br>                            &#125;<br>                        &#125;);<br>                    &#125;<span class="hljs-keyword">catch</span> (Throwable t)&#123;<br>                        result.error(<span class="hljs-string">&quot;open page error&quot;</span>,t.getMessage(),t);<br>                    &#125;<br>                &#125;<br>                <span class="hljs-keyword">break</span>;<br></code></pre></td></tr></table></figure>
+
+<p>这里的mManager是<code>FlutterViewContainerManager</code>一个实例，<code>openContainer</code>方法的实现是这样的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">void</span> <span class="hljs-title function_">openContainer</span><span class="hljs-params">(String url, Map&lt;String, Object&gt; urlParams, Map&lt;String, Object&gt; exts,OnResult onResult)</span> &#123;<br>    。。。<br>    FlutterBoost.singleton().platform().openContainer(context,url,urlParams,requestCode,exts);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>注意最后一句<code>FlutterBoost.singleton().platform()</code>这里的<code>platform</code>返回的是 <code>IPlatform</code>类型，也就是我们在Application中初始化<code>FlutterBoost</code>时传入的对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">FlutterBoost.init(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Platform</span>()&#123;...&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>最终调用了这里面的<code>openContainer</code>方法，将路由处理交给了原生。</p>
+<p>总结：</p>
+<p>在flutter中调用 <code>FlutterBoost.singleton.open</code> 方法，通过<code>channel</code>调用原生，这里的channel的实现类是<code>BoostChannel</code>,在其初始化时注册的methodHandler。 调用原生<code>FlutterBoost.BoostMethodHandler</code>中的<code>onMethodCall()</code>中的<code>case  &#39;openPage&#39;</code>,然后<code>mManager.openContainer</code>，之后就是 <code>FlutterBoost.singleton().platform().openContainer(context,url,urlParams,requestCode,exts);</code></p>
+<h5 id="在flutter中关闭页面"><a href="#在flutter中关闭页面" class="headerlink" title="在flutter中关闭页面"></a>在flutter中关闭页面</h5><p>调用</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs dart">BoostContainerSettings settings = BoostContainer.of(context).settings;<br>FlutterBoost.singleton.close(settings.uniqueId,result: &#123;<span class="hljs-string">&quot;result&quot;</span>:<span class="hljs-string">&quot;data from second&quot;</span>&#125;);<br></code></pre></td></tr></table></figure>
+<p>在上面的flutter打开原生或者flutter页面时传的map参数，打下断点或者输出一下，可以看到里面会有一个<code>__container_uniqueid_key__</code>,<br>这个key是flutter_boost用来标示flutterview的容器，当我们需要在flutter中关闭页面的时候，需要传入这个key。<br>而关闭页面的时候</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">case</span> <span class="hljs-string">&quot;closePage&quot;</span>:<br>            &#123;<br>                <span class="hljs-keyword">try</span> &#123;<br>                    <span class="hljs-type">String</span> <span class="hljs-variable">uniqueId</span> <span class="hljs-operator">=</span> methodCall.argument(<span class="hljs-string">&quot;uniqueId&quot;</span>);<br>                    Map&lt;String,Object&gt; resultData = methodCall.argument(<span class="hljs-string">&quot;result&quot;</span>);<br>                    Map&lt;String,Object&gt; exts = methodCall.argument(<span class="hljs-string">&quot;exts&quot;</span>);<br><br>                    mManager.closeContainer(uniqueId, resultData,exts);<br>                    result.success(<span class="hljs-literal">true</span>);<br>                &#125;<span class="hljs-keyword">catch</span> (Throwable t)&#123;<br>                    result.error(<span class="hljs-string">&quot;close page error&quot;</span>,t.getMessage(),t);<br>                &#125;<br>            &#125;<br></code></pre></td></tr></table></figure>
+<p>也是通过<code>FlutterViewContainerManager</code>的实例进行关闭</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java">IContainerRecord <span class="hljs-title function_">closeContainer</span><span class="hljs-params">(String uniqueId, Map&lt;String, Object&gt; result,Map&lt;String,Object&gt; exts)</span> &#123;<br>    <span class="hljs-type">IContainerRecord</span> <span class="hljs-variable">targetRecord</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;<br>    <span class="hljs-keyword">for</span> (Map.Entry&lt;IFlutterViewContainer, IContainerRecord&gt; entry : mRecordMap.entrySet()) &#123;<br>        <span class="hljs-keyword">if</span> (TextUtils.equals(uniqueId, entry.getValue().uniqueId())) &#123;<br>            targetRecord = entry.getValue();<br>            <span class="hljs-keyword">break</span>;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">if</span>(targetRecord == <span class="hljs-literal">null</span>) &#123;<br>        Debuger.exception(<span class="hljs-string">&quot;closeContainer can not find uniqueId:&quot;</span> + uniqueId);<br>    &#125;<br><br>    FlutterBoost.singleton().platform().closeContainer(targetRecord,result,exts);<br>    <span class="hljs-keyword">return</span> targetRecord;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>调用FlutterBoost.singleton().platform()的关闭容器方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">closeContainer</span><span class="hljs-params">(IContainerRecord record, Map&lt;String, Object&gt; result, Map&lt;String, Object&gt; exts)</span> &#123;<br>    <span class="hljs-keyword">if</span>(record == <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span>;<br><br>    record.getContainer().finishContainer(result);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>最终还是调用的record中container的finish方法。<br>而在ContainerRecord类(IContainerRecord的实现类)的onAppear方法中，会将当前页面放入自己维护的栈中。<br>具体执行顺序：<br>当打开FlutterView的容器(这里是我们自己继承自<code>BoostFlutterActivity</code>的类，实现了<code>finishContainer()</code>方法)，在<code>BoostFlutterActivity.onCreate()</code>中，调用<br><code> FlutterBoost.singleton().containerManager().generateSyncer(this);</code>,将当前的容器放在<code>FlutterViewContainerManager</code>中，并且记录上面讲到唯一标示<br>当关闭容器的时候，则从里面查找到对应的容器，执行finishContainer()。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+        <a href="/tags/Flutter/" class="print-no-link">#Flutter</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>flutter_boost接入及分析</div>
+      <div>https://blog.huangyuanlove.com/2019/09/12/flutter-boost接入及分析/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年9月12日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/09/16/flutter_plugin%E5%BC%80%E5%8F%91/" title="flutter_plugin开发">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">flutter_plugin开发</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/08/03/%E6%A0%91%E8%8E%93%E6%B4%BE%E5%AE%89%E8%A3%85owncloud/" title="树莓派安装owncloud">
+                        <span class="hidden-mobile">树莓派安装owncloud</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'a3e00e89a4f08d383cb237180e32efa3'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

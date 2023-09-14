@@ -1,0 +1,827 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="tinker热修复">
+  
+    <meta name="description" content="前两天想试一下热修复的功能，对比各大平台的热修复功能，看到tinker的文档介绍，最终决定先拿Tinker试一下。               Tinker QZone AndFix Robust   类替换 yes yes no no   So替换 yes no no no   资源替换 yes yes no no   全平台支持 yes yes no yes   即时生效 no no yes">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tinker初探">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2018/03/10/Tinker%E5%88%9D%E6%8E%A2/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="前两天想试一下热修复的功能，对比各大平台的热修复功能，看到tinker的文档介绍，最终决定先拿Tinker试一下。               Tinker QZone AndFix Robust   类替换 yes yes no no   So替换 yes no no no   资源替换 yes yes no no   全平台支持 yes yes no yes   即时生效 no no yes">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/hotfix/tinker_task.png">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/hotfix/tinker_task_result.png">
+<meta property="article:published_time" content="2018-03-10T04:35:18.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.227Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="热修复">
+<meta property="article:tag" content="tinker">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/hotfix/tinker_task.png">
+  
+  
+  
+  <title>Tinker初探 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Tinker初探"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2018-03-10 12:35" pubdate>
+          2018年3月10日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.4k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Tinker初探</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>前两天想试一下热修复的功能，对比各大平台的热修复功能，看到tinker的<a target="_blank" rel="noopener" href="http://www.tinkerpatch.com/Docs/intro">文档介绍</a>，最终决定先拿Tinker试一下。</p>
+<blockquote>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center"></th>
+<th align="center"></th>
+<th align="center"></th>
+<th align="center"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"></td>
+<td align="center">Tinker</td>
+<td align="center">QZone</td>
+<td align="center">AndFix</td>
+<td align="center">Robust</td>
+</tr>
+<tr>
+<td align="center">类替换</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+<td align="center">no</td>
+<td align="center">no</td>
+</tr>
+<tr>
+<td align="center">So替换</td>
+<td align="center">yes</td>
+<td align="center">no</td>
+<td align="center">no</td>
+<td align="center">no</td>
+</tr>
+<tr>
+<td align="center">资源替换</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+<td align="center">no</td>
+<td align="center">no</td>
+</tr>
+<tr>
+<td align="center">全平台支持</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+<td align="center">no</td>
+<td align="center">yes</td>
+</tr>
+<tr>
+<td align="center">即时生效</td>
+<td align="center">no</td>
+<td align="center">no</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+</tr>
+<tr>
+<td align="center">性能损耗</td>
+<td align="center">较小</td>
+<td align="center">较大</td>
+<td align="center">较小</td>
+<td align="center">较小</td>
+</tr>
+<tr>
+<td align="center">补丁包大小</td>
+<td align="center">较小</td>
+<td align="center">较大</td>
+<td align="center">一般</td>
+<td align="center">一般</td>
+</tr>
+<tr>
+<td align="center">开发透明</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+<td align="center">no</td>
+<td align="center">no</td>
+</tr>
+<tr>
+<td align="center">复杂度</td>
+<td align="center">较低</td>
+<td align="center">较低</td>
+<td align="center">复杂</td>
+<td align="center">复杂</td>
+</tr>
+<tr>
+<td align="center">Rom体积</td>
+<td align="center">Dalvik较大</td>
+<td align="center">较小</td>
+<td align="center">较小</td>
+<td align="center">较小</td>
+</tr>
+<tr>
+<td align="center">成功率</td>
+<td align="center">较高</td>
+<td align="center">较高</td>
+<td align="center">一般</td>
+<td align="center">最高</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>Tinker热补丁方案不仅支持类、So 以及资源的替换，它还是2.X－7.X的全平台支持。利用Tinker我们不仅可以用做 bugfix,甚至可以替代功能的发布。Tinker 已运行在微信的数亿 Android 设备上，那么为什么你不使用 Tinker 呢？</p>
+</blockquote>
+<p>不得不说，我真的低估了跟着腾讯文档走的难度。</p>
+<span id="more"></span>
+
+<h3 id="注册-TinkerPatch-平台"><a href="#注册-TinkerPatch-平台" class="headerlink" title="注册 TinkerPatch 平台"></a>注册 TinkerPatch 平台</h3><p>因为需要下发补丁，直接使用TinkerPatch平台就好，在这里注册<a target="_blank" rel="noopener" href="http://www.tinkerpatch.com/Index/reg">http://www.tinkerpatch.com/Index/reg</a>,注册完成后创建一个应用，拿到<code>appKey</code><br>然后添加一个APP版本</p>
+<h3 id="SDK接入"><a href="#SDK接入" class="headerlink" title="SDK接入"></a>SDK接入</h3><p>测试成功的工程全部文件在这里<a target="_blank" rel="noopener" href="https://github.com/huangyuanlove/TestTinker">https://github.com/huangyuanlove/TestTinker</a>,包含构建成功之后的apk文件以及一些辅助文件。</p>
+<h5 id="添加Gradle插件依赖"><a href="#添加Gradle插件依赖" class="headerlink" title="添加Gradle插件依赖"></a>添加Gradle插件依赖</h5><p>AndroidStudio创建一个工程，定义使用的SDK版本，我是放在了<code>gradle.properties</code> 这个文件中，</p>
+<blockquote>
+<p>TINKER_VERSION&#x3D;1.9.2<br>TINKERPATCH_VERSION&#x3D;1.2.2</p>
+</blockquote>
+<p>然后在工程的<code>build.gradle</code>文件中添加插件依赖</p>
+<blockquote>
+<p>classpath “com.tinkerpatch.sdk:tinkerpatch-gradle-plugin:${TINKERPATCH_VERSION}”</p>
+</blockquote>
+<p>然后添加一些其他配置，整个文件内容如下</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs groovy">buildscript &#123;<br>    repositories &#123;<br>        google()<br>        jcenter()<br>    &#125;<br>    dependencies &#123;<br>        classpath <span class="hljs-string">&#x27;com.android.tools.build:gradle:3.0.1&#x27;</span><br>        classpath <span class="hljs-string">&quot;com.tinkerpatch.sdk:tinkerpatch-gradle-plugin:$&#123;TINKERPATCH_VERSION&#125;&quot;</span><br>    &#125;<br>&#125;<br><span class="hljs-keyword">if</span> (JavaVersion.current().isJava8Compatible()) &#123;<br>    allprojects &#123;<br>        tasks.withType(Javadoc) &#123;<br>            options.addStringOption(<span class="hljs-string">&#x27;Xdoclint:none&#x27;</span>, <span class="hljs-string">&#x27;-quiet&#x27;</span>)<br>        &#125;<br>    &#125;<br>&#125;<br>subprojects &#123;<br>    tasks.withType(JavaCompile) &#123;<br>        sourceCompatibility = JavaVersion.VERSION_1_7<br>        targetCompatibility = JavaVersion.VERSION_1_7<br>    &#125;<br>&#125;<br>allprojects &#123;<br>    repositories &#123;<br>        google()<br>        jcenter()<br>    &#125;<br>&#125;<br>task clean(<span class="hljs-attr">type:</span> Delete) &#123;<br>    delete rootProject.buildDir<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<h5 id="集成-TinkerPatch-SDK"><a href="#集成-TinkerPatch-SDK" class="headerlink" title="集成 TinkerPatch SDK"></a>集成 TinkerPatch SDK</h5><p>在<code>app/build.gradle</code>里面添加依赖</p>
+<blockquote>
+</blockquote>
+<pre><code class="hljs">annotationProcessor(&quot;com.tinkerpatch.tinker:tinker-android-anno:$&#123;TINKER_VERSION&#125;&quot;) &#123; changing = true &#125;
+compileOnly(&quot;com.tinkerpatch.tinker:tinker-android-anno:$&#123;TINKER_VERSION&#125;&quot;) &#123; changing = true &#125;
+implementation(&quot;com.tinkerpatch.sdk:tinkerpatch-android-sdk:$&#123;TINKERPATCH_VERSION&#125;&quot;) &#123; changing = true &#125;
+</code></pre>
+<p>为了配置方便，我们把TinkerPatchSupport相关的配置放在一个单独的gradle文件中，在app下创建一个<code>tinkerpatch.gradle</code>，我们需要在<code>app/build.grale</code>文件中引用</p>
+<blockquote>
+<p>apply from: ‘tinkerpatch.gradle’</p>
+</blockquote>
+<h5 id="配置-tinkerpatchSupport-参数"><a href="#配置-tinkerpatchSupport-参数" class="headerlink" title="配置 tinkerpatchSupport 参数"></a>配置 tinkerpatchSupport 参数</h5><p>编辑 <code>app/tinkerpatch.gralde</code>文件</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><code class="hljs groovy"><br>apply <span class="hljs-attr">plugin:</span> <span class="hljs-string">&#x27;tinkerpatch-support&#x27;</span><br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * <span class="hljs-doctag">TODO:</span> 请按自己的需求修改为适应自己工程的参数</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">def</span> bakPath = file(<span class="hljs-string">&quot;$&#123;buildDir&#125;/bakApk/&quot;</span>)<br><span class="hljs-keyword">def</span> baseInfo = <span class="hljs-string">&quot;app-1.0.0-0309-21-30-56&quot;</span> <span class="hljs-comment">//构建差异文件时使用</span><br><span class="hljs-keyword">def</span> variantName = <span class="hljs-string">&quot;debug&quot;</span><br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 对于插件各参数的详细解析请参考</span><br><span class="hljs-comment"> * http://tinkerpatch.com/Docs/SDK</span><br><span class="hljs-comment"> */</span><br>tinkerpatchSupport &#123;<br>    <span class="hljs-comment">/** 可以在debug的时候关闭 tinkerPatch **/</span><br>    <span class="hljs-comment">/** 当disable tinker的时候需要添加multiDexKeepProguard和proguardFiles,</span><br><span class="hljs-comment">        这些配置文件本身由tinkerPatch的插件自动添加，当你disable后需要手动添加</span><br><span class="hljs-comment">        你可以copy本示例中的proguardRules.pro和tinkerMultidexKeep.pro,</span><br><span class="hljs-comment">        需要你手动修改&#x27;tinker.sample.android.app&#x27;本示例的包名为你自己的包名, com.xxx前缀的包名不用修改</span><br><span class="hljs-comment">     **/</span><br>    tinkerEnable = <span class="hljs-literal">true</span><br>    reflectApplication = <span class="hljs-literal">false</span><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 是否开启加固模式，只能在APK将要进行加固时使用，否则会patch失败。</span><br><span class="hljs-comment">     * 如果只在某个渠道使用了加固，可使用多flavors配置</span><br><span class="hljs-comment">     **/</span><br>    protectedApp = <span class="hljs-literal">false</span><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 实验功能</span><br><span class="hljs-comment">     * 补丁是否支持新增 Activity (新增Activity的exported属性必须为false)</span><br><span class="hljs-comment">     **/</span><br>    supportComponent = <span class="hljs-literal">true</span><br><br>    autoBackupApkPath = <span class="hljs-string">&quot;$&#123;bakPath&#125;&quot;</span><br><br>    appKey = <span class="hljs-string">&quot;2b662623551153ee&quot;</span><br><br>    <span class="hljs-comment">/** 注意: 若发布新的全量包, appVersion一定要更新 **/</span><br>    appVersion = <span class="hljs-string">&quot;1.0.0&quot;</span><br><br>    <span class="hljs-keyword">def</span> pathPrefix = <span class="hljs-string">&quot;$&#123;bakPath&#125;/$&#123;baseInfo&#125;/$&#123;variantName&#125;/&quot;</span><br>    <span class="hljs-keyword">def</span> name = <span class="hljs-string">&quot;$&#123;project.name&#125;-$&#123;variantName&#125;&quot;</span><br><br>    baseApkFile = <span class="hljs-string">&quot;$&#123;pathPrefix&#125;/$&#123;name&#125;.apk&quot;</span><br>    baseProguardMappingFile = <span class="hljs-string">&quot;$&#123;pathPrefix&#125;/$&#123;name&#125;-mapping.txt&quot;</span><br>    baseResourceRFile = <span class="hljs-string">&quot;$&#123;pathPrefix&#125;/$&#123;name&#125;-R.txt&quot;</span><br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     *  若有编译多flavors需求, 可以参照： https://github.com/TinkerPatch/tinkerpatch-flavors-sample</span><br><span class="hljs-comment">     *  注意: 除非你不同的flavor代码是不一样的,不然建议采用zip comment或者文件方式生成渠道信息（相关工具：walle 或者 packer-ng）</span><br><span class="hljs-comment">     **/</span><br>&#125;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 用于用户在代码中判断tinkerPatch是否被使能</span><br><span class="hljs-comment"> */</span><br>android &#123;<br>    defaultConfig &#123;<br>        buildConfigField <span class="hljs-string">&quot;boolean&quot;</span>, <span class="hljs-string">&quot;TINKER_ENABLE&quot;</span>, <span class="hljs-string">&quot;$&#123;tinkerpatchSupport.tinkerEnable&#125;&quot;</span><br>    &#125;<br>&#125;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 一般来说,我们无需对下面的参数做任何的修改</span><br><span class="hljs-comment"> * 对于各参数的详细介绍请参考:</span><br><span class="hljs-comment"> * https://github.com/Tencent/tinker/wiki/Tinker-%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97</span><br><span class="hljs-comment"> */</span><br>tinkerPatch &#123;<br>    ignoreWarning = <span class="hljs-literal">false</span><br>    useSign = <span class="hljs-literal">true</span><br>    dex &#123;<br>        dexMode = <span class="hljs-string">&quot;jar&quot;</span><br>        pattern = [<span class="hljs-string">&quot;classes*.dex&quot;</span>]<br>        loader = []<br>    &#125;<br>    lib &#123;<br>        pattern = [<span class="hljs-string">&quot;lib/*/*.so&quot;</span>]<br>    &#125;<br><br>    res &#123;<br>        pattern = [<span class="hljs-string">&quot;res/*&quot;</span>, <span class="hljs-string">&quot;r/*&quot;</span>, <span class="hljs-string">&quot;assets/*&quot;</span>, <span class="hljs-string">&quot;resources.arsc&quot;</span>, <span class="hljs-string">&quot;AndroidManifest.xml&quot;</span>]<br>        ignoreChange = []<br>        largeModSize = <span class="hljs-number">100</span><br>    &#125;<br><br>    packageConfig &#123;<br>    &#125;<br>    sevenZip &#123;<br>        zipArtifact = <span class="hljs-string">&quot;com.tencent.mm:SevenZip:1.1.10&quot;</span><br>    &#125;<br>    buildConfig &#123;<br>        keepDexApply = <span class="hljs-literal">false</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>每个参数的含义如下</p>
+<table>
+<thead>
+<tr>
+<th align="center">参数</th>
+<th align="center">默认值</th>
+<th align="center">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">tinkerEnable</td>
+<td align="center">true</td>
+<td align="center">是否开启 tinkerpatchSupport 插件功能</td>
+</tr>
+<tr>
+<td align="center">appKey</td>
+<td align="center">“”</td>
+<td align="center">在 TinkerPatch 平台 申请的 appkey</td>
+</tr>
+<tr>
+<td align="center">appVersion</td>
+<td align="center">“”</td>
+<td align="center">在 TinkerPatch 平台 输入的版本号,注意，我们使用 appVersion 作为 TinkerId, 我们需要保证每个发布出去的基础安装包的 appVersion 都不一样。</td>
+</tr>
+<tr>
+<td align="center">reflectApplication</td>
+<td align="center">false</td>
+<td align="center">是否反射 Application 实现一键接入；一般来说，接入 Tinker 我们需要改造我们</td>
+</tr>
+<tr>
+<td align="center">autoBackupApkPath</td>
+<td align="center">“”</td>
+<td align="center">将每次编译产生的 apk&#x2F;mapping.txt&#x2F;R.txt 归档存储的位置</td>
+</tr>
+<tr>
+<td align="center">baseApkFile</td>
+<td align="center">“”</td>
+<td align="center">基准包的文件路径, 对应 tinker 插件中的 oldApk 参数;编译补丁包时，必需指定基准版本的 apk，默认值为空，则表示不是进行补丁包的编译。</td>
+</tr>
+<tr>
+<td align="center">baseProguardMappingFile</td>
+<td align="center">“”</td>
+<td align="center">基准包的 Proguard mapping.txt 文件路径, 对应 tinker 插件 applyMapping 参数；在编译新的 apk 时候，我们希望通过保持基准 apk 的 proguard 混淆方式，从而减少补丁包的大小。这是强烈推荐的，编译补丁包时，我们推荐输入基准 apk 生成的 mapping.txt 文件。</td>
+</tr>
+<tr>
+<td align="center">baseResourceRFile</td>
+<td align="center">“”</td>
+<td align="center">基准包的资源 R.txt 文件路径, 对应 tinker 插件 applyResourceMapping 参数；在编译新的apk时候，我们希望通基准 apk 的 R.txt 文件来保持 Resource Id 的分配，这样不仅可以减少补丁包的大小，同时也避免由于 Resource Id 改变导致 remote view 异常。</td>
+</tr>
+<tr>
+<td align="center">protectedApp</td>
+<td align="center">false</td>
+<td align="center">是否开启支持加固，注意：只有在使用加固时才能开启此开关</td>
+</tr>
+<tr>
+<td align="center">supportComponent</td>
+<td align="center">false</td>
+<td align="center">是否开启支持在补丁包中动态增加Activity 注意：新增Activity的Exported属性必须为false</td>
+</tr>
+<tr>
+<td align="center">backupFileNameFormat</td>
+<td align="center">‘${appName}-${variantName}’</td>
+<td align="center">格式化命名备份文件 这里请使用单引号</td>
+</tr>
+</tbody></table>
+<h5 id="初始化-TinkerPatch-SDK"><a href="#初始化-TinkerPatch-SDK" class="headerlink" title="初始化 TinkerPatch SDK"></a>初始化 TinkerPatch SDK</h5><p>这里推荐使用改造之后的ApplicationLike，对应<code>tinkerpatch.gradle</code>文件中的<code>reflectApplication = false</code>,这里给出了完整的ApplicationLike类，可以在这里查看<a target="_blank" rel="noopener" href="https://github.com/huangyuanlove/TestTinker/blob/master/app/src/main/java/com/huangyuan/testtinker/SampleApplicationLike.java">https://github.com/huangyuanlove/TestTinker/blob/master/app/src/main/java/com/huangyuan/testtinker/SampleApplicationLike.java</a><br>其中对于类的注解中的 <code>application</code> 的值，就是我们应用的Application类，需要在<code>AndroidManifest.xml</code>中的<code>application</code>标签中配置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@DefaultLifeCycle(application = &quot;com.huangyuanlove.testtinker.SampleApplication&quot;,</span><br><span class="hljs-meta">                  flags = ShareConstants.TINKER_ENABLE_ALL,</span><br><span class="hljs-meta">                  loadVerifyFlag = false)</span>`<br></code></pre></td></tr></table></figure>
+
+<p><strong>注意：初始化的代码建议紧跟 super.onCreate(),并且所有进程都需要初始化，已达到所有进程都可以被 patch 的目的<br>如果你确定只想在主进程中初始化 tinkerPatch，那也请至少在 :patch 进程中初始化，否则会有造成 :patch 进程crash，无法使补丁生效</strong><br>我们在实际应用过程中，可以在登陆等关键地方去调用<code>TinkerPatch.with().fetchPatchUpdate(true)</code>来检测有没有新的补丁包，若有，则去下载。下载完成补丁包后，sdk会自动去合成新的安装包，并且在息屏的时候自动重启主线程去加载新的文件，或者调用<code> ShareTinkerInternals.killAllOtherProcess(getApplicationContext());                 android.os.Process.killProcess(android.os.Process.myPid());</code>来完成杀死主线程的目的。</p>
+<h5 id="使用步骤"><a href="#使用步骤" class="headerlink" title="使用步骤"></a>使用步骤</h5><p>首先构建基础包，模拟用户当前使用的版本。<br>在gradle中找到下图所示的 <code>assembleRelease</code>或者<code>assembleDebug</code>task，需要注意的是，如果构建基础包使用的是<code>debug</code>,那么在构建patch包的时候也要选择<code>debug</code>，还有就是尽量把<code>app/tinkerpatch.gradle</code>中定义的<code>variantName</code>改成一致的。<br>基础包构建成功后，会在<code>app/build/bakApk</code>文件夹下生成对应的文件，找到和你构建时间一致的包。<br>现在修改代码或者布局文件(模拟修复bug),修改清单文件<code>AndroidManifest.xml</code>中的versionName和versionCode。<br>修改<code>app/tinkerpatch.gradle</code>文件，将其中定义的<code>baseInfo</code>修改为上面提到的路径。这时候<strong>不需要修改</strong>该文件中的<code>appVersion</code>。<br>在gradle中找到tinker任务包，找到<code>tinkerPatchDebug</code>或者<code>tinkerPatchRelease</code>，构建差异包(补丁文件)。构建成功后会在<code>app/build/outputs/apk/tinkerPatch</code>文件夹中<br><img src="/image/hotfix/tinker_task.png" srcset="/img/loading.gif" lazyload alt="tinkerTaskResult"> <img src="/image/hotfix/tinker_task_result.png" srcset="/img/loading.gif" lazyload alt="tinkerTaskResult"><br>现在我们已经成功构建的差异包<code>patch-signed-7zip.apk</code>,现在只需要将差异包上传到<code>tinker-patch</code>平台就可以了。</p>
+<h5 id="在tinker-patch平台发布差异包"><a href="#在tinker-patch平台发布差异包" class="headerlink" title="在tinker-patch平台发布差异包"></a>在tinker-patch平台发布差异包</h5><p>我们登陆tinker-patch平台，找到在刚开始创建的项目，在该项目里面添加一个App版本，注意这里的App版本号要和<code>tinkerpatch.gradle</code>里面定义的<code>appVersion</code>一致，在官方文档中也提到过这一点：</p>
+<blockquote>
+<p>每一个 APP 版本对应一个已经发布的 base apk, 这里我们可以使用 APP 版本作为 TinkerID。我们需要保证每个发布的 APK 都采用不用的 APP 版本。</p>
+</blockquote>
+<p>创建好app版本之后，点击<code>发布新补丁</code>，选择补丁文件<code>patch-signed-7zip.apk</code>,填写一下备注就好了，这里有四种补丁的下发方式<a target="_blank" rel="noopener" href="http://www.tinkerpatch.com/Docs/dev">开发预览</a> 、<code>全量下发</code> 、<a target="_blank" rel="noopener" href="http://www.tinkerpatch.com/Docs/rule">条件下发</a> 、<a target="_blank" rel="noopener" href="http://www.tinkerpatch.com/Docs/rule">灰度下发</a>、具体差异可以点击去查看。<br>同时我们也可以在平台对应的软件版本中的实时监控里面看到补丁的下载以及合成应用次数。</p>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+        <a href="/tags/%E7%83%AD%E4%BF%AE%E5%A4%8D/" class="print-no-link">#热修复</a>
+      
+        <a href="/tags/tinker/" class="print-no-link">#tinker</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Tinker初探</div>
+      <div>https://blog.huangyuanlove.com/2018/03/10/Tinker初探/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2018年3月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/03/20/Java%E5%B9%B6%E5%8F%91%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5/" title="Java并发多线程同步">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Java并发多线程同步</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/02/27/LaTeX%E7%AC%94%E8%AE%B0-%E5%85%AD/" title="LaTeX笔记-六(数学公式)">
+                        <span class="hidden-mobile">LaTeX笔记-六(数学公式)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '820b2802b2a9dbbe356d7c811712b8c0'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

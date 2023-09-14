@@ -1,0 +1,769 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="ss,shadowsocks,bbr,v2ray">
+  
+    <meta name="description" content="由于众所周知的原因，为了防止文章被和谐，文中会出现明显(脑残)的解释说明上的错误，懂的自然都懂 使用pip安装ssserve以及对应的配置 使用bbr拥塞控制算法进行加速 使用v2ray脚本安装v2ray">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ss、ssr和v2ray以及bbr">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2019/05/29/ss%E3%80%81ssr%E5%92%8Cv2ray%E4%BB%A5%E5%8F%8Abbr/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="由于众所周知的原因，为了防止文章被和谐，文中会出现明显(脑残)的解释说明上的错误，懂的自然都懂 使用pip安装ssserve以及对应的配置 使用bbr拥塞控制算法进行加速 使用v2ray脚本安装v2ray">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-05-29T02:11:59.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.236Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="运维">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>ss、ssr和v2ray以及bbr - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="ss、ssr和v2ray以及bbr"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2019-05-29 10:11" pubdate>
+          2019年5月29日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.8k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">ss、ssr和v2ray以及bbr</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>由于众所周知的原因，为了防止文章被和谐，文中会出现明显(脑残)的解释说明上的错误，懂的自然都懂</p>
+<p>使用pip安装ssserve以及对应的配置</p>
+<p>使用bbr拥塞控制算法进行加速</p>
+<p>使用v2ray脚本安装v2ray</p>
+<span id="more"></span>
+
+<h4 id="安装ssserver及配置"><a href="#安装ssserver及配置" class="headerlink" title="安装ssserver及配置"></a>安装ssserver及配置</h4><h5 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h5><p>Debian&#x2F;Ubuntu:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">apt-get install python-pip<br>pip install shadowsocks <br></code></pre></td></tr></table></figure>
+
+<p>CentOS:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs she">yum install python-setuptools &amp;&amp; easy_install pip<br>pip install shadowsocks <br></code></pre></td></tr></table></figure>
+
+<p>有时 Ubuntu 会遇到第一个命令安装 python-pip 时找不到包的情况。pip 官方给出了一个安装脚本，可以自动安装 pip。先下载脚本，然后执行即可：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">wget https://bootstrap.pypa.io/get-pip.py python get-pip.py <br></code></pre></td></tr></table></figure>
+<h5 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h5><p>创建一个xx.json文件</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br><span class="hljs-attr">&quot;server&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;your server ip&quot;</span><span class="hljs-punctuation">,</span><br><span class="hljs-attr">&quot;server_port&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">8388</span><span class="hljs-punctuation">,</span><span class="hljs-comment">//客户端连接用的端口号</span><br><span class="hljs-attr">&quot;local_port&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">1080</span><span class="hljs-punctuation">,</span><span class="hljs-comment">//本机使用的端口号</span><br><span class="hljs-attr">&quot;password&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;your password&quot;</span><span class="hljs-punctuation">,</span><br><span class="hljs-attr">&quot;method&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;aes-256-cfb&quot;</span><br><span class="hljs-attr">&quot;timeout&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">300</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>上面的method是加密方式，选择什么样的加密方式自己确定，或者说看你的客户端支持什么样的假面方式，可选如下：</p>
+<blockquote>
+<p>aes-128-cfb<br>aes-256-cfb<br>chacha20<br>chacha20-ietf<br>aes-128-gcm<br>aes-256-gcm<br>chacha20-ietf-poly1305</p>
+</blockquote>
+<p>如果想要开启多个端口，把上面的server_port和password改成这样</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-attr">&quot;port_password&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><span class="hljs-comment">//端口:密码 </span><br>     <span class="hljs-attr">&quot;8381&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;password1&quot;</span><span class="hljs-punctuation">,</span><br>     <span class="hljs-attr">&quot;8382&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;password2&quot;</span><span class="hljs-punctuation">,</span><br>     <span class="hljs-attr">&quot;8383&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;password3&quot;</span><span class="hljs-punctuation">,</span><br>     <span class="hljs-attr">&quot;8384&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;password4&quot;</span><br>    <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br></code></pre></td></tr></table></figure>
+
+<p>如果服务器支持ipv6，启用ipv6的话，把上面的server改成<code>::</code></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-attr">&quot;server&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;::&quot;</span><span class="hljs-punctuation">,</span><br></code></pre></td></tr></table></figure>
+
+<p>这时ipv4和ipv6是可以同时使用的。</p>
+<p>客户端连接ss的时候，服务器地址填写ipv6的地址，类似于<code>2402:d0c0:0:133::983d</code>即可。</p>
+<h5 id="启动ssserve"><a href="#启动ssserve" class="headerlink" title="启动ssserve"></a>启动ssserve</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">ssserver -c xx.json <br></code></pre></td></tr></table></figure>
+
+<h4 id="ubuntu内核升级及使用bbr进行网络加速"><a href="#ubuntu内核升级及使用bbr进行网络加速" class="headerlink" title="ubuntu内核升级及使用bbr进行网络加速"></a>ubuntu内核升级及使用bbr进行网络加速</h4><p>谷歌新的tcp拥塞控制算法BBR(<strong>Bottleneck Bandwidth and RTT</strong>)</p>
+<p>内容出自 <a target="_blank" rel="noopener" href="https://www.dz9.net/blog/4246.html">https://www.dz9.net/blog/4246.html</a></p>
+<p>众所周知，Ubuntu开启BBR的前提是内核必须等于高于4.9。<code>uname -a</code>查看ubuntu内核系统版本，如果满足条件，跳过下一步</p>
+<h5 id="ubuntu内核升级"><a href="#ubuntu内核升级" class="headerlink" title="ubuntu内核升级"></a>ubuntu内核升级</h5><p><code>getconf LONG_BIT</code>查看一下系统是多少位的,</p>
+<p>确定系统之后，需要下载必要的升级程序包</p>
+<p><a target="_blank" rel="noopener" href="http://kernel.ubuntu.com/~kernel-ppa/mainline/">http://kernel.ubuntu.com/~kernel-ppa/mainline/</a></p>
+<p>这个网站可以找到最新的程序包，根据自己的需要使用wget命令来下载到服务器；</p>
+<p>比如我的服务器是64位，安装4.10.2的内核：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.10.2/linux-image-4.10.2-041002-generic_4.10.2-041002.201703120131_amd64.deb<br></code></pre></td></tr></table></figure>
+
+<p>然后切换到你的文件下载目录，执行下列命令来升级：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo dpkg -i linux-image-4.10.2-041002-generic_4.10.2-041002.201703120131_amd64.deb<br></code></pre></td></tr></table></figure>
+
+<p>最后，执行命令<code>sudo update-grub</code>，更新grub引导装入程序。</p>
+<p>一旦各方面都已完成，重启机器，你就可以准备使用了。系统重启后，打开终端窗口，执行命令uname -a，确保你实际上是在运行你更新之后的内核。</p>
+<h6 id="开启TCP-BBR"><a href="#开启TCP-BBR" class="headerlink" title="开启TCP BBR"></a>开启TCP BBR</h6><p>修改系统变量：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">echo &quot;net.core.default_qdisc=fq&quot; &gt;&gt; /etc/sysctl.conf<br>echo &quot;net.ipv4.tcp_congestion_control=bbr&quot; &gt;&gt; /etc/sysctl.conf<br></code></pre></td></tr></table></figure>
+
+<p>保存生效</p>
+<p><code>sysctl -p</code></p>
+<p>执行<br><code>sysctl net.ipv4.tcp_available_congestion_control</code></p>
+<p>如果返回结果<br><code>net.ipv4.tcp_available_congestion_control = bbr cubic reno</code><br>那么恭喜你BBR开启成功了！</p>
+<p>也可以执行<br><code>lsmod | grep bbr</code><br>来检测 BBR 是否真的开启成功……</p>
+<h4 id="v2ray"><a href="#v2ray" class="headerlink" title="v2ray"></a>v2ray</h4><p>一键安装脚本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">apt-get install curl -y bash -c &quot;$(curl -fsSL https://raw.githubusercontent.com/tracyone/v2ray.fun/master/install.sh)&quot;<br></code></pre></td></tr></table></figure>
+
+<p>然后看提示就好了。</p>
+<p>或者看官网 <a target="_blank" rel="noopener" href="http://www.v2ray.com/">www.v2ray.com</a>   这个需要一些方法才能访问</p>
+<p>关键内容如下：</p>
+<h5 id="平台支持"><a href="#平台支持" class="headerlink" title="平台支持"></a>平台支持</h5><p>V2Ray 在以下平台中可用：</p>
+<ul>
+<li>Windows 7 及之后版本（x86 &#x2F; amd64）；</li>
+<li>Mac OS X 10.10 Yosemite 及之后版本（amd64）；</li>
+<li>Linux 2.6.23 及之后版本（x86 &#x2F; amd64 &#x2F; arm &#x2F; arm64 &#x2F; mips64 &#x2F; mips）；<ul>
+<li>包括但不限于 Debian 7 &#x2F; 8、Ubuntu 12.04 &#x2F; 14.04 及后续版本、CentOS 6 &#x2F; 7、Arch Linux；</li>
+</ul>
+</li>
+<li>FreeBSD (x86 &#x2F; amd64)；</li>
+<li>OpenBSD (x86 &#x2F; amd64)；</li>
+<li>Dragonfly BSD (amd64)；</li>
+</ul>
+<h5 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h5><p>预编译的压缩包可以在如下几个站点找到：</p>
+<ol>
+<li>Github Release: <a target="_blank" rel="noopener" href="https://github.com/v2ray/v2ray-core/releases">github.com&#x2F;v2ray&#x2F;v2ray-core</a></li>
+<li>Github 分流: <a target="_blank" rel="noopener" href="https://github.com/v2ray/dist/">github.com&#x2F;v2ray&#x2F;dist</a></li>
+<li>Homebrew: <a target="_blank" rel="noopener" href="https://github.com/v2ray/homebrew-v2ray">github.com&#x2F;v2ray&#x2F;homebrew-v2ray</a></li>
+<li>Arch Linux: <a target="_blank" rel="noopener" href="https://www.archlinux.org/packages/community/x86_64/v2ray/">packages&#x2F;community&#x2F;x86_64&#x2F;v2ray&#x2F;</a></li>
+<li>Snapcraft: <a target="_blank" rel="noopener" href="https://snapcraft.io/v2ray-core">snapcraft.io&#x2F;v2ray-core</a></li>
+</ol>
+<p>压缩包均为 zip 格式，找到对应平台的压缩包，下载解压即可使用。</p>
+<h5 id="验证安装包"><a href="#验证安装包" class="headerlink" title="验证安装包"></a>验证安装包</h5><p>V2Ray 提供两种验证方式：</p>
+<ol>
+<li>安装包 zip 文件的 SHA1 &#x2F; SHA256 摘要，在每个安装包对应的<code>.dgst</code>文件中可以找到。</li>
+<li>可运行程序（v2ray 或 v2ray.exe）的 gpg 签名，文件位于安装包中的 v2ray.sig 或 v2ray.exe.sig。签名公钥可以<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/v2ray/v2ray-core/master/release/verify/official_release.asc">在代码库中</a>找到。</li>
+</ol>
+<h5 id="Windows-和-Mac-OS-安装方式"><a href="#Windows-和-Mac-OS-安装方式" class="headerlink" title="Windows 和 Mac OS 安装方式"></a>Windows 和 Mac OS 安装方式</h5><p>通过上述方式下载的压缩包，解压之后可看到 v2ray 或 v2ray.exe。直接运行即可。</p>
+<h5 id="Linux-发行版仓库"><a href="#Linux-发行版仓库" class="headerlink" title="Linux 发行版仓库"></a>Linux 发行版仓库</h5><p>部分发行版可能已收录 V2Ray 到其官方维护和支持的软件仓库&#x2F;软件源中。出于兼容性、适配性考虑，您可以考虑选用由您发行版开发团队维护的软件包或下文的安装脚本亦或基于已发布的二进制文件或源代码安装。<br>Linux 安装脚本<br>V2Ray 提供了一个在 Linux 中的自动化安装脚本。这个脚本会自动检测有没有安装过 V2Ray，如果没有，则进行完整的安装和配置；如果之前安装过 V2Ray，则只更新 V2Ray 二进制程序而不更新配置。</p>
+<p>以下指令假设已在 su 环境下，如果不是，请先运行 sudo su。</p>
+<p>运行下面的指令下载并安装 V2Ray。当 yum 或 apt-get 可用的情况下，此脚本会自动安装 unzip 和 daemon。这两个组件是安装 V2Ray 的必要组件。如果你使用的系统不支持 yum 或 apt-get，请自行安装 unzip 和 daemon</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">bash &lt;(curl -L -s https://install.direct/go.sh)<br></code></pre></td></tr></table></figure>
+<p>此脚本会自动安装以下文件：</p>
+<ul>
+<li>&#x2F;usr&#x2F;bin&#x2F;v2ray&#x2F;v2ray：V2Ray 程序；</li>
+<li>&#x2F;usr&#x2F;bin&#x2F;v2ray&#x2F;v2ctl：V2Ray 工具；</li>
+<li>&#x2F;etc&#x2F;v2ray&#x2F;config.json：配置文件；</li>
+<li>&#x2F;usr&#x2F;bin&#x2F;v2ray&#x2F;geoip.dat：IP 数据文件</li>
+<li>&#x2F;usr&#x2F;bin&#x2F;v2ray&#x2F;geosite.dat：域名数据文件<br>此脚本会配置自动运行脚本。自动运行脚本会在系统重启之后，自动运行 V2Ray。目前自动运行脚本只支持带有 Systemd 的系统，以及 Debian &#x2F; Ubuntu 全系列。</li>
+</ul>
+<p>运行脚本位于系统的以下位置：</p>
+<ul>
+<li><p>&#x2F;etc&#x2F;systemd&#x2F;system&#x2F;v2ray.service: Systemd</p>
+</li>
+<li><p>&#x2F;etc&#x2F;init.d&#x2F;v2ray: SysV</p>
+</li>
+</ul>
+<p>脚本运行完成后，你需要：</p>
+<ol>
+<li>编辑 &#x2F;etc&#x2F;v2ray&#x2F;config.json 文件来配置你需要的代理方式；</li>
+<li>运行 service v2ray start 来启动 V2Ray 进程；</li>
+<li>之后可以使用 service v2ray start|stop|status|reload|restart|force-reload 控制 V2Ray 的运行。</li>
+</ol>
+<h5 id="go-sh-参数"><a href="#go-sh-参数" class="headerlink" title="go.sh 参数"></a>go.sh 参数</h5><p>go.sh 支持如下参数，可在手动安装时根据实际情况调整：</p>
+<ul>
+<li><p>-p 或 –proxy: 使用代理服务器来下载 V2Ray 的文件，格式与 curl 接受的参数一致，比如”socks5:&#x2F;&#x2F;127.0.0.1:1080” 或 “<a href="http://127.0.0.1:3128&quot;。">http://127.0.0.1:3128&quot;。</a></p>
+</li>
+<li><p>-f 或 –force: 强制安装。在默认情况下，如果当前系统中已有最新版本的 V2Ray，go.sh 会在检测之后就退出。如果需要强制重装一遍，则需要指定该参数。</p>
+</li>
+<li><p>–version: 指定需要安装的版本，比如 “v1.13”。默认值为最新版本。</p>
+</li>
+<li><p>–local: 使用一个本地文件进行安装。如果你已经下载了某个版本的 V2Ray，则可通过这个参数指定一个文件路径来进行安装。<br>示例：</p>
+</li>
+<li><p>使用地址为 127.0.0.1:1080 的 SOCKS 代理下载并安装最新版本：.&#x2F;go.sh -p socks5:&#x2F;&#x2F;127.0.0.1:1080</p>
+</li>
+<li><p>安装本地的 v1.13 版本：.&#x2F;go.sh –version v1.13 –local &#x2F;path&#x2F;to&#x2F;v2ray.zip</p>
+<h5 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h5><p>V2Ray 提供了两个预编译的 Docker image：</p>
+</li>
+<li><p>v2ray&#x2F;official <a target="_blank" rel="noopener" href="https://hub.docker.com/r/v2ray/official/">https://hub.docker.com/r/v2ray/official/</a> : 包含最新发布的版本，每周跟随新版本更新；</p>
+</li>
+<li><p>v2ray&#x2F;dev  <a target="_blank" rel="noopener" href="https://hub.docker.com/r/v2ray/dev/">https://hub.docker.com/r/v2ray/dev/</a>:  包含由最新的代码编译而成的程序文件，随代码库更新；<br>两个 image 的文件结构相同：</p>
+</li>
+<li><p>&#x2F;etc&#x2F;v2ray&#x2F;config.json: 配置文件</p>
+</li>
+<li><p>&#x2F;usr&#x2F;bin&#x2F;v2ray&#x2F;v2ray: V2Ray 主程序</p>
+</li>
+<li><p>&#x2F;usr&#x2F;bin&#x2F;v2ray&#x2F;v2ctl: V2Ray 辅助工具</p>
+</li>
+<li><p>&#x2F;usr&#x2F;bin&#x2F;v2ray&#x2F;geoip.dat: IP 数据文件</p>
+</li>
+<li><p>&#x2F;usr&#x2F;bin&#x2F;v2ray&#x2F;geosite.dat: 域名数据文件</p>
+</li>
+</ul>
+<h5 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h5><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;inbounds&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;port&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1080</span><span class="hljs-punctuation">,</span>  <span class="hljs-comment">// SOCKS 代理端口，在浏览器中需配置代理并指向这个端口</span><br>    <span class="hljs-attr">&quot;listen&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;127.0.0.1&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;protocol&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;socks&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;settings&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;udp&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;outbounds&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;protocol&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;vmess&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;settings&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;vnext&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-attr">&quot;address&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;server&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// 服务器地址，请修改为你自己的服务器 ip 或域名</span><br>        <span class="hljs-attr">&quot;port&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10086</span><span class="hljs-punctuation">,</span>  <span class="hljs-comment">// 服务器端口</span><br>        <span class="hljs-attr">&quot;users&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">&#123;</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;b831381d-6324-4d53-ad4f-8cda48b30811&quot;</span> <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">]</span><br>      <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">]</span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;protocol&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;freedom&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;tag&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;direct&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;settings&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;routing&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;domainStrategy&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;IPOnDemand&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;rules&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;field&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;ip&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;geoip:private&quot;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;outboundTag&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;direct&quot;</span><br>    <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">]</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>上述配置唯一要改的地方就是你的服务器 IP，配置中已注明。上述配置会把除了局域网（比如访问路由器）之外的所有流量转发到你的服务器。</p>
+<h5 id="服务器配置"><a href="#服务器配置" class="headerlink" title="服务器配置"></a>服务器配置</h5><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;inbounds&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;port&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10086</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// 服务器监听端口，必须和上面的一样</span><br>    <span class="hljs-attr">&quot;protocol&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;vmess&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;settings&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;clients&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">&#123;</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;b831381d-6324-4d53-ad4f-8cda48b30811&quot;</span> <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">]</span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;outbounds&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;protocol&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;freedom&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;settings&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">]</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>服务器的配置中需要确保 <code>id</code> 和端口与客户端一致，就可以正常连接了。</p>
+<h5 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h5><ul>
+<li>在 Windows 和 macOS 中，配置文件通常是 V2Ray 同目录下的 <code>config.json</code> 文件。直接运行 <code>v2ray</code> 或 <code>v2ray.exe</code> 即可。</li>
+<li>在 Linux 中，配置文件通常位于 <code>/etc/v2ray/config.json</code> 文件。运行 <code>v2ray --config=/etc/v2ray/config.json</code>，或使用 systemd 等工具把 V2Ray 作为服务在后台运行。</li>
+</ul>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E8%BF%90%E7%BB%B4/" class="print-no-link">#运维</a>
+      
+        <a href="/tags/linux/" class="print-no-link">#linux</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>ss、ssr和v2ray以及bbr</div>
+      <div>https://blog.huangyuanlove.com/2019/05/29/ss、ssr和v2ray以及bbr/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2019年5月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/06/19/Android%E6%8E%A5%E5%85%A5flutter%E5%A4%9A%E6%B8%A0%E9%81%93%E5%BC%95%E8%B5%B7%E7%9A%84%E9%97%AE%E9%A2%98/" title="Android接入flutter多渠道引起的问题">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Android接入flutter多渠道引起的问题</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/05/28/JetPack-LiveData-ViewModel-LifeCycle/" title="JetPack中的LiveData、ViewModel、LifeCycle">
+                        <span class="hidden-mobile">JetPack中的LiveData、ViewModel、LifeCycle</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '9a2bcb27d268a746ccc43056ea847089'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

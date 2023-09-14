@@ -1,0 +1,730 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="MMKV,SP,SharedPreference">
+  
+    <meta name="description" content="鉴于SP的”种种问题”,萌发了想要使用写文件的方式替换掉sp的想法，发现腾讯开源MMKV是个不错的选择。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MMKV与SharedPreference">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2020/08/23/MMKV%E4%B8%8ESharedPreference/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="鉴于SP的”种种问题”,萌发了想要使用写文件的方式替换掉sp的想法，发现腾讯开源MMKV是个不错的选择。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/Android/MMKV/apply.png">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/Android/MMKV/commit.png">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/Android/MMKV/Linux-storage-stack.png">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/Android/MMKV/linux-io.png">
+<meta property="article:published_time" content="2020-08-23T03:31:39.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.225Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/Android/MMKV/apply.png">
+  
+  
+  
+  <title>MMKV与SharedPreference - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="MMKV与SharedPreference"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-08-23 11:31" pubdate>
+          2020年8月23日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.4k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">MMKV与SharedPreference</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>鉴于SP的”种种问题”,萌发了想要使用写文件的方式替换掉sp的想法，发现腾讯开源MMKV是个不错的选择。</p>
+<span id="more"></span>
+
+<h5 id="存储方式"><a href="#存储方式" class="headerlink" title="存储方式"></a>存储方式</h5><ol>
+<li>SharedPreferences</li>
+<li>ContentProvider</li>
+<li>文件</li>
+<li>数据库</li>
+</ol>
+<h5 id="如何选择"><a href="#如何选择" class="headerlink" title="如何选择"></a>如何选择</h5><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>时间开销</td>
+<td>这里说的时间开销包括了CPU时间和&#x2F;0时间，在I&#x2F;O优化中我就多次提到相比CPU和内存，I&#x2F;0存储的速度是非常慢的。但是如果存储方法中比如编解码或者加密&#x2F;解密等设计的比较复杂，整个数据存储过程也会出现CPU时间变得更长的情况</td>
+</tr>
+<tr>
+<td>正确性</td>
+<td>选择存储方案的时候，第一个需要判断它是否靠谱。这套存储方案设计是否完备，有没有支持多线程或者跨进程同步操作。内部是否健壮，有没有考虑异常情况下数据的校验和恢复，比如采用双写或者备份文件策略，即使主文件因为系统底层导致损坏，也可以一定程度 上恢复大部分数据</td>
+</tr>
+<tr>
+<td>空间开销</td>
+<td>即使相同的数据如果使用不同的编码方式，最后占用的存储空间也会有所不同。举一个简单的例子，相同的数据所占的空间大小是XML&gt;JSON&gt;ProtocolBuffer。除了编码方式的差异，在一些场景我们可能还需要引入压缩策略来进-步减少存储空间，例如zip、lzma等。数据存储的空间开销还需要考虑内存空间的占用量，整个存储过程会不会导致应用出现大量GC、OOM等</td>
+</tr>
+<tr>
+<td>安全</td>
+<td>应用中可能会有一些非常敏感的数据,即使它们存储在&#x2F;data&#x2F;data中，我们依然必须将它们加密。例如微信的聊天数据是存储在加密的数据库中，一些些账号相关的数据我们也要单独做加密落地。根据加密强度的不同，可以选择RSA、AES、chacha20、 TEA这些常用的加密算法</td>
+</tr>
+<tr>
+<td>开发成本</td>
+<td>有些存储方案看起来非常高大上，但是需要业务做很大改造才能接入。这里我们当然希望能无缝的接入到业务中，在整个开发过程越简单越好</td>
+</tr>
+<tr>
+<td>兼容性</td>
+<td>业务不停地向前演进，我们的存储字段或者格式有时候也会不得不有所变化。兼容性首先要考虑的是向前、向后的兼容性，老的数据在升级时能否迁移过来，新的数据在老版本能否降级使用。兼容性另外一个需要考虑的可能是多语言的问题，不同的语言是否支持转换</td>
+</tr>
+</tbody></table>
+<h4 id="sp的N宗罪"><a href="#sp的N宗罪" class="headerlink" title="sp的N宗罪"></a>sp的N宗罪</h4><ol>
+<li>跨进程不安全</li>
+<li>加载缓慢：异步加载，但是异步加载线程没有设置优先级，如果这时候主线程读取数据需要等待加载线程执行完毕(也就是主线程等待低优先级线程锁的问题)</li>
+<li>全量写入：无论是commit还是apply，即使改动一个条目，也会把全部内容写到文件</li>
+<li>卡顿：异步落盘机制在应用崩溃时会导致数据丢失</li>
+</ol>
+<p>下面是SP操作源码的简介图，来源：<a target="_blank" rel="noopener" href="https://juejin.im/entry/6844903488271417351">https://juejin.im/entry/6844903488271417351</a></p>
+<p><img src="/image/Android/MMKV/apply.png" srcset="/img/loading.gif" lazyload alt="linux-io"></p>
+<p><img src="/image/Android/MMKV/commit.png" srcset="/img/loading.gif" lazyload alt="linux-io"></p>
+<h4 id="SP优化"><a href="#SP优化" class="headerlink" title="SP优化"></a>SP优化</h4><p>可以在Application中重写getSharedPreference方法，返回自己实现的sp。我们可以自己将多次读写进行合并</p>
+<h4 id="MMKV与SP"><a href="#MMKV与SP" class="headerlink" title="MMKV与SP"></a>MMKV与SP</h4><table>
+<thead>
+<tr>
+<th>关键要素</th>
+<th>SP</th>
+<th>MMKV</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>正确性</td>
+<td>差<br>跨进程和apply机制导致数据丢失</td>
+<td>优<br>使用mmap和文件 锁保证数据完整</td>
+</tr>
+<tr>
+<td>时间开销</td>
+<td>差<br>全量写入、卡顿</td>
+<td>优<br>1.使用mmap<br/>2.修改插入文件尾部，无需全量写入</td>
+</tr>
+<tr>
+<td>空间开销</td>
+<td>差<br>使用XML，格式比较冗余</td>
+<td>良<br/>使用Protocol Buffer,但是增量更新可能会导致部分冗余</td>
+</tr>
+<tr>
+<td>安全</td>
+<td>差<br/>完全明文存储，没有支持加密与权限校验，不适合存放敏感数据</td>
+<td>良<br/>使用Protocol Buffer,不是完全明文。没有支持加密与权限校验，不适合存放敏感数据</td>
+</tr>
+<tr>
+<td>开发成本</td>
+<td>优<br/>系统支持，非常简单</td>
+<td>良<br/>需要引入单独库，有一定的改造成本</td>
+</tr>
+<tr>
+<td>兼容性</td>
+<td>优<br/>支持前后兼容</td>
+<td>优<br/>支持前后兼容，支持导入<br/>SharedPreferences历史数据，但注意<br/>转换后版本无法回退</td>
+</tr>
+</tbody></table>
+<h4 id="MMKV原理：来源https-github-com-Tencent-MMKV"><a href="#MMKV原理：来源https-github-com-Tencent-MMKV" class="headerlink" title="MMKV原理：来源https://github.com/Tencent/MMKV"></a>MMKV原理：来源<a target="_blank" rel="noopener" href="https://github.com/Tencent/MMKV">https://github.com/Tencent/MMKV</a></h4><ol>
+<li><p>内存准备</p>
+<p>通过 mmap 内存映射文件，提供一段可供随时写入的内存块，App 只管往里面写数据，由操作系统负责将内存回写到文件，不必担心 crash 导致数据丢失。</p>
+<p><img src="/image/Android/MMKV/Linux-storage-stack.png" srcset="/img/loading.gif" lazyload alt="Linux-storage-stack"></p>
+</li>
+</ol>
+<p>简化版<br>   <img src="/image/Android/MMKV/linux-io.png" srcset="/img/loading.gif" lazyload alt="linux-io"></p>
+<ol start="2">
+<li><p>数据组织</p>
+<p>数据序列化方面我们选用 protobuf 协议，pb 在性能和空间占用上都有不错的表现。考虑到我们要提供的是通用 kv 组件，key 可以限定是 string 字符串类型，value 则多种多样（int&#x2F;bool&#x2F;double 等）。要做到通用的话，考虑将 value 通过 protobuf 协议序列化成统一的内存块（buffer），然后就可以将这些 KV 对象序列化到内存中。</p>
+</li>
+<li><p>写入优化</p>
+<p>标准 protobuf 不提供增量更新的能力，每次写入都必须全量写入。考虑到主要使用场景是频繁地进行写入更新，我们需要有增量更新的能力：将增量 kv 对象序列化后，直接 append 到内存末尾；这样同一个 key 会有新旧若干份数据，最新的数据在最后；那么只需在程序启动第一次打开 mmkv 时，不断用后读入的 value 替换之前的值，就可以保证数据是最新有效的。</p>
+</li>
+<li><p>空间增长</p>
+<p>使用 append 实现增量更新带来了一个新的问题，就是不断 append 的话，文件大小会增长得不可控。例如同一个 key 不断更新的话，是可能耗尽几百 M 甚至上 G 空间，而事实上整个 kv 文件就这一个 key，不到 1k 空间就存得下。这明显是不可取的。我们需要在性能和空间上做个折中：以内存 pagesize 为单位申请空间，在空间用尽之前都是 append 模式；当 append 到文件末尾时，进行文件重整、key 排重，尝试序列化保存排重结果；排重后空间还是不够用的话，将文件扩大一倍，直到空间足够。</p>
+</li>
+<li><p>数据有效性</p>
+<p>考虑到文件系统、操作系统都有一定的不稳定性，我们另外增加了 crc 校验，对无效数据进行甄别。在 iOS 微信现网环境上，我们观察到有平均约 70万日次的数据校验不通过。</p>
+</li>
+</ol>
+<h4 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h4><p><a target="_blank" rel="noopener" href="https://github.com/Tencent/MMKV">https://github.com/Tencent/MMKV</a> github上有对应的示例</p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a target="_blank" rel="noopener" href="http://www.0xffffff.org/2017/05/01/41-linux-io/">聊聊 Linux IO</a><br><a target="_blank" rel="noopener" href="https://tech.meituan.com/2017/05/19/about-desk-io.html">磁盘I&#x2F;O那些事</a><br><a target="_blank" rel="noopener" href="https://www.ibm.com/developerworks/cn/linux/l-cache/index.html">Linux 内核的文件 Cache 管理机制介绍</a><br><a target="_blank" rel="noopener" href="https://www.ibm.com/developerworks/cn/linux/l-cn-directio/index.html">Linux 中直接 I&#x2F;O 机制的介绍</a><br><a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/os/MemoryFile">MemoryFile</a><br><a target="_blank" rel="noopener" href="https://developer.android.com/reference/java/nio/MappedByteBuffer">MappedByteBuffer</a><br><a target="_blank" rel="noopener" href="https://juejin.im/entry/6844903488271417351">彻底搞懂 SharedPreferences</a><br><a target="_blank" rel="noopener" href="https://developer.ibm.com/zh/articles/j-5things1/">Java 对象序列化</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>MMKV与SharedPreference</div>
+      <div>https://blog.huangyuanlove.com/2020/08/23/MMKV与SharedPreference/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年8月23日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/09/24/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F-%E4%B8%8A/" title="正则表达式--上">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">正则表达式--上</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/07/27/Flutter%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" title="Flutter异常处理">
+                        <span class="hidden-mobile">Flutter异常处理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '2430852f011820bbf2e08a88eb01fea7'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

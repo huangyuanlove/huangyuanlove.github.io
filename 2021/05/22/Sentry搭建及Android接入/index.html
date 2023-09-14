@@ -1,0 +1,699 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="Sentry搭建,Android接入sentry,sentry混淆,sentry上传mapping文件">
+  
+    <meta name="description" content="因为sentry可以私有化部署，相比起bugly，我们可以做跟多的单独定制功能，所以决定将需要即时上报的日志放在sentry上。 搭建环境：  Ubuntu18.04 64位 sentry版本21.5.1  环境要求：  Docker 19.03.6+ Compose 1.24.1+ 4 CPU Cores 8 GB RAM 20 GB Free Disk Space  由于sentry需要使用r">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sentry搭建及Android接入">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2021/05/22/Sentry%E6%90%AD%E5%BB%BA%E5%8F%8AAndroid%E6%8E%A5%E5%85%A5/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="因为sentry可以私有化部署，相比起bugly，我们可以做跟多的单独定制功能，所以决定将需要即时上报的日志放在sentry上。 搭建环境：  Ubuntu18.04 64位 sentry版本21.5.1  环境要求：  Docker 19.03.6+ Compose 1.24.1+ 4 CPU Cores 8 GB RAM 20 GB Free Disk Space  由于sentry需要使用r">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/sentry_upload_mapping.png">
+<meta property="article:published_time" content="2021-05-22T00:39:04.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.226Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="运维">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/sentry_upload_mapping.png">
+  
+  
+  
+  <title>Sentry搭建及Android接入 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Sentry搭建及Android接入"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-05-22 08:39" pubdate>
+          2021年5月22日 早上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.4k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Sentry搭建及Android接入</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>因为sentry可以私有化部署，相比起bugly，我们可以做跟多的单独定制功能，所以决定将需要即时上报的日志放在sentry上。</p>
+<p>搭建环境：</p>
+<ol>
+<li>Ubuntu18.04 64位</li>
+<li>sentry版本21.5.1</li>
+</ol>
+<p>环境要求：</p>
+<ul>
+<li>Docker 19.03.6+</li>
+<li>Compose 1.24.1+</li>
+<li>4 CPU Cores</li>
+<li>8 GB RAM</li>
+<li>20 GB Free Disk Space</li>
+</ul>
+<p>由于sentry需要使用redis、postgreSQL，所以选在了在新的虚拟机上进行部署</p>
+<span id="more"></span>
+
+
+
+
+
+<h4 id="安装docker"><a href="#安装docker" class="headerlink" title="安装docker"></a>安装docker</h4><p>目前是在Ubuntu18.04上使用deb文件安装的。官方指导在这里<a target="_blank" rel="noopener" href="https://docs.docker.com/engine/install/ubuntu/">https://docs.docker.com/engine/install/ubuntu/</a></p>
+<p>在 <a target="_blank" rel="noopener" href="https://download.docker.com/linux/ubuntu/dists/">https://download.docker.com/linux/ubuntu/dists/</a> 这里选择一下自己ubuntu的系统对应的文件夹(也就是系统版本代号)，比如18.04对应<code>bionic</code>，然后进入<code>pool/stable</code>文件夹，选择对应的系统环境，比如ubuntu 18.04 64位，对应的地址应该是<code>https://download.docker.com/linux/ubuntu/dists/bionic/pool/stable/amd64/</code>,然后下载最新版本的软件，我现在下载的是</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">containerd</span>.io_1.<span class="hljs-number">4</span>.<span class="hljs-number">4</span>-<span class="hljs-number">1</span>_amd64.deb <br><span class="hljs-attribute">docker</span>-ce-cli_20.<span class="hljs-number">10</span>.<span class="hljs-number">6</span>~<span class="hljs-number">3</span>-<span class="hljs-number">0</span>~ubuntu-bionic_amd64.deb <br><span class="hljs-attribute">docker</span>-ce_20.<span class="hljs-number">10</span>.<span class="hljs-number">6</span>~<span class="hljs-number">3</span>-<span class="hljs-number">0</span>~ubuntu-bionic_amd64.deb<br></code></pre></td></tr></table></figure>
+
+<p>然后按照顺序安装，安装完成后确认是否安装成功：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo docker run hello-world<br></code></pre></td></tr></table></figure>
+
+<p>这条命令会下载测试镜像并运行，如果安装成功，则会在终端打印对应信息</p>
+<p>如果上面的下载地址无法访问的话，可以使用国内的清华大学镜像源，地址是 <code>https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/dists/bionic/pool/stable/amd64/</code></p>
+<h4 id="安装docker-compose"><a href="#安装docker-compose" class="headerlink" title="安装docker-compose"></a>安装docker-compose</h4><p>访问 <a target="_blank" rel="noopener" href="https://github.com/docker/compose/releases/tag/1.29.2">https://github.com/docker/compose/releases/tag/1.29.2</a> 下载linux版本，文件名字改成<code>docker-compose</code>，添加执行权限，并复制到<code> /usr/local/bin/</code>文件夹下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">mv docker-compose-Linux-x86_64 docker-compose<br>chmox +x docker-compose<br>sudo cp docker-compose  /usr/local/bin/<br></code></pre></td></tr></table></figure>
+
+<p>执行 <code>docker-compose -v</code>命令，能打印出版本信息证明安装程国平</p>
+<h4 id="安装sentry"><a href="#安装sentry" class="headerlink" title="安装sentry"></a>安装sentry</h4><p>访问 <a target="_blank" rel="noopener" href="https://github.com/getsentry/onpremise">https://github.com/getsentry/onpremise</a> 并克隆下来该仓库，仓库地址为：<code>git@github.com:getsentry/onpremise.git</code> 或者<code> https://github.com/getsentry/onpremise.git</code>,执行文件夹中的<code>install.sh</code>。过程会比较漫长，在这个过程中会让你创建sentry的用户，输入邮箱和密码。这个用户也就是你之后登陆sentry网页使用的账号密码。</p>
+<p>安装过程中需要拉取docker镜像，众所周知的原因，有很大可能会失败，我们可以将docker的镜像源替换为国内的，比如中科大。ubuntu下替换方式</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs shell">vi /etc/docker/daemon.json<br><span class="hljs-meta prompt_">#</span><span class="language-bash">文件内容</span><br>&#123;<br>    &quot;registry-mirrors&quot;: [&quot;https://docker.mirrors.ustc.edu.cn&quot;]<br>&#125;<br><span class="hljs-meta prompt_">#</span><span class="language-bash">保存后执行</span><br>systemctl restart docker.service<br></code></pre></td></tr></table></figure>
+
+<h4 id="启动及使用"><a href="#启动及使用" class="headerlink" title="启动及使用"></a>启动及使用</h4><p>在上一步安装完成后的控制台会告诉你启动sentry服务的命令<code>docker-compose up -d</code>，</p>
+<p>在浏览器中访问sentry服务器的ip:9000， 输入上一步创建的邮箱和密码就可以登录了。接下来可以跟着引导查看一下基本功能的使用。</p>
+<p>现在我们创建一个Android应用，创建好了之后会有对应的引导提示如何在Android中使用sentry。</p>
+<ol>
+<li><p>添加仓库</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs groovy">repositories &#123;<br>  mavenCentral()<br>&#125;<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>添加依赖</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs groovy">implementation <span class="hljs-string">&#x27;io.sentry:sentry-android:4.3.0&#x27;</span><br></code></pre></td></tr></table></figure>
+</li>
+<li><p>在Androidmanifest.xml中添加应用信息</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">application</span>&gt;</span><br>	<span class="hljs-tag">&lt;<span class="hljs-name">meta-data</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;io.sentry.dsn&quot;</span> <span class="hljs-attr">android:value</span>=<span class="hljs-string">&quot;http://b3a3844e753f4734b7ca1d6b154e6e06@192.168.102.181:9000/2&quot;</span> /&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">application</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>这里的value值可以在sentry项目设置中找到。</p>
+</li>
+<li><p>使用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> io.sentry.Breadcrumb;<br><span class="hljs-keyword">import</span> io.sentry.Sentry;<br><span class="hljs-keyword">import</span> io.sentry.SentryEvent;<br><span class="hljs-keyword">import</span> io.sentry.SentryLevel;<br><span class="hljs-keyword">import</span> io.sentry.protocol.Message;<br><span class="hljs-keyword">import</span> io.sentry.protocol.User;<br><br>Sentry.captureMessage(<span class="hljs-string">&quot;captureMessage INFO&quot;</span>, SentryLevel.INFO);<br>Sentry.captureException(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Exception</span>(<span class="hljs-string">&quot;exception&quot;</span>));<br>Sentry.captureEvent(<span class="hljs-keyword">new</span> <span class="hljs-title class_">SentryEvent</span>());<br><span class="hljs-comment">//设置全局用户信息</span><br><span class="hljs-type">User</span> <span class="hljs-variable">user</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">User</span>();<br>user.setEmail(<span class="hljs-string">&quot;a@a.com&quot;</span>);<br><span class="hljs-type">String</span> <span class="hljs-variable">userId</span> <span class="hljs-operator">=</span> UUID.randomUUID().toString();<br>user.setId(userId);<br>Sentry.setUser(user);<br></code></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="关于混淆"><a href="#关于混淆" class="headerlink" title="关于混淆"></a>关于混淆</h4><p>如果应用经过混淆，我们需要将mapping文件上传到sentry平台，才能定位到错误代码所在位置。</p>
+<p>首先在<code>app/build.gradle</code>中添加plugin：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs groovy">apply <span class="hljs-attr">plugin:</span> <span class="hljs-string">&#x27;io.sentry.android.gradle&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p>然后在工程根目录下的<code>build.gradle</code>文件中添加</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs groovy">dependencies &#123;<br>        classpath <span class="hljs-string">&#x27;io.sentry:sentry-android-gradle-plugin:1.7.36&#x27;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们还需要在项目根目录下添加一个<code>sentry.properties</code>文件，用来配置我们的mapping文件上传到哪个项目中</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs properties"><span class="hljs-attr">defaults.project</span>=<span class="hljs-string">your-project</span><br><span class="hljs-attr">defaults.org</span>=<span class="hljs-string">your-org</span><br><span class="hljs-attr">auth.token</span>=<span class="hljs-string">YOUR_AUTH_TOKEN</span><br><span class="hljs-attr">defaults.url</span>=<span class="hljs-string">your sentry service address</span><br></code></pre></td></tr></table></figure>
+
+<p>这里的org的值在<code>Organization Settings</code>中查看，是<code>Organization Slug</code>的值，而不是<code>Display Name</code>的值</p>
+<p><img src="/image/sentry_upload_mapping.png" srcset="/img/loading.gif" lazyload alt="sentry_upload_mapping"></p>
+<p>token值在上图中的 <code>API keys</code>里面，没有的话创建一个新的就好，权限我是用的默认。</p>
+<p>然后我们打个release包，上传成功后会在控制台打印出对应信息。我们可以在项目设置 <code>ProGuard</code>中找到上传的mapping文件。</p>
+<p>如果不希望自动上传mapping，我们可以将其关闭，使用<code>sentry-cli</code>进行手动上传</p>
+<p>在<code>app/build.gradle</code>中添加如下配置</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs groovy">sentry &#123;<br>    <span class="hljs-comment">// Disables or enables the automatic configuration of ProGuard</span><br>    <span class="hljs-comment">// for Sentry.  This injects a default config for ProGuard so</span><br>    <span class="hljs-comment">// you don&#x27;t need to do it manually.</span><br><br>    <span class="hljs-comment">// Only enable it if you are using sentry-android &lt;= v1.7,</span><br>    <span class="hljs-comment">// sentry-android &gt;= v2.0 already does it automatically.</span><br>    autoProguardConfig <span class="hljs-literal">false</span><br><br>    <span class="hljs-comment">// Enables or disables the automatic upload of mapping files</span><br>    <span class="hljs-comment">// during a build.  If you disable this, you&#x27;ll need to manually</span><br>    <span class="hljs-comment">// upload the mapping files with sentry-cli when you do a release.</span><br>    autoUpload <span class="hljs-literal">true</span><br><br>    <span class="hljs-comment">// Disables or enables the automatic configuration of Native Symbols</span><br>    <span class="hljs-comment">// for Sentry. This executes sentry-cli automatically so</span><br>    <span class="hljs-comment">// you don&#x27;t need to do it manually.</span><br>    <span class="hljs-comment">// Default is disabled.</span><br>    uploadNativeSymbols <span class="hljs-literal">false</span><br><br>    <span class="hljs-comment">// Does or doesn&#x27;t include the source code of native code for Sentry.</span><br>    <span class="hljs-comment">// This executes sentry-cli with the --include-sources param. automatically so</span><br>    <span class="hljs-comment">// you don&#x27;t need to do it manually.</span><br>    <span class="hljs-comment">// Default is disabled.</span><br>    includeNativeSources <span class="hljs-literal">false</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>sentry-cli的安装在这里 <a target="_blank" rel="noopener" href="https://docs.sentry.io/product/cli/installation/">https://docs.sentry.io/product/cli/installation/</a></p>
+<p>sentry-cli的配置 <a target="_blank" rel="noopener" href="https://docs.sentry.io/product/cli/configuration/">https://docs.sentry.io/product/cli/configuration/</a></p>
+<p>sentry-cli 的使用 <a target="_blank" rel="noopener" href="https://docs.sentry.io/product/cli/dif/#proguard-mapping-upload">https://docs.sentry.io/product/cli/dif/#proguard-mapping-upload</a></p>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+        <a href="/tags/%E8%BF%90%E7%BB%B4/" class="print-no-link">#运维</a>
+      
+        <a href="/tags/linux/" class="print-no-link">#linux</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Sentry搭建及Android接入</div>
+      <div>https://blog.huangyuanlove.com/2021/05/22/Sentry搭建及Android接入/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年5月22日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/06/19/Android%E6%85%A2%E7%BD%91%E7%BB%9C%E5%8F%8A%E9%A1%B5%E9%9D%A2%E7%9B%91%E6%8E%A7/" title="Android慢网络及页面监控">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Android慢网络及页面监控</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/04/25/Android%E4%B8%AD%E7%9A%84%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/" title="Android中的单元测试">
+                        <span class="hidden-mobile">Android中的单元测试</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '7f1c3d4a03996c9bc6adb2497ebc9181'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

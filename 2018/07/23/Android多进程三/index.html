@@ -1,0 +1,681 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="Android多进程实现">
+  
+    <meta name="description" content="Android中中IPC方式有很多，比如使用Bundle，使用文件共享，使用Messenger，使用AIDL，使用ContentProvider，使用Socket等。前两种方式比较简单，自己玩。下面主要是抄的《Android开发艺术探索》2.4.4章节，看过书的就不用看了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android多进程三">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2018/07/23/Android%E5%A4%9A%E8%BF%9B%E7%A8%8B%E4%B8%89/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="Android中中IPC方式有很多，比如使用Bundle，使用文件共享，使用Messenger，使用AIDL，使用ContentProvider，使用Socket等。前两种方式比较简单，自己玩。下面主要是抄的《Android开发艺术探索》2.4.4章节，看过书的就不用看了。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-07-23T09:38:39.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.212Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Android多进程三 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Android多进程三"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2018-07-23 17:38" pubdate>
+          2018年7月23日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          16k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Android多进程三</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>Android中中IPC方式有很多，比如使用Bundle，使用文件共享，使用Messenger，使用AIDL，使用ContentProvider，使用Socket等。前两种方式比较简单，自己玩。<br>下面主要是抄的《Android开发艺术探索》2.4.4章节，看过书的就不用看了。</p>
+<span id="more"></span>
+<p>上一篇主要抄了Messenger来进行进程间通信的方法，可以发现Messenger是以串行的方式处理客户端发来的消息，如果大量的消息同时发送到服务端，服务端仍然只能一个个处理，如果有大量的并发请求，那么用Messenger就不太合适了。同时，Messenger的作用主要是为了传递消息，很多时候我们可能需要跨进程调用服务端的方法，这种情形用Messenger就无法做到了，但是我们可以使用AIDL来实现跨进程的方法调用。AIDL也是Messenger的底层实现，因此Messenger本质上也是AIDL，只不过系统为我们做了封装从而方便上层的调用而已。在上一节中，我们介绍了Binder的概念，大家对Binder也有了一定的了解，在Binder的基础上我们可以更加容易地理解AIDL。这里先介绍使用AIDL来进行进程间通信的流程，分为服务端和客户端两个方面。</p>
+<h5 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h5><p>服务端首先要创建一个Service用来监听客户端的连接请求，然后创建一个AIDL文件，将暴露给客户端的接口在这个AIDL文件中声明，最后在Service中实现这个AIDL接口即可。</p>
+<h5 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h5><p>客户端所要做事情就稍微简单一些，首先需要绑定服务端的Service，绑定成功后，将服务端返回的Binder对象转成AIDL接口所属的类型，接着就可以调用AIDL中的方法了。</p>
+<h5 id="具体实现方式"><a href="#具体实现方式" class="headerlink" title="具体实现方式"></a>具体实现方式</h5><h6 id="AIDL接口的创建"><a href="#AIDL接口的创建" class="headerlink" title="AIDL接口的创建"></a>AIDL接口的创建</h6><p>收看看AIDL接口的创建，如下所示创建了一个后缀为AIDL的文件，在里面声明了一个接口和两个方法。创建AIDL文件的方式可以看这个<a href="http://blog.huangyuanlove.com/2018/06/21/Android%E5%A4%9A%E8%BF%9B%E7%A8%8B-%E4%B8%80/#more">Android多进程(一)</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// IBookManager.aidl</span><br><span class="hljs-keyword">package</span> com.huangyuanlove.testandroid;<br><br><span class="hljs-comment">// Declare any non-default types here with import statements</span><br><span class="hljs-keyword">import</span> com.huangyuanlove.testandroid.Book;<br><span class="hljs-keyword">interface</span> <span class="hljs-title class_">IBookManager</span> &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Demonstrates some basic types that you can use as parameters</span><br><span class="hljs-comment">     * and return values in AIDL.</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">basicTypes</span><span class="hljs-params">(<span class="hljs-type">int</span> anInt, <span class="hljs-type">long</span> aLong, <span class="hljs-type">boolean</span> aBoolean, <span class="hljs-type">float</span> aFloat,</span><br><span class="hljs-params">            <span class="hljs-type">double</span> aDouble, String aString)</span>;<br>            List&lt;Book&gt; <span class="hljs-title function_">getBookList</span><span class="hljs-params">()</span>;<br>            <span class="hljs-keyword">void</span> <span class="hljs-title function_">addBook</span><span class="hljs-params">(in Book book)</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>在AIDL文件中，并不是所有的数据类型都是可以使用的，只支持如下几种类型：</p>
+<ul>
+<li>基本数据类型（int、long、char、boolean、double等）；</li>
+<li>String和CharSequence；</li>
+<li>List：只支持ArrayList，里面每个元素都必须能够被AIDL支持；</li>
+<li>Map：只支持HashMap，里面的每个元素都必须被AIDL支持，包括key和value；</li>
+<li>Parcelable：所有实现了Parcelable接口的对象；</li>
+<li>AIDL：所有的AIDL接口本身也可以在AIDL文件中使用。</li>
+</ul>
+<p>以上6种数据类型就是AIDL所支持的所有类型，其中自定义的Parcelable对象和AIDL对象必须要显式import进来，不管它们是否和当前的AIDL文件位于同一个包内。比如IBookManager.aidl这个文件，里面用到了Book这个类，这个类实现了Parcelable接口并且和IBookManager.aidl位于同一个包中，但是遵守AIDL的规范，我们仍然需要显式地import进来：com.huangyuanlove.testandroid.Book。<br>另外一个需要注意的地方是，如果AIDL文件中用到了自定义的Parcelable对象，那么必须新建一个和它同名的AIDL文件，并在其中声明它为Parcelable类型。在上面的IBookManager.aidl中，我们用到了Book这个类，所以，我们必须要创建Book.aidl，然后在里面添加如下内容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.huangyuanlove.testandroid;<br>parcelable Book;<br></code></pre></td></tr></table></figure>
+
+<h6 id="远程服务端Service的实现"><a href="#远程服务端Service的实现" class="headerlink" title="远程服务端Service的实现"></a>远程服务端Service的实现</h6><p>上面讲述了如何定义AIDL接口，接下来实现这个接口。先创建一个service，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.huangyuanlove.testandroid;<br><br><span class="hljs-keyword">import</span> android.app.Service;<br><span class="hljs-keyword">import</span> android.content.Intent;<br><span class="hljs-keyword">import</span> android.os.Binder;<br><span class="hljs-keyword">import</span> android.os.IBinder;<br><span class="hljs-keyword">import</span> android.os.RemoteException;<br><span class="hljs-keyword">import</span> android.support.annotation.Nullable;<br><br><span class="hljs-keyword">import</span> java.util.List;<br><span class="hljs-keyword">import</span> java.util.concurrent.CopyOnWriteArrayList;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">BookManagerService</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Service</span> &#123;<br><br>    <span class="hljs-keyword">private</span> CopyOnWriteArrayList&lt;Book&gt; mBookList = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CopyOnWriteArrayList</span>&lt;&gt;();<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-type">Binder</span> <span class="hljs-variable">mBinder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IBookManager</span>.Stub() &#123;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">basicTypes</span><span class="hljs-params">(<span class="hljs-type">int</span> anInt, <span class="hljs-type">long</span> aLong, <span class="hljs-type">boolean</span> aBoolean, <span class="hljs-type">float</span> aFloat, <span class="hljs-type">double</span> aDouble, String aString)</span> <span class="hljs-keyword">throws</span> RemoteException &#123;<br>        &#125;<br><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> List&lt;Book&gt; <span class="hljs-title function_">getBookList</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> RemoteException &#123;<br>            <span class="hljs-keyword">return</span> mBookList;<br>        &#125;<br><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">addBook</span><span class="hljs-params">(Book book)</span> <span class="hljs-keyword">throws</span> RemoteException &#123;<br>            mBookList.add(book);<br>        &#125;<br>    &#125;;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onCreate</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-built_in">super</span>.onCreate();<br>        mBookList.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Book</span>(<span class="hljs-number">1</span>,<span class="hljs-string">&quot;Android&quot;</span>));<br>        mBookList.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Book</span>(<span class="hljs-number">2</span>,<span class="hljs-string">&quot;IOS&quot;</span>));<br>    &#125;<br><br>    <span class="hljs-meta">@Nullable</span><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> IBinder <span class="hljs-title function_">onBind</span><span class="hljs-params">(Intent intent)</span> &#123;<br>        <span class="hljs-keyword">return</span> mBinder;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>上面是一个服务端Service的典型实现，首先在onCreate中初始化添加了两本图书的信息，然后创建了一个Binder对象并在onBind中返回它，这个对象继承<code>IBookManager.Stub</code>并实现了它内部的AIDL方法，注意这里采用了CopyOnWriteArrayList，这个CopyOnWriteArrayList支持并发读&#x2F;写。在前面<br>我们提到，AIDL方法是在服务端的Binder线程池中执行的，因此当多个客户端同时连接的时候，会存在多个线程同时访问的情形，所以我们要在AIDL方法中处理线程同步，而我们这里直接使用CopyOnWriteArrayList来进行自动的线程同步。AIDL中所支持的是抽象的List，而List只是一个接口，因此虽然服务端返回的是CopyOnWriteArrayList，但是在Binder中会按照List的规范去访问数据并最终形成一个新的ArrayList传递给客户端。所以，我们在服务端采用CopyOnWriteArrayList是完全可以的。和此类似的还有ConcurrentHashMap，然后我们需要在XML中注册这个Service:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">service</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;.BookManagerService&quot;</span></span><br><span class="hljs-tag">            <span class="hljs-attr">android:process</span>=<span class="hljs-string">&quot;:remote&quot;</span>/&gt;</span><br></code></pre></td></tr></table></figure>
+<h6 id="客户端的实现"><a href="#客户端的实现" class="headerlink" title="客户端的实现"></a>客户端的实现</h6><p>客户端的实现就比较简单了，首先要绑定远程服务，绑定成功后将服务端返回的Binder对象转换成AIDL接口，然后就可以通过这个接口去调用服务端的远程方法了，代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MainActivity</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AppCompatActivity</span> &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-type">ServiceConnection</span> <span class="hljs-variable">mConnection</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServiceConnection</span>() &#123;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onServiceConnected</span><span class="hljs-params">(ComponentName name, IBinder service)</span> &#123;<br>            IBookManager bookManager= IBookManager.Stub.asInterface(service);<br>            <span class="hljs-keyword">try</span> &#123;<br>                List&lt;Book&gt; list = bookManager.getBookList();<br>                Log.d(<span class="hljs-string">&quot;xuan&quot;</span>,<span class="hljs-string">&quot;bookManager.getBookList()--&gt;&quot;</span> + list.size());<br>                bookManager.addBook(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Book</span>(<span class="hljs-number">3</span>,<span class="hljs-string">&quot;java&quot;</span>));<br>                List&lt;Book&gt; newList = bookManager.getBookList();<br>                Log.d(<span class="hljs-string">&quot;xuan&quot;</span>,<span class="hljs-string">&quot;bookManager.getBookList()--&gt;&quot;</span> + newList.size());<br>            &#125;<span class="hljs-keyword">catch</span> (RemoteException e)&#123;<br>                e.printStackTrace();<br>            &#125;<br>        &#125;<br><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onServiceDisconnected</span><span class="hljs-params">(ComponentName name)</span> &#123;<br><br>        &#125;<br>    &#125;;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onCreate</span><span class="hljs-params">(Bundle savedInstanceState)</span> &#123;<br>        <span class="hljs-built_in">super</span>.onCreate(savedInstanceState);<br>        setContentView(R.layout.activity_main);<br>        <span class="hljs-type">Intent</span> <span class="hljs-variable">intent</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Intent</span>(<span class="hljs-built_in">this</span>,BookManagerService.class);<br>        bindService(intent,mConnection, Context.BIND_AUTO_CREATE);<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onDestroy</span><span class="hljs-params">()</span> &#123;<br>        unbindService(mConnection);<br>        <span class="hljs-built_in">super</span>.onDestroy();<br><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>绑定成功以后，会通过bookManager去调用getBookList方法，然后打印出所获取的图书信息。需要注意的是，服务端的方法有可能需要很久才能执行完毕，这个时候下面的代码就会导致ANR，这一点是需要注意的，后面会再介绍这种情况，接着再调用一下另外一个接口addBook，我们在客户端给服务端添加一本书，然后再获取一次。<br>现在我们考虑一种情况，假设有一种需求：用户不想时不时地去查询图书列表了，太累了，于是，他去问图书馆，“当有新书时能不能把书的信息告诉我呢？”。这就是一种典型的观察者模式。<br>首先，我们需要提供一个AIDL接口，每个用户都需要实现这个接口并且向图书馆申请新书的提醒功能，当然用户也可以随时取消这种提醒。之所以选择AIDL<br>接口而不是普通接口，是因为AIDL中无法使用普通接口。这里我们创建一个IOnNewBookArrivedListener.aidl文件，我们所期望的情况是：当服务端有新书到来时，就会通知每一个已经申请提醒功能的用户。从程序上来说就是调用所有IOnNewBookArrivedListener对象中的onNewBookArrived方法，并把新书的对象通过参数传递给客户端，内容如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// IOnNewBookArrivedListener.aidl</span><br><span class="hljs-keyword">package</span> com.huangyuanlove.testandroid;<br><br><span class="hljs-comment">// Declare any non-default types here with import statements</span><br><span class="hljs-keyword">import</span> com.huangyuanlove.testandroid.Book;<br><span class="hljs-keyword">interface</span> <span class="hljs-title class_">IOnNewBookArrivedListener</span> &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * Demonstrates some basic types that you can use as parameters</span><br><span class="hljs-comment">     * and return values in AIDL.</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">basicTypes</span><span class="hljs-params">(<span class="hljs-type">int</span> anInt, <span class="hljs-type">long</span> aLong, <span class="hljs-type">boolean</span> aBoolean, <span class="hljs-type">float</span> aFloat,</span><br><span class="hljs-params">            <span class="hljs-type">double</span> aDouble, String aString)</span>;<br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">onNewBookArrived</span><span class="hljs-params">(in Book newBook)</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>AIDL中除了基本数据类型，其他类型的参数必须标上方向：in、out或者inout，in表示输入型参数，out表示输出型参数，inout表示输入输出型参数，至于它们具体的区别，官网是这么说的：</p>
+<blockquote>
+<p>All non-primitive parameters require a directional tag indicating which way the data goes . Either in , out , or inout . Primitives are in by default , and connot be otherwise .</p>
+</blockquote>
+<blockquote>
+<p>所有的非基本参数都需要一个定向tag来指出数据的流向，不管是 in , out , 还是 inout 。基本参数的定向tag默认是并且只能是 in 。</p>
+</blockquote>
+<p>我们要根据实际需要去指定参数类型，不能一概使用out或者inout，因为这在底层实现是有开销的。最后，AIDL接口中只支持方法，不支持声明静态常量，这一点区别于传统的接口。<br>除了要新增加一个AIDL接口，还需要在原有的接口中添加两个新方法，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.huangyuanlove.testandroid;<br><br><span class="hljs-keyword">import</span> com.huangyuanlove.testandroid.Book;<br><span class="hljs-keyword">import</span> com.huangyuanlove.testandroid.IOnNewBookArrivedListener;<br><span class="hljs-keyword">interface</span> <span class="hljs-title class_">IBookManager</span> &#123;<br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">basicTypes</span><span class="hljs-params">(<span class="hljs-type">int</span> anInt, <span class="hljs-type">long</span> aLong, <span class="hljs-type">boolean</span> aBoolean, <span class="hljs-type">float</span> aFloat,</span><br><span class="hljs-params">            <span class="hljs-type">double</span> aDouble, String aString)</span>;<br>    List&lt;Book&gt; <span class="hljs-title function_">getBookList</span><span class="hljs-params">()</span>;<br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">addBook</span><span class="hljs-params">(in Book book)</span>;<br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">registerListener</span><span class="hljs-params">(IOnNewBookArrivedListener listener)</span>;<br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">unRegisterListener</span><span class="hljs-params">(IOnNewBookArrivedListener listener)</span>;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<p>接着，服务端中的Service的实现也需要修改一下，主要是Service中的IBookManager.Stub的实现，需要实现新增加的两个方法(IDE没有提示的话可以make一下)。同时，在BookManagerService中还开启了一个线程，每隔5s就向书库中增加一本新书并通知所有感兴趣的用户，整个代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><code class="hljs java"><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">BookManagerService</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Service</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">AtomicBoolean</span> <span class="hljs-variable">mIsServiceDestroyed</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AtomicBoolean</span>(<span class="hljs-literal">false</span>);<br>    <span class="hljs-keyword">private</span> CopyOnWriteArrayList&lt;Book&gt; mBookList = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CopyOnWriteArrayList</span>&lt;&gt;();<br>    <span class="hljs-keyword">private</span> CopyOnWriteArrayList&lt;IOnNewBookArrivedListener&gt; mListenerList<br>            = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CopyOnWriteArrayList</span>&lt;&gt;();<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-type">Binder</span> <span class="hljs-variable">mBinder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IBookManager</span>.Stub() &#123;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">basicTypes</span><span class="hljs-params">(<span class="hljs-type">int</span> anInt, <span class="hljs-type">long</span> aLong, <span class="hljs-type">boolean</span> aBoolean, <span class="hljs-type">float</span> aFloat, <span class="hljs-type">double</span> aDouble, String aString)</span> <span class="hljs-keyword">throws</span> RemoteException &#123;<br><br>        &#125;<br><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> List&lt;Book&gt; <span class="hljs-title function_">getBookList</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> RemoteException &#123;<br>            <span class="hljs-keyword">return</span> mBookList;<br>        &#125;<br><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">addBook</span><span class="hljs-params">(Book book)</span> <span class="hljs-keyword">throws</span> RemoteException &#123;<br>            mBookList.add(book);<br>        &#125;<br><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">registerListener</span><span class="hljs-params">(IOnNewBookArrivedListener listener)</span> <span class="hljs-keyword">throws</span> RemoteException &#123;<br>            <span class="hljs-keyword">if</span> (!mListenerList.contains(listener)) &#123;<br>                mListenerList.add(listener);<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                Log.d(<span class="hljs-string">&quot;xuan&quot;</span>, <span class="hljs-string">&quot;already exists.&quot;</span>);<br>            &#125;<br>            Log.d(<span class="hljs-string">&quot;xuan&quot;</span>, <span class="hljs-string">&quot;registerListener,size:&quot;</span> + mListenerList.size());<br>        &#125;<br><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">unRegisterListener</span><span class="hljs-params">(IOnNewBookArrivedListener listener)</span> <span class="hljs-keyword">throws</span> RemoteException &#123;<br>            <span class="hljs-keyword">if</span> (mListenerList.contains(listener)) &#123;<br>                mListenerList.remove(listener);<br>                Log.d(<span class="hljs-string">&quot;xuan&quot;</span>, <span class="hljs-string">&quot;unregister listener succeed.&quot;</span>);<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                Log.d(<span class="hljs-string">&quot;xuan&quot;</span>, <span class="hljs-string">&quot;not found,can not unregister.&quot;</span>);<br>            &#125;<br>            Log.d(<span class="hljs-string">&quot;xuan&quot;</span>, <span class="hljs-string">&quot;unregisterListener,current size:&quot;</span> + mListenerList.size());<br>        &#125;<br>    &#125;;<br><br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onCreate</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-built_in">super</span>.onCreate();<br><br>        mBookList.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Book</span>(<span class="hljs-number">1</span>, <span class="hljs-string">&quot;Android&quot;</span>));<br>        mBookList.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Book</span>(<span class="hljs-number">2</span>, <span class="hljs-string">&quot;IOS&quot;</span>));<br>        <span class="hljs-keyword">new</span> <span class="hljs-title class_">Thread</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ServiceWorker</span>()).start();<br>    &#125;<br><br>    <span class="hljs-meta">@Nullable</span><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> IBinder <span class="hljs-title function_">onBind</span><span class="hljs-params">(Intent intent)</span> &#123;<br>        <span class="hljs-keyword">return</span> mBinder;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onDestroy</span><span class="hljs-params">()</span> &#123;<br>        mIsServiceDestroyed.set(<span class="hljs-literal">true</span>);<br>        <span class="hljs-built_in">super</span>.onDestroy();<br>    &#125;<br><br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onNewBookArrived</span><span class="hljs-params">(Book book)</span> <span class="hljs-keyword">throws</span> RemoteException &#123;<br>        mBookList.add(book);<br>        Log.d(<span class="hljs-string">&quot;xuan&quot;</span>, <span class="hljs-string">&quot;onNewBookArrived,notify listeners:&quot;</span> + mListenerList.<br>                size());<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; mListenerList.size(); i++) &#123;<br>            <span class="hljs-type">IOnNewBookArrivedListener</span> <span class="hljs-variable">listener</span> <span class="hljs-operator">=</span> mListenerList.get(i);<br>            Log.d(<span class="hljs-string">&quot;xuan&quot;</span>, <span class="hljs-string">&quot;onNewBookArrived,notify listener:&quot;</span> + listener);<br>            listener.onNewBookArrived(book);<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ServiceWorker</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> &#123;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>            <span class="hljs-keyword">while</span> (!mIsServiceDestroyed.get()) &#123;<br>                <span class="hljs-keyword">try</span> &#123;<br>                    Thread.sleep(<span class="hljs-number">5000</span>);<br>                &#125; <span class="hljs-keyword">catch</span> (InterruptedException e) &#123;<br>                    e.printStackTrace();<br>                &#125;<br>                <span class="hljs-type">int</span> <span class="hljs-variable">bookId</span> <span class="hljs-operator">=</span> mBookList.size() + <span class="hljs-number">1</span>;<br>                <span class="hljs-type">Book</span> <span class="hljs-variable">newBook</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Book</span>(bookId, <span class="hljs-string">&quot;new book#&quot;</span> + bookId);<br>                <span class="hljs-keyword">try</span> &#123;<br>                    onNewBookArrived(newBook);<br>                &#125; <span class="hljs-keyword">catch</span> (RemoteException e) &#123;<br>                    e.printStackTrace();<br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<p>最后还需要修改一下客户端的代码，主要有两方面：首先客户端要注册IOnNewBookArrivedListener到远程服务端，这样当有新书时服务端才能通知当前客户端，同时我们要在Activity退出时解除这个注册；另一方面，当有新书时，服务端会回调客户端的IOnNewBookArrivedListener对象中的onNewBookArrived方法，但是这个方法是在客户端的Binder线程池中执行的，因此，为了便于进行UI操作，我们需要有一个Handler可以将其切换到客户端的主线程中去执行，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MainActivity</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AppCompatActivity</span> &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">MESSAGE_NEW_BOOK_ARRIVED</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">private</span> IBookManager mRemoteBookManager;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-type">Handler</span> <span class="hljs-variable">mHandler</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Handler</span>() &#123;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">handleMessage</span><span class="hljs-params">(Message msg)</span> &#123;<br>            <span class="hljs-keyword">switch</span> (msg.what) &#123;<br>                <span class="hljs-keyword">case</span> MESSAGE_NEW_BOOK_ARRIVED:<br>                    Log.d(<span class="hljs-string">&quot;MainActivity&quot;</span>,<span class="hljs-string">&quot;receive new book :&quot;</span> + msg.obj);<br>                    <span class="hljs-keyword">break</span>;<br>                <span class="hljs-keyword">default</span>:<br>                    <span class="hljs-built_in">super</span>.handleMessage(msg);<br>            &#125;<br>        &#125;<br>    &#125;;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-type">ServiceConnection</span> <span class="hljs-variable">mConnection</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServiceConnection</span>() &#123;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onServiceConnected</span><span class="hljs-params">(ComponentName name, IBinder service)</span> &#123;<br>            IBookManager bookManager= IBookManager.Stub.asInterface(service);<br>            <span class="hljs-keyword">try</span> &#123;<br>                mRemoteBookManager = bookManager;<br>                List&lt;Book&gt; list = bookManager.getBookList();<br>                Log.d(<span class="hljs-string">&quot;MainActivity&quot;</span>,<span class="hljs-string">&quot;bookManager.getBookList()--&gt;&quot;</span> + list.size() +<span class="hljs-string">&quot;&gt;&gt; &quot;</span> + list.toString());<br>                bookManager.addBook(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Book</span>(<span class="hljs-number">3</span>,<span class="hljs-string">&quot;java&quot;</span>));<br>                List&lt;Book&gt; newList = bookManager.getBookList();<br>                Log.d(<span class="hljs-string">&quot;MainActivity&quot;</span>,<span class="hljs-string">&quot;bookManager.getBookList()--&gt;&quot;</span> + newList.size()+<span class="hljs-string">&quot;&gt;&gt; &quot;</span> + newList.toString());<br>                bookManager.registerListener(mOnNewBookArrivedListener);<br>            &#125;<span class="hljs-keyword">catch</span> (RemoteException e)&#123;<br>                e.printStackTrace();<br>            &#125;<br>        &#125;<br><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onServiceDisconnected</span><span class="hljs-params">(ComponentName name)</span> &#123;<br>            mRemoteBookManager = <span class="hljs-literal">null</span>;<br>            Log.e(<span class="hljs-string">&quot;MainActivity&quot;</span>,<span class="hljs-string">&quot;binder died.&quot;</span>);<br>        &#125;<br>    &#125;;<br><br><br>    <span class="hljs-keyword">private</span> <span class="hljs-type">IOnNewBookArrivedListener</span> <span class="hljs-variable">mOnNewBookArrivedListener</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IOnNewBookArrivedListener</span>.Stub() &#123;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">basicTypes</span><span class="hljs-params">(<span class="hljs-type">int</span> anInt, <span class="hljs-type">long</span> aLong, <span class="hljs-type">boolean</span> aBoolean, <span class="hljs-type">float</span> aFloat, <span class="hljs-type">double</span> aDouble, String aString)</span> <span class="hljs-keyword">throws</span> RemoteException &#123;<br><br>        &#125;<br><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onNewBookArrived</span><span class="hljs-params">(Book newBook)</span> <span class="hljs-keyword">throws</span> RemoteException &#123;<br>            mHandler.obtainMessage(MESSAGE_NEW_BOOK_ARRIVED,newBook)<br>                    .sendToTarget();<br>        &#125;<br>    &#125;;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onCreate</span><span class="hljs-params">(Bundle savedInstanceState)</span> &#123;<br>        <span class="hljs-built_in">super</span>.onCreate(savedInstanceState);<br>        setContentView(R.layout.activity_main);<br>        <span class="hljs-type">Intent</span> <span class="hljs-variable">intent</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Intent</span>(<span class="hljs-built_in">this</span>,BookManagerService.class);<br>        bindService(intent,mConnection, Context.BIND_AUTO_CREATE);<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onDestroy</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">if</span> (mRemoteBookManager != <span class="hljs-literal">null</span><br>                &amp;&amp; mRemoteBookManager.asBinder().isBinderAlive()) &#123;<br>            <span class="hljs-keyword">try</span> &#123;<br>                Log.d(<span class="hljs-string">&quot;MainActivity&quot;</span>,<span class="hljs-string">&quot;unregister listener:&quot;</span> + mOnNewBookArrivedListener);<br>                mRemoteBookManager.unRegisterListener(mOnNewBookArrivedListener);<br>            &#125; <span class="hljs-keyword">catch</span> (RemoteException e) &#123;<br>                e.printStackTrace();<br>            &#125;<br>        &#125;<br>        unbindService(mConnection);<br>        <span class="hljs-built_in">super</span>.onDestroy();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>从上面的代码可以看出，当BookManagerActivity关闭时，我们会在onDestroy中去解除已经注册到服务端的listener，这就相当于我们不想再接收图书馆的新书提醒了，所以我<br>们可以随时取消这个提醒服务。按back键退出BookManagerActivity,下面是打印出的log</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs log">07-23 14:56:55.493 16905-16918/com.huangyuanlove.testandroid:remote D/BookManagerService: not found,can not unregister.<br>07-23 14:56:57.185 16905-16918/com.huangyuanlove.testandroid:remote D/BookManagerService: unregisterListener,current size:1<br></code></pre></td></tr></table></figure>
+<p>从上面的log可以看出，程序没有像我们所预期的那样执行。在解注册的过程中，服务端竟然无法找到我们之前注册的那个listener，其实，这是必然的，这种解注册的处理方式在日常开发过程中时常使用到，但是放到多进程中却无法奏效，因为Binder会把客户端传递过来的对象重新转化并生成一个新的对象。虽然我们在注册和解注册过程中使用的是同一个客户端对象，但是通过Binder传递到服务端后，却会产生两个全新的对象。别忘了对象是不能跨进程直接传输的，对象的跨进程传输本质上都是反序列化的过程，这就是为什么AIDL中的自定义对象都必须要实现Parcelable接口的原因。可以使用<code>RemoteCallbackList</code>。<br>RemoteCallbackList是系统专门提供的用于删除跨进程listener的接口。 RemoteCallbackList是一个泛型， 支持管理任意的AIDL接口， 这点从它的声明就可以看出，因为所有的AIDL接口都继承自IInterface接口</p>
+<blockquote>
+<p>public class RemoteCallbackList<E extends IInterface></p>
+</blockquote>
+<p>它的工作原理很简单， 在它的内部有一个Map结构专门用来保存所有的AIDL回调，这个Map的key是IBinder类型， value是Callback类型， 如下所示:</p>
+<blockquote>
+<p>ArrayMap&lt;IBinder,Callback&gt; mCallbacks &#x3D; new ArrayMap&lt;IBinder,Callback&gt;();</p>
+</blockquote>
+<p>其中Callback中封装了真正的远程listener。 当客户端注册listener的时候，它会把这个listener的信息存入mCallbacks中， 其中key和value分别通过下面的方式获得：</p>
+<blockquote>
+<p>IBinder key&#x3D; listener.asBinder()<br>Callback value &#x3D; new Callback(listener,cookie)</p>
+</blockquote>
+<p>虽然说多次跨进程传输客户端的同一个对象会在服务端生成不同的对象，但是这些新生成的对象有一个共同点，那就是它们底层的Binder对象是同一个， 利用这个特性，就可以实现上面我们无法实现的功能。当客户端解注册的时候，我们只要遍历服务端所有的listener， 找出那个和解注册listener具有相同Binder对象的服务端listener并把它删掉即可，这就是RemoteCallbackList为我们做的事情。同时RemoteCallbackList还有一个很有用的功能， 那就是当客户端进程终止后，它能够自动移除客户端所注册的listener。另外，RemoteCallbackList内部自动实现了线程同步的功能，所以我们使用它来注册和解注册时，不需要做额外的线程同步工作。<br>RemoteCallbackList使用起来很简单，我们要对BookManagerService做一些修改，首先要创建一个RemoteCallbackList对象来替代之前的CopyOnWriteArrayList，如下所示:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> RemoteCallbackList&lt;IOnNewBookArrivedListener&gt; mListenerList = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoteCallbackList</span>&lt;IOnNewBookArrivedListener&gt;();<br></code></pre></td></tr></table></figure>
+<p>然后修改registerListener和unregisterListener这两个接口的实现， 如下所示:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">registerListener</span><span class="hljs-params">(IOnNewBookArrivedIistener listener)</span> <span class="hljs-keyword">throws</span> RemoteException &#123;<br>    mListenerList.register(listener);<br>&#125;<br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">unRegisterListener</span><span class="hljs-params">(IOnNewBookArrivedIistener listener)</span> <span class="hljs-keyword">throws</span> RemoteException &#123;<br>    mListenerList.unregister(listener);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>接着要修改onNewBookArrived方法，当有新书时，我们就要通知所有已注册的listener，如下所示:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onNewBookArrived</span><span class="hljs-params">(Book book)</span> <span class="hljs-keyword">throws</span> RemoteException &#123;<br>        books.add(book);<br>       <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">N</span>  <span class="hljs-operator">=</span>mListenerList.beginBroadcast();<br>       <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span> ; i &lt; N;i++)&#123;<br>           <span class="hljs-type">IOnNewBookArrivedIistener</span> <span class="hljs-variable">iOnNewBookArrivedIistener</span> <span class="hljs-operator">=</span> mListenerList.getBroadcastItem(i);<br>           <span class="hljs-keyword">if</span>(iOnNewBookArrivedIistener!=<span class="hljs-literal">null</span>)&#123;<br>               iOnNewBookArrivedIistener.onNewBookArrived(book);<br>           &#125;<br>       &#125;<br>       mListenerList.finishBroadcast();<br>    &#125;<br></code></pre></td></tr></table></figure>
+<p>使用RemoteCallbackList，有一点需要注意，我们无法像操作List一样去操作它，尽管它的名字中也带个List，但是它并不是一个List。遍历RemoteCallbackList，必须要按照下面的方式进行，其中beginBroadcast和beginBroadcast必须要配对使用，哪怕我们仅仅是想要获取RemoteCallbackList中的元素个数，这是必须要注意的地方。<br>另外还有几点需要说明一下：</p>
+<ul>
+<li>客户端调用远程服务的方法，被调用的方法运行在服务端的Binder线程池中，同时客户端线程会被挂起，这个时候如果服务端方法执行比较耗时，就会导致客户端线程长时间地阻塞在这里，而如果这个客户端线程是UI线程的话，就会导致客户端ANR。因此，如果我们明确知道某个远程方法是耗时的，那么就要避免在客户端的UI线程中去访问远程方法。由于客户端的<code>onServiceConnected</code>和<code>onServiceDisconnected</code>方法都运行在UI线程中，所以也不可以在它们里面直接调用服务端的耗时方法，这点要尤其注意。</li>
+<li>由于服务端的方法本身就运行在服务端的Binder线程池中，所以服务端方法本身就可以执行大量耗时操作，这个时候切记不要在服务端方法中开线程去进行异步任务，除非你明确知道自己在干什么，否则不建议这么做。</li>
+<li>同理，当远程服务端需要调用客户端的listener中的方法时，被调用的方法也运行在Binder线程池中，只不过是客户端的线程池。所以，我们同样不可以在服务端中调用客户端的耗时方法。比如针对BookManagerService的onNewBookArrived方法。在它内部调用了客户端的IOnNewBookArrivedListener中的onNewBookArrived方法，如果客户端的这个onNewBookArrived方法比较耗时的话，那么请确保BookManagerService中的onNewBookArrived运行在非UI线程中，否则将导致服务端无法响应。</li>
+<li>权限验证，第一种方法，我们可以在onBind中进行验证，验证不通过就直接返回null，这样验证失败的客户端直接无法绑定服务，至于验证方式可以有多种， 比如使用permission验证。第二种方法，我们可以在服务端的onTransact方法中进行权限验证，如果验证失败就直接返回false，这样服务端就不会终止执行AIDL中的方法从而达到保护服务端的效果。</li>
+</ul>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Android多进程三</div>
+      <div>https://blog.huangyuanlove.com/2018/07/23/Android多进程三/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2018年7月23日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/07/26/Activity%E5%90%AF%E5%8A%A8%E6%A8%A1%E5%BC%8F%EF%BC%8C%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/" title="Activity启动模式，启动过程">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Activity启动模式，启动过程</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/06/22/Android%E5%A4%9A%E8%BF%9B%E7%A8%8B-%E4%BA%8C/" title="Android多进程-二">
+                        <span class="hidden-mobile">Android多进程-二</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'e9b12c6a9afc93d7881cdb8c80a1ef9a'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

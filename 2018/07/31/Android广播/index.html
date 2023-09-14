@@ -1,0 +1,651 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="广播,BroadcastReceiver，广播过程">
+  
+    <meta name="description" content="面试APUS的时候被问到广播：面试官：聊一下广播吧。我：广播啊，四大组件之一，自己创建个类继承自BroadcastReceiver，重写onReceive()方法，需要注意的是不要在这个方法中做耗时操作。注册的话可以在AndroidManifest文件中静态注册，也可以在代码中动态注册。都做完了之后就可以调用sendBroadCast()方法发送广播了。面试官：了解广播注册过程么？我：哈~！这个没">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android广播">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2018/07/31/Android%E5%B9%BF%E6%92%AD/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="面试APUS的时候被问到广播：面试官：聊一下广播吧。我：广播啊，四大组件之一，自己创建个类继承自BroadcastReceiver，重写onReceive()方法，需要注意的是不要在这个方法中做耗时操作。注册的话可以在AndroidManifest文件中静态注册，也可以在代码中动态注册。都做完了之后就可以调用sendBroadCast()方法发送广播了。面试官：了解广播注册过程么？我：哈~！这个没">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-07-31T07:16:25.000Z">
+<meta property="article:modified_time" content="2023-05-19T12:51:02.213Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Android广播 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Android广播"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2018-07-31 15:16" pubdate>
+          2018年7月31日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          13k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Android广播</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>面试APUS的时候被问到广播：<br>面试官：聊一下广播吧。<br>我：广播啊，四大组件之一，自己创建个类继承自<code>BroadcastReceiver</code>，重写<code>onReceive()</code>方法，需要注意的是不要在这个方法中做耗时操作。注册的话可以在<code>AndroidManifest</code>文件中静态注册，也可以在代码中动态注册。都做完了之后就可以调用sendBroadCast()方法发送广播了。<br>面试官：了解广播注册过程么？<br>我：哈~！这个没怎么看过。<br>面试官：了解怎么接收到的广播么？<br>我：没有。。。。</p>
+<span id="more"></span>
+
+<h4 id="广播的注册过程"><a href="#广播的注册过程" class="headerlink" title="广播的注册过程"></a>广播的注册过程</h4><p>《Android开发艺术探索》9.4章<br>广播的注册分为静态注册和动态注册，其中静态注册的广播在应用安装时由系统自动完成注册，具体来说是由PMS ( PackageManagerService)来完成整个注册过程的，除了广播以外，其他三大组件也都是在应用安装时由PMS解析并注册的。这里只分析广播的动态注册的过程，动态注册的过程是从ContextWrapper的registerReceiver方法开始的，和Activity以及Service一样 。ContextWrapper并 没有做实际的工作，而是将注册过程直接交给了ContextImpl来完成，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> Intent <span class="hljs-title function_">registerReceiver</span><span class="hljs-params">(BroadcastReceiver receiver, IntentFilter filter)</span> &#123;<br>    <span class="hljs-keyword">return</span> mBase.registerReceiver(receiver, filter);<br>&#125;<br><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">public</span> Intent <span class="hljs-title function_">registerReceiver</span><span class="hljs-params">(BroadcastReceiver receiver, IntentFilter filter,String broadcastPermission, Handler scheduler)</span> &#123;<br>    <span class="hljs-keyword">return</span> registerReceiverInternal(receiver, getUserId(),<br>            filter, broadcastPermission, scheduler, getOuterContext(), <span class="hljs-number">0</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这里的<code>registerReceiver</code>方法是重载方法，最终调用了<code>registerReceiverInternal</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> Intent <span class="hljs-title function_">registerReceiverInternal</span><span class="hljs-params">(BroadcastReceiver receiver, <span class="hljs-type">int</span> userId,</span><br><span class="hljs-params">            IntentFilter filter, String broadcastPermission,</span><br><span class="hljs-params">            Handler scheduler, Context context, <span class="hljs-type">int</span> flags)</span> &#123;<br>        <span class="hljs-type">IIntentReceiver</span> <span class="hljs-variable">rd</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;<br>        <span class="hljs-keyword">if</span> (receiver != <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-keyword">if</span> (mPackageInfo != <span class="hljs-literal">null</span> &amp;&amp; context != <span class="hljs-literal">null</span>) &#123;<br>                <span class="hljs-keyword">if</span> (scheduler == <span class="hljs-literal">null</span>) &#123;<br>                    scheduler = mMainThread.getHandler();<br>                &#125;<br>                rd = mPackageInfo.getReceiverDispatcher(<br>                    receiver, context, scheduler,<br>                    mMainThread.getInstrumentation(), <span class="hljs-literal">true</span>);<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                <span class="hljs-keyword">if</span> (scheduler == <span class="hljs-literal">null</span>) &#123;<br>                    scheduler = mMainThread.getHandler();<br>                &#125;<br>                rd = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LoadedApk</span>.ReceiverDispatcher(<br>                        receiver, context, scheduler, <span class="hljs-literal">null</span>, <span class="hljs-literal">true</span>).getIIntentReceiver();<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-keyword">final</span> <span class="hljs-type">Intent</span> <span class="hljs-variable">intent</span> <span class="hljs-operator">=</span> ActivityManager.getService().registerReceiver(<br>                    mMainThread.getApplicationThread(), mBasePackageName, rd, filter,<br>                    broadcastPermission, userId, flags);<br>            <span class="hljs-keyword">if</span> (intent != <span class="hljs-literal">null</span>) &#123;<br>                intent.setExtrasClassLoader(getClassLoader());<br>                intent.prepareToEnterProcess();<br>            &#125;<br>            <span class="hljs-keyword">return</span> intent;<br>        &#125; <span class="hljs-keyword">catch</span> (RemoteException e) &#123;<br>            <span class="hljs-keyword">throw</span> e.rethrowFromSystemServer();<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+<p>在上面的代码中，系统首先从<code>mPackageInfo</code>获取<code>IIntentReceiver</code>对象，然后再采用跨进程的方式向AMS发送广播注册的请求。之所以采用<code>IIntentReceiver</code>而不是直接采用<code>BroadcastReceiver</code> ,这是因为上述注册过程是一个进程间通信的过程，而<code>BroadcastReceiver</code>作为Android的一个组件是不能直接跨进程传递的，所以需要通过<code>IIntentReceiver</code>来中转一下。毫无疑问，<code>IIntentReceiver</code>必须是一个Binder接口，它的具体实现是<code>LoadedApk.ReceiverDispatcher.InnerReceiver</code>, <code>ReceiverDispatcher</code>的内部同时保存了<code>BroadcastReceiver</code>和<code>InnerReceiver</code>,这样当接收到广播时，<code>ReceiverDispatcher</code>可以很方便地调用<code>BroadcastReceiver</code>的<code>onReceive</code>方法。<br>看一下<code>LoadedApk.getReceiverDispatcher</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> IIntentReceiver <span class="hljs-title function_">getReceiverDispatcher</span><span class="hljs-params">(BroadcastReceiver r,</span><br><span class="hljs-params">            Context context, Handler handler,</span><br><span class="hljs-params">            Instrumentation instrumentation, <span class="hljs-type">boolean</span> registered)</span> &#123;<br>        <span class="hljs-keyword">synchronized</span> (mReceivers) &#123;<br>            LoadedApk.<span class="hljs-type">ReceiverDispatcher</span> <span class="hljs-variable">rd</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;<br>            ArrayMap&lt;BroadcastReceiver, LoadedApk.ReceiverDispatcher&gt; map = <span class="hljs-literal">null</span>;<br>            <span class="hljs-keyword">if</span> (registered) &#123;<br>                map = mReceivers.get(context);<br>                <span class="hljs-keyword">if</span> (map != <span class="hljs-literal">null</span>) &#123;<br>                    rd = map.get(r);<br>                &#125;<br>            &#125;<br>            <span class="hljs-keyword">if</span> (rd == <span class="hljs-literal">null</span>) &#123;<br>                rd = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ReceiverDispatcher</span>(r, context, handler,<br>                        instrumentation, registered);<br>                <span class="hljs-keyword">if</span> (registered) &#123;<br>                    <span class="hljs-keyword">if</span> (map == <span class="hljs-literal">null</span>) &#123;<br>                        map = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayMap</span>&lt;BroadcastReceiver, LoadedApk.ReceiverDispatcher&gt;();<br>                        mReceivers.put(context, map);<br>                    &#125;<br>                    map.put(r, rd);<br>                &#125;<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                rd.validate(context, handler);<br>            &#125;<br>            rd.mForgotten = <span class="hljs-literal">false</span>;<br>            <span class="hljs-keyword">return</span> rd.getIIntentReceiver();<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+<p>很显然，<code>getReceiverDispatcher</code>方法重新创建了一个<code>ReceiverDispatcher</code>对象并将其保存的<code>InnerReceiver</code>对象作为返回值返回，其中<code>InnerReceiver</code>对象和<code>BroadcastReceiver</code>都是在<code>ReceiverDispatcher</code>的构造方法中被保存起来的。<br>由于注册广播的真正实现过程是在AMS中，因此我们需要看一下AMS的具体实现。AMS的<code>registerReceiver</code>方法看起来很长，其实关键点就只有下面一部分，最终会把远程的<code>InnerReceiver</code>对象以及<code>IntentFilter</code>对象存储起来，这样整个广播的注册过程就完成了，代码如下所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> Intent <span class="hljs-title function_">registerReceiver</span><span class="hljs-params">(IApplicationThread caller, String callerPackage,IIntentReceiver receiver, IntentFilter filter, String permission, <span class="hljs-type">int</span> userId)</span> &#123;<br>    <span class="hljs-comment">// The first sticky in the list is returned directly back to the client.</span><br>    <span class="hljs-type">Intent</span> <span class="hljs-variable">sticky</span> <span class="hljs-operator">=</span> allSticky != <span class="hljs-literal">null</span> ? allSticky.get(<span class="hljs-number">0</span>) : <span class="hljs-literal">null</span>;<br>    <span class="hljs-type">ReceiverList</span> <span class="hljs-variable">rl</span> <span class="hljs-operator">=</span> mRegisteredReceivers.get(receiver.asBinder());<br>    <span class="hljs-type">BroadcastFilter</span> <span class="hljs-variable">bf</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BroadcastFilter</span>(filter, rl, callerPackage,permission, callingUid, userId);<br>    rl.add(bf);<br>    mReceiverResolver.addFilter(bf);<br>    <span class="hljs-keyword">return</span> sticky;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="广播的发送过程"><a href="#广播的发送过程" class="headerlink" title="广播的发送过程"></a>广播的发送过程</h4><p>当通过send方法来发送广播时，AMS会查找出匹配的广播接收者并将广播发送给它们处理。广播的发送有几种类型:普通广播、有序广播和粘性广播，有序广播和粘性广播与普通广播相比具有不同的特性，但是它们的发送&#x2F;接收过程的流程是类似的，因此这里只分析普通厂播的实现。广播的发送和接收，其本质是一个过程的两个阶段。这里从广播的发送可以说起，广播的发送仍然开始于<code>ContextWrapper</code>的<code>sendBroadcast</code>方法，之所以不是<code>Context</code>,那是因为<code>Context</code>的<code>sendBroadcast</code>是-一个抽象方法。和广播的注册过程一样，<code>ContextWrapper</code>的<code>sendBroadcast</code>方法仍然什么都不做，只是把事情交给<code>ContextImpl</code>去处理，<code>ContextImpl的sendBroadcast</code>方法的源码如下所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">sendBroadcast</span><span class="hljs-params">(Intent intent)</span> &#123;<br>        warnIfCallingFromSystemProcess();<br>        <span class="hljs-type">String</span> <span class="hljs-variable">resolvedType</span> <span class="hljs-operator">=</span> intent.resolveTypeIfNeeded(getContentResolver());<br>        <span class="hljs-keyword">try</span> &#123;<br>            intent.prepareToLeaveProcess(<span class="hljs-built_in">this</span>);<br>            ActivityManager.getService().broadcastIntent(<br>                    mMainThread.getApplicationThread(), intent, resolvedType, <span class="hljs-literal">null</span>,<br>                    Activity.RESULT_OK, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>, AppOpsManager.OP_NONE, <span class="hljs-literal">null</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>,<br>                    getUserId());<br>        &#125; <span class="hljs-keyword">catch</span> (RemoteException e) &#123;<br>            <span class="hljs-keyword">throw</span> e.rethrowFromSystemServer();<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+<p>从_上面的代码来看，<code>ContextImpl</code>也是几乎什么事都没干，它直接向AMS发起了一个异步请求用于发送广播。因此，下面直接看AMS对广播发送过程的处理，AMS的<code>broadcastIntent</code>方法又调用了<code>broadcastIntentLocked</code>,在这个方法的开始有这么一行：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// By default broadcasts do not go to stopped apps.</span><br>intent.addFlags(Intent.FLAG_EXCLUDE_STOPPED_PACKAGES);<br></code></pre></td></tr></table></figure>
+<p>从Android3.1开始广播默认情况下广播不会发送给已经停止的应用。这是因为系统在Android3.1中为Intent添加了两个标记位，分别是<code>FLAG_INCLUDE_STOPPED_PACKAGES</code>和<code>FLAG_EXCLUDE_STOPPED_PACKAGES</code>，用来控制广播是否要对处于停止状态的应用起作用，它们的含义如下所示。<br>** FLAG_INCLUDE_STOPPED_PACKAGES **<br>表示包含已经停止的应用，这个时候广播会发送给已经停止的应用。<br>** FLAG_EXCLUDE_STOPPED_PACKAGES **<br>表示不包含已经停止的应用，这个时候广播不会发送给已经停止的应用。</p>
+<p>从Android3.1开始，系统为所有广播默认添加了<code>FLAG_EXCLUDE_STOPPED_PACKAGES</code>标志，这样做是为了防止广播无意间或者在不必要的时候调起已经停止运行的应用。如果的确需要调起未启动的应用，那么只需要为广播的Intent添加<code>FLAG_INCLUDE_STOPPED_PACKAGES</code>标记即可。当<code>FLAG_EXCLUDE_STOPPED_PACKAGES</code>和<code>FLAG_INCLUDE_STOPPED_PACKAGES</code>两种标记位共存时,以<code>FLAG_INCLUDE_STOPPED_PACKAGES</code>为准。这里需要补充一下，一个应用处于停止状态分为两种情形:<br>第一种是应用安装后未运行，<br>第二种是应用被手动或者其他应用强停了。<br>Android3.1中广播的这个特性同样会影响开机广播，从Android3.1开始，处于停止状态的应用同样无法接收到开机广播，而在Android 3.1之前，处于停止状态的应用是可以收到开机广播的。<br>在<code>broadcastIntentLocked</code>的内部，会根据<code>intent-filter</code>查找出匹配的广播接收者并经过一系列的条件过滤，最终会将满足条件的广播接收者添加到<code>BroadcastQueue</code>中，接着<code>BroadcastQueue</code>就会将广播发送给相应的广播接收者，这个过程的源码如下所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">if</span> ((receivers != <span class="hljs-literal">null</span> &amp;&amp; receivers.size() &gt; <span class="hljs-number">0</span>)<br>                || resultTo != <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-type">BroadcastQueue</span> <span class="hljs-variable">queue</span> <span class="hljs-operator">=</span> broadcastQueueForIntent(intent);<br>            <span class="hljs-type">BroadcastRecord</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BroadcastRecord</span>(queue, intent, callerApp,<br>                    callerPackage, callingPid, callingUid, resolvedType,<br>                    requiredPermissions, appOp, brOptions, receivers, resultTo, resultCode,<br>                    resultData, resultExtras, ordered, sticky, <span class="hljs-literal">false</span>, userId);<br><br>            <span class="hljs-keyword">if</span> (DEBUG_BROADCAST) Slog.v(TAG_BROADCAST, <span class="hljs-string">&quot;Enqueueing ordered broadcast &quot;</span> + r<br>                    + <span class="hljs-string">&quot;: prev had &quot;</span> + queue.mOrderedBroadcasts.size());<br>            <span class="hljs-keyword">if</span> (DEBUG_BROADCAST) Slog.i(TAG_BROADCAST,<br>                    <span class="hljs-string">&quot;Enqueueing broadcast &quot;</span> + r.intent.getAction());<br><br>            <span class="hljs-type">boolean</span> <span class="hljs-variable">replaced</span> <span class="hljs-operator">=</span> replacePending &amp;&amp; queue.replaceOrderedBroadcastLocked(r);<br>            <span class="hljs-keyword">if</span> (!replaced) &#123;<br>                queue.enqueueOrderedBroadcastLocked(r);<br>                queue.scheduleBroadcastsLocked();<br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-comment">// There was nobody interested in the broadcast, but we still want to record</span><br>            <span class="hljs-comment">// that it happened.</span><br>            <span class="hljs-keyword">if</span> (intent.getComponent() == <span class="hljs-literal">null</span> &amp;&amp; intent.getPackage() == <span class="hljs-literal">null</span><br>                    &amp;&amp; (intent.getFlags()&amp;Intent.FLAG_RECEIVER_REGISTERED_ONLY) == <span class="hljs-number">0</span>) &#123;<br>                <span class="hljs-comment">// This was an implicit broadcast... let&#x27;s record it for posterity.</span><br>                addBroadcastStatLocked(intent.getAction(), callerPackage, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);<br>            &#125;<br>        &#125;<br></code></pre></td></tr></table></figure>
+<p>将广播添加到<code>BroadCastQueue</code>之后，接着调用了<code>scheduleBroadcastsLocked</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">scheduleBroadcastsLocked</span><span class="hljs-params">()</span> &#123;<br>       <span class="hljs-keyword">if</span> (DEBUG_BROADCAST) Slog.v(TAG_BROADCAST, <span class="hljs-string">&quot;Schedule broadcasts [&quot;</span><br>               + mQueueName + <span class="hljs-string">&quot;]: current=&quot;</span><br>               + mBroadcastsScheduled);<br><br>       <span class="hljs-keyword">if</span> (mBroadcastsScheduled) &#123;<br>           <span class="hljs-keyword">return</span>;<br>       &#125;<br>       mHandler.sendMessage(mHandler.obtainMessage(BROADCAST_INTENT_MSG, <span class="hljs-built_in">this</span>));<br>       mBroadcastsScheduled = <span class="hljs-literal">true</span>;<br>   &#125;<br></code></pre></td></tr></table></figure>
+<p>方法内发送了一个<code>BROADCAST_INTENT_MSG</code>消息，handler接到消息后，调用了<code>processNextBroadcast</code>方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">BroadcastHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Handler</span> &#123;<br>       <span class="hljs-keyword">public</span> <span class="hljs-title function_">BroadcastHandler</span><span class="hljs-params">(Looper looper)</span> &#123;<br>           <span class="hljs-built_in">super</span>(looper, <span class="hljs-literal">null</span>, <span class="hljs-literal">true</span>);<br>       &#125;<br><br>       <span class="hljs-meta">@Override</span><br>       <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">handleMessage</span><span class="hljs-params">(Message msg)</span> &#123;<br>           <span class="hljs-keyword">switch</span> (msg.what) &#123;<br>               <span class="hljs-keyword">case</span> BROADCAST_INTENT_MSG: &#123;<br>                   <span class="hljs-keyword">if</span> (DEBUG_BROADCAST) Slog.v(TAG_BROADCAST, <span class="hljs-string">&quot;Received BROADCAST_INTENT_MSG&quot;</span>);<br>                   processNextBroadcast(<span class="hljs-literal">true</span>);<br>               &#125; <span class="hljs-keyword">break</span>;<br>               <span class="hljs-keyword">case</span> BROADCAST_TIMEOUT_MSG: &#123;<br>                   <span class="hljs-keyword">synchronized</span> (mService) &#123;<br>                       broadcastTimeoutLocked(<span class="hljs-literal">true</span>);<br>                   &#125;<br>               &#125; <span class="hljs-keyword">break</span>;<br>               <span class="hljs-keyword">case</span> SCHEDULE_TEMP_WHITELIST_MSG: &#123;<br>                   DeviceIdleController.<span class="hljs-type">LocalService</span> <span class="hljs-variable">dic</span> <span class="hljs-operator">=</span> mService.mLocalDeviceIdleController;<br>                   <span class="hljs-keyword">if</span> (dic != <span class="hljs-literal">null</span>) &#123;<br>                       dic.addPowerSaveTempWhitelistAppDirect(UserHandle.getAppId(msg.arg1),msg.arg2, <span class="hljs-literal">true</span>, (String)msg.obj);<br>                   &#125;<br>               &#125; <span class="hljs-keyword">break</span>;<br>           &#125;<br>       &#125;<br>   &#125;<br></code></pre></td></tr></table></figure>
+<p>收到消息后会调用<code>processNextBroadcast</code>方法，内容如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// First, deliver any non-serialized broadcasts right away.</span><br>    <span class="hljs-keyword">while</span> (mParallelBroadcasts.size() &gt; <span class="hljs-number">0</span>) &#123;<br>        r = mParallelBroadcasts.remove(<span class="hljs-number">0</span>);<br>        r.dispatchTime = SystemClock.uptimeMillis();<br>        r.dispatchClockTime = System.currentTimeMillis();<br><br>        <span class="hljs-keyword">if</span> (Trace.isTagEnabled(Trace.TRACE_TAG_ACTIVITY_MANAGER)) &#123;<br>            Trace.asyncTraceEnd(Trace.TRACE_TAG_ACTIVITY_MANAGER,<br>                createBroadcastTraceTitle(r, BroadcastRecord.DELIVERY_PENDING),<br>                System.identityHashCode(r));<br>            Trace.asyncTraceBegin(Trace.TRACE_TAG_ACTIVITY_MANAGER,<br>                createBroadcastTraceTitle(r, BroadcastRecord.DELIVERY_DELIVERED),<br>                System.identityHashCode(r));<br>        &#125;<br><br>        <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">N</span> <span class="hljs-operator">=</span> r.receivers.size();<br>        <br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>; i&lt;N; i++) &#123;<br>            <span class="hljs-type">Object</span> <span class="hljs-variable">target</span> <span class="hljs-operator">=</span> r.receivers.get(i);<br>            <span class="hljs-keyword">if</span> (DEBUG_BROADCAST)  Slog.v(TAG_BROADCAST,<br>                    <span class="hljs-string">&quot;Delivering non-ordered on [&quot;</span> + mQueueName + <span class="hljs-string">&quot;] to registered &quot;</span><br>                    + target + <span class="hljs-string">&quot;: &quot;</span> + r);<br>            deliverToRegisteredReceiverLocked(r, (BroadcastFilter)target, <span class="hljs-literal">false</span>, i);<br>        &#125;<br>        addBroadcastToHistoryLocked(r);<br>       <br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>可以看到，无序广播存储在<code>mParallelBroadcasts</code>中，系统会遍历<code>mParallelBroadcasts</code>并将其中的广播发送给它们所有的接收者，具体的发送过程是通过<code>deliverToRegisteredReceiverLocked</code>方法来实现的。<code>deliverToRegisteredReceiverLocked</code>方法负责将一个广播发送给一个特定的接收者，它内部调用了<code>performReceiveLocked</code>方法来完成具体的发送过程:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">performReceiveLocked(r.callerApp, r.resultTo,<span class="hljs-keyword">new</span> <span class="hljs-title class_">Intent</span>(r.intent), r.resultCode,r.resultData, r.resultExtras, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>, r.userId);<br></code></pre></td></tr></table></figure>
+<p><code>performReceiveLocked</code>方法的实现如下所示。由于接收广播会调起应用程序，因此app.thread不为null，根据前面的分析我们知道这里的<code>app.thread</code>仍然指<code>ApplicationThread</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">void</span> <span class="hljs-title function_">performReceiveLocked</span><span class="hljs-params">(ProcessRecord app, IIntentReceiver receiver,Intent intent, <span class="hljs-type">int</span> resultCode, String data, Bundle extras,<span class="hljs-type">boolean</span> ordered, <span class="hljs-type">boolean</span> sticky, <span class="hljs-type">int</span> sendingUser)</span> <span class="hljs-keyword">throws</span> RemoteException &#123;<br>            <br>            <span class="hljs-comment">// Send the intent to the receiver asynchronously using one-way binder calls.</span><br>    <span class="hljs-keyword">if</span> (app != <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-keyword">if</span> (app.thread != <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-comment">// If we have an app thread, do the call through that so it is</span><br>            <span class="hljs-comment">// correctly ordered with other one-way calls.</span><br>            <span class="hljs-keyword">try</span> &#123;<br>                app.thread.scheduleRegisteredReceiver(receiver, intent, resultCode,<br>                        data, extras, ordered, sticky, sendingUser, app.repProcState);<br>            <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> Uncomment this when (b/28322359) is fixed and we aren&#x27;t getting</span><br>            <span class="hljs-comment">// DeadObjectException when the process isn&#x27;t actually dead.</span><br>            <span class="hljs-comment">//&#125; catch (DeadObjectException ex) &#123;</span><br>            <span class="hljs-comment">// Failed to call into the process.  It&#x27;s dying so just let it die and move on.</span><br>            <span class="hljs-comment">//    throw ex;</span><br>            &#125; <span class="hljs-keyword">catch</span> (RemoteException ex) &#123;<br>                <span class="hljs-comment">// Failed to call into the process. It&#x27;s either dying or wedged. Kill it gently.</span><br>                <span class="hljs-keyword">synchronized</span> (mService) &#123;<br>                    Slog.w(TAG, <span class="hljs-string">&quot;Can&#x27;t deliver broadcast to &quot;</span> + app.processName<br>                            + <span class="hljs-string">&quot; (pid &quot;</span> + app.pid + <span class="hljs-string">&quot;). Crashing it.&quot;</span>);<br>                    app.scheduleCrash(<span class="hljs-string">&quot;can&#x27;t deliver broadcast&quot;</span>);<br>                &#125;<br>                <span class="hljs-keyword">throw</span> ex;<br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-comment">// Application has died. Receiver doesn&#x27;t exist.</span><br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoteException</span>(<span class="hljs-string">&quot;app.thread must not be null&quot;</span>);<br>        &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        receiver.performReceive(intent, resultCode, data, extras, ordered,<br>                sticky, sendingUser);<br>    &#125;<br>            <br>&#125;<br></code></pre></td></tr></table></figure>
+<p><code>ApplicationThread</code>的<code>scheduleRegisteredReceiver</code>的实现比较简单，它通过<code>InnerReceiver</code>来实现广播的接收:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// This function exists to make sure all receiver dispatching is</span><br><span class="hljs-comment">// correctly ordered, since these are one-way calls and the binder driver</span><br><span class="hljs-comment">// applies transaction ordering per object for such calls.</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">scheduleRegisteredReceiver</span><span class="hljs-params">(IIntentReceiver receiver, Intent intent,</span><br><span class="hljs-params">        <span class="hljs-type">int</span> resultCode, String dataStr, Bundle extras, <span class="hljs-type">boolean</span> ordered,</span><br><span class="hljs-params">        <span class="hljs-type">boolean</span> sticky, <span class="hljs-type">int</span> sendingUser, <span class="hljs-type">int</span> processState)</span> <span class="hljs-keyword">throws</span> RemoteException &#123;<br>    updateProcessState(processState, <span class="hljs-literal">false</span>);<br>    receiver.performReceive(intent, resultCode, dataStr, extras, ordered,<br>            sticky, sendingUser);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><code>InnerReceiver</code>的<code>performReceive</code>方法会调用<code>LoadedApk.ReceiverDispatcher</code>的<code>performReceive</code>方法，<code>LoadedApk.ReceiverDispatcher</code>的<code>performReceive</code>方法的实现如下所示:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">performReceive</span><span class="hljs-params">(Intent intent, <span class="hljs-type">int</span> resultCode, String data,Bundle extras, <span class="hljs-type">boolean</span> ordered, <span class="hljs-type">boolean</span> sticky, <span class="hljs-type">int</span> sendingUser)</span> &#123;<br>    <span class="hljs-keyword">final</span> <span class="hljs-type">Args</span> <span class="hljs-variable">args</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Args</span>(intent, resultCode, data, extras, ordered,<br>            sticky, sendingUser);<br>    <span class="hljs-keyword">if</span> (intent == <span class="hljs-literal">null</span>) &#123;<br>        Log.wtf(TAG, <span class="hljs-string">&quot;Null intent received&quot;</span>);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">if</span> (ActivityThread.DEBUG_BROADCAST) &#123;<br>            <span class="hljs-type">int</span> <span class="hljs-variable">seq</span> <span class="hljs-operator">=</span> intent.getIntExtra(<span class="hljs-string">&quot;seq&quot;</span>, -<span class="hljs-number">1</span>);<br>            Slog.i(ActivityThread.TAG, <span class="hljs-string">&quot;Enqueueing broadcast &quot;</span> + intent.getAction()<br>                    + <span class="hljs-string">&quot; seq=&quot;</span> + seq + <span class="hljs-string">&quot; to &quot;</span> + mReceiver);<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">if</span> (intent == <span class="hljs-literal">null</span> || !mActivityThread.post(args.getRunnable())) &#123;<br>        <span class="hljs-keyword">if</span> (mRegistered &amp;&amp; ordered) &#123;<br>            <span class="hljs-type">IActivityManager</span> <span class="hljs-variable">mgr</span> <span class="hljs-operator">=</span> ActivityManager.getService();<br>            <span class="hljs-keyword">if</span> (ActivityThread.DEBUG_BROADCAST) Slog.i(ActivityThread.TAG,<br>                    <span class="hljs-string">&quot;Finishing sync broadcast to &quot;</span> + mReceiver);<br>            args.sendFinished(mgr);<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>在上面的代码中，会创建一个Args对象并通过mActivityThread的post方法来执行Args中的逻辑，而Args实现了Runnable接口。mActivityThread是一个Handler，它其实就是ActivityThread中的mH，mH的类型是ActivityThread的内部类H。在Args的run方法中有如下几行代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">final</span> <span class="hljs-type">BroadcastReceiver</span> <span class="hljs-variable">receiver</span> <span class="hljs-operator">=</span> mReceiver;<br><span class="hljs-keyword">final</span> <span class="hljs-type">boolean</span> <span class="hljs-variable">ordered</span> <span class="hljs-operator">=</span> mOrdered;<br>receiver.setPendingResult(<span class="hljs-built_in">this</span>);<br>receiver.onReceive(mContext, intent);<br></code></pre></td></tr></table></figure>
+<p>这个时候BroadcastReceiver的onReceive方法被执行了，也就是说应用已经接收到广播了，同时onReceive方法是在广播接收者的主线程中被调用的。</p>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Android广播</div>
+      <div>https://blog.huangyuanlove.com/2018/07/31/Android广播/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2018年7月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/08/01/AndroidService/" title="AndroidService">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">AndroidService</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/07/29/View%E7%BB%98%E5%88%B6%E8%BF%87%E7%A8%8B/" title="View绘制过程">
+                        <span class="hidden-mobile">View绘制过程</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '93672308070cef969189bd06a07a2a5c'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
