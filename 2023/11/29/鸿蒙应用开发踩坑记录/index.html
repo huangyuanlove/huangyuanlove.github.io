@@ -1,0 +1,647 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="HarmonyOS,鸿蒙应用开发,鸿蒙手机应用开发">
+  
+    <meta name="description" content="使用HarmonyOS4+ArkUI+Stage模型进行开发的翻译软件，目前只是半成品，代码写的很挫。记录一下开发过程中踩过的坑。项目地址：码云https:&#x2F;&#x2F;gitee.com&#x2F;huangyuan&#x2F;HarmonyTranslatorgithubhttps:&#x2F;&#x2F;github.com&#x2F;huangyuanlove&#x2F;HarmonyTranslator码云项目是从github导入的，偶尔会忘记同步 冻屏、">
+<meta property="og:type" content="article">
+<meta property="og:title" content="鸿蒙应用开发踩坑记录">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2023/11/29/%E9%B8%BF%E8%92%99%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="使用HarmonyOS4+ArkUI+Stage模型进行开发的翻译软件，目前只是半成品，代码写的很挫。记录一下开发过程中踩过的坑。项目地址：码云https:&#x2F;&#x2F;gitee.com&#x2F;huangyuan&#x2F;HarmonyTranslatorgithubhttps:&#x2F;&#x2F;github.com&#x2F;huangyuanlove&#x2F;HarmonyTranslator码云项目是从github导入的，偶尔会忘记同步 冻屏、">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-11-29T06:50:40.000Z">
+<meta property="article:modified_time" content="2023-12-22T06:53:20.156Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="HarmonyOS">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>鸿蒙应用开发踩坑记录 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="鸿蒙应用开发踩坑记录"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-29 14:50" pubdate>
+          2023年11月29日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.2k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">鸿蒙应用开发踩坑记录</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>使用HarmonyOS4+ArkUI+Stage模型进行开发的翻译软件，目前只是半成品，代码写的很挫。记录一下开发过程中踩过的坑。<br>项目地址：<br>码云<br><a target="_blank" rel="noopener" href="https://gitee.com/huangyuan/HarmonyTranslator">https://gitee.com/huangyuan/HarmonyTranslator</a><br>github<br><a target="_blank" rel="noopener" href="https://github.com/huangyuanlove/HarmonyTranslator">https://github.com/huangyuanlove/HarmonyTranslator</a><br>码云项目是从github导入的，偶尔会忘记同步</p>
+<h4 id="冻屏、黑屏、假死"><a href="#冻屏、黑屏、假死" class="headerlink" title="冻屏、黑屏、假死"></a>冻屏、黑屏、假死</h4><p>运行环境是MetaPadPro 2019 鸿蒙4.0.0，使用api9+stage模型开发，运行在模拟器上正常，但是运行在该设备上出现冻屏现象，页面轮播图无法轮播，滑动组件无法发滑动，就像卡在了这一帧上一样。点击输入框键盘能弹出，但页面是黑的。可以通过锁屏、解锁或者音量键刷新页面。</p>
+<p>感觉上就是屏幕不会主动刷新，需要按物理键让屏幕刷新一次似的。  </p>
+<p>询问过朋友后发现，这个现象只会出现在麒麟系列芯片的手机或平板上，看到论坛也有人咨询相同的问题。向官方提工单后官方回复是已知问题，将会在HarmonyOS next系统中修复  </p>
+<p>如果只是自己写着玩，可以安装 <a target="_blank" rel="noopener" href="https://github.com/Genymobile/scrcpy">scrcpy</a> 将屏幕内容同步到电脑上，在电脑上操作是没有问题的。  </p>
+<p>如果是公司用，建议咨询鸿蒙运营，成为合作伙伴，直接上HarmonyOS Next进行开发。或者降低api版本。</p>
+<h4 id="PersistentStorage和-StorageLink"><a href="#PersistentStorage和-StorageLink" class="headerlink" title="PersistentStorage和@StorageLink"></a>PersistentStorage和@StorageLink</h4><p>项目中有些设置需要持久化存储，于是选择了PersistentStorage和@StorageLink方式进行存储，大致如下</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">User</span> &#123;<br>  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">name: <span class="hljs-built_in">string</span>, age: <span class="hljs-built_in">number</span></span>) &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span> = name<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">age</span> = age<br>  &#125;<br>  <span class="hljs-attr">name</span>: <span class="hljs-built_in">string</span><br>  <span class="hljs-attr">age</span>: <span class="hljs-built_in">number</span><br>&#125;<br><br><span class="hljs-title class_">PersistentStorage</span>.<span class="hljs-property">PersistProp</span>&lt;<span class="hljs-title class_">User</span>&gt;(<span class="hljs-string">&#x27;user&#x27;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">User</span>(<span class="hljs-string">&#x27;xuan&#x27;</span>,<span class="hljs-number">18</span>))<br><span class="hljs-meta">@Entry</span><br><span class="hljs-meta">@Component</span><br>struct <span class="hljs-title class_">Tmp</span> &#123;<br>  <span class="hljs-meta">@StorageLink</span>(<span class="hljs-string">&#x27;user&#x27;</span>) <span class="hljs-attr">user</span>: <span class="hljs-title class_">User</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">User</span>(<span class="hljs-string">&#x27;xuan&#x27;</span>, <span class="hljs-number">18</span>)<br>  <span class="hljs-title function_">build</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-title class_">Text</span>(<span class="hljs-string">`<span class="hljs-subst">$&#123;<span class="hljs-variable language_">this</span>.user.name&#125;</span> : <span class="hljs-subst">$&#123;<span class="hljs-variable language_">this</span>.user.age&#125;</span>`</span>)<br>  &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<p>当我第一运行的时候，页面显示正常，Text显示的内容是<code>xuan : 18</code><br/><br>但是当我重新打开应用(不是重新编译，就是简单的在设备上关掉应用然后点击桌面图标打开应用)的时候，Text显示内容是 <code>undefined : undefined</code><br/><br>打上断点发现重新打开应用的时候 <code>user</code> 是一个字符串类型，值为 {‘name’:’xuan’,’age’:18}，但字符串对象没有name和age属性，所以显示了 undefined.<br/><br>看到文档中有写 <a target="_blank" rel="noopener" href="https://developer.harmonyos.com/cn/docs/documentation/doc-references-V3/arkts-state-management-0000001504151156-V3#ZH-CN_TOPIC_0000001523808562__persistprop">https://developer.harmonyos.com/cn/docs/documentation/doc-references-V3/arkts-state-management-0000001504151156-V3#ZH-CN_TOPIC_0000001523808562__persistprop</a></p>
+<blockquote>
+<p>AppStorage的属性向PersistentStorage中持久化的允许的类型是：<br/><br>number，string，boolean，enum基础类型。<br/><br>Object中可序列化的属性。<br/><br>不允许undefined和null。</p>
+</blockquote>
+<p>但同样的，在指南中同样有PersistentStorage描述 <a target="_blank" rel="noopener" href="https://developer.harmonyos.com/cn/docs/documentation/doc-guides-V3/arkts-persiststorage-0000001474017166-V3#section610120319595">https://developer.harmonyos.com/cn/docs/documentation/doc-guides-V3/arkts-persiststorage-0000001474017166-V3#section610120319595</a></p>
+<blockquote>
+<p>PersistentStorage允许的类型和值有：<br/><br>number, string, boolean, enum 等简单类型。<br/><br>可以被JSON.stringify()和JSON.parse()重构的对象。例如Date, Map, Set等内置类型则不支持，以及对象的属性方法不支持持久化。<br/></p>
+</blockquote>
+<p>看到论坛有同样的求助，有开发者回复说他是将对象转成字符串保存的，使用的时候再parse一下。</p>
+<h4 id="剪贴板-pasteboard-getSystemPasteboard"><a href="#剪贴板-pasteboard-getSystemPasteboard" class="headerlink" title="剪贴板 pasteboard.getSystemPasteboard()"></a>剪贴板 pasteboard.getSystemPasteboard()</h4><p>在使用剪贴板时需要先创建剪贴板数据，<br>创建方法如下 </p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-title function_">createData</span>(<span class="hljs-attr">mimeType</span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr">value</span>: <span class="hljs-title class_">ValueType</span>): <span class="hljs-title class_">PasteData</span>  <br><span class="hljs-title function_">createRecord</span>(<span class="hljs-attr">mimeType</span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr">value</span>: <span class="hljs-title class_">ValueType</span>):<span class="hljs-title class_">PasteDataRecord</span><br></code></pre></td></tr></table></figure>
+
+<p>第一个参数含义为：自定义数据的MIME类型。 文档中 <a target="_blank" rel="noopener" href="https://developer.harmonyos.com/cn/docs/documentation/doc-references-V3/js-apis-pasteboard-0000001544384177-V3#ZH-CN_TOPIC_0000001523648478__pasteboardcreatedata9">鸿蒙开发api参考</a><br>中写的示例</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">import</span> pasteboard <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@ohos.pasteboard&#x27;</span>;<br><span class="hljs-keyword">let</span> dataXml = <span class="hljs-string">&#x27;Hello World&#x27;</span>;<br><span class="hljs-keyword">let</span> pasteDataRecord = pasteboard.<span class="hljs-title function_">createRecord</span>(<span class="hljs-string">&#x27;app/xml&#x27;</span>, dataXml);<br></code></pre></td></tr></table></figure>
+<p>实际中发现时不能使用这自定义的<code>app/xml</code>值，会崩溃，只能使用pasteboard中预定义的MIME类型</p>
+<h4 id="对象属性从有值变为空，应用会崩溃"><a href="#对象属性从有值变为空，应用会崩溃" class="headerlink" title="对象属性从有值变为空，应用会崩溃"></a>对象属性从有值变为空，应用会崩溃</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-meta">@Entry</span><br><span class="hljs-meta">@Component</span><br>struct <span class="hljs-title class_">PlayGround</span> &#123;<br>  <span class="hljs-meta">@State</span> <span class="hljs-attr">people</span>:<span class="hljs-title class_">People</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">People</span>()<br>  <span class="hljs-keyword">private</span> <span class="hljs-title function_">log</span>(<span class="hljs-attr">log</span>:<span class="hljs-built_in">string</span>):<span class="hljs-built_in">boolean</span>&#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">`---------<span class="hljs-subst">$&#123;log&#125;</span>---------`</span>)<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span><br>  &#125;<br><br>  <span class="hljs-title function_">build</span>(<span class="hljs-params"></span>)&#123;<br>    <span class="hljs-title class_">Column</span>() &#123;<br>      <span class="hljs-keyword">if</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">people</span>)&#123;<br>        <span class="hljs-title class_">Text</span>(<span class="hljs-string">`姓名： <span class="hljs-subst">$&#123;<span class="hljs-variable language_">this</span>.people.name&#125;</span>  年龄：<span class="hljs-subst">$&#123;<span class="hljs-variable language_">this</span>.people.age&#125;</span>`</span>)<br>        <span class="hljs-keyword">if</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">people</span>.<span class="hljs-property">address</span>)&#123;<br>          <span class="hljs-keyword">if</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;address 有值&#x27;</span>))&#123;<br>            <span class="hljs-title class_">Text</span>( <span class="hljs-string">`地址： <span class="hljs-subst">$&#123;<span class="hljs-variable language_">this</span>.people.address.name&#125;</span>  邮编：<span class="hljs-subst">$&#123;<span class="hljs-variable language_">this</span>.people.address.zipCode&#125;</span>`</span>)<br>          &#125;<br>          <span class="hljs-keyword">else</span>&#123;<br>            <span class="hljs-title class_">Text</span>(<span class="hljs-string">&#x27;address 为空 内部&#x27;</span>)<br>          &#125;<br>        &#125;<span class="hljs-keyword">else</span>&#123;<br>          <span class="hljs-keyword">if</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;address 为空 最外层&#x27;</span>))&#123;<br>            <span class="hljs-title class_">Text</span>(<span class="hljs-string">&#x27;address 为空 最外层&#x27;</span>)<br>          &#125;<br>        &#125;<br>      &#125;<br>      <span class="hljs-title class_">Button</span>(<span class="hljs-string">&#x27;网络请求返回一个有地址的对象&#x27;</span>).<span class="hljs-title function_">onClick</span>(<span class="hljs-function">()=&gt;</span>&#123;<br>        <span class="hljs-keyword">let</span> tmpPeople = <span class="hljs-keyword">new</span> <span class="hljs-title class_">People</span>()<br>        <span class="hljs-keyword">let</span> tmpAddress = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Address</span>()<br>        tmpAddress.<span class="hljs-property">name</span> = <span class="hljs-string">&#x27;测试地址&#x27;</span><br>        tmpAddress.<span class="hljs-property">zipCode</span> = -<span class="hljs-number">1000</span><br>        tmpPeople.<span class="hljs-property">address</span> = tmpAddress<br><br>        tmpPeople.<span class="hljs-property">age</span> = <span class="hljs-number">10</span><br>        tmpPeople.<span class="hljs-property">name</span> = <span class="hljs-string">&#x27;有地址&#x27;</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">people</span> = tmpPeople<br>      &#125;)<br><br>      <span class="hljs-title class_">Button</span>(<span class="hljs-string">&#x27;网络请求返回一个没有地址的对象&#x27;</span>).<span class="hljs-title function_">onClick</span>(<span class="hljs-function">()=&gt;</span>&#123;<br>        <span class="hljs-keyword">let</span> tmpPeople = <span class="hljs-keyword">new</span> <span class="hljs-title class_">People</span>()<br>        tmpPeople.<span class="hljs-property">age</span> = <span class="hljs-number">10</span><br>        tmpPeople.<span class="hljs-property">name</span> = <span class="hljs-string">&#x27;没有地址&#x27;</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">people</span> = tmpPeople<br>      &#125;)<br>    &#125;.<span class="hljs-title function_">margin</span>(&#123;<span class="hljs-attr">top</span>:<span class="hljs-number">48</span>&#125;)<br>  &#125;<br>&#125;<br><span class="hljs-keyword">class</span>  <span class="hljs-title class_">Address</span>&#123;<br>  <span class="hljs-attr">zipCode</span>:<span class="hljs-built_in">number</span><br>  <span class="hljs-attr">name</span>:<span class="hljs-built_in">string</span><br>&#125;<br><span class="hljs-keyword">class</span>  <span class="hljs-title class_">People</span>&#123;<br>  <span class="hljs-attr">name</span>:<span class="hljs-built_in">string</span><br>  <span class="hljs-attr">age</span>:<span class="hljs-built_in">number</span><br>  address :<span class="hljs-title class_">Address</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>很简单的页面，展示对象属性，<br>刚开始运行，一切正常。点击返回有地址的对象，页面正常刷新并且展示。然后点击返回没有地址的对象，这时候会崩溃。<br>日志指向了 Text( <code>地址： $&#123;this.people.address.name&#125;  邮编：$&#123;this.people.address.zipCode&#125;</code>)<br>说是<code>不能从undefined对象中读取name属性</code> 具体可以看这里：<a target="_blank" rel="noopener" href="https://developer.huawei.com/consumer/cn/forum/topic/0204136377582311317?fid=0102683795438680754">开发这论坛</a><br>规避方案：我有一个朋友，尝试出了使用 <code>?.</code>来规避的方法。 取对象属性除了要用if判断来控制渲染之外，需要用 <code>?.</code>来取值，防崩溃，将上面的代码修改为<br>Text( <code>地址： $&#123;this.people.address?.name&#125;  邮编：$&#123;this.people.address?.zipCode&#125;</code>)<br>应用不会崩溃，这个对象也不会渲染在页面上<br/><br>但根据文档描述，既然if条件不成立，下面的Text组件就不应该被渲染，也不应该读取address的name属性。同样提工单，回复说是双框架问题，将在HarmonyOS Next版本解决</p>
+<p>需要注意的是，文档上写的被状态管理装饰器修饰的变量，基本上都不支持any、undefined、null值，但实际写代码的过程中是没有校验的，目前来看即使是这些类型或者值，也是没什么大问题的，但还是建议大家按文档写，有问题咨询相关技术人员或者论坛、提工单。</p>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/HarmonyOS/" class="print-no-link">#HarmonyOS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>鸿蒙应用开发踩坑记录</div>
+      <div>https://blog.huangyuanlove.com/2023/11/29/鸿蒙应用开发踩坑记录/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年11月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/05/09/Java%E4%BD%BF%E7%94%A8Protocol-Buffer%E4%B8%8E%E6%9C%8D%E5%8A%A1%E7%AB%AF%E4%BA%A4%E4%BA%92/" title="Java使用Protocol Buffer与服务端交互">
+                        <span class="hidden-mobile">Java使用Protocol Buffer与服务端交互</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'c5913cc32f01868cc1eac559c2f51734'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
