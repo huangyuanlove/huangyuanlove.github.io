@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://blog.huangyuanlove.com/2023/12/24/%E9%B8%BF%E8%92%99%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E4%BD%BF%E7%94%A8canvas%E5%AE%9E%E7%8E%B0%E7%90%83%E9%9D%A2%E8%BF%90%E5%8A%A8%E5%8A%A8%E7%94%BB/</loc>
+    <lastmod>2023-12-27</lastmod>
+  </url>
+  <url>
     <loc>https://blog.huangyuanlove.com/2023/11/29/%E9%B8%BF%E8%92%99%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/</loc>
     <lastmod>2023-12-22</lastmod>
   </url>
@@ -37,11 +41,11 @@
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2019/12/10/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3%EF%BC%8C%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%A1%86%E6%9E%B6-%E4%B8%8B%E4%B8%8B%E4%B8%8B%E7%AF%87/</loc>
+    <loc>https://blog.huangyuanlove.com/2019/12/09/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3%EF%BC%8C%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%A1%86%E6%9E%B6-%E4%B8%8B%E4%B8%8B%E7%AF%87/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2019/12/09/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3%EF%BC%8C%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%A1%86%E6%9E%B6-%E4%B8%8B%E4%B8%8B%E7%AF%87/</loc>
+    <loc>https://blog.huangyuanlove.com/2019/12/10/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3%EF%BC%8C%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%A1%86%E6%9E%B6-%E4%B8%8B%E4%B8%8B%E4%B8%8B%E7%AF%87/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
@@ -249,11 +253,11 @@
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2023/01/23/flutter-Key/</loc>
+    <loc>https://blog.huangyuanlove.com/2023/01/18/flutter-StatefulWidget/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2023/01/18/flutter-StatefulWidget/</loc>
+    <loc>https://blog.huangyuanlove.com/2023/01/23/flutter-Key/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
@@ -293,15 +297,15 @@
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
+    <loc>https://blog.huangyuanlove.com/2021/04/05/PMS%E5%8F%8Aapk%E5%AE%89%E8%A3%85%E8%BF%87%E7%A8%8B/</loc>
+    <lastmod>2023-05-19</lastmod>
+  </url>
+  <url>
     <loc>https://blog.huangyuanlove.com/2021/05/22/Sentry%E6%90%AD%E5%BB%BA%E5%8F%8AAndroid%E6%8E%A5%E5%85%A5/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
     <loc>https://blog.huangyuanlove.com/2017/07/03/TCP%E5%8D%8F%E8%AE%AE%E7%9A%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/</loc>
-    <lastmod>2023-05-19</lastmod>
-  </url>
-  <url>
-    <loc>https://blog.huangyuanlove.com/2021/04/05/PMS%E5%8F%8Aapk%E5%AE%89%E8%A3%85%E8%BF%87%E7%A8%8B/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
@@ -361,11 +365,11 @@
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2017/03/27/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/</loc>
+    <loc>https://blog.huangyuanlove.com/2017/03/29/JVM%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6-%E5%AF%B9%E8%B1%A1%E5%B7%B2%E6%AD%BB%EF%BC%9F/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2017/03/29/JVM%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6-%E5%AF%B9%E8%B1%A1%E5%B7%B2%E6%AD%BB%EF%BC%9F/</loc>
+    <loc>https://blog.huangyuanlove.com/2017/03/27/JVM%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
@@ -485,11 +489,11 @@
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2017/12/25/Android%E4%B8%AD%E4%BD%BF%E7%94%A8WebSocket/</loc>
+    <loc>https://blog.huangyuanlove.com/2017/12/26/Android%E4%B8%AD%E4%BD%BF%E7%94%A8WebSocket-2/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2017/12/26/Android%E4%B8%AD%E4%BD%BF%E7%94%A8WebSocket-2/</loc>
+    <loc>https://blog.huangyuanlove.com/2017/12/25/Android%E4%B8%AD%E4%BD%BF%E7%94%A8WebSocket/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>

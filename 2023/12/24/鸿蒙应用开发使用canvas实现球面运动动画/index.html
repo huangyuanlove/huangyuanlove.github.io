@@ -14,24 +14,26 @@
   
   <meta name="theme-color" content="#2f4154">
   <meta name="author" content="HuangYuan_xuan">
-  <meta name="keywords" content="linux find">
+  <meta name="keywords" content="HarmonyOS,鸿蒙应用开发,鸿蒙手机应用开发">
   
-    <meta name="description" content="find 命令的工作方式如下: 沿着文件层次结构向下遍历,匹配符合条件的文件,并执行相应的操作.">
+    <meta name="description" content="吐槽一下,习惯了 Android 的 Canvas,用鸿蒙的 canvas 多少有点别扭效果图">
 <meta property="og:type" content="article">
-<meta property="og:title" content="UNIX&#x2F;linux的find命令细节">
-<meta property="og:url" content="https://blog.huangyuanlove.com/2015/02/11/UNIX-linux%E7%9A%84find%E5%91%BD%E4%BB%A4%E7%BB%86%E8%8A%82/index.html">
+<meta property="og:title" content="鸿蒙应用开发使用canvas实现球面运动动画">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2023/12/24/%E9%B8%BF%E8%92%99%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E4%BD%BF%E7%94%A8canvas%E5%AE%9E%E7%8E%B0%E7%90%83%E9%9D%A2%E8%BF%90%E5%8A%A8%E5%8A%A8%E7%94%BB/index.html">
 <meta property="og:site_name" content="放码过来">
-<meta property="og:description" content="find 命令的工作方式如下: 沿着文件层次结构向下遍历,匹配符合条件的文件,并执行相应的操作.">
+<meta property="og:description" content="吐槽一下,习惯了 Android 的 Canvas,用鸿蒙的 canvas 多少有点别扭效果图">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2015-02-11T15:40:31.000Z">
-<meta property="article:modified_time" content="2023-05-19T12:51:02.227Z">
+<meta property="og:image" content="https://blog.huangyuanlove.com/2023/12/24/%E9%B8%BF%E8%92%99%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E4%BD%BF%E7%94%A8canvas%E5%AE%9E%E7%8E%B0%E7%90%83%E9%9D%A2%E8%BF%90%E5%8A%A8%E5%8A%A8%E7%94%BB/image/HarmonyOS/canvas_ball_animation.gif">
+<meta property="article:published_time" content="2023-12-24T03:38:04.000Z">
+<meta property="article:modified_time" content="2023-12-27T02:26:44.682Z">
 <meta property="article:author" content="HuangYuan_xuan">
-<meta property="article:tag" content="linux">
+<meta property="article:tag" content="HarmonyOS">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/2023/12/24/%E9%B8%BF%E8%92%99%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E4%BD%BF%E7%94%A8canvas%E5%AE%9E%E7%8E%B0%E7%90%83%E9%9D%A2%E8%BF%90%E5%8A%A8%E5%8A%A8%E7%94%BB/image/HarmonyOS/canvas_ball_animation.gif">
   
   
   
-  <title>UNIX/linux的find命令细节 - 放码过来</title>
+  <title>鸿蒙应用开发使用canvas实现球面运动动画 - 放码过来</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -186,7 +188,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="UNIX/linux的find命令细节"></span>
+            <span id="subtitle" data-typed-text="鸿蒙应用开发使用canvas实现球面运动动画"></span>
           
         </div>
 
@@ -197,8 +199,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2015-02-11 23:40" pubdate>
-          2015年2月11日 晚上
+        <time datetime="2023-12-24 11:38" pubdate>
+          2023年12月24日 中午
         </time>
       </span>
     
@@ -209,7 +211,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.9k 字
+          42 字
         
       </span>
     
@@ -248,84 +250,12 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">UNIX/linux的find命令细节</h1>
+            <h1 id="seo-header">鸿蒙应用开发使用canvas实现球面运动动画</h1>
             
             
               <div class="markdown-body">
                 
-                <p>find 命令的工作方式如下:</p>
-<p>沿着文件层次结构向下遍历,匹配符合条件的文件,并执行相应的操作.</p>
-<span id="more"></span>
-
-<h4 id="根据文件名或者正则表达式匹配搜索"><a href="#根据文件名或者正则表达式匹配搜索" class="headerlink" title="根据文件名或者正则表达式匹配搜索"></a>根据文件名或者正则表达式匹配搜索</h4><p>选项-name的参数指定了文件名所必须匹配的字符串,我们可以将通配符作为参数使用.”*.txt” 可以匹配所有的以”.txt”结尾的文件.选项-print 在终端中打印出符合条件的文件名或者文件路径,这些匹配条件作为find 的参数给出</p>
-<p>find &#x2F;home&#x2F;huangyuan -name “*.txt” -print</p>
-<p>find 有一个选项-iname 可以忽略文件名的大小写</p>
-<p>如果想匹配多个条件中的一个,可以使用 OR 条件操作</p>
-<p>find . (-name “<em>.txt” -o -name “</em>.pdf”) -print</p>
-<p>上面的代码会打印出所有的 “.txt” 和 “.pdf” 文件,是因为这个find 命令可以匹配所有的这两类文件</p>
-<p>其中, “(“ 和 “)“ 用于将 -name “<em>.txt” -o -name “</em>.pdf” 视为一个整体</p>
-<p>选项 -path 可以使用通配符来匹配文件路径或者文件名</p>
-<p>选项 -regex 是基于正则表达式来匹配文件路径货文件.正则表达式是通配符的高级形式,例如,可以使用正则表达式来匹配Email ,一个 Email 的形式通常是 <a href="mailto:&#x6e;&#97;&#x6d;&#x65;&#x40;&#104;&#111;&#x73;&#116;&#x2e;&#x72;&#x6f;&#111;&#x74;">&#x6e;&#97;&#x6d;&#x65;&#x40;&#104;&#111;&#x73;&#116;&#x2e;&#x72;&#x6f;&#111;&#x74;</a></p>
-<p>所以可以将其一般化为 [0-9a-zA-A]+@[0-9a-zA-A]+.[0-9a-zA-A] +</p>
-<p> “+” 指明在它之前的字符类中字符可以出现一次或者多次</p>
-<h4 id="否定参数"><a href="#否定参数" class="headerlink" title="否定参数 !"></a>否定参数 !</h4><p>find 也可以用 “!” 来否定参数的含义</p>
-<p>find . ! -name “*.txt” -print</p>
-<p>上面的命令可以用来 匹配所有不以 “.txt” 结尾的文件</p>
-<h4 id="基于目录深度的搜索"><a href="#基于目录深度的搜索" class="headerlink" title="基于目录深度的搜索"></a>基于目录深度的搜索</h4><p>find 命令在使用时会遍历所有的子目录,我们可以使用 -mindepth 和 -maxdepth 来限制搜索子目录的深度</p>
-<p>find . -maxdeoth 1 -print </p>
-<p>这条目录只会打印当前目录中的所有文件,而不会打印子目录中的文件</p>
-<p>find . -mindepth 2 -print</p>
-<p>这条目录打印目录深度至少为2 的文件</p>
-<h4 id="根据文件类型搜索"><a href="#根据文件类型搜索" class="headerlink" title="根据文件类型搜索"></a>根据文件类型搜索</h4><p>find . -type d -print</p>
-<p>上面的命令只会打印出目录</p>
-<p>文件类型                类型参数</p>
-<p>普通文件                f</p>
-<p>符号连接                l</p>
-<p>目录                       d</p>
-<p>字符设备                c</p>
-<p>块设备                    b</p>
-<p>套接字                    s</p>
-<p>Fifo                        p</p>
-<h4 id="根据文件时间进行搜索"><a href="#根据文件时间进行搜索" class="headerlink" title="根据文件时间进行搜索"></a>根据文件时间进行搜索</h4><p>unix&#x2F;linux 文件系统中的每一个文件都有三种时间戳(timestamp) ,如下所示</p>
-<p>访问时间 (-atime) : 用户最近一次访问文件的时间</p>
-<p>修改时间 (-mtime): 文件内同最后一次被修改的时间</p>
-<p>变化时间 (-ctime) : 文件元数据(metadata,例如权限或者所有权)最后一次被修改的时间</p>
-<p>在unux&#x2F;linux中没有创建时间这个概念</p>
-<p>-atime,-mtime,-ctime 可以作为 find 的时间参数,例如</p>
-<p>打印出 最近七天内被访问过的文件</p>
-<p>find . -atime -7 -print</p>
-<p>打印出 刚好七天前访问过的文件</p>
-<p>find . -atime 7 -print</p>
-<p>打印出 访问时间超过7天的文件</p>
-<p>find . -atime +7 -print</p>
-<p>还有其他一些基于时间的参数 (以分钟为单位)</p>
-<p>-amin</p>
-<p>-mmin</p>
-<p>-cmin</p>
-<h4 id="基于文件大小搜索"><a href="#基于文件大小搜索" class="headerlink" title="基于文件大小搜索"></a>基于文件大小搜索</h4><p>find . -size +2k</p>
-<p>大于2k的文件</p>
-<p>find . -size -2k</p>
-<p>小于2k的文件</p>
-<p>find .-size 2k</p>
-<p>等于2k的文件</p>
-<p>除了K之外,还有其他单元</p>
-<p>b——块  512字节</p>
-<p>c——字节</p>
-<p>w—–字  2字节</p>
-<p>k—–千字节</p>
-<p>m—-兆字节</p>
-<p>G—-吉字节</p>
-<h4 id="删除匹配文件"><a href="#删除匹配文件" class="headerlink" title="删除匹配文件"></a>删除匹配文件</h4><p>-delete 可以删除 find 查找到的匹配文件</p>
-<p>find . -name “*.flv” -delete ##(删除所有flv文件)</p>
-<p>基于文件权限和所有权的匹配</p>
-<p>find . -perm 644 -print</p>
-<p>find . -user huangyuan -print</p>
-<h4 id="结合-find-执行命令或动作"><a href="#结合-find-执行命令或动作" class="headerlink" title="结合 find 执行命令或动作"></a>结合 find 执行命令或动作</h4><p>find 命令可以借助选项 -exec 与其他命令结合</p>
-<p>例如  将制定目录中的所有C程序文件拼接起来写入单个文件 all_C_file.txt </p>
-<p>find . -name “*.c” -exec cat {} ;&gt; all_C_file.txt</p>
-<p>-exec 后面可以接任何命令.{}表示一个匹配.使用 &gt; 而不使用 &gt;&gt;　的原因是 find 命令的输出只是一个单数据流,而只有当多个数据流被追加到单个文件中的时候才有必要用 &gt;&gt; </p>
-<h4 id="跳过指定目录"><a href="#跳过指定目录" class="headerlink" title="跳过指定目录"></a>跳过指定目录</h4><p>find .  ( -name “.get” -prune  ) -o  ( -print )</p>
-<p>这条命令中  (-name “.git” -prune ) 指明 .git 目录应该排除掉, 而 ( -print ) 指明了执行的动作.这些动作需要放在第二个语句块中.</p>
+                <p>吐槽一下,习惯了 Android 的 Canvas,用鸿蒙的 canvas 多少有点别扭<br>效果图<br><img src='image/HarmonyOS/canvas_ball_animation.gif' width=20% height=20%/></p>
 
                 
               </div>
@@ -338,7 +268,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/linux/" class="print-no-link">#linux</a>
+        <a href="/tags/HarmonyOS/" class="print-no-link">#HarmonyOS</a>
       
     </div>
   
@@ -350,8 +280,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>UNIX/linux的find命令细节</div>
-      <div>https://blog.huangyuanlove.com/2015/02/11/UNIX-linux的find命令细节/</div>
+      <div>鸿蒙应用开发使用canvas实现球面运动动画</div>
+      <div>https://blog.huangyuanlove.com/2023/12/24/鸿蒙应用开发使用canvas实现球面运动动画/</div>
     </div>
     <div class="license-meta">
       
@@ -363,7 +293,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2015年2月11日</div>
+          <div>2023年12月24日</div>
         </div>
       
       
@@ -388,18 +318,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2016/10/08/2016%E5%9B%BD%E5%BA%86/" title="2016年国庆-在深圳">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">2016年国庆-在深圳</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2014/05/19/CCNA-Internet-connection/" title="CCNA-Internet connection">
-                        <span class="hidden-mobile">CCNA-Internet connection</span>
+                      <a href="/2023/11/29/%E9%B8%BF%E8%92%99%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/" title="鸿蒙应用开发踩坑记录">
+                        <span class="hidden-mobile">鸿蒙应用开发踩坑记录</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -422,7 +346,7 @@
         var options = Object.assign(
           {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: '56839f51c4837510256ac6c720bf17d1'
+            id: '98378c5201e7ecbcd81861ca4e60ce78'
           }
         )
         var gitalk = new Gitalk(options);

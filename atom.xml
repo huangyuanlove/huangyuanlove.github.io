@@ -6,7 +6,7 @@
   <link href="https://blog.huangyuanlove.com/atom.xml" rel="self"/>
   
   <link href="https://blog.huangyuanlove.com/"/>
-  <updated>2023-12-22T06:53:20.156Z</updated>
+  <updated>2023-12-27T02:26:44.682Z</updated>
   <id>https://blog.huangyuanlove.com/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>鸿蒙应用开发使用canvas实现球面运动动画</title>
+    <link href="https://blog.huangyuanlove.com/2023/12/24/%E9%B8%BF%E8%92%99%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E4%BD%BF%E7%94%A8canvas%E5%AE%9E%E7%8E%B0%E7%90%83%E9%9D%A2%E8%BF%90%E5%8A%A8%E5%8A%A8%E7%94%BB/"/>
+    <id>https://blog.huangyuanlove.com/2023/12/24/%E9%B8%BF%E8%92%99%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E4%BD%BF%E7%94%A8canvas%E5%AE%9E%E7%8E%B0%E7%90%83%E9%9D%A2%E8%BF%90%E5%8A%A8%E5%8A%A8%E7%94%BB/</id>
+    <published>2023-12-24T03:38:04.000Z</published>
+    <updated>2023-12-27T02:26:44.682Z</updated>
+    
+    <content type="html"><![CDATA[<p>吐槽一下,习惯了 Android 的 Canvas,用鸿蒙的 canvas 多少有点别扭<br>效果图<br><img src='image/HarmonyOS/canvas_ball_animation.gif' width=20% height=20%/></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;吐槽一下,习惯了 Android 的 Canvas,用鸿蒙的 canvas 多少有点别扭&lt;br&gt;效果图&lt;br&gt;&lt;img src=&#39;image/HarmonyOS/canvas_ball_animation.gif&#39; width=20% height=20%/&gt;&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    
+    <category term="HarmonyOS" scheme="https://blog.huangyuanlove.com/tags/HarmonyOS/"/>
+    
+  </entry>
   
   <entry>
     <title>鸿蒙应用开发踩坑记录</title>
@@ -447,27 +470,6 @@
     
     
     <category term="Android" scheme="https://blog.huangyuanlove.com/tags/Android/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Flutter异常处理</title>
-    <link href="https://blog.huangyuanlove.com/2020/07/27/Flutter%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/"/>
-    <id>https://blog.huangyuanlove.com/2020/07/27/Flutter%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</id>
-    <published>2020-07-27T13:04:53.000Z</published>
-    <updated>2023-05-19T12:51:02.219Z</updated>
-    
-    <content type="html"><![CDATA[<p>Flutter异常和Java异常类似，都是代码运行时发生的错误事件，我们可以通过与Java类似的try-catch机制来捕获这个异常，和java不同的地方在于 Dart 采用事件循环的机制来运行任务，各个任务的运行状态是互相独立的，也就是说，即便某个任务出现了异常我们没有捕获它，Dart 程序也不会退出，只会导致当前任务后续的代码不会被执行，用户仍可以继续使用其他功能。</p><span id="more"></span><p>dart中的异常分为App异常和Framework异常，根据来源不同，捕获方式也不同。App异常我们可以通过try–catch或者异步调用中的catchError捕获；Framework中的异常可以通过自定义ErrorWidget.builder进行捕获+展示</p><h3 id="App异常的捕获方式"><a href="#App异常的捕获方式" class="headerlink" title="App异常的捕获方式"></a>App异常的捕获方式</h3><p>App异常，就是应用代码的异常，通常由未处理应用层其他模块所抛出的异常引起。根据异常代码的执行时序，App异常可以分为两类，即同步异常和异步异常:同步异常可以通过try-catch机制捕获，异步异常则需要采用Future 提供的catchError语句捕获。</p><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-comment">//异常捕获</span><br><span class="hljs-keyword">try</span>&#123;<br>  <span class="hljs-keyword">throw</span> StateError(<span class="hljs-string">&quot;this is a dart exception&quot;</span>);<br><br>&#125;<span class="hljs-keyword">catch</span> (e)&#123;<br>  <span class="hljs-built_in">print</span>(e);<br>&#125;<br><br><br>Future.delayed(<span class="hljs-built_in">Duration</span>(seconds: <span class="hljs-number">1</span>))<br>.then((value) =&gt; <span class="hljs-keyword">throw</span> StateError(<span class="hljs-string">&quot;this is a dart exception in future&quot;</span>) )<br>.catchError((e)=&gt;<span class="hljs-built_in">print</span>(e));<br><br><br><span class="hljs-comment">//无法捕获</span><br><span class="hljs-keyword">try</span>&#123;<br>  Future.delayed(<span class="hljs-built_in">Duration</span>(seconds: <span class="hljs-number">1</span>))<br>      .then((value) =&gt; <span class="hljs-keyword">throw</span> StateError(<span class="hljs-string">&quot;this is a dart exception in future by try catch&quot;</span>) );<br>&#125;<span class="hljs-keyword">catch</span>(e)&#123;<br>  <span class="hljs-built_in">print</span>(e);<br>&#125;<br></code></pre></td></tr></table></figure><p>需要注意的是，这两种方式是不能混用的。无法使用try- -catch去捕获一个异步调用所抛出的异常的。如果我们想集中管理代码中的所有异常，Flutter 也提供了Zone.runZoned 方法。我们可以给代码执行对象指定一-个Zone，在Dart中，Zone表示一个代码执行的环境范围，其概念类似沙盒，不同沙盒之间是互相隔离的。如果我们想要观察沙盒中代码执行出现的异常，沙盒提供了onError回调函数，拦截那些在代码执行对象中的未捕获异常。<br>在下面的代码中，我们将可能抛出异常的语句放置在了Zone里。可以看到，在没有使用try-catch和catchError的情况下，无论是同步异常还是异步异常，都可以通过Zone直接捕获到:</p><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-comment">//runZoned</span><br>runZoned(() &#123;<br>  <span class="hljs-keyword">throw</span> StateError(<span class="hljs-string">&quot;this is a dart exception in future&quot;</span>);<br>  <br>&#125;, onError: (<span class="hljs-built_in">dynamic</span> e, StackTrace stack) &#123;<br>  <span class="hljs-built_in">print</span>(e);<br>  <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;catch exception by zone&quot;</span>);<br>&#125;);<br><br><br>runZoned(() &#123;<br>  Future.delayed(<span class="hljs-built_in">Duration</span>(seconds: <span class="hljs-number">1</span>))<br>      .then((value) =&gt;<br>  <span class="hljs-keyword">throw</span> StateError(<span class="hljs-string">&quot;this is a dart exception in future by try catch&quot;</span>));<br>&#125;, onError: (<span class="hljs-built_in">dynamic</span> e, StackTrace stack) &#123;<br>  <span class="hljs-built_in">print</span>(e);<br>  <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;catch future exception by zone&quot;</span>);<br>&#125;);<br></code></pre></td></tr></table></figure><h2 id="Framework-异常捕获"><a href="#Framework-异常捕获" class="headerlink" title="Framework 异常捕获"></a>Framework 异常捕获</h2><p>Framework异常，就是Flutter框架引发的异常，通常是由应用代码触发了Flutter 框架底层的异常判断引起的。比如，当布局错误时(具体一点就是Text控件的构造方法传入null)，Flutter 就会自动展示一个包含错误信息的红色页面，这其实是因为，Flutter 框架在调用build方法构建页面时进行了try- -catch的处理，并提供了一个ErrorWidget，用于在出现异常时进行信息提示:</p><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-comment">//abstract class ComponentElement extends Element </span><br><span class="hljs-comment">//StatelessElement extends  ComponentElement</span><br><span class="hljs-comment">// StatefulElement extends  ComponentElement</span><br><br>built = ErrorWidget.builder(<br>        _debugReportException(<br>          ErrorDescription(<span class="hljs-string">&#x27;building <span class="hljs-subst">$this</span>&#x27;</span>),<br>          e,<br>          stack,<br>          informationCollector: () <span class="hljs-keyword">sync</span>* &#123;<br>            <span class="hljs-keyword">yield</span> DiagnosticsDebugCreator(DebugCreator(<span class="hljs-keyword">this</span>));<br>          &#125;,<br>        )<br></code></pre></td></tr></table></figure><p>这个页面反馈的信息比较丰富，适合开发期定位问题。但我们并不想让用户看到这种错误信息，希望给用户展示一个更加友好的页面。因此，我们通常会重写ErrorWidget.builder方法，返回我们自定义的展示信息，下面我们直接返回了一个居中的Text控件:</p><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs dart">ErrorWidget.builder = (FlutterErrorDetails flutterErrorDetails) &#123;<br>     <span class="hljs-keyword">return</span> Scaffold(<br>       body: Center(<br>         child: Text(<span class="hljs-string">&quot;<span class="hljs-subst">$&#123;flutterErrorDetails.exception&#125;</span>&quot;</span>),<br>       ),<br>     );<br>   &#125;;<br></code></pre></td></tr></table></figure><h4 id="异常统一处理"><a href="#异常统一处理" class="headerlink" title="异常统一处理"></a>异常统一处理</h4><p>为了集中处理框架异常，Flutter 提供了FlutterError类，这个类的onError属性会在接收到框架异常时执行相应的回调。因此，要实现自定义捕获逻辑，我们只要为它提供一个自定义的错误处理回调即可。<br>在下面的代码中，我们使用Zone提供的handleUncaughtError语句，将Flutter框架的异常统- -转发到当前的Zone中，这样我们就可以统一使用Zone去处理应用内的所有异常了:</p><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs dart"><br><span class="hljs-keyword">void</span> main() &#123;<br>  FlutterError.onError = (FlutterErrorDetails details) <span class="hljs-keyword">async</span> &#123;<br>    <span class="hljs-comment">//转发至zone</span><br>    Zone.current.handleUncaughtError(details.exception, details.stack);<br>  &#125;;<br><br>  runZoned&lt;Future&lt;<span class="hljs-built_in">Null</span>&gt;&gt;(() <span class="hljs-keyword">async</span> &#123;<br>    runApp(MyApp());<br>  &#125;, onError: (error, stackTrace) <span class="hljs-keyword">async</span> &#123;<br>    <span class="hljs-comment">//在这里处理异常 搞个channel，转发到原生，上报到bugly平台</span><br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;-------&quot;</span>);<br>    <span class="hljs-built_in">print</span>(error);<br>    <span class="hljs-built_in">print</span>(stackTrace);<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;-------&quot;</span>);<br>  &#125;);<br>&#125;<br></code></pre></td></tr></table></figure><hr><p>以上</p>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;Flutter异常和Java异常类似，都是代码运行时发生的错误事件，我们可以通过与Java类似的try-catch机制来捕获这个异常，和java不同的地方在于 Dart 采用事件循环的机制来运行任务，各个任务的运行状态是互相独立的，也就是说，即便某个任务出现了异常我们没有捕获它，Dart 程序也不会退出，只会导致当前任务后续的代码不会被执行，用户仍可以继续使用其他功能。&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="Android" scheme="https://blog.huangyuanlove.com/tags/Android/"/>
-    
-    <category term="Flutter" scheme="https://blog.huangyuanlove.com/tags/Flutter/"/>
     
   </entry>
   
