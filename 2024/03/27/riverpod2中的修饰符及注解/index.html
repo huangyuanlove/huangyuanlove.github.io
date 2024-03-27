@@ -1,0 +1,717 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="riverpod,flutter,Provider,ConsumerWidget,StateProvider,StateNotifierProvider,FutureProvider,ChangeNotifierProvider,NotifierProvider,AsyncNotifierProvider">
+  
+    <meta name="description" content="原文来自：https:&#x2F;&#x2F;codewithandrea.com&#x2F;articles&#x2F;flutter-state-management-riverpod&#x2F; 监听、观察、选择、记录、重建ref.read or ref.watch在上一篇中，我们使用了 ref.read和 ref.watch，那么这两者在什么情况下使用？一般来讲，如果需要在Provider 值发生改变时更新依赖它的 widget，就使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="riverpod2中的修饰符及注解">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2024/03/27/riverpod2%E4%B8%AD%E7%9A%84%E4%BF%AE%E9%A5%B0%E7%AC%A6%E5%8F%8A%E6%B3%A8%E8%A7%A3/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="原文来自：https:&#x2F;&#x2F;codewithandrea.com&#x2F;articles&#x2F;flutter-state-management-riverpod&#x2F; 监听、观察、选择、记录、重建ref.read or ref.watch在上一篇中，我们使用了 ref.read和 ref.watch，那么这两者在什么情况下使用？一般来讲，如果需要在Provider 值发生改变时更新依赖它的 widget，就使用">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-03-27T02:43:24.000Z">
+<meta property="article:modified_time" content="2024-03-27T02:44:14.329Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Flutter">
+<meta property="article:tag" content="riverpod">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>riverpod2中的修饰符及注解 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="riverpod2中的修饰符及注解"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-03-27 10:43" pubdate>
+          2024年3月27日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          14k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">riverpod2中的修饰符及注解</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>原文来自：<a target="_blank" rel="noopener" href="https://codewithandrea.com/articles/flutter-state-management-riverpod/">https://codewithandrea.com/articles/flutter-state-management-riverpod/</a></p>
+<h3 id="监听、观察、选择、记录、重建"><a href="#监听、观察、选择、记录、重建" class="headerlink" title="监听、观察、选择、记录、重建"></a>监听、观察、选择、记录、重建</h3><h4 id="ref-read-or-ref-watch"><a href="#ref-read-or-ref-watch" class="headerlink" title="ref.read or ref.watch"></a>ref.read or ref.watch</h4><p>在上一篇中，我们使用了 ref.read和 ref.watch，那么这两者在什么情况下使用？<br>一般来讲，如果需要在Provider 值发生改变时更新依赖它的 widget，就使用 watch。比如 我们在 build 函数中使用watch,这确保了如果提供者的值发生更改，我们会重建依赖它的widget.</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-keyword">final</span> counterStateProvider = StateProvider&lt;<span class="hljs-built_in">int</span>&gt;((_) =&gt; <span class="hljs-number">0</span>);<br>  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CounterWidget</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ConsumerWidget</span> </span>&#123;<br>    <span class="hljs-meta">@override</span><br>    Widget build(BuildContext context, WidgetRef ref) &#123;<br>      <span class="hljs-comment">// 1. watch the provider and rebuild when the value changes</span><br>      <span class="hljs-keyword">final</span> counter = ref.watch(counterStateProvider);<br>      <span class="hljs-keyword">return</span> ElevatedButton(<br>        <span class="hljs-comment">// 2. use the value</span><br>        child: Text(<span class="hljs-string">&#x27;Value: <span class="hljs-subst">$counter</span>&#x27;</span>),<br>        <span class="hljs-comment">// 3. change the state inside a button callback</span><br>        onPressed: () =&gt; ref.read(counterStateProvider.notifier).state++,<br>      );<br>    &#125;<br>  &#125;<br></code></pre></td></tr></table></figure>
+<p>如果我们只是读取到 Provider 的值做操作，一般使用 read，比如上面点击 ElevatedButton 时我们获取到 notifier 之后对count 做了++操作<br>需要注意的是：notifier语法仅适用于StateProvider和StateNotifierProvider，其工作方式如下：</p>
+<ul>
+<li>在StateProvider上调用ref.read(provider.notifier)，以返回底层的StateController，我们可以使用它来修改状态。</li>
+<li>在StateNotifierProvider上调用ref.read(provider.notifier)，以返回底层的StateNotifier，以便我们可以调用其方法。</li>
+</ul>
+<h4 id="select"><a href="#select" class="headerlink" title="select"></a>select</h4><p>我们有时候也会遇到这种需求：一个对象有多个属性，希望只有特定属性发生变化时才更新页面，这时候我们就可以使用 select 来完成</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Student</span> </span>&#123;<br>  Student(<span class="hljs-keyword">this</span>.firstName, <span class="hljs-keyword">this</span>.lastName, <span class="hljs-keyword">this</span>.age);<br><br>  <span class="hljs-built_in">String</span> firstName;<br>  <span class="hljs-built_in">String</span> lastName;<br>  <span class="hljs-built_in">int</span> age;<br>  Student copy() &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Student(firstName, lastName, age);<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>我们只需要在年龄发生改变时更新页面</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs dart">Widget build(BuildContext context, WidgetRef ref) &#123;<br>    <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> age = ref.watch( provider.select((value) =&gt; value.age) );<br>    <span class="hljs-keyword">return</span> Text(<span class="hljs-string">&quot;<span class="hljs-subst">$age</span>&quot;</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<h4 id="listen"><a href="#listen" class="headerlink" title="listen"></a>listen</h4><p>除此之外，我们还有 listen， 比如我们希望在 Provider 内容发生变化时弹出一个 SnakeBar提示用户，我们可以这样做:</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-keyword">final</span> counterStateProvider = StateProvider&lt;<span class="hljs-built_in">int</span>&gt;((_) =&gt; <span class="hljs-number">0</span>);<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CounterWidget</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ConsumerWidget</span> </span>&#123;<br>  <span class="hljs-meta">@override</span><br>  Widget build(BuildContext context, WidgetRef ref) &#123;<br>    <span class="hljs-comment">// if we use a StateProvider&lt;T&gt;, the type of the previous and current </span><br>    <span class="hljs-comment">// values is StateController&lt;T&gt;</span><br>    ref.listen&lt;StateController&lt;<span class="hljs-built_in">int</span>&gt;&gt;(counterStateProvider.state, (previous, current) &#123;<br>      <span class="hljs-comment">// note: this callback executes when the provider value changes,</span><br>      <span class="hljs-comment">// not when the build method is called</span><br>      ScaffoldMessenger.of(context).showSnackBar(<br>        SnackBar(content: Text(<span class="hljs-string">&#x27;Value is <span class="hljs-subst">$&#123;current.state&#125;</span>&#x27;</span>)),<br>      );<br>    &#125;);<br>    <span class="hljs-comment">// watch the provider and rebuild when the value changes</span><br>    <span class="hljs-keyword">final</span> counter = ref.watch(counterStateProvider);<br>    <span class="hljs-keyword">return</span> ElevatedButton(<br>      <span class="hljs-comment">// use the value</span><br>      child: Text(<span class="hljs-string">&#x27;Value: <span class="hljs-subst">$counter</span>&#x27;</span>),<br>      <span class="hljs-comment">// change the state inside a button callback</span><br>      onPressed: () =&gt; ref.read(counterStateProvider.notifier).state++,<br>    );<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h4><p>我们需要在 Provider 内容发生改变时打印日志，以方便我们进行调试，但又不想在每个 Provider 中都加上打印代码，应该怎么办？<br>在 Rivepod 中有一个ProviderObserver类，我们可以继承它实现自己的逻辑</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ProviderLogger</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ProviderObserver</span> </span>&#123;<br>    <span class="hljs-meta">@override</span><br>    <span class="hljs-keyword">void</span> didUpdateProvider(<br>      ProviderBase provider,<br>      <span class="hljs-built_in">Object?</span> previousValue,<br>      <span class="hljs-built_in">Object?</span> newValue,<br>      ProviderContainer container,<br>    ) &#123;<br>      <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[<span class="hljs-subst">$&#123;provider.name ?? provider.runtimeType&#125;</span>] value: <span class="hljs-subst">$newValue</span>&#x27;</span>);<br>    &#125;<br>  &#125;<br></code></pre></td></tr></table></figure>
+<p>同样的，需要将它添加到 ProviderScope内的观察者列表中</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-keyword">void</span> main() &#123;<br>    runApp(<br>      ProviderScope(observers: [ProviderLogger()], child: MyApp()),<br>    );<br>  &#125;<br></code></pre></td></tr></table></figure>
+<p>为了方便我们区分是哪一个 Provider 的日志，我们在声明 Provider 时可以提供一个名字</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-keyword">final</span> counterStateProvider = StateProvider&lt;<span class="hljs-built_in">int</span>&gt;((ref) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>  &#125;, name: <span class="hljs-string">&#x27;main_page_counter&#x27;</span>);<br></code></pre></td></tr></table></figure>
+
+
+
+
+<h3 id="修饰符"><a href="#修饰符" class="headerlink" title="修饰符"></a>修饰符</h3><h4 id="autoDispose"><a href="#autoDispose" class="headerlink" title="autoDispose"></a>autoDispose</h4><p>上一篇中提到Riverpod 作者强烈建议将 Provider 声明为全局的而不是类内部，这样有一个问题，页面销毁时也就是provider没有任何监听者时并不会被重置。再次进入页面后还是页面销毁之前的值，比如 StateProvider 实现的计数功能。当我们在页面中点击加号，将数字变为 5 后，返回上一个页面后再次打开该页面，会发现页面还是 5。这有时不符合我们的需求，这里我们可以使用autoDispose来实现：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-keyword">final</span> autoDisposeProvider = StateProvider.autoDispose&lt;<span class="hljs-built_in">int</span>&gt;(((ref) &#123;<br>  ref.onDispose(() &#123;<br>    debugPrint(<span class="hljs-string">&quot;countProvider onDispose&quot;</span>);<br>  &#125;);<br><br>  <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;));<br><br><span class="hljs-keyword">final</span> countProvider = StateProvider&lt;<span class="hljs-built_in">int</span>&gt;((ref) =&gt; <span class="hljs-number">1</span>);<br><br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">RiverpodAutoDisposeWidget</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ConsumerWidget</span> </span>&#123;<br>  <span class="hljs-meta">@override</span><br>  Widget build(BuildContext context, WidgetRef ref) &#123;<br>    <span class="hljs-keyword">final</span> autoDisposeValue = ref.watch(autoDisposeProvider);<br>    <span class="hljs-keyword">final</span> normalValue = ref.watch(countProvider);<br>    <span class="hljs-keyword">return</span> Scaffold(<br>      appBar: AppBar(<br>        title: Text(<span class="hljs-string">&quot;AutoDispose&quot;</span>),<br>        centerTitle: <span class="hljs-keyword">true</span>,<br>      ),<br>      body: Column(children: [<br>        Text(<span class="hljs-string">&quot;autoDispose:当privder不被使用时，可以被自动释放&quot;</span>),<br>        Text(<span class="hljs-string">&quot;autoDisposeValue-&gt; <span class="hljs-subst">$&#123;autoDisposeValue&#125;</span>&quot;</span>),<br>        Text(<span class="hljs-string">&quot;normalValue-&gt; <span class="hljs-subst">$&#123;normalValue&#125;</span>&quot;</span>),<br>        Row(<br>          children: [<br>            ElevatedButton(<br>                onPressed: (() &#123;<br>                  ref.read(autoDisposeProvider.notifier).state++;<br>                  ref.read(countProvider.notifier).state++;<br>                &#125;),<br>                child: Text(<span class="hljs-string">&quot;增加计数&quot;</span>))<br>          ],<br>        )<br>      ]),<br>    );<br>  &#125;<br>&#125;<br><br><br></code></pre></td></tr></table></figure>
+<p>可以看到当页面被销毁时，被autoDispose修饰的 provider 会被释放并重置。这里的 ref.onDispose会在没有监听者之后调用。</p>
+<h4 id="keepAlive"><a href="#keepAlive" class="headerlink" title="keepAlive"></a>keepAlive</h4><p>我们可以使用 ref.keepAlive实现超时缓存。<br>简单粗暴点就是这样：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-keyword">final</span> tmpProvider = StateProvider.autoDispose&lt;<span class="hljs-built_in">int</span>&gt;((ref)&#123;<br><br>    <span class="hljs-comment">// get the [KeepAliveLink]</span><br>    <span class="hljs-keyword">final</span> link = ref.keepAlive();<br>    <span class="hljs-comment">// start a 30 second timer</span><br>    <span class="hljs-keyword">final</span> timer = Timer(<span class="hljs-keyword">const</span> <span class="hljs-built_in">Duration</span>(seconds: <span class="hljs-number">30</span>), () &#123;<br>      <span class="hljs-comment">// dispose on timeout</span><br>      link.close();<br>    &#125;);<br>    <span class="hljs-comment">// make sure to cancel the timer when the provider state is disposed</span><br>    <span class="hljs-comment">// (prevents undesired test failures)</span><br>    ref.onDispose(() =&gt; timer.cancel());<br><br>  <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;);<br><br></code></pre></td></tr></table></figure>
+<p>我们可以使用<code>extension</code>封装一下</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-keyword">extension</span> AutoDisposeRefCache <span class="hljs-keyword">on</span> AutoDisposeRef &#123;<br>  <span class="hljs-keyword">void</span> cacheFor(<span class="hljs-built_in">Duration</span> duration) &#123;<br>    <span class="hljs-keyword">final</span> link = keepAlive();<br>    <span class="hljs-keyword">final</span> timer = Timer(duration, () &#123;<br>      link.close();<br>    &#125;);<br>    onDispose(() &#123;<br>      timer.cancel();<br>    &#125;);<br>  &#125;<br>&#125;<br><br><span class="hljs-comment">//使用</span><br><span class="hljs-keyword">final</span> timerCachedProvider = Provider.autoDispose&lt;<span class="hljs-built_in">int</span>&gt;((ref) &#123;<br>  ref.cacheFor(<span class="hljs-built_in">Duration</span>(minutes: <span class="hljs-number">5</span>));<br>  <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;);<br></code></pre></td></tr></table></figure>
+<h4 id="family"><a href="#family" class="headerlink" title="family"></a>family</h4><p>我们可以用它向 Provider 提供参数，比如我们的计数器示例，比如想从指定的数字开始</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-keyword">final</span> countProviderBase = StateProvider.autoDispose.family&lt;<span class="hljs-built_in">int</span>,<span class="hljs-built_in">int</span>&gt; ((ref,start)&#123;<br>  <span class="hljs-keyword">return</span> start;<br>&#125;);<br><span class="hljs-comment">//使用</span><br><span class="hljs-keyword">final</span> startValue =  ref.watch(countProviderBase(<span class="hljs-number">10</span>));<br></code></pre></td></tr></table></figure>
+
+<h4 id="依赖覆盖"><a href="#依赖覆盖" class="headerlink" title="依赖覆盖"></a>依赖覆盖</h4><p>有时候我们希望使用 Provider 存储无法立即获取的对象或者值，比如做本地存储时用的<code>shared_preferences</code>。但是它的初始化是异步的，如果我们直接在 Provider 中使用则会提示</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-keyword">final</span> spProvider = Provider&lt;SharedPreferences&gt;((ref) &#123;<br>  <span class="hljs-keyword">return</span> SharedPreferences.getInstance();<span class="hljs-comment">//不可以这样使用</span><br>  <span class="hljs-comment">//The return type &#x27;Future&lt;SharedPreferences&gt;&#x27; isn&#x27;t a &#x27;SharedPreferences&#x27;, as required by the closure&#x27;s context.</span><br>&#125;);<br></code></pre></td></tr></table></figure>
+<p>这时候我们可以先抛出一个为实现的异常</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-keyword">final</span> sharedPreferencesProvider = Provider&lt;SharedPreferences&gt;((ref) &#123;<br>    <span class="hljs-keyword">throw</span> UnimplementedError();<br>  &#125;);<br></code></pre></td></tr></table></figure>
+<p>然后我们可以在 ProviderScope 组件中进行依赖覆盖</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs dart">Future&lt;<span class="hljs-keyword">void</span>&gt; main() <span class="hljs-keyword">async</span> &#123;<br>  WidgetsFlutterBinding.ensureInitialized();<br>  <span class="hljs-keyword">final</span> sharedPreferences = <span class="hljs-keyword">await</span> SharedPreferences.getInstance();<br>  runApp(ProviderScope(<br>    overrides: [<br>      <span class="hljs-comment">// override the previous value with the new object</span><br>      sharedPreferencesProvider.overrideWithValue(sharedPreferences),<br>    ],<br>    child: MyApp(),<br>  ));<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这样我们就可以在任何地方观察sharedPreferencesProvider对象，而无需使用基于Future的API</p>
+<h3 id="注解"><a href="#注解" class="headerlink" title="注解"></a>注解</h3><p>我们在使用 Provider 时都需要手动编写，我们是否可以使用 build_runner生成？Riverpod 中已经提供了这种方式，但当前只支持以下几种</p>
+<ul>
+<li>Provider</li>
+<li>FutureProvider</li>
+<li>StreamProvider</li>
+<li>NotifierProvider</li>
+<li>AsyncNotifierProvider</li>
+</ul>
+<h4 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">dependencies:</span><br>  <span class="hljs-comment"># or flutter_riverpod/hooks_riverpod as per https://riverpod.dev/docs/getting_started</span><br>  <span class="hljs-attr">riverpod:</span> <span class="hljs-string">^2.4.10</span><br>  <span class="hljs-comment"># the annotation package containing @riverpod</span><br>  <span class="hljs-attr">riverpod_annotation:</span> <span class="hljs-string">^2.3.4</span><br><span class="hljs-attr">dev_dependencies:</span><br>  <span class="hljs-comment"># a tool for running code generators</span><br>  <span class="hljs-attr">build_runner:</span><br>  <span class="hljs-comment"># the code generator</span><br>  <span class="hljs-attr">riverpod_generator:</span> <span class="hljs-string">^2.3.9</span><br>  <span class="hljs-comment"># riverpod_lint makes it easier to work with Riverpod</span><br>  <span class="hljs-attr">riverpod_lint:</span> <span class="hljs-string">^2.3.7</span><br>  <span class="hljs-comment"># import custom_lint too as riverpod_lint depends on it</span><br>  <span class="hljs-attr">custom_lint:</span><br></code></pre></td></tr></table></figure>
+<p>其中<code>riverpod_lint</code>和<code>custom_lint</code>这两个包是可选的。<br>之后我们需要在<code>watch</code>模式下启动代码生成器<br><code>flutter pub run build_runner watch -d</code>,较新的flutter版本会提示使用<code>dart run build_runner watch -d</code>。</p>
+<h4 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h4><p>我们来看个简单的示例，从 Provider 开始<br>没有使用注解生成器之前：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-comment">// dio_provider.dart</span><br><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;package:dio/dio.dart&#x27;</span>;<br><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;package:flutter_riverpod/flutter_riverpod.dart&#x27;</span>;<br><span class="hljs-comment">// a provider for the Dio client to be used by the rest of the app</span><br><span class="hljs-keyword">final</span> dioProvider = Provider&lt;Dio&gt;((ref) &#123;<br>  <span class="hljs-keyword">return</span> Dio();<br>&#125;);<br></code></pre></td></tr></table></figure>
+<p>使用注解生成器之后</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;package:dio/dio.dart&#x27;</span>;<br><span class="hljs-comment">// 1. import the riverpod_annotation package</span><br><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;package:riverpod_annotation/riverpod_annotation.dart&#x27;</span>;<br><span class="hljs-comment">// 2. add a part file</span><br><span class="hljs-keyword">part</span> <span class="hljs-string">&#x27;dio_provider.g.dart&#x27;</span>;<br><br><br><span class="hljs-comment">//需要执行 flutter pub run build_runner watch -d 来生成对应代码</span><br><span class="hljs-meta">@riverpod</span><br>Dio dio(DioRef ref)&#123;<br>  <span class="hljs-keyword">return</span> Dio();<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>会生成<code>dio_provider.g.dart</code>文件，内容如下</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-comment">// GENERATED CODE - DO NOT MODIFY BY HAND</span><br><br><span class="hljs-keyword">part</span> of <span class="hljs-string">&#x27;dio_provider.dart&#x27;</span>;<br><br><span class="hljs-comment">// **************************************************************************</span><br><span class="hljs-comment">// RiverpodGenerator</span><br><span class="hljs-comment">// **************************************************************************</span><br><br><span class="hljs-built_in">String</span> _$dioHash() =&gt; <span class="hljs-string">r&#x27;58eeefbd0832498ca2574c1fe69ed783c58d1d8f&#x27;</span>;<br><br><span class="hljs-comment">/// <span class="language-markdown">See also [dio].</span></span><br><span class="hljs-meta">@ProviderFor</span>(dio)<br><span class="hljs-keyword">final</span> dioProvider = AutoDisposeProvider&lt;Dio&gt;.internal(<br>  dio,<br>  name: <span class="hljs-string">r&#x27;dioProvider&#x27;</span>,<br>  debugGetCreateSourceHash:<br>      <span class="hljs-keyword">const</span> <span class="hljs-built_in">bool</span>.fromEnvironment(<span class="hljs-string">&#x27;dart.vm.product&#x27;</span>) ? <span class="hljs-keyword">null</span> : _$dioHash,<br>  dependencies: <span class="hljs-keyword">null</span>,<br>  allTransitiveDependencies: <span class="hljs-keyword">null</span>,<br>);<br><br><span class="hljs-keyword">typedef</span> DioRef = AutoDisposeProviderRef&lt;Dio&gt;;<br><span class="hljs-comment">// ignore_for_file: type=lint</span><br><span class="hljs-comment">// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member</span><br><br></code></pre></td></tr></table></figure>
+
+<h4 id="autoDispose和-keepAlive"><a href="#autoDispose和-keepAlive" class="headerlink" title="autoDispose和 keepAlive"></a>autoDispose和 keepAlive</h4><p>在使用注解生成代码时，autoDispose 现在默认启用，并已重命名为 keepAlive。如果不想销毁 provider，可以将keepAlive设置为 true</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-meta">@Riverpod</span>(keepAlive: <span class="hljs-keyword">true</span>)<br><span class="hljs-built_in">int</span> counter(CounterRef ref)&#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>生成的代码是这样的</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-built_in">String</span> _$counterHash() =&gt; <span class="hljs-string">r&#x27;6b26baf29ab7c65258c6367ad62133458d88a2b3&#x27;</span>;<br><br><span class="hljs-comment">/// <span class="language-markdown">See also [counter].</span></span><br><span class="hljs-meta">@ProviderFor</span>(counter)<br><span class="hljs-keyword">final</span> counterProvider = Provider&lt;<span class="hljs-built_in">int</span>&gt;.internal(<br>  counter,<br>  name: <span class="hljs-string">r&#x27;counterProvider&#x27;</span>,<br>  debugGetCreateSourceHash:<br>      <span class="hljs-keyword">const</span> <span class="hljs-built_in">bool</span>.fromEnvironment(<span class="hljs-string">&#x27;dart.vm.product&#x27;</span>) ? <span class="hljs-keyword">null</span> : _$counterHash,<br>  dependencies: <span class="hljs-keyword">null</span>,<br>  allTransitiveDependencies: <span class="hljs-keyword">null</span>,<br>);<br><br><span class="hljs-keyword">typedef</span> CounterRef = ProviderRef&lt;<span class="hljs-built_in">int</span>&gt;;<br><span class="hljs-comment">// ignore_for_file: type=lint</span><br><span class="hljs-comment">// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member</span><br><br></code></pre></td></tr></table></figure>
+<p>可以看到，当 keepAlive 是默认值(true)时，使用的是<code>AutoDisposeProvider</code>,为 false 时，使用的是<code>Provider</code></p>
+<h4 id="FutureProvider-和-StreamProvider"><a href="#FutureProvider-和-StreamProvider" class="headerlink" title="FutureProvider 和 StreamProvider"></a>FutureProvider 和 StreamProvider</h4><p>几乎是一样的写法</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-meta">@riverpod</span><br>Future&lt;<span class="hljs-built_in">String</span>&gt; generateName(GenerateNameRef ref) <span class="hljs-keyword">async</span> &#123;<br>    <span class="hljs-keyword">await</span> Future.delayed(<span class="hljs-built_in">Duration</span>(seconds: <span class="hljs-number">5</span>));<br>    <span class="hljs-keyword">final</span> wordPair = generateWordPairs().first;<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;<span class="hljs-subst">$&#123;wordPair.first&#125;</span>  <span class="hljs-subst">$&#123;wordPair.second&#125;</span>&quot;</span>;<br>&#125;<br><br><span class="hljs-meta">@riverpod</span><br>Stream&lt;<span class="hljs-built_in">int</span>&gt; timeCount(TimeCountRef ref)&#123;<br>  <span class="hljs-keyword">return</span> Stream.periodic(<span class="hljs-built_in">Duration</span>(seconds: <span class="hljs-number">1</span>),(number)&#123;<br>    <span class="hljs-keyword">return</span> number +<span class="hljs-number">1</span>;<br>  &#125;);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="NotifierProvider"><a href="#NotifierProvider" class="headerlink" title="NotifierProvider"></a>NotifierProvider</h4><p>我们把上一篇中<code>NotifierProvider</code>例子简化一下，还是那个万能的计数器</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-comment">//声明一个Notifier对象</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Counter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Notifier</span>&lt;<span class="hljs-title">int</span>&gt;</span>&#123;<br>  <span class="hljs-meta">@override</span><br>  <span class="hljs-built_in">int</span> build() &#123;<br>   <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>  &#125;<br><br> <span class="hljs-comment">//对 state 进行操作，也可以在外部直接操作</span><br>  <span class="hljs-keyword">void</span> increment()&#123;<br>    state ++;<br>  &#125;<br><br>&#125;<br><span class="hljs-comment">//两种 provider 的声明方式</span><br><span class="hljs-keyword">final</span> counterProvider = NotifierProvider&lt;Counter, <span class="hljs-built_in">int</span>&gt;(() &#123;<br>  <span class="hljs-keyword">return</span> Counter();<br>&#125;);<br><span class="hljs-comment">// final counterProvider = NotifierProvider&lt;Counter, int&gt;(Counter.new);</span><br></code></pre></td></tr></table></figure>
+<p>在 widget 中使用</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">RiverpodGeneratorWidget</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ConsumerWidget</span></span>&#123;<br>  <span class="hljs-meta">@override</span><br>  Widget build(BuildContext context, WidgetRef ref) &#123;<br>    <span class="hljs-keyword">final</span> count = ref.watch(counterProvider);<br>    <span class="hljs-keyword">return</span> Scaffold(<br>      appBar: AppBar(title: Text(<span class="hljs-string">&quot;RiverpodGeneratorWidget&quot;</span>),centerTitle: <span class="hljs-keyword">true</span>,),<br>      body: Column(children: [<br>        Text(<span class="hljs-string">&quot;count <span class="hljs-subst">$count</span>&quot;</span>)<br>      ],),<br>      floatingActionButton: FloatingActionButton(onPressed: ()&#123;<br>        <span class="hljs-comment">//调用 notifier 中定义的方法</span><br>        ref.read(counterProvider.notifier).increment();<br>        <span class="hljs-comment">//直接获取到 state 进行操作</span><br>        ref.read(counterProvider.notifier).state++;<br>      &#125;,child: Icon(Icons.add),<br>      ),<br>    );<br>  &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>那么我们如是用注解代码生成？</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-comment">//counter.dart</span><br><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;package:riverpod_annotation/riverpod_annotation.dart&#x27;</span>;<br><span class="hljs-keyword">part</span> <span class="hljs-string">&#x27;counter.g.dart&#x27;</span>;<br><span class="hljs-meta">@riverpod</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Counter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">_</span>$<span class="hljs-title">Counter</span></span>&#123;<br>  <span class="hljs-meta">@override</span><br>  <span class="hljs-built_in">int</span> build() &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>  &#125;<br>  <span class="hljs-keyword">void</span> increment()&#123;<br>    state ++;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>需要注意的是，这里我们需要继承<code>_$Counter</code>而不是<code>Notifier</code>。<br>因为 <code>Counter</code>中的 <code>build</code> 方法返回值是<code>int</code>类型，生成的代码中也就使用了 <code>int</code>类型。简单来讲就是<code>build</code>方法的返回值类型决定了 <code>state</code> 的类型.</p>
+<p>还是需要运行 <code>flutter pub run build_runner watch</code> 或者 <code>dart run build_runner watch</code>,这时会生成<code>counter.g.dart</code>文件，内容如下</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-comment">// GENERATED CODE - DO NOT MODIFY BY HAND</span><br><br><span class="hljs-keyword">part</span> of <span class="hljs-string">&#x27;counter.dart&#x27;</span>;<br><br><span class="hljs-comment">// **************************************************************************</span><br><span class="hljs-comment">// RiverpodGenerator</span><br><span class="hljs-comment">// **************************************************************************</span><br><br><span class="hljs-built_in">String</span> _$counterHash() =&gt; <span class="hljs-string">r&#x27;7015b4a05f8ed24a914f6b3aad12be335d0c73d7&#x27;</span>;<br><br><span class="hljs-comment">/// <span class="language-markdown">See also [Counter].</span></span><br><span class="hljs-meta">@ProviderFor</span>(Counter)<br><span class="hljs-keyword">final</span> counterProvider = AutoDisposeNotifierProvider&lt;Counter, <span class="hljs-built_in">int</span>&gt;.internal(<br>  Counter.<span class="hljs-keyword">new</span>,<br>  name: <span class="hljs-string">r&#x27;counterProvider&#x27;</span>,<br>  debugGetCreateSourceHash:<br>      <span class="hljs-keyword">const</span> <span class="hljs-built_in">bool</span>.fromEnvironment(<span class="hljs-string">&#x27;dart.vm.product&#x27;</span>) ? <span class="hljs-keyword">null</span> : _$counterHash,<br>  dependencies: <span class="hljs-keyword">null</span>,<br>  allTransitiveDependencies: <span class="hljs-keyword">null</span>,<br>);<br><br><span class="hljs-keyword">typedef</span> _$Counter = AutoDisposeNotifier&lt;<span class="hljs-built_in">int</span>&gt;;<br><span class="hljs-comment">// ignore_for_file: type=lint</span><br><span class="hljs-comment">// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member</span><br><br></code></pre></td></tr></table></figure>
+
+<h4 id="AsyncNotifierProvider"><a href="#AsyncNotifierProvider" class="headerlink" title="AsyncNotifierProvider"></a>AsyncNotifierProvider</h4><p>也是同样的</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-meta">@riverpod</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AsyncCounters</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">_</span>$<span class="hljs-title">AsyncCounters</span></span>&#123;<br>  <span class="hljs-meta">@override</span><br>  FutureOr&lt;<span class="hljs-built_in">int</span>&gt; build()&#123;<br>    <span class="hljs-keyword">return</span> Future.delayed(<span class="hljs-built_in">Duration</span>(seconds: <span class="hljs-number">3</span>),()&#123;<br>      <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>    &#125;);<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>生成的代码如下</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-comment">// GENERATED CODE - DO NOT MODIFY BY HAND</span><br><br><span class="hljs-keyword">part</span> of <span class="hljs-string">&#x27;async_counter.dart&#x27;</span>;<br><br><span class="hljs-comment">// **************************************************************************</span><br><span class="hljs-comment">// RiverpodGenerator</span><br><span class="hljs-comment">// **************************************************************************</span><br><br><span class="hljs-built_in">String</span> _$asyncCountersHash() =&gt; <span class="hljs-string">r&#x27;787b7c6513c7794fa310550d32594b97238e7e3c&#x27;</span>;<br><br><span class="hljs-comment">/// <span class="language-markdown">See also [AsyncCounters].</span></span><br><span class="hljs-meta">@ProviderFor</span>(AsyncCounters)<br><span class="hljs-keyword">final</span> asyncCountersProvider =<br>    AutoDisposeAsyncNotifierProvider&lt;AsyncCounters, <span class="hljs-built_in">int</span>&gt;.internal(<br>  AsyncCounters.<span class="hljs-keyword">new</span>,<br>  name: <span class="hljs-string">r&#x27;asyncCountersProvider&#x27;</span>,<br>  debugGetCreateSourceHash: <span class="hljs-keyword">const</span> <span class="hljs-built_in">bool</span>.fromEnvironment(<span class="hljs-string">&#x27;dart.vm.product&#x27;</span>)<br>      ? <span class="hljs-keyword">null</span><br>      : _$asyncCountersHash,<br>  dependencies: <span class="hljs-keyword">null</span>,<br>  allTransitiveDependencies: <span class="hljs-keyword">null</span>,<br>);<br><br><span class="hljs-keyword">typedef</span> _$AsyncCounters = AutoDisposeAsyncNotifier&lt;<span class="hljs-built_in">int</span>&gt;;<br><span class="hljs-comment">// ignore_for_file: type=lint</span><br><span class="hljs-comment">// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member</span><br><br></code></pre></td></tr></table></figure>
+
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><h4 id="Notifier-和-AsyncNotifier：是否值得使用？"><a href="#Notifier-和-AsyncNotifier：是否值得使用？" class="headerlink" title="Notifier 和 AsyncNotifier：是否值得使用？"></a>Notifier 和 AsyncNotifier：是否值得使用？</h4><p>长时间以来，StateNotifier 一直在为我们提供服务，提供了一个存储复杂状态和修改状态逻辑的地方，使其不再依赖于小部件树。</p>
+<p>Notifier 和 AsyncNotifier 旨在取代 StateNotifier 并带来一些新的好处：</p>
+<p>更容易执行复杂的异步初始化<br>更符合人体工程学的 API：不再需要传递 ref<br>不再需要手动声明提供者（如果使用 Riverpod Generator）<br>对于新项目来说，这些好处是值得的，因为新的类可以帮助您用更少的代码实现更多的功能。</p>
+<p>但如果您有很多现有代码使用 StateNotifier，则由您决定是否（或何时）迁移到新的语法。</p>
+<p>无论如何，StateNotifier 还会存在一段时间，如果您愿意，可以逐个迁移您的提供者。</p>
+<h4 id="使用-generator-还是手动编写-provider"><a href="#使用-generator-还是手动编写-provider" class="headerlink" title="使用 generator 还是手动编写 provider"></a>使用 generator 还是手动编写 provider</h4><p>使用 generator 需要我们执行额外的代码来生成对应的代码文件，并且在编写生成代码时体验不是那么的友好。但另外一方面，能省去我们编写模板的代码的时间。如何使用，看个人喜好。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Flutter/" class="print-no-link">#Flutter</a>
+      
+        <a href="/tags/riverpod/" class="print-no-link">#riverpod</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>riverpod2中的修饰符及注解</div>
+      <div>https://blog.huangyuanlove.com/2024/03/27/riverpod2中的修饰符及注解/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年3月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/03/27/%E9%B8%BF%E8%92%99-canvas-%E5%AE%9E%E7%8E%B0%E6%B3%A2%E6%B5%AA%E6%95%88%E6%9E%9C/" title="鸿蒙--canvas 实现波浪效果">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">鸿蒙--canvas 实现波浪效果</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/03/27/riverpod2-x%E4%B8%AD%E7%9A%84-Provider-%E7%AE%80%E4%BB%8B/" title="riverpod2.x中的 Provider 简介">
+                        <span class="hidden-mobile">riverpod2.x中的 Provider 简介</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '2f67e1fe14849eed7b65788f2c2e3237'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

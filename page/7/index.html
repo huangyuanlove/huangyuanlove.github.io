@@ -215,6 +215,256 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2018/12/27/Android-O-%E9%80%82%E9%85%8DNotificationChannel/" target="_blank">
+          Android O---适配NotificationChannel
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2018/12/27/Android-O-%E9%80%82%E9%85%8DNotificationChannel/" target="_blank">
+        <div>
+          继之前跪在Android N的StrictMode上了。现在又跪在的Android O 的NotificationChannel上了 场景如下： 某些场景中需要上传图片，选择图片或者拍照时使用系统的图库会将自己的app置于后台，若选择图片的时间过长，则可能会导致自己的app会杀死。看了一下传承下来的代码，是在这种情况下发送一个前台通知startForeground,使此服务在前台运行。但是会在通知
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2018-12-27 19:47" pubdate>
+              2018年12月27日
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Android/">#Android</a>
+            
+              <a href="/tags/Android%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85/">#Android爬坑之旅</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2018/12/26/Ubuntu%E8%BE%93%E5%85%A5%E5%AF%86%E7%A0%81%E7%99%BB%E9%99%86%E5%90%8E%E5%9B%9E%E5%88%B0%E7%99%BB%E5%BD%95%E7%95%8C%E9%9D%A2/" target="_blank">
+          Ubuntu输入密码登陆后回到登录界面
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2018/12/26/Ubuntu%E8%BE%93%E5%85%A5%E5%AF%86%E7%A0%81%E7%99%BB%E9%99%86%E5%90%8E%E5%9B%9E%E5%88%B0%E7%99%BB%E5%BD%95%E7%95%8C%E9%9D%A2/" target="_blank">
+        <div>
+          既然推荐更新了，那就更呗，然后更新到了18.04，被小伙伴吐槽不用命令行更新的系统是没有灵魂的。更新之后玩了没几天，昨晚突然间无法登录桌面了。输入密码登录后显示一下桌面背景然后就回到了的登录界面，使用tty登录没问题。这就好办了，盲猜桌面服务挂了。然后猜原因：  .Xauthority权限不对 /tmp权限不对 ubuntu-desktop挂了  盲猜完了，验证一下
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2018-12-26 11:25" pubdate>
+              2018年12月26日
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/linux/">#linux</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2018/12/22/gradle-android%E6%8F%92%E4%BB%B6/" target="_blank">
+          gradle-android插件
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2018/12/22/gradle-android%E6%8F%92%E4%BB%B6/" target="_blank">
+        <div>
+          Android Gradle插件可以分为三类，分别对应Android中的三类工程：  App应用工程，它可以生成一个可运行的apk应用，对应插件id：com.android.application Library库工程，可以生成AAR包给其他工程使用，对用插件id:com.android.library test测试工程，对App工程或者Library库工程进行单元测试，对应插件id：com.an
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2018-12-22 11:56" pubdate>
+              2018年12月22日
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Android/">#Android</a>
+            
+              <a href="/tags/gradle/">#gradle</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2018/12/19/gradle-java%E6%8F%92%E4%BB%B6/" target="_blank">
+          gradle-java插件
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2018/12/19/gradle-java%E6%8F%92%E4%BB%B6/" target="_blank">
+        <div>
+          当我们使用java插件时，只需要在gradle文件中应用apply plugin :&#39;java&#39;一下 就好了，插件中有很多默认的配置，比如源代码位置在src/main/java，src/test/java是单元测试用例的存放目录，src/main/resources是要打包的文件存放目录，比如配置文件和图片等。当然我们也可以改变java插件的默认配置，只需要在build.gradl
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2018-12-19 21:23" pubdate>
+              2018年12月19日
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Android/">#Android</a>
+            
+              <a href="/tags/gradle/">#gradle</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2018/12/09/gradle%E6%8F%92%E4%BB%B6/" target="_blank">
+          gradle插件
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2018/12/09/gradle%E6%8F%92%E4%BB%B6/" target="_blank">
+        <div>
+          把插件应用到你的项目，插件会扩展项目的功能，帮助你在项目的构建过程中做很多事情。  可以添加任务到你的项目中，帮你完成一些事情，比如测试、编译、打包。 可以添加依赖配置到你的项目中，我们可以通过他们配置我们项目在构建过程中需要的依赖，比如变异的时候依赖第三方库等 可以向项目中现有的对象类型添加新的扩展属性、方法等，让你可以使用他们帮助我们配置、优化构建，比如android&#123;&#125;这
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2018-12-09 23:20" pubdate>
+              2018年12月09日
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Android/">#Android</a>
+            
+              <a href="/tags/gradle/">#gradle</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2018/11/19/gradle%E4%BB%BB%E5%8A%A1/" target="_blank">
+          gradle任务
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2018/11/19/gradle%E4%BB%BB%E5%8A%A1/" target="_blank">
+        <div>
+          参考《Android Gradle 权威指南》第四章Gradle任务，主要介绍任务的创建方式、访问任务、任务分组和描述、&lt;&lt;操作符、任务的执行分析、任务排序、启用和禁用、断言、规则等。
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2018-11-19 10:56" pubdate>
+              2018年11月19日
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Android/">#Android</a>
+            
+              <a href="/tags/gradle/">#gradle</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2018/11/12/%E9%80%82%E9%85%8D%E5%85%A8%E9%9D%A2%E5%B1%8F%E6%89%8B%E6%9C%BA/" target="_blank">
           适配全面屏手机
         </a>
@@ -373,253 +623,11 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2018/09/27/%E4%BD%BF%E7%94%A8express%E6%A8%A1%E6%8B%9F%E5%90%8E%E5%8F%B0%E8%BF%94%E5%9B%9E%E6%95%B0%E6%8D%AE/" target="_blank">
-          使用express模拟后台返回数据
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2018/09/27/%E4%BD%BF%E7%94%A8express%E6%A8%A1%E6%8B%9F%E5%90%8E%E5%8F%B0%E8%BF%94%E5%9B%9E%E6%95%B0%E6%8D%AE/" target="_blank">
-        <div>
-          在研发过程中，有时候会遇到前端写完了，但是后端接口还没有完成的情况。一般情况下我们会写一些假数据来填充UI，这种方式没有办法检测网络请求有没有问题。我们可以自己搭一个服务，请求自己的服务来返回一些模拟数据。比如可以使用node和express模块来做。
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2018-09-27 14:52" pubdate>
-              2018年09月27日
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Android/">#Android</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2018/08/20/Coordinatorlayout/" target="_blank">
-          Coordinatorlayout
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2018/08/20/Coordinatorlayout/" target="_blank">
-        <div>
-          上图的动画其实挺简单的，如果你知道的话，就不要继续往下看了，那是在浪费时间。
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2018-08-20 23:16" pubdate>
-              2018年08月20日
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Android/">#Android</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2018/08/09/ConstraintLayout/" target="_blank">
-          ConstraintLayout
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2018/08/09/ConstraintLayout/" target="_blank">
-        <div>
-          https://developer.android.google.cn/reference/android/support/constraint/ConstraintLayoutA ConstraintLayout is a ViewGroup which allows you to position and size widgets in a flexible way.
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2018-08-09 10:40" pubdate>
-              2018年08月09日
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Android/">#Android</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2018/08/06/Android-hook-%E7%A4%BA%E4%BE%8B/" target="_blank">
-          Android hook--示例
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2018/08/06/Android-hook-%E7%A4%BA%E4%BE%8B/" target="_blank">
-        <div>
-          Hook过程：  寻找 Hook 点，原则是静态变量或者单例对象，尽量 Hook public 的对象和方法。Hook的选择点：静态变量和单例，因为一旦创建对象，它们不容易变化，非常容易定位。 选择合适的代理方式，如果是接口可以用动态代理。 偷梁换柱——用代理对象替换原始对象。注意Android 的 API 版本比较多，方法和类可能不一样，所以要做好 API 的兼容工作。还有不要hook太底层的东
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2018-08-06 15:46" pubdate>
-              2018年08月06日
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Android/">#Android</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2018/08/06/Android-hook--%E5%8F%8D%E5%B0%84%E5%9F%BA%E7%A1%80/" target="_blank">
-          Android hook--反射基础
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2018/08/06/Android-hook--%E5%8F%8D%E5%B0%84%E5%9F%BA%E7%A1%80/" target="_blank">
-        <div>
-          假如你已经非常熟悉java中反射(reflect)和代理(Proxy)，那你还在这里看我这篇文章纯粹就是浪费时间了。
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2018-08-06 15:18" pubdate>
-              2018年08月06日
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Android/">#Android</a>
-            
-              <a href="/tags/java/">#java</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2018/08/03/Toast%E6%98%BE%E7%A4%BA%E8%BF%87%E7%A8%8B/" target="_blank">
-          Toast显示过程
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2018/08/03/Toast%E6%98%BE%E7%A4%BA%E8%BF%87%E7%A8%8B/" target="_blank">
-        <div>
-          抄书抄的有点烦，自己也学着分析一下源码，挑了个在我看来比较简单的Toast显示过程来玩一玩。 1Toast.makeText(context, text, duration).show(); 先了解一下makeText过程，该过程最终都会调用下面的方法： 1234567891011121314151617181920/**     * Make a standard toast to displa
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2018-08-03 11:35" pubdate>
-              2018年08月03日
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Android/">#Android</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/6/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/#board">5</a><a class="page-number" href="/page/6/#board">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/#board">8</a><a class="page-number" href="/page/9/#board">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/#board">14</a><a class="extend next" rel="next" href="/page/8/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/6/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/#board">5</a><a class="page-number" href="/page/6/#board">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/#board">8</a><a class="page-number" href="/page/9/#board">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/#board">15</a><a class="extend next" rel="next" href="/page/8/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

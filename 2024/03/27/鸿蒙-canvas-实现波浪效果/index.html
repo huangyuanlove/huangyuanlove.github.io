@@ -1,0 +1,645 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="HarmonyOS,鸿蒙应用开发,鸿蒙手机应用开发,Canvas,贝塞尔曲线">
+  
+    <meta name="description" content="前言Android 中 canvas 能画出来的东西鸿蒙的 canvas 还画不了，不大可能吧？有个朋友问鸿蒙应用中想实现波浪效果，应该咋画？这个问题，你能在 Android 上用 canvas 画出来，在鸿蒙里面用 canvas 画不出来？还是 api 不熟悉吧？ 开始波浪效果嘛，首先想到的是正弦、余弦函数、贝塞尔曲线，还有一个傅里叶变换，不过这个有点搞不定。这里选择使用贝塞尔曲线，因为之前在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="鸿蒙--canvas 实现波浪效果">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2024/03/27/%E9%B8%BF%E8%92%99-canvas-%E5%AE%9E%E7%8E%B0%E6%B3%A2%E6%B5%AA%E6%95%88%E6%9E%9C/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="前言Android 中 canvas 能画出来的东西鸿蒙的 canvas 还画不了，不大可能吧？有个朋友问鸿蒙应用中想实现波浪效果，应该咋画？这个问题，你能在 Android 上用 canvas 画出来，在鸿蒙里面用 canvas 画不出来？还是 api 不熟悉吧？ 开始波浪效果嘛，首先想到的是正弦、余弦函数、贝塞尔曲线，还有一个傅里叶变换，不过这个有点搞不定。这里选择使用贝塞尔曲线，因为之前在">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/HarmonyOS/wave.gif">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/HarmonyOS/wave.png">
+<meta property="article:published_time" content="2024-03-27T02:44:55.000Z">
+<meta property="article:modified_time" content="2024-03-27T02:53:17.246Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="HarmonyOS">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/HarmonyOS/wave.gif">
+  
+  
+  
+  <title>鸿蒙--canvas 实现波浪效果 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="鸿蒙--canvas 实现波浪效果"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-03-27 10:44" pubdate>
+          2024年3月27日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.3k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">鸿蒙--canvas 实现波浪效果</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Android 中 canvas 能画出来的东西鸿蒙的 canvas 还画不了，不大可能吧？有个朋友问鸿蒙应用中想实现波浪效果，应该咋画？这个问题，你能在 Android 上用 canvas 画出来，在鸿蒙里面用 canvas 画不出来？还是 api 不熟悉吧？</p>
+<h3 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h3><p>波浪效果嘛，首先想到的是正弦、余弦函数、贝塞尔曲线，还有一个傅里叶变换，不过这个有点搞不定。这里选择使用贝塞尔曲线，因为之前在 Android 中画过，应该可以很丝滑的迁移过来<br>先复习一下在 Android 中怎么实现：<a href="https://blog.huangyuanlove.com/2019/01/20/%E8%87%AA%E5%AE%9A%E4%B9%89View-%E8%B4%9D%E5%A1%9E%E5%B0%94%E6%9B%B2%E7%BA%BF%E3%80%81Shader/">https://blog.huangyuanlove.com/2019/01/20/%E8%87%AA%E5%AE%9A%E4%B9%89View-%E8%B4%9D%E5%A1%9E%E5%B0%94%E6%9B%B2%E7%BA%BF%E3%80%81Shader/</a></p>
+<p>确认起始点，确认终点，计算控制点，然后调用 api 划线，最后填充一下就好了。<br>怎么动起来？Android 这边用的动画，其实用 handler 或者其他东西搞个定时更新也行。<br>先看效果图<br><img src="/image/HarmonyOS/wave.gif" srcset="/img/loading.gif" lazyload alt="wave.gif">  </p>
+<p>看下鸿蒙对应的 api，目前开放的最新的HarmonyOS文档是 3.1&#x2F;4.0的，对应地址是这个 <a target="_blank" rel="noopener" href="https://developer.harmonyos.com/cn/docs/documentation/doc-references-V3/ts-canvasrenderingcontext2d-0000001478181441-V3#ZH-CN_TOPIC_0000001573928937__quadraticcurveto">https://developer.harmonyos.com/cn/docs/documentation/doc-references-V3/ts-canvasrenderingcontext2d-0000001478181441-V3#ZH-CN_TOPIC_0000001573928937__quadraticcurveto</a><br>目前开放的最新的 OpenHarmony 文档是4.0 的，对应地址在这里 <a target="_blank" rel="noopener" href="https://docs.openharmony.cn/pages/v4.0/zh-cn/application-dev/ui/arkts-drawing-customization-on-canvas.md/#%E7%94%BB%E5%B8%83%E7%BB%84%E4%BB%B6%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95">https://docs.openharmony.cn/pages/v4.0/zh-cn/application-dev/ui/arkts-drawing-customization-on-canvas.md/#%E7%94%BB%E5%B8%83%E7%BB%84%E4%BB%B6%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95</a><br>步骤都差不多，只不过鸿蒙中没有画笔的概念，需要对<code>CanvasRenderingContext2D</code>对象进行操作设置，包括设置线条颜色、线条宽度、图型填充颜色等。<br>想要画线、画出各种形状，可以直接操作<code>CanvasRenderingContext2D</code>对象，也可以创建<code>Path2D</code>对象进行操作。其余 api 可以查看对应的文档。  </p>
+<h3 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h3><p>这还有啥好设计的，直接<del>抄</del>移植 Android 上面的实现就好了<br>由于需要动起来，为了避免移动后左右有空白，这里需要<strong>多画一个波浪</strong></p>
+<p><img src="/image/HarmonyOS/wave.png" srcset="/img/loading.gif" lazyload alt="WX20240108-233545@2x.png">  </p>
+<p>这里需要注意的是，我们需要上面这条蓝色的线，而不是下面这条绿色的。</p>
+<p>在 Android 中画二阶贝塞尔曲线有两个 api,一个是<br><code>public void rQuadTo(float dx1, float dy1, float dx2, float dy2)</code><br>这个表示的是控制点和终点相对于上一个控制点和终点的偏移量<br>另外一个是<br><code>public void quadTo(float x1, float y1, float x2, float y2)</code><br>这个表示是控制点和终点的绝对坐标值<br>但在鸿蒙中没有找到对应的 api，我们可以自己计算一下：这里的控制点的横坐标是起点和终点的中间值，控制点的纵坐标取的是波浪高度<br>所以上面两条线的画法是这样的</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-title class_">Canvas</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>).<span class="hljs-title function_">width</span>(<span class="hljs-string">&quot;100%&quot;</span>).<span class="hljs-title function_">height</span>(<span class="hljs-string">&quot;30%&quot;</span>)<br>        .<span class="hljs-title function_">onAreaChange</span>(<span class="hljs-function">(<span class="hljs-params">oldValue,newValue</span>)=&gt;</span>&#123;<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-property">fillStyle</span> = <span class="hljs-string">&quot;#39d167&quot;</span><br><br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-property">strokeStyle</span> = <span class="hljs-string">&quot;#39d167&quot;</span><br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-property">lineWidth</span> = <span class="hljs-number">10</span><br>          <span class="hljs-keyword">let</span> canvasWidth = <span class="hljs-built_in">parseInt</span>(newValue.<span class="hljs-property">width</span>.<span class="hljs-title function_">toString</span>())<br>          <span class="hljs-keyword">let</span> canvasHeight = <span class="hljs-built_in">parseInt</span>(newValue.<span class="hljs-property">height</span>.<span class="hljs-title function_">toString</span>())<br><br>          <span class="hljs-keyword">let</span> waveWidth = canvasWidth/<span class="hljs-number">2</span><br>          <span class="hljs-keyword">let</span> waveHeight = <span class="hljs-number">100</span><br>          <span class="hljs-keyword">let</span> baseHeight =canvasHeight<br><br>          <span class="hljs-keyword">let</span> <span class="hljs-attr">path</span>:<span class="hljs-title class_">Path2D</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Path2D</span>()<br>          <br>          path.<span class="hljs-title function_">moveTo</span>(<span class="hljs-number">0</span>,baseHeight)<br>          <span class="hljs-comment">//波浪宽度是画布的一半，这里偷懒直接写了</span><br>          path.<span class="hljs-title function_">quadraticCurveTo</span>( waveWidth/<span class="hljs-number">2</span>,baseHeight-waveHeight ,waveWidth,baseHeight)<br>          path.<span class="hljs-title function_">quadraticCurveTo</span>(waveWidth+waveWidth/<span class="hljs-number">2</span>,  baseHeight-waveHeight ,canvasWidth,baseHeight)<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-title function_">stroke</span>(path)<br><br><br>          path = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Path2D</span>()<br>          baseHeight /=<span class="hljs-number">3</span><br>          path.<span class="hljs-title function_">moveTo</span>(<span class="hljs-number">0</span>,baseHeight)<br>          <span class="hljs-comment">//波浪宽度是画布的一半，这里偷懒直接写了</span><br>          path.<span class="hljs-title function_">quadraticCurveTo</span>( waveWidth/<span class="hljs-number">2</span>,baseHeight-waveHeight ,waveWidth,baseHeight)<br>          path.<span class="hljs-title function_">quadraticCurveTo</span>(waveWidth+waveWidth/<span class="hljs-number">2</span>,  baseHeight+waveHeight ,canvasWidth,baseHeight)<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-property">strokeStyle</span> = <span class="hljs-string">&quot;#1b91e0&quot;</span><br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-title function_">stroke</span>(path)<br>          <br>        &#125;)<br></code></pre></td></tr></table></figure>
+
+
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><p>实现也一样，直接<del>抄</del> 移植过来就好了，对应的 api 怎么用也搞定了，代码如下</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">export</span> struct <span class="hljs-title class_">WaveView</span>&#123;<br>  <span class="hljs-keyword">private</span> <span class="hljs-attr">settings</span>: <span class="hljs-title class_">RenderingContextSettings</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RenderingContextSettings</span>(<span class="hljs-literal">true</span>)<br>  <span class="hljs-keyword">private</span> <span class="hljs-attr">canvasRendering</span>: <span class="hljs-title class_">CanvasRenderingContext2D</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CanvasRenderingContext2D</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">settings</span>)<br>  <span class="hljs-keyword">private</span> <span class="hljs-attr">canvasHeight</span>: <span class="hljs-built_in">number</span> = -<span class="hljs-number">1</span><br>  <span class="hljs-keyword">private</span> <span class="hljs-attr">canvasWidth</span>: <span class="hljs-built_in">number</span> = -<span class="hljs-number">1</span><br>  <span class="hljs-meta">@State</span> <span class="hljs-keyword">private</span> <span class="hljs-attr">dx</span>: <span class="hljs-built_in">number</span> = <span class="hljs-number">0</span> <span class="hljs-comment">//最大值等于 waveWidth，每次移动的距离</span><br>  <span class="hljs-keyword">private</span> waveHeight = <span class="hljs-number">50</span> <span class="hljs-comment">//拍脑袋订的数值</span><br>  <span class="hljs-keyword">private</span> baseHeight = <span class="hljs-number">300</span> <span class="hljs-comment">//拍脑袋订的数值</span><br>  <span class="hljs-keyword">private</span> waveWidth = <span class="hljs-number">0</span>;<br>  <span class="hljs-keyword">private</span> <span class="hljs-attr">intervalTimer</span>: <span class="hljs-built_in">number</span> = <span class="hljs-number">0</span><br>  <span class="hljs-title function_">drawWave</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">dx</span> += <span class="hljs-number">4</span><br>    <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">dx</span> &gt;= <span class="hljs-variable language_">this</span>.<span class="hljs-property">waveWidth</span>) &#123;<br>      <span class="hljs-variable language_">this</span>.<span class="hljs-property">dx</span> = <span class="hljs-number">0</span><br>    &#125;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-title function_">clearRect</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasWidth</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasHeight</span>)<br><br>    <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">waveWidth</span> == <span class="hljs-number">0</span>) &#123;<br>      <span class="hljs-variable language_">this</span>.<span class="hljs-property">waveWidth</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasWidth</span> / <span class="hljs-number">2</span><br>    &#125;<br><br>    <span class="hljs-keyword">let</span> <span class="hljs-attr">path</span>: <span class="hljs-title class_">Path2D</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Path2D</span>()<br>    <span class="hljs-comment">//需要在屏幕外多画一个波浪，这里先将画笔移动到画布|屏幕外，记得加上动画的偏移量 dx</span><br>    path.<span class="hljs-title function_">moveTo</span>(-<span class="hljs-variable language_">this</span>.<span class="hljs-property">waveWidth</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">dx</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">baseHeight</span>)<br>    <span class="hljs-keyword">let</span> startX = -<span class="hljs-variable language_">this</span>.<span class="hljs-property">waveWidth</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">dx</span><span class="hljs-comment">//记录开始点的横坐标</span><br>    <span class="hljs-comment">//需要多画一个波浪，直接循环开始画就好了</span><br>    <span class="hljs-keyword">while</span> (startX &lt; <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasWidth</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">dx</span>) &#123;<br><br>      <span class="hljs-keyword">let</span> endY = <span class="hljs-variable language_">this</span>.<span class="hljs-property">baseHeight</span><br>      <span class="hljs-comment">//画向下和向上的波浪，全靠控制点的纵坐标控制波浪的上线</span><br>      path.<span class="hljs-title function_">quadraticCurveTo</span>(startX + <span class="hljs-variable language_">this</span>.<span class="hljs-property">waveWidth</span> / <span class="hljs-number">4</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">baseHeight</span> - <span class="hljs-variable language_">this</span>.<span class="hljs-property">waveHeight</span>, startX + <span class="hljs-variable language_">this</span>.<span class="hljs-property">waveWidth</span>/<span class="hljs-number">2</span>, endY)<br>      path.<span class="hljs-title function_">quadraticCurveTo</span>(startX + <span class="hljs-variable language_">this</span>.<span class="hljs-property">waveWidth</span> / <span class="hljs-number">4</span>*<span class="hljs-number">3</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">baseHeight</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">waveHeight</span>, startX + <span class="hljs-variable language_">this</span>.<span class="hljs-property">waveWidth</span>, endY)<br>      <span class="hljs-comment">//画完一上一下这一组波浪后更新起始点坐标</span><br>      startX += <span class="hljs-variable language_">this</span>.<span class="hljs-property">waveWidth</span><br>    &#125;<br>    <span class="hljs-comment">//需要将波浪线下方的区域填满颜色，这里取巧圈起来一个框，使用 fill 方法填充</span><br>    path.<span class="hljs-title function_">lineTo</span>(startX ,<span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasHeight</span>) <span class="hljs-comment">//波浪线最右侧画一条到画布底部的垂线</span><br>    path.<span class="hljs-title function_">lineTo</span>(<span class="hljs-number">0</span> ,<span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasHeight</span>)<span class="hljs-comment">//画布底部的横线</span><br>    path.<span class="hljs-title function_">lineTo</span>(<span class="hljs-number">0</span> ,<span class="hljs-variable language_">this</span>.<span class="hljs-property">baseHeight</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">waveHeight</span>) <span class="hljs-comment">//波浪线最左侧到画布底部的垂线</span><br><br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-property">fillStyle</span> = <span class="hljs-string">&quot;#39d167&quot;</span><br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-property">strokeStyle</span> = <span class="hljs-string">&quot;#39d167&quot;</span><br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-property">lineWidth</span> = <span class="hljs-number">10</span><br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-title function_">fill</span>(path)<br><br>  &#125;<br><br>  <span class="hljs-title function_">build</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-title class_">Column</span>() &#123;<br>      <span class="hljs-title class_">Canvas</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>).<span class="hljs-title function_">layoutWeight</span>(<span class="hljs-number">1</span>).<span class="hljs-title function_">width</span>(<span class="hljs-string">&quot;100%&quot;</span>)<br>        .<span class="hljs-title function_">onAreaChange</span>(<span class="hljs-function">(<span class="hljs-params">oldValue, newValue</span>) =&gt;</span> &#123;<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasWidth</span> = <span class="hljs-built_in">parseInt</span>(newValue.<span class="hljs-property">width</span>.<span class="hljs-title function_">toString</span>())<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasHeight</span> = <span class="hljs-built_in">parseInt</span>(newValue.<span class="hljs-property">height</span>.<span class="hljs-title function_">toString</span>())<br><br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">baseHeight</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasHeight</span> - <span class="hljs-number">300</span><br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">waveWidth</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasWidth</span> / <span class="hljs-number">2</span><br>          <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">drawWave</span>()<br><br>        &#125;)<br>      <span class="hljs-title class_">Row</span>() &#123;<br>        <span class="hljs-title class_">Button</span>(<span class="hljs-string">&quot;开始&quot;</span>).<span class="hljs-title function_">onClick</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>          <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">intervalTimer</span> != <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-built_in">clearInterval</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">intervalTimer</span>)<br>          &#125;<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">intervalTimer</span> = <span class="hljs-built_in">setInterval</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)&#123;<br>            <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">drawWave</span>()<br>          &#125;.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>), <span class="hljs-number">10</span>)<br>        &#125;)<br>        <span class="hljs-title class_">Blank</span>().<span class="hljs-title function_">width</span>(<span class="hljs-number">15</span>)<br>        <span class="hljs-title class_">Button</span>(<span class="hljs-string">&quot;停止&quot;</span>).<span class="hljs-title function_">onClick</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>          <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">intervalTimer</span> != <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-built_in">clearInterval</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">intervalTimer</span>)<br>          &#125;<br>        &#125;)<br>      &#125;.<span class="hljs-title function_">margin</span>(&#123; <span class="hljs-attr">bottom</span>: <span class="hljs-number">10</span> &#125;)<br><br>    &#125;<br>  &#125;<br><br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>上面就是完整的代码了，github 仓库在这里：<a target="_blank" rel="noopener" href="https://github.com/huangyuanlove/HelloArkUI/blob/main/entry/src/main/ets/pages/playground/WaveView.ets">https://github.com/huangyuanlove/HelloArkUI/blob/main/entry/src/main/ets/pages/playground/WaveView.ets</a><br><a target="_blank" rel="noopener" href="https://github.com/huangyuanlove/HelloArkUI/blob/main/entry/src/main/ets/pages/playground/WaveLinePage.ets">https://github.com/huangyuanlove/HelloArkUI/blob/main/entry/src/main/ets/pages/playground/WaveLinePage.ets</a></p>
+<h3 id="进化"><a href="#进化" class="headerlink" title="进化"></a>进化</h3><p>稍微修改一下就可以做成其他效果<br>比如将<code>baseHeight</code>也用<code>@State</code>修饰一下，同时在定时器中更新一下，就可以实现注水效果<br>再将画布裁成圆形，就是一个简单的充电、内存加速球效果。再做点随机的粒子效果或者多画几条浅色的波浪线，效果就更好了</p>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/HarmonyOS/" class="print-no-link">#HarmonyOS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>鸿蒙--canvas 实现波浪效果</div>
+      <div>https://blog.huangyuanlove.com/2024/03/27/鸿蒙-canvas-实现波浪效果/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年3月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/03/27/%E9%B8%BF%E8%92%99-canvas-%E7%94%BB%E6%97%B6%E9%92%9F/" title="鸿蒙--canvas 画时钟">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">鸿蒙--canvas 画时钟</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/03/27/riverpod2%E4%B8%AD%E7%9A%84%E4%BF%AE%E9%A5%B0%E7%AC%A6%E5%8F%8A%E6%B3%A8%E8%A7%A3/" title="riverpod2中的修饰符及注解">
+                        <span class="hidden-mobile">riverpod2中的修饰符及注解</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '260250dc0da9ec999259c7b3c9f6ee10'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
