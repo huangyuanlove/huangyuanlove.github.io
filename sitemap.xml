@@ -2,9 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://blog.huangyuanlove.com/2024/04/07/Retrofit%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/</loc>
+    
+    <lastmod>2024-04-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://blog.huangyuanlove.com/2024/03/29/kotlin%E4%B8%ADRetrofit2-x%E8%87%AA%E5%AE%9A%E4%B9%89CallAdapter%E5%81%9A%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/</loc>
     
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-07</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -812,7 +821,7 @@
   </url>
   
   <url>
-    <loc>https://blog.huangyuanlove.com/2018/07/29/View%E7%BB%98%E5%88%B6%E8%BF%87%E7%A8%8B/</loc>
+    <loc>https://blog.huangyuanlove.com/2017/03/21/Window%E5%92%8CWindowManager/</loc>
     
     <lastmod>2023-05-19</lastmod>
     
@@ -821,7 +830,7 @@
   </url>
   
   <url>
-    <loc>https://blog.huangyuanlove.com/2017/03/21/Window%E5%92%8CWindowManager/</loc>
+    <loc>https://blog.huangyuanlove.com/2018/07/29/View%E7%BB%98%E5%88%B6%E8%BF%87%E7%A8%8B/</loc>
     
     <lastmod>2023-05-19</lastmod>
     
@@ -947,7 +956,7 @@
   </url>
   
   <url>
-    <loc>https://blog.huangyuanlove.com/2018/01/27/LaTeX%E7%AC%94%E8%AE%B0-%E4%BA%8C/</loc>
+    <loc>https://blog.huangyuanlove.com/2018/02/27/LaTeX%E7%AC%94%E8%AE%B0-%E4%BA%94/</loc>
     
     <lastmod>2023-05-19</lastmod>
     
@@ -956,7 +965,7 @@
   </url>
   
   <url>
-    <loc>https://blog.huangyuanlove.com/2018/02/27/LaTeX%E7%AC%94%E8%AE%B0-%E4%BA%94/</loc>
+    <loc>https://blog.huangyuanlove.com/2018/01/27/LaTeX%E7%AC%94%E8%AE%B0-%E4%BA%8C/</loc>
     
     <lastmod>2023-05-19</lastmod>
     
@@ -1055,15 +1064,6 @@
   </url>
   
   <url>
-    <loc>https://blog.huangyuanlove.com/2014/05/19/CCNA-ospf%E5%8D%8F%E8%AE%AE/</loc>
-    
-    <lastmod>2023-05-19</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://blog.huangyuanlove.com/2014/05/19/CCNA-rip%E5%8D%8F%E8%AE%AE/</loc>
     
     <lastmod>2023-05-19</lastmod>
@@ -1074,6 +1074,15 @@
   
   <url>
     <loc>https://blog.huangyuanlove.com/2014/05/19/CCNA-%E5%B9%BF%E5%9F%9F%E7%BD%91%E5%92%8CACL/</loc>
+    
+    <lastmod>2023-05-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.huangyuanlove.com/2014/05/19/CCNA-ospf%E5%8D%8F%E8%AE%AE/</loc>
     
     <lastmod>2023-05-19</lastmod>
     
@@ -1190,7 +1199,7 @@
   </url>
   
   <url>
-    <loc>https://blog.huangyuanlove.com/2018/07/23/Android%E5%A4%9A%E8%BF%9B%E7%A8%8B%E4%B8%89/</loc>
+    <loc>https://blog.huangyuanlove.com/2018/06/22/Android%E5%A4%9A%E8%BF%9B%E7%A8%8B-%E4%BA%8C/</loc>
     
     <lastmod>2023-05-19</lastmod>
     
@@ -1199,7 +1208,7 @@
   </url>
   
   <url>
-    <loc>https://blog.huangyuanlove.com/2018/06/22/Android%E5%A4%9A%E8%BF%9B%E7%A8%8B-%E4%BA%8C/</loc>
+    <loc>https://blog.huangyuanlove.com/2018/07/23/Android%E5%A4%9A%E8%BF%9B%E7%A8%8B%E4%B8%89/</loc>
     
     <lastmod>2023-05-19</lastmod>
     
@@ -1226,7 +1235,7 @@
   </url>
   
   <url>
-    <loc>https://blog.huangyuanlove.com/2021/03/04/Android%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/</loc>
+    <loc>https://blog.huangyuanlove.com/2021/04/25/Android%E4%B8%AD%E7%9A%84%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</loc>
     
     <lastmod>2023-05-19</lastmod>
     
@@ -1235,7 +1244,7 @@
   </url>
   
   <url>
-    <loc>https://blog.huangyuanlove.com/2021/04/25/Android%E4%B8%AD%E7%9A%84%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</loc>
+    <loc>https://blog.huangyuanlove.com/2021/03/04/Android%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/</loc>
     
     <lastmod>2023-05-19</lastmod>
     
@@ -1318,7 +1327,7 @@
 
   <url>
     <loc>https://blog.huangyuanlove.com/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -1326,273 +1335,273 @@
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/%E4%B9%B1%E4%B8%83%E5%85%AB%E7%B3%9F/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/Android/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/%E9%9D%A2%E8%AF%95/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/Android%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/Java/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/Plugin/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/WebSocket/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/Gradle/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/Flutter/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/CCNA/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/%E7%AC%94%E8%AE%B0/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/JVM/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/jenkins/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/%E8%BF%90%E7%BB%B4/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/LaTeX/</loc>
-    <lastmod>2024-04-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.huangyuanlove.com/tags/linux/</loc>
-    <lastmod>2024-04-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.huangyuanlove.com/tags/tcp%E5%8D%8F%E8%AE%AE/</loc>
-    <lastmod>2024-04-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.huangyuanlove.com/tags/%E7%83%AD%E4%BF%AE%E5%A4%8D/</loc>
-    <lastmod>2024-04-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.huangyuanlove.com/tags/tinker/</loc>
-    <lastmod>2024-04-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.huangyuanlove.com/tags/elk/</loc>
-    <lastmod>2024-04-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.huangyuanlove.com/tags/Python/</loc>
-    <lastmod>2024-04-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.huangyuanlove.com/tags/Flask/</loc>
-    <lastmod>2024-04-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.huangyuanlove.com/tags/git/</loc>
-    <lastmod>2024-04-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.huangyuanlove.com/tags/hexo/</loc>
-    <lastmod>2024-04-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.huangyuanlove.com/tags/gitpage/</loc>
-    <lastmod>2024-04-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.huangyuanlove.com/tags/blog/</loc>
-    <lastmod>2024-04-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.huangyuanlove.com/tags/Kotlin/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/Retrofit/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.huangyuanlove.com/tags/linux/</loc>
+    <lastmod>2024-04-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.huangyuanlove.com/tags/tcp%E5%8D%8F%E8%AE%AE/</loc>
+    <lastmod>2024-04-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.huangyuanlove.com/tags/%E7%83%AD%E4%BF%AE%E5%A4%8D/</loc>
+    <lastmod>2024-04-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.huangyuanlove.com/tags/tinker/</loc>
+    <lastmod>2024-04-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.huangyuanlove.com/tags/elk/</loc>
+    <lastmod>2024-04-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.huangyuanlove.com/tags/Python/</loc>
+    <lastmod>2024-04-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.huangyuanlove.com/tags/Flask/</loc>
+    <lastmod>2024-04-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.huangyuanlove.com/tags/git/</loc>
+    <lastmod>2024-04-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.huangyuanlove.com/tags/hexo/</loc>
+    <lastmod>2024-04-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.huangyuanlove.com/tags/gitpage/</loc>
+    <lastmod>2024-04-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.huangyuanlove.com/tags/blog/</loc>
+    <lastmod>2024-04-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.huangyuanlove.com/tags/Kotlin/</loc>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/riverpod/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/sublime/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/%E8%9E%8D%E4%BA%91IM/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/vim/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/csdn/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/jcenter/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/%E6%A0%91%E8%8E%93%E6%B4%BE/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/%E6%AD%A3%E5%88%99/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/%E7%BD%91%E7%AB%99https/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.huangyuanlove.com/tags/HarmonyOS/</loc>
-    <lastmod>2024-04-01</lastmod>
+    <lastmod>2024-04-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
