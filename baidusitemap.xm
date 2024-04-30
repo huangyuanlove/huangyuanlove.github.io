@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://blog.huangyuanlove.com/2024/04/28/kotlin%E4%BD%9C%E7%94%A8%E5%9F%9F%E5%87%BD%E6%95%B0-run%E3%80%81let%E3%80%81also%E3%80%81apply%E3%80%81with/</loc>
+    <lastmod>2024-04-30</lastmod>
+  </url>
+  <url>
     <loc>https://blog.huangyuanlove.com/2024/04/23/Kotlin%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E7%B1%BB%E5%9E%8B%E5%8F%8A-Lambda-%E8%A1%A8%E8%BE%BE%E5%BC%8F/</loc>
     <lastmod>2024-04-28</lastmod>
   </url>
@@ -97,11 +101,11 @@
     <lastmod>2024-04-01</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2017/12/19/%E3%80%8A%E6%88%91%E7%9A%84%E5%AE%89%E5%8D%93%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85%E3%80%8B-%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91-3/</loc>
+    <loc>https://blog.huangyuanlove.com/2017/02/25/%E3%80%8A%E6%88%91%E7%9A%84%E5%AE%89%E5%8D%93%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85%E3%80%8B-%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91-2/</loc>
     <lastmod>2024-04-01</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2017/02/25/%E3%80%8A%E6%88%91%E7%9A%84%E5%AE%89%E5%8D%93%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85%E3%80%8B-%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91-2/</loc>
+    <loc>https://blog.huangyuanlove.com/2017/12/19/%E3%80%8A%E6%88%91%E7%9A%84%E5%AE%89%E5%8D%93%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85%E3%80%8B-%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91-3/</loc>
     <lastmod>2024-04-01</lastmod>
   </url>
   <url>
@@ -229,11 +233,11 @@
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2019/12/09/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3%EF%BC%8C%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%A1%86%E6%9E%B6-%E4%B8%8B%E4%B8%8B%E7%AF%87/</loc>
+    <loc>https://blog.huangyuanlove.com/2019/12/10/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3%EF%BC%8C%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%A1%86%E6%9E%B6-%E4%B8%8B%E4%B8%8B%E4%B8%8B%E7%AF%87/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2019/12/10/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3%EF%BC%8C%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%A1%86%E6%9E%B6-%E4%B8%8B%E4%B8%8B%E4%B8%8B%E7%AF%87/</loc>
+    <loc>https://blog.huangyuanlove.com/2019/12/09/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3%EF%BC%8C%E6%89%93%E9%80%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E6%A1%86%E6%9E%B6-%E4%B8%8B%E4%B8%8B%E7%AF%87/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
@@ -273,11 +277,11 @@
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2021/01/02/%E5%86%99%E5%9C%A82021%E5%B9%B4%E5%88%9D-2020%E6%80%BB%E7%BB%93/</loc>
+    <loc>https://blog.huangyuanlove.com/2020/01/06/%E5%86%99%E5%9C%A82020%E5%B9%B4%E5%88%9D-2019%E6%80%BB%E7%BB%93/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2020/01/06/%E5%86%99%E5%9C%A82020%E5%B9%B4%E5%88%9D-2019%E6%80%BB%E7%BB%93/</loc>
+    <loc>https://blog.huangyuanlove.com/2021/01/02/%E5%86%99%E5%9C%A82021%E5%B9%B4%E5%88%9D-2020%E6%80%BB%E7%BB%93/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
@@ -349,7 +353,7 @@
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2019/03/13/flutter-Android%E6%B7%B7%E7%BC%96%E5%8F%8A%E4%BA%92%E7%9B%B8%E8%B0%83%E7%94%A8/</loc>
+    <loc>https://blog.huangyuanlove.com/2023/01/18/flutter-StatefulWidget/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
@@ -357,7 +361,7 @@
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2023/01/18/flutter-StatefulWidget/</loc>
+    <loc>https://blog.huangyuanlove.com/2019/03/13/flutter-Android%E6%B7%B7%E7%BC%96%E5%8F%8A%E4%BA%92%E7%9B%B8%E8%B0%83%E7%94%A8/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
@@ -377,11 +381,11 @@
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2017/03/15/View%E7%9A%84%E6%BB%91%E5%8A%A8/</loc>
+    <loc>https://blog.huangyuanlove.com/2018/07/29/View%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2018/07/29/View%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/</loc>
+    <loc>https://blog.huangyuanlove.com/2017/03/15/View%E7%9A%84%E6%BB%91%E5%8A%A8/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
@@ -389,11 +393,11 @@
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2018/08/03/Toast%E6%98%BE%E7%A4%BA%E8%BF%87%E7%A8%8B/</loc>
+    <loc>https://blog.huangyuanlove.com/2015/02/11/UNIX-linux%E7%9A%84find%E5%91%BD%E4%BB%A4%E7%BB%86%E8%8A%82/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2015/02/11/UNIX-linux%E7%9A%84find%E5%91%BD%E4%BB%A4%E7%BB%86%E8%8A%82/</loc>
+    <loc>https://blog.huangyuanlove.com/2018/08/03/Toast%E6%98%BE%E7%A4%BA%E8%BF%87%E7%A8%8B/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
@@ -449,19 +453,11 @@
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2019/07/01/Flutter%E4%B8%AD%E7%9A%84provider/</loc>
-    <lastmod>2023-05-19</lastmod>
-  </url>
-  <url>
     <loc>https://blog.huangyuanlove.com/2019/07/08/Flutter-InheritedWidget%E5%92%8CNotification/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2014/05/19/CCNA-%E9%9D%99%E6%80%81%E8%B7%AF%E7%94%B1%E5%92%8C%E5%8A%A8%E6%80%81%E8%B7%AF%E7%94%B1/</loc>
-    <lastmod>2023-05-19</lastmod>
-  </url>
-  <url>
-    <loc>https://blog.huangyuanlove.com/2018/08/20/Coordinatorlayout/</loc>
+    <loc>https://blog.huangyuanlove.com/2019/07/01/Flutter%E4%B8%AD%E7%9A%84provider/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
@@ -469,11 +465,15 @@
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2014/05/19/CCNA-ospf%E5%8D%8F%E8%AE%AE/</loc>
+    <loc>https://blog.huangyuanlove.com/2018/08/20/Coordinatorlayout/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2014/05/19/CCNA-rip%E5%8D%8F%E8%AE%AE/</loc>
+    <loc>https://blog.huangyuanlove.com/2014/05/19/CCNA-%E9%9D%99%E6%80%81%E8%B7%AF%E7%94%B1%E5%92%8C%E5%8A%A8%E6%80%81%E8%B7%AF%E7%94%B1/</loc>
+    <lastmod>2023-05-19</lastmod>
+  </url>
+  <url>
+    <loc>https://blog.huangyuanlove.com/2014/05/19/CCNA-ospf%E5%8D%8F%E8%AE%AE/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
@@ -481,11 +481,15 @@
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2014/05/19/CCNA-%E6%95%B0%E6%8D%AE%E5%8C%85%E5%8F%91%E9%80%81%E6%B5%81%E7%A8%8B%E5%8F%8A%E7%BD%91%E7%BB%9C%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4/</loc>
+    <loc>https://blog.huangyuanlove.com/2014/05/19/CCNA-%E7%BD%91%E7%BB%9C%E6%8B%93%E6%89%91%E7%BB%93%E6%9E%84/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2014/05/19/CCNA-%E7%BD%91%E7%BB%9C%E6%8B%93%E6%89%91%E7%BB%93%E6%9E%84/</loc>
+    <loc>https://blog.huangyuanlove.com/2014/05/19/CCNA-rip%E5%8D%8F%E8%AE%AE/</loc>
+    <lastmod>2023-05-19</lastmod>
+  </url>
+  <url>
+    <loc>https://blog.huangyuanlove.com/2014/05/19/CCNA-%E6%95%B0%E6%8D%AE%E5%8C%85%E5%8F%91%E9%80%81%E6%B5%81%E7%A8%8B%E5%8F%8A%E7%BD%91%E7%BB%9C%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
@@ -517,11 +521,11 @@
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2021/06/19/Android%E6%85%A2%E7%BD%91%E7%BB%9C%E5%8F%8A%E9%A1%B5%E9%9D%A2%E7%9B%91%E6%8E%A7/</loc>
+    <loc>https://blog.huangyuanlove.com/2018/07/31/Android%E5%B9%BF%E6%92%AD/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2018/07/31/Android%E5%B9%BF%E6%92%AD/</loc>
+    <loc>https://blog.huangyuanlove.com/2021/06/19/Android%E6%85%A2%E7%BD%91%E7%BB%9C%E5%8F%8A%E9%A1%B5%E9%9D%A2%E7%9B%91%E6%8E%A7/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
@@ -537,15 +541,15 @@
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
+    <loc>https://blog.huangyuanlove.com/2017/12/26/Android%E4%B8%AD%E4%BD%BF%E7%94%A8WebSocket-2/</loc>
+    <lastmod>2023-05-19</lastmod>
+  </url>
+  <url>
     <loc>https://blog.huangyuanlove.com/2017/12/25/Android%E4%B8%AD%E4%BD%BF%E7%94%A8WebSocket/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
     <loc>https://blog.huangyuanlove.com/2021/04/25/Android%E4%B8%AD%E7%9A%84%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</loc>
-    <lastmod>2023-05-19</lastmod>
-  </url>
-  <url>
-    <loc>https://blog.huangyuanlove.com/2017/12/26/Android%E4%B8%AD%E4%BD%BF%E7%94%A8WebSocket-2/</loc>
     <lastmod>2023-05-19</lastmod>
   </url>
   <url>
