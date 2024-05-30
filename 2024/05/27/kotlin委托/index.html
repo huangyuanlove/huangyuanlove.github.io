@@ -1,0 +1,752 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="Kotlin,Kotlin委托,委托属性,属性委托,委托类,Delegation,Delegated properties">
+  
+    <meta name="description" content="经常在 Kotlin 的源码三方库中看到by关键字，这种写法就是委托，主要有两个应用场景，一个是委托类，另一个是委托属性，每个场景中又有不同的用法，我们可以对比 Java 的委托来学习 Kotlin 的委托。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kotlin委托">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2024/05/27/kotlin%E5%A7%94%E6%89%98/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="经常在 Kotlin 的源码三方库中看到by关键字，这种写法就是委托，主要有两个应用场景，一个是委托类，另一个是委托属性，每个场景中又有不同的用法，我们可以对比 Java 的委托来学习 Kotlin 的委托。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-05-27T02:30:07.000Z">
+<meta property="article:modified_time" content="2024-05-30T08:55:33.981Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="Kotlin">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>kotlin委托 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="kotlin委托"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-05-27 10:30" pubdate>
+          2024年5月27日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          10k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">kotlin委托</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>经常在 Kotlin 的源码三方库中看到<code>by</code>关键字，这种写法就是委托，主要有两个应用场景，一个是委托类，另一个是委托属性，每个场景中又有不同的用法，我们可以对比 Java 的委托来学习 Kotlin 的委托。</p>
+<span id="more"></span>
+
+<h3 id="委托-类委托、接口委托"><a href="#委托-类委托、接口委托" class="headerlink" title="委托(类委托、接口委托)"></a>委托(类委托、接口委托)</h3><p>其实我们在 Java 和 Android 中经常会用到委托，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs Java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Delegated</span> &#123;<br><br>    <span class="hljs-keyword">interface</span> <span class="hljs-title class_">Base</span>&#123;<br>        <span class="hljs-keyword">void</span> <span class="hljs-title function_">print</span><span class="hljs-params">()</span>;<br>    &#125;<br>    <span class="hljs-keyword">class</span> <span class="hljs-title class_">BaseImpl</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Base</span>&#123;<br>        <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> x;<br><br>        <span class="hljs-keyword">public</span> <span class="hljs-title function_">BaseImpl</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span> &#123;<br>            <span class="hljs-built_in">this</span>.x = x;<br>        &#125;<br><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">print</span><span class="hljs-params">()</span> &#123;<br>            System.out.println(x);<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">class</span> <span class="hljs-title class_">Derived</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Base</span>&#123;<br>        <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Base base;<br><br>        <span class="hljs-keyword">public</span> <span class="hljs-title function_">Derived</span><span class="hljs-params">(Base base)</span> &#123;<br>            <span class="hljs-built_in">this</span>.base = base;<br>        &#125;<br><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">print</span><span class="hljs-params">()</span> &#123;<br>            base.print();<br>        &#125;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<p>我们有一个接口<code>Base</code>，一个实现类<code>BaseImpl</code>。假如我们想要在实现类中添加一些方法，但又不想重新写一遍接口实现，第一种我们可以继承<code>BaseImpl</code>,另外一种就是实现接口<code>Base</code>，传入一个实现类的实例，将所有的接口请求都交给实现类的实例来完成。<br>虽然官方说<strong>委托模式已经证明是实现继承的一个很好的替代方式(The Delegation pattern has proven to be a good alternative to implementation inheritance)</strong>,但选择权还是在大家手上，看情况而定，没有银弹。<br>那么在 kotlin 中应该怎么写呢？如果我们用 java 的思想来写，无非就是换换关键字，然后一坨模板代码，其实在 kotlin 中是可以通过<code>by</code>关键字零模板代码支持的</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">Base</span> </span>&#123;<br>    <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">print</span><span class="hljs-params">()</span></span><br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">BaseImpl</span></span>(<span class="hljs-keyword">val</span> x: <span class="hljs-built_in">Int</span>) : Base &#123;<br>    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">print</span><span class="hljs-params">()</span></span> &#123;<br>        println(x)<br>    &#125;<br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Derived</span></span>(b: Base) : Base <span class="hljs-keyword">by</span> b<br></code></pre></td></tr></table></figure>
+<p><code>Derived</code>的超类型列表中的<code>by</code>子句表示<code>b</code>将会在<code>Derived</code>中内部存储， 并且编译器将生成转发给<code>b</code>的所有<code>Base</code>的方法。<br>这个就是 kotlin 中的委托，有的地方也叫委托类或者委托接口。<br>这里有一点需要注意下，覆盖(override)是符合预期的：编译器会使用 override 覆盖的实现而不是委托对象中的.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">Base</span> </span>&#123;<br>    <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">printMessage</span><span class="hljs-params">()</span></span><br>    <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">printMessageLine</span><span class="hljs-params">()</span></span><br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">BaseImpl</span></span>(<span class="hljs-keyword">val</span> x: <span class="hljs-built_in">Int</span>) : Base &#123;<br>    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">printMessage</span><span class="hljs-params">()</span></span> &#123; println(x) &#125;<br>    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">printMessageLine</span><span class="hljs-params">()</span></span> &#123; println(x) &#125;<br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Derived2</span></span>(b: Base) : Base <span class="hljs-keyword">by</span> b &#123;<br>    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">printMessage</span><span class="hljs-params">()</span></span> &#123; println(<span class="hljs-string">&quot;abc&quot;</span>) &#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    <span class="hljs-keyword">val</span> b = BaseImpl(<span class="hljs-number">10</span>)<br>    Derived2(b).printMessage()<br>    Derived2(b).printMessageLine()<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>我们在<code>Derived2</code>中覆写了<code>printMessage</code>这个方法，那么在调用的时候，就是用的我们覆写的方法。</p>
+<h3 id="属性委托"><a href="#属性委托" class="headerlink" title="属性委托"></a>属性委托</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Example</span> </span>&#123;<br>    <span class="hljs-keyword">var</span> p: String <span class="hljs-keyword">by</span> Delegate()<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>语法是：<code>val/var &lt;属性名&gt;: &lt;类型&gt; by &lt;表达式&gt;</code>。在<code>by</code>后面的表达式是该<code>委托</code>， 因为属性对应的<code>get()</code>（与<code>set()</code>）会被委托给它的<code>getValue()</code>与<code>setValue()</code>方法。 属性的委托不必实现接口，但是需要提供一个<code>getValue()</code>函数（对于<code>var</code>属性还有<code>setValue()</code>）。<br>先从最简单的委托开始，最后再看自定义委托。</p>
+<h4 id="标准委托"><a href="#标准委托" class="headerlink" title="标准委托"></a>标准委托</h4><p>借用官网的一个例子</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyClass</span> </span>&#123;<br>   <span class="hljs-keyword">var</span> newName: <span class="hljs-built_in">Int</span> = <span class="hljs-number">0</span><br>   <span class="hljs-meta">@Deprecated(<span class="hljs-string">&quot;Use &#x27;newName&#x27; instead&quot;</span>, ReplaceWith(<span class="hljs-string">&quot;newName&quot;</span>)</span>)<br>   <span class="hljs-keyword">var</span> oldName: <span class="hljs-built_in">Int</span> <span class="hljs-keyword">by</span> <span class="hljs-keyword">this</span>::newName<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>   <span class="hljs-keyword">val</span> myClass = MyClass()<br>   <span class="hljs-comment">// 通知：&#x27;oldName: Int&#x27; is deprecated.</span><br>   <span class="hljs-comment">// Use &#x27;newName&#x27; instead</span><br>   myClass.oldName = <span class="hljs-number">42</span><br>   println(myClass.newName) <span class="hljs-comment">// 42</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这是一种最简单的委托方式。通过查看对应的 java 代码，发现其实就是对同一个成员变量的读写</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs Java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MyClass</span> &#123;<br>   <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> newName;<br><br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getNewName</span><span class="hljs-params">()</span> &#123;<br>      <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.newName;<br>   &#125;<br><br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setNewName</span><span class="hljs-params">(<span class="hljs-type">int</span> var1)</span> &#123;<br>      <span class="hljs-built_in">this</span>.newName = var1;<br>   &#125;<br><br>   <span class="hljs-comment">/** <span class="hljs-doctag">@deprecated</span> */</span><br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getOldName</span><span class="hljs-params">()</span> &#123;<br>      <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.newName;<br>   &#125;<br><br>   <span class="hljs-comment">/** <span class="hljs-doctag">@deprecated</span> */</span><br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setOldName</span><span class="hljs-params">(<span class="hljs-type">int</span> var1)</span> &#123;<br>      <span class="hljs-built_in">this</span>.newName = var1;<br>   &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><code>MyClass</code>中的四个方法都是对<code>newName</code>这个字段的读写。</p>
+<p>除此之外，委托属性可以是：</p>
+<ul>
+<li>顶层属性</li>
+<li>同一个类的成员或扩展属性</li>
+<li>另一个类的成员或扩展属性</li>
+</ul>
+<p>比如</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">var</span> topLevelInt: <span class="hljs-built_in">Int</span> = <span class="hljs-number">0</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ClassWithDelegate</span></span>(<span class="hljs-keyword">val</span> anotherClassInt: <span class="hljs-built_in">Int</span>)<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyClass</span></span>(<span class="hljs-keyword">var</span> memberInt: <span class="hljs-built_in">Int</span>, <span class="hljs-keyword">val</span> anotherClassInstance: ClassWithDelegate) &#123;<br>    <span class="hljs-keyword">var</span> delegatedToMember: <span class="hljs-built_in">Int</span> <span class="hljs-keyword">by</span> <span class="hljs-keyword">this</span>::memberInt<span class="hljs-comment">//同一个类的成员</span><br>    <span class="hljs-keyword">var</span> delegatedToTopLevel: <span class="hljs-built_in">Int</span> <span class="hljs-keyword">by</span> ::topLevelInt<span class="hljs-comment">//顶层属性</span><br><br>    <span class="hljs-keyword">val</span> delegatedToAnotherClass: <span class="hljs-built_in">Int</span> <span class="hljs-keyword">by</span> anotherClassInstance::anotherClassInt<span class="hljs-comment">//另一个类的成员</span><br>&#125;<br><span class="hljs-keyword">var</span> MyClass.extDelegated: <span class="hljs-built_in">Int</span> <span class="hljs-keyword">by</span> ::topLevelInt<span class="hljs-comment">//顶层属性</span><br></code></pre></td></tr></table></figure>
+<p>这种委托方式在我们做版本升级修改字段时是挺常用的,将旧字段委托给新字段，并将旧字段标记为过时。</p>
+<h4 id="懒加载委托"><a href="#懒加载委托" class="headerlink" title="懒加载委托"></a>懒加载委托</h4><p>这种方式就是当我们首次访问这个属性的时候才会去初始化这个属性，从而避免不必要的资源消耗，和我们用 java 写单例模式的懒加载是一样的。<br>只会在首次访问的时候初始化这个属性，然后缓存起来，下次访问时直接返回。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">val</span> lazyValue: String <span class="hljs-keyword">by</span> lazy &#123;<br>    println(<span class="hljs-string">&quot;computed!&quot;</span>)<br>    <span class="hljs-string">&quot;Hello&quot;</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    println(lazyValue)<br>    println(lazyValue)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这里的 lazy 是一个高阶函数：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">public</span> <span class="hljs-keyword">actual</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-type">&lt;T&gt;</span> <span class="hljs-title">lazy</span><span class="hljs-params">(initializer: () -&gt; <span class="hljs-type">T</span>)</span></span>: Lazy&lt;T&gt; = SynchronizedLazyImpl(initializer)<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">actual</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-type">&lt;T&gt;</span> <span class="hljs-title">lazy</span><span class="hljs-params">(mode: <span class="hljs-type">LazyThreadSafetyMode</span>, initializer: () -&gt; <span class="hljs-type">T</span>)</span></span>: Lazy&lt;T&gt; =<br>    <span class="hljs-keyword">when</span> (mode) &#123;<br>        LazyThreadSafetyMode.SYNCHRONIZED -&gt; SynchronizedLazyImpl(initializer)<br>        LazyThreadSafetyMode.PUBLICATION -&gt; SafePublicationLazyImpl(initializer)<br>        LazyThreadSafetyMode.NONE -&gt; UnsafeLazyImpl(initializer)<br>    &#125;<br></code></pre></td></tr></table></figure>
+<p>可以看到，lazy接收一个 mode 参数，如果没有传入的话，默认是<code>SynchronizedLazyImpl</code>线程安全的：该值只在一个线程中计算，但所有线程都会看到相同的值。如果初始化委托的同步锁不是必需的，这样可以让多个线程同时执行，那么将<code>LazyThreadSafetyMode.PUBLICATION</code>作为参数传给 lazy()。<br>如果我们确定初始化将总是发生在与属性使用位于相同的线程， 那么可以使用<code>LazyThreadSafetyMode.NONE</code>模式。它不会有任何线程安全的保证以及相关的开销。<br>所以这个参数的选择也要看具体应用场景。</p>
+<h4 id="可观察委托"><a href="#可观察委托" class="headerlink" title="可观察委托"></a>可观察委托</h4><p>如果我们想要观察属性值的变化，可以使用<code>Delegates.observable()</code>，它接受两个参数：初始值与修改时处理程序（handler）。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-class"><span class="hljs-keyword">class</span>  <span class="hljs-title">ObservableItem</span></span>&#123;<br>    <span class="hljs-keyword">var</span> name :String <span class="hljs-keyword">by</span> Delegates.observable(<span class="hljs-string">&quot;initialValue&quot;</span>)&#123;<br>        prop,old,new-&gt;<br>        println(<span class="hljs-string">&quot;<span class="hljs-variable">$prop</span>  <span class="hljs-variable">$old</span> -&gt; <span class="hljs-variable">$new</span>&quot;</span>)<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>当我们给<code>name</code>赋值的时候，就会触发传入的处理程序，但这里我们只能观察到赋值，但并不能做拦截，如果想要截获取值并<strong>否决</strong>,可以使用<code>vetoable()</code></p>
+<h4 id="可否决委托"><a href="#可否决委托" class="headerlink" title="可否决委托"></a>可否决委托</h4><p>如果我们想在观察属性值变化的同时决定是否使用新的值，可以使用<code>Delegates.vetoable</code>,同样的，它也接受两个参数：它接受两个参数：初始值与修改时处理程序（handler）。只不过这里的 handler 需要返回一个布尔值，告诉程序是否使用新值。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VetoableItem</span></span>&#123;<br>    <span class="hljs-keyword">var</span> name :String <span class="hljs-keyword">by</span> Delegates.vetoable(<span class="hljs-string">&quot;initialValue&quot;</span>)&#123;<br>        prop,old,new-&gt;<br>        println(<span class="hljs-string">&quot;<span class="hljs-variable">$prop</span>  <span class="hljs-variable">$old</span> -&gt; <span class="hljs-variable">$new</span>&quot;</span>)<br>        new.length &gt; <span class="hljs-number">3</span><br>    &#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>&#123;<br>    <span class="hljs-keyword">val</span> vetoableItem = VetoableItem()<br>    println(vetoableItem.name)<br>    vetoableItem.name = <span class="hljs-string">&quot;123&quot;</span><br>    println(vetoableItem.name)<br>    vetoableItem.name = <span class="hljs-string">&quot;1234&quot;</span><br>    println(vetoableItem.name)<br>&#125;<br><span class="hljs-comment">//输出</span><br><span class="hljs-comment">// initialValue</span><br><span class="hljs-comment">// var com.huangyuanlove.VetoableItem.name: kotlin.String  initialValue -&gt; 123</span><br><span class="hljs-comment">// initialValue</span><br><span class="hljs-comment">// var com.huangyuanlove.VetoableItem.name: kotlin.String  initialValue -&gt; 1234</span><br><span class="hljs-comment">// 1234</span><br></code></pre></td></tr></table></figure>
+<p>在这里，只有当<code>new</code>的长度大于 3 时，我们才会将<code>new</code>赋值给<code>name</code>，</p>
+<h4 id="将属性储存在映射中"><a href="#将属性储存在映射中" class="headerlink" title="将属性储存在映射中"></a>将属性储存在映射中</h4><p>一个常见的用例是在一个映射（map）里存储属性的值。 这经常出现在像解析 JSON 或者执行其他“动态”任务的应用中。 在这种情况下，你可以使用映射实例自身作为委托来实现委托属性。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MapItem</span></span>(map: Map&lt;String,Any?&gt;)&#123;<br>    <span class="hljs-keyword">val</span> name: String <span class="hljs-keyword">by</span> map<br>    <span class="hljs-keyword">val</span> age:<span class="hljs-built_in">Int</span> <span class="hljs-keyword">by</span> map<br>    <span class="hljs-keyword">val</span> address:String <span class="hljs-keyword">by</span> map<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>&#123;<br>  <span class="hljs-keyword">val</span> map:Map&lt;String,Any?&gt; = mapOf(<br>    <span class="hljs-string">&quot;name&quot;</span> to <span class="hljs-string">&quot;xuan&quot;</span>,<br>    <span class="hljs-string">&quot;age&quot;</span> to <span class="hljs-number">18</span>,<br>  )<br>  <span class="hljs-keyword">val</span> mapItem = MapItem(map)<br>  println(<span class="hljs-string">&quot;<span class="hljs-subst">$&#123;mapItem.name&#125;</span>  <span class="hljs-subst">$&#123;mapItem.age&#125;</span>&quot;</span>)<br>  println(<span class="hljs-string">&quot;<span class="hljs-subst">$&#123;mapItem.name&#125;</span>  <span class="hljs-subst">$&#123;mapItem.age&#125;</span>  <span class="hljs-subst">$&#123;mapItem.address&#125;</span>&quot;</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这里需要注意，假如我们传入的<code>map</code>里面没有对应属性，当程序运行时，这个属性没有被使用是没问题的，比如上面打印<code>name</code>和<code>age</code>。但是当我们使用这个属性的时候，就是上面打印<code>address</code>,会抛出异常<code>Key address is missing in the map.</code>.另外一方面，我们将传入的 map 的值声明为了可空，这就意味着在调用出传入了空值，比如<code>&quot;address&quot; to null,</code>,代码是可以运行的，但对<code>address</code>这个属性做处理的时候会报空指针异常，这些都是需要额外注意的地方。<br>还有一点需要注意，如果是对于<code>var</code>属性，需要将<code>Map</code>替换成<code>MutableMap</code>,但是这样的话它们两个可是双向绑定的哟，比如下面这种</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MutableMapItem</span></span>(map:MutableMap&lt;String,Any?&gt;)&#123;<br>    <span class="hljs-keyword">var</span> name: String <span class="hljs-keyword">by</span> map<br>    <span class="hljs-keyword">var</span> age: <span class="hljs-built_in">Int</span> <span class="hljs-keyword">by</span> map<br>    <span class="hljs-keyword">var</span> address: String <span class="hljs-keyword">by</span> map<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>      <span class="hljs-keyword">val</span> map:MutableMap&lt;String,Any?&gt; = mutableMapOf(<br>        <span class="hljs-string">&quot;name&quot;</span> to <span class="hljs-string">&quot;xuan&quot;</span>,<br>        <span class="hljs-string">&quot;age&quot;</span> to <span class="hljs-number">18</span>,<br>        <span class="hljs-string">&quot;address&quot;</span> to <span class="hljs-string">&quot;beijing&quot;</span><br>    )<br>    <span class="hljs-keyword">val</span> mutableMapItem = MutableMapItem(map)<br>    println(<span class="hljs-string">&quot;<span class="hljs-subst">$&#123;mutableMapItem.name&#125;</span>  <span class="hljs-subst">$&#123;mutableMapItem.age&#125;</span> <span class="hljs-subst">$&#123;mutableMapItem.address&#125;</span>&quot;</span>)<br>    println(map)<br>    mutableMapItem.name = <span class="hljs-string">&quot;huang&quot;</span><br>    println(<span class="hljs-string">&quot;<span class="hljs-subst">$&#123;mutableMapItem.name&#125;</span>  <span class="hljs-subst">$&#123;mutableMapItem.age&#125;</span> <span class="hljs-subst">$&#123;mutableMapItem.address&#125;</span>&quot;</span>)<br>    println(map)<br>    mutableMapItem.name = <span class="hljs-string">&quot;yuan&quot;</span><br>    println(<span class="hljs-string">&quot;<span class="hljs-subst">$&#123;mutableMapItem.name&#125;</span>  <span class="hljs-subst">$&#123;mutableMapItem.age&#125;</span> <span class="hljs-subst">$&#123;mutableMapItem.address&#125;</span>&quot;</span>)<br>    println(map)<br>&#125;<br><span class="hljs-comment">//输出</span><br><span class="hljs-comment">// xuan  18 beijing</span><br><span class="hljs-comment">// &#123;name=xuan, age=18, address=beijing&#125;</span><br><span class="hljs-comment">// huang  18 beijing</span><br><span class="hljs-comment">// &#123;name=huang, age=18, address=beijing&#125;</span><br><span class="hljs-comment">// yuan  18 beijing</span><br><span class="hljs-comment">// &#123;name=yuan, age=18, address=beijing&#125;</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="局部属性委托"><a href="#局部属性委托" class="headerlink" title="局部属性委托"></a>局部属性委托</h4><p>可以将局部变量声明为委托属性。 例如，你可以使一个局部变量惰性初始化：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">example</span><span class="hljs-params">(computeFoo: () -&gt; <span class="hljs-type">Int</span>)</span></span> &#123;<br>    <span class="hljs-keyword">val</span> memoizedFoo <span class="hljs-keyword">by</span> lazy(computeFoo)<br>    <span class="hljs-keyword">val</span> someCondition = <span class="hljs-literal">false</span><br><br>    <span class="hljs-keyword">if</span> (someCondition &amp;&amp; memoizedFoo&gt;<span class="hljs-number">0</span> ) &#123;<br>        println(memoizedFoo+<span class="hljs-number">1</span>)<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>memoizedFoo</code>变量只会在第一次访问时计算。 如果<code>someCondition</code>失败，那么该变量根本不会计算。</p>
+<h4 id="自定义委托"><a href="#自定义委托" class="headerlink" title="自定义委托"></a>自定义委托</h4><p>先看一下自定义委托的要求有哪些，示例是这样的</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Resource</span></span><br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Owner</span> </span>&#123;<br>    <span class="hljs-keyword">var</span> varResource: Resource <span class="hljs-keyword">by</span> ResourceDelegate()<br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ResourceDelegate</span></span>(<span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> resource: Resource = Resource()) &#123;<br>    <span class="hljs-keyword">operator</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">getValue</span><span class="hljs-params">(thisRef: <span class="hljs-type">Owner</span>, property: <span class="hljs-type">KProperty</span>&lt;*&gt;)</span></span>: Resource &#123;<br>        <span class="hljs-keyword">return</span> resource<br>    &#125;<br>    <span class="hljs-keyword">operator</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">setValue</span><span class="hljs-params">(thisRef: <span class="hljs-type">Owner</span>, property: <span class="hljs-type">KProperty</span>&lt;*&gt;, value: <span class="hljs-type">Any</span>?)</span></span> &#123;<br>        <span class="hljs-keyword">if</span> (value <span class="hljs-keyword">is</span> Resource) &#123;<br>            resource = value<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>总结一下</p>
+<ol>
+<li>对于<code>var</code>修饰的属性，我们必须要有<code>getValue</code>、<code>setValue</code>这两个方法，同时，这两个方法必须用<code>operator</code>关键字修饰。</li>
+<li>由于<code>varResource</code>是<code>Owner</code>,因此<code>getValue</code>、<code>setValue</code>这两个方法中的<code>thisRef</code>的类型，必须要是<code>Owner</code>或者是<code>Owner的父类</code>。一般来说，这三处的类型是一致的，当我们不确定委托属性会处于哪个类的时候，就可以将<code>thisRef</code>的类型定义为<code>Any?</code>。</li>
+<li>由于委托的属性是<code>Resource</code>类型，那么对于自定义委托中的<code>getValue</code>、<code>setValue</code>参数及返回值需要是<code>String类型或者是它的父类</code></li>
+</ol>
+<p>我们可以把上面的代码当成模板代码，都是这样写就好了。如果觉得麻烦，可以使用标准库中的接口<code>ReadOnlyProperty</code>和<code>ReadWriteProperty</code>将委托创建为匿名对象，而无需创建新类。它们提供所需的方法:<code>getValue()</code>在<code>ReadOnlyProperty</code>中声明；<code>ReadWriteProperty</code>扩展了它并添加了<code>setValue()</code>。这意味着可以在需要<code>ReadOnlyProperty</code>时传递 <code>ReadWriteProperty</code>。<br>比如像这样</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">resourceDelegate</span><span class="hljs-params">(resource: <span class="hljs-type">Resource</span>= Resource()</span></span>) :ReadWriteProperty&lt;Owner,Resource&gt; =<br>    <span class="hljs-keyword">object</span>:ReadWriteProperty&lt;Owner,Resource&gt;&#123;<br>        <span class="hljs-keyword">var</span> curValue = resource<br>        <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">getValue</span><span class="hljs-params">(thisRef: <span class="hljs-type">Owner</span>, property: <span class="hljs-type">KProperty</span>&lt;*&gt;)</span></span>: Resource=curValue<br>        <br>        <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">setValue</span><span class="hljs-params">(thisRef: <span class="hljs-type">Owner</span>, property: <span class="hljs-type">KProperty</span>&lt;*&gt;, value: <span class="hljs-type">Resource</span>)</span></span> &#123;<br>            curValue = value<br>        &#125;<br><br>    &#125;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Owner</span> </span>&#123;<br>    <span class="hljs-keyword">val</span> readOnlyResource: Resource <span class="hljs-keyword">by</span> resourceDelegate()  <span class="hljs-comment">// ReadWriteProperty as val</span><br>    <span class="hljs-keyword">var</span> readWriteResource: Resource <span class="hljs-keyword">by</span> resourceDelegate()<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<h4 id="提供委托"><a href="#提供委托" class="headerlink" title="提供委托"></a>提供委托</h4><p>通过定义 provideDelegate 操作符，可以扩展创建属性实现所委托对象的逻辑。 如果 by 右侧所使用的对象将 provideDelegate 定义为成员或扩展函数， 那么会调用该函数来创建属性委托实例。比如在初始化之前检查一致性。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ResourceDelegate</span>&lt;<span class="hljs-type">T</span>&gt; : <span class="hljs-type">ReadOnlyProperty</span>&lt;<span class="hljs-type">MyUI, T</span>&gt; </span>&#123;<br>    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">getValue</span><span class="hljs-params">(thisRef: <span class="hljs-type">MyUI</span>, property: <span class="hljs-type">KProperty</span>&lt;*&gt;)</span></span>: T &#123; ... &#125;<br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ResourceLoader</span>&lt;<span class="hljs-type">T</span>&gt;</span>(id: ResourceID&lt;T&gt;) &#123;<br>    <span class="hljs-keyword">operator</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">provideDelegate</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">            thisRef: <span class="hljs-type">MyUI</span>,</span></span><br><span class="hljs-params"><span class="hljs-function">            prop: <span class="hljs-type">KProperty</span>&lt;*&gt;</span></span><br><span class="hljs-params"><span class="hljs-function">    )</span></span>: ReadOnlyProperty&lt;MyUI, T&gt; &#123;<br>        checkProperty(thisRef, prop.name)<br>        <span class="hljs-comment">// 创建委托</span><br>        <span class="hljs-keyword">return</span> ResourceDelegate()<br>    &#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">checkProperty</span><span class="hljs-params">(thisRef: <span class="hljs-type">MyUI</span>, name: <span class="hljs-type">String</span>)</span></span> &#123; …… &#125;<br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyUI</span> </span>&#123;<br>    <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-type">&lt;T&gt;</span> <span class="hljs-title">bindResource</span><span class="hljs-params">(id: <span class="hljs-type">ResourceID</span>&lt;<span class="hljs-type">T</span>&gt;)</span></span>: ResourceLoader&lt;T&gt; &#123; …… &#125;<br><br>    <span class="hljs-keyword">val</span> image <span class="hljs-keyword">by</span> bindResource(ResourceID.image_id)<br>    <span class="hljs-keyword">val</span> text <span class="hljs-keyword">by</span> bindResource(ResourceID.text_id)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><code>provideDelegate</code>的参数与<code>getValue</code>的相同：</p>
+<ul>
+<li><code>thisRef</code>必须与<code>属性所有者</code>类型（对于扩展属性必须是被扩展的类型）相同或者是它的超类型；</li>
+<li><code>property</code>必须是类型<code>KProperty&lt;*&gt;</code>或其超类型。</li>
+</ul>
+<hr>
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://book.kotlincn.net/text/delegation.html">委托</a><br><a target="_blank" rel="noopener" href="https://kotlinlang.org/docs/delegation.html">Delegation</a></p>
+<hr>
+<p>已学习：</p>
+<ul>
+<li><p>扩展</p>
+<ul>
+<li><input type='checkbox' disabled='true' checked>扩展函数</input></li>
+<li><input type='checkbox' disabled='true' checked>扩展属性</input></li>
+<li><input type='checkbox' disabled='true' checked>作用域</input></li>
+</ul>
+</li>
+<li><p>函数类型</p>
+<ul>
+<li><input type='checkbox' disabled='true' checked>带有接收者的函数类型</input></li>
+<li><input type='checkbox' disabled='true' checked>Lambda表达式</input></li>
+<li><input type='checkbox' disabled='true' checked>SAM 转换</input></li>
+</ul>
+</li>
+<li><p>泛型</p>
+<ul>
+<li><input type='checkbox' disabled='true' checked>逆变</input></li>
+<li><input type='checkbox' disabled='true' checked>协变</input></li>
+<li><input type='checkbox' disabled='true' checked>类型投影</input></li>
+<li><input type='checkbox' disabled='true' checked>星投影</input></li>
+<li><input type='checkbox' disabled='true' checked>泛型约束</input></li>
+</ul>
+</li>
+<li><p>关键字</p>
+<ul>
+<li><input type='checkbox' disabled='true' checked>作用域函数：with、let、run、apply、also</input></li>
+</ul>
+</li>
+<li><p>委托</p>
+<ul>
+<li><input type='checkbox' disabled='true' checked>委托类</input></li>
+<li><input type='checkbox' disabled='true' checked>委托属性</input></li>
+<li><input type='checkbox' disabled='true' checked>自定义委托</input></li>
+</ul>
+</li>
+</ul>
+<p>未学习：</p>
+<ul>
+<li><p>关键字</p>
+<ul>
+<li>object</li>
+<li>Unit</li>
+<li>Nothing</li>
+<li>inline,noinline,crossinline</li>
+</ul>
+</li>
+<li><p>协程</p>
+<ul>
+<li>启动</li>
+<li>挂起</li>
+<li>Job</li>
+<li>Context</li>
+<li>Channel</li>
+<li>Flow</li>
+<li>select</li>
+<li>并发、异常</li>
+<li>launch</li>
+<li>Dispatchers</li>
+<li>CoroutineScope</li>
+</ul>
+</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+        <a href="/tags/Kotlin/" class="print-no-link">#Kotlin</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>kotlin委托</div>
+      <div>https://blog.huangyuanlove.com/2024/05/27/kotlin委托/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年5月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/04/30/kotlin%E6%B3%9B%E5%9E%8B-%E9%80%86%E5%8F%98%E4%B8%8E%E5%8D%8F%E5%8F%98/" title="kotlin泛型:逆变与协变">
+                        <span class="hidden-mobile">kotlin泛型:逆变与协变</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '9884a1bef6454ee83d7361b70d526f43'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
