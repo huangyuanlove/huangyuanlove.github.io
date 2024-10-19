@@ -1,0 +1,754 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="无障碍服务,AccessibilityService,一键拨打微信电话">
+  
+    <meta name="description" content="无障碍服务适配大家应该多多少少的都遇到过，简单点讲就是给图片、文本等控件加上 android:contentDescription&#x3D;&quot;&quot;标签，这样在使用无障碍服务(比如手机自带的 talkback)时，可以将contentDescription的内容以声音的方式读出来，方便视障用户使用我们的 app。 这不是本文的重点，重点是在无障碍–&gt;已安装的服务中中发现了一些其他的应">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用无障碍服务完成一键拨打微信视频电话">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2024/08/16/%E4%BD%BF%E7%94%A8%E6%97%A0%E9%9A%9C%E7%A2%8D%E6%9C%8D%E5%8A%A1%E5%81%9A%E4%B8%80%E4%B8%AA%E4%B8%80%E9%94%AE%E6%8B%A8%E6%89%93%E5%BE%AE%E4%BF%A1%E8%A7%86%E9%A2%91%E7%94%B5%E8%AF%9D%E7%9A%84%E5%BA%94%E7%94%A8/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="无障碍服务适配大家应该多多少少的都遇到过，简单点讲就是给图片、文本等控件加上 android:contentDescription&#x3D;&quot;&quot;标签，这样在使用无障碍服务(比如手机自带的 talkback)时，可以将contentDescription的内容以声音的方式读出来，方便视障用户使用我们的 app。 这不是本文的重点，重点是在无障碍–&gt;已安装的服务中中发现了一些其他的应">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/accessibility/accessibility_setting_honor.png">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/accessibility/accessibility_setting_k30.png">
+<meta property="article:published_time" content="2024-08-16T02:10:35.000Z">
+<meta property="article:modified_time" content="2024-08-19T10:31:45.624Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/accessibility/accessibility_setting_honor.png">
+  
+  
+  
+  <title>使用无障碍服务完成一键拨打微信视频电话 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="使用无障碍服务完成一键拨打微信视频电话"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-08-16 10:10" pubdate>
+          2024年8月16日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          11k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">使用无障碍服务完成一键拨打微信视频电话</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>无障碍服务适配大家应该多多少少的都遇到过，简单点讲就是给图片、文本等控件加上 <code>android:contentDescription=&quot;&quot;</code>标签，这样在使用无障碍服务(比如手机自带的 talkback)时，可以将<code>contentDescription</code>的内容以声音的方式读出来，方便视障用户使用我们的 app。</p>
+<p>这不是本文的重点，重点是在无障碍–&gt;已安装的服务中中发现了一些其他的应用也提供了一些无障碍服务，比如某输入法提供了”智能回复”、”智能应答”等服务，某些应用还提供了类似于一键进行微信视频通话功能，这玩意咋搞的？我们能不能搞？能不能给老人做一个简单的工具，去掉那些花里胡哨的功能，点个按钮就能和我们进行视频通话？<br><strong>不要用无障碍服务做违法的事情！！！不要用无障碍服务做违法的事情！！！不要用无障碍服务做违法的事情！！!</strong></p>
+<span id="more"></span>
+
+<p>查了一些资料，我们可以使用<code>AccessibilityService</code>来实现该功能。该服务可以在页面切换或者发生其他变化时回调某些方法，我们可以根据这些回调，获取到页面的节点(控件)信息，来进行点击、长按等操作。</p>
+<h2 id="第一步：创建与配置"><a href="#第一步：创建与配置" class="headerlink" title="第一步：创建与配置"></a>第一步：创建与配置</h2><p>我们需要自定义一个继承自<code>AccessibilityService</code>的 service，然后在<code>AndroidManifest.xml</code>文件中注册一下，就想普通的 service 差不多，这里有三个可以被重写方法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">import</span> android.accessibilityservice.AccessibilityService;<br><span class="hljs-keyword">import</span> android.view.accessibility.AccessibilityEvent;<br><br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyAccessibilityService</span> <span class="hljs-title">extends</span> <span class="hljs-title">AccessibilityService</span> </span>&#123;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> void onAccessibilityEvent(AccessibilityEvent event) &#123;<br>        <span class="hljs-comment">// 处理接收到的辅助功能事件</span><br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> void onInterrupt() &#123;<br>        <span class="hljs-comment">// 处理服务被中断的情况</span><br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">protected</span> void onServiceConnected() &#123;<br>        <span class="hljs-keyword">super</span>.onServiceConnected();<br>        <span class="hljs-comment">// 初始化服务</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>在清单文件中注册一下</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">service</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;.MyAccessibilityService&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:permission</span>=<span class="hljs-string">&quot;android.permission.BIND_ACCESSIBILITY_SERVICE&quot;</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">intent-filter</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">action</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;android.accessibilityservice.AccessibilityService&quot;</span> /&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">intent-filter</span>&gt;</span><br><br>    <span class="hljs-tag">&lt;<span class="hljs-name">meta-data</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;android.accessibilityservice&quot;</span></span><br><span class="hljs-tag">        <span class="hljs-attr">android:resource</span>=<span class="hljs-string">&quot;@xml/accessibility_service_config&quot;</span> /&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">service</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<p>需要注意这里的<code>meta-data</code>标签，其中的<code>name</code>属性值是固定的，<code>resource</code>属性则是我们为无障碍服务提供的配置文件。大致有这么一些属性<br><code>accessibility_service_config.xml</code> 是一个用于配置 <code>AccessibilityService</code> 的 XML 文件，其中包含了许多属性，用于定义服务的行为和特性。以下是这些属性的详细介绍和示例说明：</p>
+<h3 id="1-android-description"><a href="#1-android-description" class="headerlink" title="1. android:description"></a>1. <code>android:description</code></h3><p>描述服务的用途，通常是一个字符串资源的引用。这个值会展示在开启无障碍服务时的帮助说明中</p>
+<h3 id="2-android-accessibilityEventTypes"><a href="#2-android-accessibilityEventTypes" class="headerlink" title="2. android:accessibilityEventTypes"></a>2. <code>android:accessibilityEventTypes</code></h3><p>定义服务要监听的事件类型。可以是以下之一或多个的组合：</p>
+<ul>
+<li><code>typeAllMask</code></li>
+<li><code>typeViewClicked</code></li>
+<li><code>typeViewFocused</code></li>
+<li><code>typeViewLongClicked</code></li>
+<li><code>typeViewSelected</code></li>
+<li><code>typeViewTextChanged</code></li>
+<li><code>typeWindowContentChanged</code></li>
+<li><code>typeWindowStateChanged</code>。</li>
+</ul>
+<p>这里我们只需要监听 <code>typeWindowContentChanged</code> 和 <code>typeWindowStateChanged</code> 就足够了</p>
+<h3 id="3-android-packageNames"><a href="#3-android-packageNames" class="headerlink" title="3. android:packageNames"></a>3. <code>android:packageNames</code></h3><p>指定服务要监听的应用包名。多个包名可以用逗号分隔。这个没啥好说的</p>
+<h3 id="4-android-accessibilityFeedbackType"><a href="#4-android-accessibilityFeedbackType" class="headerlink" title="4. android:accessibilityFeedbackType"></a>4. <code>android:accessibilityFeedbackType</code></h3><p>定义服务的反馈类型，就是如何给用户反馈，可以是以下之一或多个的组合：</p>
+<ul>
+<li><code>feedbackSpoken</code> ： 适用于需要将信息通过语音读出来的情况，例如屏幕阅读器。</li>
+<li><code>feedbackHaptic</code> ： 适用于需要通过振动提醒用户的情况，例如通知用户某个操作成功或失败。</li>
+<li><code>feedbackAudible</code> ： 适用于需要通过音效提醒用户的情况，例如提示音。</li>
+<li><code>feedbackVisual</code> ： 适用于需要通过视觉效果（如闪烁、颜色变化）提醒用户的情况。</li>
+<li><code>feedbackGeneric</code> ： 适用于不特定于某一种反馈类型的情况。</li>
+<li><code>feedbackBraille</code> : 适用于需要将信息传递给盲文设备用户的情况。</li>
+</ul>
+<h3 id="5-android-notificationTimeout"><a href="#5-android-notificationTimeout" class="headerlink" title="5. android:notificationTimeout"></a>5. <code>android:notificationTimeout</code></h3><p>定义服务在处理连续事件之间的最短时间间隔，以毫秒为单位。当辅助功能服务接收到大量的连续事件时，可能会导致性能问题或用户体验不佳。通过设置 <code>notificationTimeout</code>，可以指定一个时间窗口，在这个时间窗口内重复的事件将被合并为一个事件，从而减少处理的频率。</p>
+<h3 id="6-android-canRetrieveWindowContent"><a href="#6-android-canRetrieveWindowContent" class="headerlink" title="6. android:canRetrieveWindowContent"></a>6. <code>android:canRetrieveWindowContent</code></h3><p>定义服务是否可以检索窗口内容。设置为 <code>true</code> 表示服务可以访问窗口内容。</p>
+<h3 id="7-android-settingsActivity"><a href="#7-android-settingsActivity" class="headerlink" title="7. android:settingsActivity"></a>7. <code>android:settingsActivity</code></h3><p>指定一个设置活动的类名，用户可以通过辅助功能设置页面进入该活动。配置了该属性之后，用户可以在开启无障碍服务页面点击更多设置直接进入到该页面</p>
+<h3 id="8-android-canRequestTouchExplorationMode"><a href="#8-android-canRequestTouchExplorationMode" class="headerlink" title="8. android:canRequestTouchExplorationMode"></a>8. <code>android:canRequestTouchExplorationMode</code></h3><p>属性用于指定辅助功能服务是否可以请求触摸探索模式。触摸探索模式是一种特殊的输入模式，通常用于帮助视力障碍用户使用触摸屏设备<br>这里也需要我们在代码中设置一下</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onServiceConnected</span><span class="hljs-params">()</span></span> &#123;<br>    <span class="hljs-keyword">super</span>.onServiceConnected()<br>    <span class="hljs-keyword">val</span> info = AccessibilityServiceInfo()<br>    info.flags = AccessibilityServiceInfo.FLAG_REQUEST_TOUCH_EXPLORATION_MODE<br>    serviceInfo = info<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>并且，在处理事件中我们也需要处理更多的事件</p>
+<blockquote>
+<p>启用时：应用需要处理更多的辅助功能事件，如 TYPE_TOUCH_EXPLORATION_GESTURE_START 和 TYPE_TOUCH_EXPLORATION_GESTURE_END。这些事件帮助应用确定用户正在进行触摸探索。<br>未启用时：应用只需处理标准的触摸事件。</p>
+</blockquote>
+<h3 id="9-android-canRequestEnhancedWebAccessibility"><a href="#9-android-canRequestEnhancedWebAccessibility" class="headerlink" title="9. android:canRequestEnhancedWebAccessibility"></a>9. <code>android:canRequestEnhancedWebAccessibility</code></h3><p>定义服务是否可以请求增强的网页辅助功能。</p>
+<h3 id="10-android-canRequestFilterKeyEvents"><a href="#10-android-canRequestFilterKeyEvents" class="headerlink" title="10. android:canRequestFilterKeyEvents"></a>10. <code>android:canRequestFilterKeyEvents</code></h3><p>用于指定辅助功能服务是否可以请求过滤键事件（key events）。这对于开发辅助功能服务（如屏幕阅读器或其他辅助工具）非常重要，因为它允许这些服务拦截和处理按键事件，以提供更好的用户体验和辅助功能支持。同样的，不仅要在配置文件中声明，也需要在代码中设置</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onServiceConnected</span><span class="hljs-params">()</span></span> &#123;<br>    <span class="hljs-keyword">super</span>.onServiceConnected()<br>    <span class="hljs-keyword">val</span> info = AccessibilityServiceInfo()<br>    info.flags = AccessibilityServiceInfo.FLAG_REQUEST_FILTER_KEY_EVENTS<br>    serviceInfo = info<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<h3 id="11-android-canPerformGestures"><a href="#11-android-canPerformGestures" class="headerlink" title="11. android:canPerformGestures"></a>11. <code>android:canPerformGestures</code></h3><p>定义服务是否可以执行手势。如果为 true，我们可以这样执行手势</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-comment">// 执行点击手势</span><br><span class="hljs-keyword">private</span> void performClick(float x, float y) &#123;<br>    <span class="hljs-keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.N) &#123;<br>        Path clickPath = new Path();<br>        clickPath.moveTo(x, y);<br>        GestureDescription.StrokeDescription clickStroke = new GestureDescription.StrokeDescription(clickPath, <span class="hljs-number">0</span>, <span class="hljs-number">100</span>);<br>        GestureDescription gestureDescription = new GestureDescription.Builder().addStroke(clickStroke).build();<br>        dispatchGesture(gestureDescription, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="12-android-accessibilityFlags"><a href="#12-android-accessibilityFlags" class="headerlink" title="12. android:accessibilityFlags"></a>12. <code>android:accessibilityFlags</code></h3><p>定义服务的辅助功能标志，这些标志定义了服务的行为和特性。通过设置不同的标志，开发者可以控制辅助功能服务如何与系统和应用交互。可以是以下之一或多个的组合：</p>
+<ol>
+<li><p>**<code>flagIncludeNotImportantViews</code>**：</p>
+<ul>
+<li><strong>作用</strong>：包括那些通常被认为不重要的视图（如布局视图）在辅助功能事件中。</li>
+<li><strong>使用场景</strong>：当需要确保所有视图都被辅助功能服务处理时使用。</li>
+</ul>
+</li>
+<li><p>**<code>flagRequestTouchExplorationMode</code>**：</p>
+<ul>
+<li><strong>作用</strong>：请求触摸探索模式，这对于视力障碍用户非常有用。</li>
+<li><strong>使用场景</strong>：当辅助功能服务需要解释触摸事件并提供反馈时使用。</li>
+</ul>
+</li>
+<li><p>**<code>flagReportViewIds</code>**：</p>
+<ul>
+<li><strong>作用</strong>：报告视图的资源 ID。</li>
+<li><strong>使用场景</strong>：当辅助功能服务需要识别和操作特定视图时使用。</li>
+</ul>
+</li>
+<li><p>**<code>flagRetrieveInteractiveWindows</code>**：</p>
+<ul>
+<li><strong>作用</strong>：允许辅助功能服务检索交互窗口。</li>
+<li><strong>使用场景</strong>：当需要处理多个窗口或弹出窗口时使用。</li>
+</ul>
+</li>
+</ol>
+<p>当然我们也可以在代码中设置标志</p>
+<p>在你的 <code>AccessibilityService</code> 中，你可以使用 <code>AccessibilityServiceInfo</code> 来设置标志：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onServiceConnected</span><span class="hljs-params">()</span></span> &#123;<br>    <span class="hljs-keyword">super</span>.onServiceConnected()<br>    <span class="hljs-keyword">val</span> info = AccessibilityServiceInfo()<br>    info.flags = (AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS<br>            or AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS<br>            or AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS)<br>    serviceInfo = info<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<h3 id="示例完整配置文件"><a href="#示例完整配置文件" class="headerlink" title="示例完整配置文件"></a>示例完整配置文件</h3><p>下面是我们这次需要用到的配置文件内容：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-meta">&lt;?xml version=<span class="hljs-string">&quot;1.0&quot;</span> encoding=<span class="hljs-string">&quot;utf-8&quot;</span>?&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">accessibility-service</span></span><br><span class="hljs-tag">    <span class="hljs-attr">xmlns:android</span>=<span class="hljs-string">&quot;http://schemas.android.com/apk/res/android&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:accessibilityEventTypes</span>=<span class="hljs-string">&quot;typeWindowContentChanged|typeWindowStateChanged&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:accessibilityFeedbackType</span>=<span class="hljs-string">&quot;feedbackGeneric&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:accessibilityFlags</span>=<span class="hljs-string">&quot;flagIncludeNotImportantViews|flagReportViewIds&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:canRetrieveWindowContent</span>=<span class="hljs-string">&quot;true&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:canRequestTouchExplorationMode</span>=<span class="hljs-string">&quot;true&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:canRequestFilterKeyEvents</span>=<span class="hljs-string">&quot;true&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:canPerformGestures</span>=<span class="hljs-string">&quot;true&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:packageNames</span>=<span class="hljs-string">&quot;com.tencent.mm&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:settingsActivity</span>=<span class="hljs-string">&quot;com.huangyuanlove.auxiliary.SettingActivity&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:description</span>=<span class="hljs-string">&quot;@string/wx_make_call_service_helper&quot;</span></span><br><span class="hljs-tag">    <span class="hljs-attr">android:notificationTimeout</span>=<span class="hljs-string">&quot;100&quot;</span>/&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>通过配置这些属性，你可以精确地控制 <code>AccessibilityService</code> 的行为，以满足特定的需求和用例。</p>
+<p><img src="/image/accessibility/accessibility_setting_honor.png" srcset="/img/loading.gif" lazyload alt="荣耀v10开启无障碍服务弹窗提示"><br><img src="/image/accessibility/accessibility_setting_k30.png" srcset="/img/loading.gif" lazyload alt="红米k30p开启无障碍服务弹窗提示"></p>
+<h2 id="第二步：rua代码"><a href="#第二步：rua代码" class="headerlink" title="第二步：rua代码"></a>第二步：rua代码</h2><p>在上面我们已经做好了基础配置，下面开始rua 代码，看看我们应该怎么做。</p>
+<h3 id="分析路径流程"><a href="#分析路径流程" class="headerlink" title="分析路径流程"></a>分析路径流程</h3><p>我们先做好微信的前期准备工作：通话双方是好友、微信已经登录。<br>那么我们的使用流程大致时这样的：<br>打开微信<br>点击底部通讯录<br>找到这个好友(可能需要滑动通讯录列表)点击一下进入到好友信息页面<br>点击信息页面的音视频通话<br>在底部弹窗中点击视频通话或者语音通话</p>
+<h3 id="简单的-API-调用准备"><a href="#简单的-API-调用准备" class="headerlink" title="简单的 API 调用准备"></a>简单的 API 调用准备</h3><h4 id="onAccessibilityEvent"><a href="#onAccessibilityEvent" class="headerlink" title="onAccessibilityEvent"></a>onAccessibilityEvent</h4><p>当触发了我们在配置文件中指定的事件时，系统会回调<code>AccessibilityService#onAccessibilityEvent(event: AccessibilityEvent)</code>这个方法。<br>我们可以通过<code>event</code>对象获取触发这个事件的包名，触发的事件类型等，</p>
+<h4 id="getRootInActiveWindow"><a href="#getRootInActiveWindow" class="headerlink" title="getRootInActiveWindow"></a>getRootInActiveWindow</h4><p>我们可以在<code>AccessibilityService</code>中调用这个方法获取当前页面的根节点，这个节点可以看做是当前视图树的根节点，这样我们就可以遍历整个视图树了。<br>同样的，我们也可以通过<code>AccessibilityNodeInfo</code>实例来获取对应节点的属性，比如是否可以点击(isClickable)、类型(className)、按钮|文本内容(text)、无障碍服务标签内容(contentDescription)等。我们可以根据这些属性来判断是不是我们需要的节点(控件)</p>
+<h4 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h4><p>就像我们平时开发一样，有些事件并不是直接设置在 TextView 或者 Button 上的，可能是设置在它们的父级组件上，比如LinearLayout或者RelativeLayout等。所以当我们获取到对应的节点后，需要判断一下是不是我们需要的节点，如果不是的话，就在找找父级是不是我们需要的节点。<br>当然如果我们知道某个页面某个节点的id，就不需要这么麻烦了，直接根据 id 查找就好了。</p>
+<h4 id="权限"><a href="#权限" class="headerlink" title="权限"></a>权限</h4><p>需要开启无障碍服务才可以进行对应的操作</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">isServiceEnabled</span><span class="hljs-params">(context: <span class="hljs-type">Context</span>)</span></span>: <span class="hljs-built_in">Boolean</span> &#123;<br>    (context.getSystemService(Context.ACCESSIBILITY_SERVICE) <span class="hljs-keyword">as</span> AccessibilityManager)<br>            .getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)<br>            .filter &#123; it.id == <span class="hljs-string">&quot;<span class="hljs-subst">$&#123;context.packageName&#125;</span>/<span class="hljs-subst">$&#123;MakeWeChatCallService::class.java.name&#125;</span>&quot;</span> &#125;<br>            .let &#123; <span class="hljs-keyword">return</span> it.isNotEmpty() &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-comment">//跳转到开启无障碍服务页面</span><br>startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) <br></code></pre></td></tr></table></figure>
+
+
+<h3 id="动手开工"><a href="#动手开工" class="headerlink" title="动手开工"></a>动手开工</h3><h4 id="打开微信"><a href="#打开微信" class="headerlink" title="打开微信"></a>打开微信</h4><p>这个很简单哇，知道微信的包名就好了</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">val</span> intent = packageManager.getLaunchIntentForPackage(WX_PACKAGE_NAME)<br>intent?.let &#123;<br>    startActivity(intent)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>当我们打开微信后，标记接下来需要点击通讯录按钮：current_step&#x3D; click_contacts;</p>
+<h3 id="点击底部通讯录"><a href="#点击底部通讯录" class="headerlink" title="点击底部通讯录"></a>点击底部通讯录</h3><p>这个就需要用到上面准备好的<code>AccessibilityService</code>了，按照上面的配置，当我们打开微信之后，就开始回调<code>onAccessibilityEvent(event: AccessibilityEvent)</code>这个方法了。</p>
+<p>我们假设用户使用的是中文，我们需要找到”通讯录”这个按钮对应的AccessibilityNodeInfo实例，然后调用<code>performAction(AccessibilityNodeInfo.ACTION_CLICK)</code>进行点击就好了。<br>注意，这个的<code>通讯录</code>文本并不是可以点击的，我们打开<code>无障碍服务talkback</code>将框框移动到通讯录这里，就可以看到<code>通讯录</code>和上面的图标是一体的。但我们也不清楚他们到底是怎么实现的，所以我们查找这个文本的父级控件，看是否能点，不能点击就再往上查找。多次尝试之后，发现需要向上查找两次。这里写了一个扩展方法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> AccessibilityNodeInfo.<span class="hljs-title">clickNodeByText</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">    textList: <span class="hljs-type">Array</span>&lt;<span class="hljs-type">String</span>&gt;,</span></span><br><span class="hljs-params"><span class="hljs-function">    parentCount: <span class="hljs-type">Int</span> = <span class="hljs-number">0</span></span></span><br><span class="hljs-params"><span class="hljs-function">)</span></span>: <span class="hljs-built_in">Boolean</span> &#123;<br>    <span class="hljs-keyword">var</span> node = getNodeByText(textList)<br>    repeat(parentCount) &#123;<br>        node = node?.parent<br>    &#125;<br>    node?.let &#123;<br>        <span class="hljs-keyword">return</span> it.performAction(AccessibilityNodeInfo.ACTION_CLICK)<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这里的参数<code>parentCount</code>表示需要向上查找几次。<br>我们点击通讯录的时候调用<code>rootInActiveWindow.clickNodeByText(arrayOf(&quot;通讯录&quot;), 2)</code>就可以了.<br>点击成功后，我们标记接下来需要点击联系人：current_step&#x3D;click_contact;</p>
+<h3 id="找到好友"><a href="#找到好友" class="headerlink" title="找到好友"></a>找到好友</h3><p>通讯录是个列表，我们猜要不是 ListView，要不是 RecyclerView，我觉得不大可能是 ScrollView。要注意。右侧还有一个字母列表，不要搞错了。<br>我们先从当前可看到的页面查找联系人。<br>这里也搞了个扩展方法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> AccessibilityNodeInfo.<span class="hljs-title">getNodeByText</span><span class="hljs-params">(textList: <span class="hljs-type">Array</span>&lt;<span class="hljs-type">String</span>&gt;)</span></span>: AccessibilityNodeInfo? &#123;<br>    <span class="hljs-keyword">var</span> node: AccessibilityNodeInfo? = <span class="hljs-literal">null</span><br>    <span class="hljs-keyword">var</span> index = <span class="hljs-number">0</span><br>    <span class="hljs-keyword">while</span> (index &lt; textList.size &amp;&amp; node === <span class="hljs-literal">null</span>) &#123;<br>        node = <span class="hljs-keyword">this</span>.findAccessibilityNodeInfosByText(textList[index]).getOrNull(<span class="hljs-number">0</span>)<br>        index++<br>    &#125;<br>    <span class="hljs-keyword">return</span> node<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>查找这个联系人</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">var</span> contactNode = rootInActiveWindow.getNodeByText(arrayOf(cantactName))<br></code></pre></td></tr></table></figure>
+<p>如果<code>contactNode</code>为空，表示当前可视内容中没有这个联系人，我们需要滑动列表。<br>首先，找到联系人列表的<code>RecyclerView</code>,别问为啥是<code>RecyclerView</code>,试了好多次试出来的。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">getContactListView</span><span class="hljs-params">()</span></span>: AccessibilityNodeInfo? &#123;<br>    <span class="hljs-keyword">val</span> queue = LinkedList&lt;AccessibilityNodeInfo&gt;()<br>    queue.offer(rootInActiveWindow)<br>    <span class="hljs-keyword">var</span> info: AccessibilityNodeInfo?<br>    <span class="hljs-keyword">while</span> (!queue.isEmpty()) &#123;<br>        info = queue.poll()<br>        <span class="hljs-keyword">if</span> (info == <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-keyword">continue</span><br>        &#125;<br>        <span class="hljs-keyword">if</span> (info.className.equals(<span class="hljs-string">&quot;androidx.recyclerview.widget.RecyclerView&quot;</span>) &amp;&amp; info.isScrollable) &#123;<br>            <span class="hljs-keyword">return</span> info<br>        &#125;<br>        <span class="hljs-keyword">for</span> (i <span class="hljs-keyword">in</span> <span class="hljs-number">0</span> until info.childCount) &#123;<br>            queue.offer(info.getChild(i))<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>找到列表控件后滑动一下</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">val</span> contactListNode = getContactListView()<br>contactListNode?.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)<br></code></pre></td></tr></table></figure>
+<p>注意，这里列表的滑动同样会触发<code>onAccessibilityEvent</code>这个方法，我们再重复上面的流程，直到找到这个联系人控件。需要注意的是，这里的联系人显示的名字要是单个英文字母，这会和列表分组上面的单个英文字母相同，导致查找到的控件不是我们想要的</p>
+<p>当我们找到这个联系人控件后，进行点击</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">var</span> contactNode = rootInActiveWindow.getNodeByText(arrayOf(cantactName))<br>repeat(<span class="hljs-number">6</span>) &#123;<span class="hljs-comment">//别问这里为啥是 6，试出来的，或者可以遍历一下视图树，自己数一下层级</span><br>    contactNode = contactNode?.parent<br>&#125;<br>contactNode?.let &#123;<br>    <span class="hljs-keyword">val</span> result = it.performAction(AccessibilityNodeInfo.ACTION_CLICK)<br>    <span class="hljs-keyword">if</span>(result)&#123;<br>        <span class="hljs-comment">//标记接下来需要在联系人详情页面点击音视频通话</span><br>        current_step= click_video;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="点击音视频通话"><a href="#点击音视频通话" class="headerlink" title="点击音视频通话"></a>点击音视频通话</h3><p>这个就比较简单了，还是调用我们上面写的扩展方法找到按钮，然后点击就行了</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">var</span> contactNode = rootInActiveWindow.getNodeByText(arrayOf(<span class="hljs-string">&quot;音视频通话&quot;</span>))<br>repeat(<span class="hljs-number">2</span>) &#123;<br>    contactNode = contactNode?.parent<br>&#125;<br>contactNode?.let &#123;<br>    <span class="hljs-keyword">val</span> result = it.performAction(AccessibilityNodeInfo.ACTION_CLICK)<br>    <span class="hljs-keyword">if</span>(result)&#123;<br>        <span class="hljs-comment">//标记接下来需要点击弹窗中的视频通话</span><br>        current_step= click_video_on_dialog;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="点击弹窗中的视频通话"><a href="#点击弹窗中的视频通话" class="headerlink" title="点击弹窗中的视频通话"></a>点击弹窗中的视频通话</h3><p>这个就更简单了</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs kotlin">rootInActiveWindow.clickNodeByText(arrayOf(<span class="hljs-string">&quot;语音通话&quot;</span>), <span class="hljs-number">3</span>)<br>rootInActiveWindow.clickNodeByText(arrayOf(<span class="hljs-string">&quot;视频通话&quot;</span>), <span class="hljs-number">3</span>)<br></code></pre></td></tr></table></figure>
+<p>一个语音通话，一个视频通话。<br>到这里我们就可以进行视频通话了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>上面的流程是最理想的状态，还有一些奇奇怪怪的问题：<br>比如我们视频通话结束后，需要返回到列表页，也就是在通话结束后点击左上角的返回，这个功能没有写。<br>比如打开微信的时候不是在首页，比如在浏览公众号信息怎么办？同样需要找到左上角的返回按钮，一直到首页之后才可以进行点击通讯录的操作。<br>比如联系人的名字就是单个英文字母，上面也提到，这种情况下查找到的会是分组的名称，无法进行点击。<br>或者我们可以从首页点击右上角的搜索，输入联系人名字，然后在搜索列表中点击联系人，进入到聊天页面，然后点击左下角加号，在更多菜单里面点击音视频通话也行。<br>放个最终效果的视频吧</p>
+<video width="320" height="240" autoplay muted>
+  <source src="image/accessibility/accessibility_video.mp4" type="video/mp4">
+
+<p>Your browser does not support the video tag.<br></video></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>使用无障碍服务完成一键拨打微信视频电话</div>
+      <div>https://blog.huangyuanlove.com/2024/08/16/使用无障碍服务做一个一键拨打微信视频电话的应用/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年8月16日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/08/24/%E9%B8%BF%E8%92%99-canvas-%E5%88%AE%E5%88%AE%E4%B9%90/" title="鸿蒙-canvas-刮刮乐">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">鸿蒙-canvas-刮刮乐</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/06/26/kotlin%E4%B8%AD%E7%9A%84%E5%86%85%E8%81%94%E5%87%BD%E6%95%B0/" title="kotlin中的内联函数">
+                        <span class="hidden-mobile">kotlin中的内联函数</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '547c8dc6c8ae55ffb4124663e2c39728'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
