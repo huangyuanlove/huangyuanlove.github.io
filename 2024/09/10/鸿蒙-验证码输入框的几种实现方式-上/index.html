@@ -19,7 +19,7 @@
     <meta name="description" content="最近在做应用鸿蒙化，说白了就是把原来Android、iOS的代码重新用ArkTS写一遍，我负责基础建设和登录模块，有个验证码输入框需要定制一下外观样式。这里详细记录一下探索过程及结果，以及思路和源码。这里给出了三种方案一：多个 InputText 拼接，每个 InputText 只能输入 1 个字符，代码控制焦点移动，二：多个 Text 拼接，通过系统apiinputMethod.InputMet">
 <meta property="og:type" content="article">
 <meta property="og:title" content="鸿蒙-验证码输入框的几种实现方式(上)">
-<meta property="og:url" content="https://blog.huangyuanlove.com/2024/10/10/%E9%B8%BF%E8%92%99-%E9%AA%8C%E8%AF%81%E7%A0%81%E8%BE%93%E5%85%A5%E6%A1%86%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F-%E4%B8%8A/index.html">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2024/09/10/%E9%B8%BF%E8%92%99-%E9%AA%8C%E8%AF%81%E7%A0%81%E8%BE%93%E5%85%A5%E6%A1%86%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F-%E4%B8%8A/index.html">
 <meta property="og:site_name" content="放码过来">
 <meta property="og:description" content="最近在做应用鸿蒙化，说白了就是把原来Android、iOS的代码重新用ArkTS写一遍，我负责基础建设和登录模块，有个验证码输入框需要定制一下外观样式。这里详细记录一下探索过程及结果，以及思路和源码。这里给出了三种方案一：多个 InputText 拼接，每个 InputText 只能输入 1 个字符，代码控制焦点移动，二：多个 Text 拼接，通过系统apiinputMethod.InputMet">
 <meta property="og:locale" content="zh_CN">
@@ -27,8 +27,8 @@
 <meta property="og:image" content="https://blog.huangyuanlove.com/image/HarmonyOS/verification_code/four_text.gif">
 <meta property="og:image" content="https://blog.huangyuanlove.com/image/HarmonyOS/verification_code/canvas_input.gif">
 <meta property="og:image" content="https://blog.huangyuanlove.com/image/HarmonyOS/verification_code/four_textinput_base.png">
-<meta property="article:published_time" content="2024-10-10T09:57:30.000Z">
-<meta property="article:modified_time" content="2024-11-21T09:36:30.419Z">
+<meta property="article:published_time" content="2024-09-10T09:57:30.000Z">
+<meta property="article:modified_time" content="2024-11-21T10:02:42.720Z">
 <meta property="article:author" content="HuangYuan_xuan">
 <meta property="article:tag" content="HarmonyOS">
 <meta name="twitter:card" content="summary_large_image">
@@ -202,8 +202,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-10-10 17:57" pubdate>
-          2024年10月10日 下午
+        <time datetime="2024-09-10 17:57" pubdate>
+          2024年9月10日 下午
         </time>
       </span>
     
@@ -327,7 +327,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>鸿蒙-验证码输入框的几种实现方式(上)</div>
-      <div>https://blog.huangyuanlove.com/2024/10/10/鸿蒙-验证码输入框的几种实现方式-上/</div>
+      <div>https://blog.huangyuanlove.com/2024/09/10/鸿蒙-验证码输入框的几种实现方式-上/</div>
     </div>
     <div class="license-meta">
       
@@ -339,7 +339,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年10月10日</div>
+          <div>2024年9月10日</div>
         </div>
       
       
@@ -364,7 +364,7 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/10/13/%E9%B8%BF%E8%92%99-%E9%AA%8C%E8%AF%81%E7%A0%81%E8%BE%93%E5%85%A5%E6%A1%86%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F-%E4%B8%8B/" title="鸿蒙-验证码输入框的几种实现方式(下)">
+                      <a href="/2024/09/13/%E9%B8%BF%E8%92%99-%E9%AA%8C%E8%AF%81%E7%A0%81%E8%BE%93%E5%85%A5%E6%A1%86%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F-%E4%B8%8B/" title="鸿蒙-验证码输入框的几种实现方式(下)">
                         <i class="iconfont icon-arrowleft"></i>
                         <span class="hidden-mobile">鸿蒙-验证码输入框的几种实现方式(下)</span>
                         <span class="visible-mobile">上一篇</span>
@@ -374,8 +374,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/09/26/%E9%B8%BF%E8%92%99%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E4%BD%BF%E7%94%A8canvas%E5%AE%9E%E7%8E%B0%E7%90%83%E9%9D%A2%E8%BF%90%E5%8A%A8%E5%8A%A8%E7%94%BB/" title="鸿蒙应用开发使用canvas实现球面运动动画">
-                        <span class="hidden-mobile">鸿蒙应用开发使用canvas实现球面运动动画</span>
+                      <a href="/2024/08/24/%E9%B8%BF%E8%92%99-canvas-%E5%88%AE%E5%88%AE%E4%B9%90/" title="鸿蒙-canvas-刮刮乐">
+                        <span class="hidden-mobile">鸿蒙-canvas-刮刮乐</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -398,7 +398,7 @@
         var options = Object.assign(
           {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
           {
-            id: 'ab3feff13e2aa488238989957fabf849'
+            id: 'd6262d6648e6937fadb31fabe4154819'
           }
         )
         var gitalk = new Gitalk(options);
