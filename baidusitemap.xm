@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://blog.huangyuanlove.com/2024/11/28/%E9%B8%BF%E8%92%99-Canvas-%E5%9B%BE%E7%89%87%E6%BB%91%E5%8A%A8%E9%AA%8C%E8%AF%81/</loc>
+    <lastmod>2024-11-28</lastmod>
+  </url>
+  <url>
     <loc>https://blog.huangyuanlove.com/2023/12/24/%E9%B8%BF%E8%92%99%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E4%BD%BF%E7%94%A8canvas%E5%AE%9E%E7%8E%B0%E7%90%83%E9%9D%A2%E8%BF%90%E5%8A%A8%E5%8A%A8%E7%94%BB/</loc>
     <lastmod>2024-11-21</lastmod>
   </url>
@@ -117,11 +121,11 @@
     <lastmod>2024-04-12</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2020/11/26/gradle%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6/</loc>
+    <loc>https://blog.huangyuanlove.com/2018/11/09/groovy%E8%AF%AD%E6%B3%95%E5%85%A5%E9%97%A8/</loc>
     <lastmod>2024-04-12</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2018/11/09/groovy%E8%AF%AD%E6%B3%95%E5%85%A5%E9%97%A8/</loc>
+    <loc>https://blog.huangyuanlove.com/2020/11/26/gradle%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6/</loc>
     <lastmod>2024-04-12</lastmod>
   </url>
   <url>
@@ -149,11 +153,11 @@
     <lastmod>2024-04-12</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2024/03/27/riverpod2-x%E4%B8%AD%E7%9A%84-Provider-%E7%AE%80%E4%BB%8B/</loc>
+    <loc>https://blog.huangyuanlove.com/2024/03/27/riverpod2%E4%B8%AD%E7%9A%84%E4%BF%AE%E9%A5%B0%E7%AC%A6%E5%8F%8A%E6%B3%A8%E8%A7%A3/</loc>
     <lastmod>2024-03-29</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2024/03/27/riverpod2%E4%B8%AD%E7%9A%84%E4%BF%AE%E9%A5%B0%E7%AC%A6%E5%8F%8A%E6%B3%A8%E8%A7%A3/</loc>
+    <loc>https://blog.huangyuanlove.com/2024/03/27/riverpod2-x%E4%B8%AD%E7%9A%84-Provider-%E7%AE%80%E4%BB%8B/</loc>
     <lastmod>2024-03-29</lastmod>
   </url>
   <url>
@@ -289,11 +293,11 @@
     <lastmod>2023-05-17</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2017/02/25/%E3%80%8A%E6%88%91%E7%9A%84%E5%AE%89%E5%8D%93%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85%E3%80%8B-%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91-2/</loc>
+    <loc>https://blog.huangyuanlove.com/2017/12/19/%E3%80%8A%E6%88%91%E7%9A%84%E5%AE%89%E5%8D%93%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85%E3%80%8B-%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91-3/</loc>
     <lastmod>2023-05-17</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2017/12/19/%E3%80%8A%E6%88%91%E7%9A%84%E5%AE%89%E5%8D%93%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85%E3%80%8B-%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91-3/</loc>
+    <loc>https://blog.huangyuanlove.com/2017/02/25/%E3%80%8A%E6%88%91%E7%9A%84%E5%AE%89%E5%8D%93%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85%E3%80%8B-%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91-2/</loc>
     <lastmod>2023-05-17</lastmod>
   </url>
   <url>
@@ -405,11 +409,11 @@
     <lastmod>2023-05-17</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2017/07/03/TCP%E5%8D%8F%E8%AE%AE%E7%9A%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/</loc>
+    <loc>https://blog.huangyuanlove.com/2018/03/10/Tinker%E5%88%9D%E6%8E%A2/</loc>
     <lastmod>2023-05-17</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2018/03/10/Tinker%E5%88%9D%E6%8E%A2/</loc>
+    <loc>https://blog.huangyuanlove.com/2017/07/03/TCP%E5%8D%8F%E8%AE%AE%E7%9A%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/</loc>
     <lastmod>2023-05-17</lastmod>
   </url>
   <url>
@@ -601,11 +605,11 @@
     <lastmod>2023-05-17</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2017/12/25/Android%E4%B8%AD%E4%BD%BF%E7%94%A8WebSocket/</loc>
+    <loc>https://blog.huangyuanlove.com/2017/12/26/Android%E4%B8%AD%E4%BD%BF%E7%94%A8WebSocket-2/</loc>
     <lastmod>2023-05-17</lastmod>
   </url>
   <url>
-    <loc>https://blog.huangyuanlove.com/2017/12/26/Android%E4%B8%AD%E4%BD%BF%E7%94%A8WebSocket-2/</loc>
+    <loc>https://blog.huangyuanlove.com/2017/12/25/Android%E4%B8%AD%E4%BD%BF%E7%94%A8WebSocket/</loc>
     <lastmod>2023-05-17</lastmod>
   </url>
   <url>
