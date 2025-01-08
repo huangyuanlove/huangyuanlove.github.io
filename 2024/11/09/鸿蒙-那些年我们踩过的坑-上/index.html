@@ -1,0 +1,667 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="HarmonyOS,鸿蒙应用开发,plain (literal) objects,class (constructor) objects,嵌套类观察属性变化,Foreach刷新">
+  
+    <meta name="description" content="写了这么长时间的ArkTs,一个应用上架了,另外一个应用也快要提交审核了。记录一下自己踩过的坑以及对应的解决方案,大家可以借鉴一下,少走一些弯路。但也不一定,万一我的方法是另外一条弯路嘞~不过话又说回来,再过几个版本说不定官方就把这些坑填上了。。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="鸿蒙--那些年我们踩过的坑(上)">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2024/11/09/%E9%B8%BF%E8%92%99-%E9%82%A3%E4%BA%9B%E5%B9%B4%E6%88%91%E4%BB%AC%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91-%E4%B8%8A/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="写了这么长时间的ArkTs,一个应用上架了,另外一个应用也快要提交审核了。记录一下自己踩过的坑以及对应的解决方案,大家可以借鉴一下,少走一些弯路。但也不一定,万一我的方法是另外一条弯路嘞~不过话又说回来,再过几个版本说不定官方就把这些坑填上了。。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/HarmonyOS/foreach_render_a.gif">
+<meta property="article:published_time" content="2024-11-09T06:16:16.000Z">
+<meta property="article:modified_time" content="2024-11-11T07:32:04.270Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="HarmonyOS">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/HarmonyOS/foreach_render_a.gif">
+  
+  
+  
+  <title>鸿蒙--那些年我们踩过的坑(上) - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="鸿蒙--那些年我们踩过的坑(上)"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-11-09 14:16" pubdate>
+          2024年11月9日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.5k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">鸿蒙--那些年我们踩过的坑(上)</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>写了这么长时间的ArkTs,一个应用上架了,另外一个应用也快要提交审核了。记录一下自己踩过的坑以及对应的解决方案,大家可以借鉴一下,少走一些弯路。但也不一定,万一我的方法是另外一条弯路嘞~<br>不过话又说回来,再过几个版本说不定官方就把这些坑填上了。。  </p>
+<span id="more"></span>
+
+<h2 id="自绘制编辑框"><a href="#自绘制编辑框" class="headerlink" title="自绘制编辑框"></a>自绘制编辑框</h2><p>输入验证码的输入框,由于有些样式需要定制,使用<code>TextInput</code>满足不了需求(有没有一种可能是因为我菜？),于是就按照<a target="_blank" rel="noopener" href="https://developer.huawei.com/consumer/cn/doc/harmonyos-guides-V5/use-inputmethod-in-custom-edit-box-V5">在自绘编辑框中使用输入法</a>中的介绍,通过<code>InputMethodController.on(&#39;insertText&#39;)</code>监听键盘输入, 使用多个<code>Text</code>来展示输入的验证码,具体文章可以看<a target="_blank" rel="noopener" href="https://juejin.cn/post/7414024083443236927">这里</a>。<br>写起来也挺简单,带着业务跑了一下也挺好,直到后来这个组件被用到了验证码登录的情景:用户输入手机号,点击获取验证码按钮,请求服务器发送验证码,服务器返回成功,跳转到输入验证码页面,弹起键盘,用户输入验证码。  </p>
+<p>中规中矩的流程,四四方方的需求。但是,键盘弹起来之后输入的内容不会展示。呵呵哒,在其他业务上表现正常,为啥在这里就不正常？<del>首先排除控件有bug</del> 首先怀疑控件问题,整个playground工程,精简业务流程后就留下一个输入框,一个按钮,点击按钮后跳转输入验证码页面,这个页面也只留下封装的控件。<br>简单走一下流程,果然键盘弹出来了,但输入内容后没有展示出来。</p>
+<p>一开始以为是监听失败了,debug,加日志后发现是<code>InputMethodController.attach</code>失败了,报了<code>&#123;&quot;code&quot;:12800009&#125;</code>错误码,查问但发现该错误码是<code>input method client is detached.</code>当时就麻了:我要进行<strong>attach</strong>操作,你告诉我已经<strong>detached</strong>。 emmm  </p>
+<p>后来发现是其他业务上是点击按钮或者其他操作之后直接发送验证码,然后跳转到输入验证码页面。而登录需要先输入手机号码,再跳转到输入验证码页面。当网络不好的时候,上个页面跳转之前键盘完全收起来,在输入验证码页面再调起键盘就正常。 </p>
+<p>这里有两个解决方案:<br>方案一:在控件中延迟一定时间后再进行<strong>attach</strong>操作<br>方案二:展示的时候使用TextInput,可以看<a target="_blank" rel="noopener" href="https://juejin.cn/post/7413607758577106978">这里</a></p>
+<h2 id="Foreach循环渲染刷新"><a href="#Foreach循环渲染刷新" class="headerlink" title="Foreach循环渲染刷新"></a>Foreach循环渲染刷新</h2><p>列表渲染大部分甚至绝大部分都是使用的ForEach循环渲染,本着磨刀不误砍柴工的原则,先看文档,了解注意事项 <a target="_blank" rel="noopener" href="https://developer.huawei.com/consumer/cn/doc/harmonyos-guides-V5/arkts-rendering-control-foreach-V5#%E6%B8%B2%E6%9F%93%E7%BB%93%E6%9E%9C%E9%9D%9E%E9%A2%84%E6%9C%9F">ForEach:循环渲染</a>。<br>文档中提到:<strong>在ForEach组件进行非首次渲染时,它会检查新生成的键值是否在上次渲染中已经存在。如果键值不存在,则会创建一个新的组件；如果键值存在,则不会创建新的组件,而是直接渲染该键值所对应的组件</strong>。也就是说,我们如果想要刷新某一项,需要改变对应的生成的key,当然也提供了默认的生成规则:</p>
+<blockquote>
+<p>默认的键值生成函数,即(item: Object, index: number) &#x3D;&gt; { return index + ‘__’ + JSON.stringify(item); }。</p>
+</blockquote>
+<p>一般情况下, 默认的生成函数就够用了。</p>
+<p>但我还是遇到了坑,这里先放结论:<strong>key一旦生成了,再去修改item的属性(假如item是个字面量对象),这个key也不会更新</strong>。</p>
+<p>这就会遇到一些比较恶心的问题:当我们想要单独刷新某一项时,需要自已定义键值函数,单独改变这一项参与生成键值函数变量的值,比如自定义的键值生成函数<code>(item: Object, index: number) =&gt; &#123; return index + &#39;__&#39; + item.id +&#39;__&#39; +item.updateTime  ; &#125;</code>,并且这里的item必须是被<code>@Observed</code>修饰的class,并且每一个子组件都必须是自定义组件,并且组件内部的数据(也就是这个 item 类型的变量)需要使用<code>@ObjectLink</code>修饰。<br>这是因为@State只能观察到简单的数据类型数组数据源变化,对于自定义类,嵌套类,是观察不到的,需要使用<code>@Observed</code>和<code>@ObjectLink</code>来实现这种深度观察。</p>
+<p>关于这两个装饰器可以看这里 <a target="_blank" rel="noopener" href="https://developer.huawei.com/consumer/cn/doc/harmonyos-guides-V5/arkts-observed-and-objectlink-V5">@Observed装饰器和@ObjectLink装饰器：嵌套类对象属性变化</a></p>
+<p>举个例子<br>先定义一个普通的数据类</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">ForeachModel</span>&#123;<br>  <span class="hljs-attr">name</span>:<span class="hljs-built_in">string</span>=<span class="hljs-string">&#x27;&#x27;</span><br>  <span class="hljs-attr">defaultSelect</span>: <span class="hljs-built_in">boolean</span> = <span class="hljs-literal">false</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>页面也很简单,顶部三个按钮操作数据,下面就是一个ForEach循环渲染的列表;自定义的键值生成函数就是index和属性name、属性defaultSelect字符串连接。<br>列表内容也很简单,一个展示<code>name</code>属性的<code>Text</code>组件,一个展示<code>defaultSelect</code>属性的<code>Checkbox</code>组件</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-meta">@Entry</span><br><span class="hljs-meta">@Component</span><br>struct <span class="hljs-title class_">ForeachPage</span> &#123;<br>  <span class="hljs-meta">@State</span> <span class="hljs-attr">foreachModelList</span>: <span class="hljs-title class_">ForeachModel</span>[] = []<br><br>  <span class="hljs-title function_">aboutToAppear</span>(): <span class="hljs-built_in">void</span> &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">initData</span>()<br>  &#125;<br><br>  <span class="hljs-title function_">initData</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">foreachModelList</span> = []<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">5</span>; i++) &#123;<br>      <span class="hljs-keyword">let</span> <span class="hljs-attr">model</span>: <span class="hljs-title class_">ForeachModel</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ForeachModel</span>()<br>      model.<span class="hljs-property">name</span> = <span class="hljs-string">`第 <span class="hljs-subst">$&#123;i&#125;</span> 项`</span><br>      <span class="hljs-keyword">if</span> (i == <span class="hljs-number">1</span>) &#123;<br>        model.<span class="hljs-property">defaultSelect</span> = <span class="hljs-literal">true</span><br>      &#125; <span class="hljs-keyword">else</span> &#123;<br>        model.<span class="hljs-property">defaultSelect</span> = <span class="hljs-literal">false</span><br>      &#125;<br>      <span class="hljs-variable language_">this</span>.<span class="hljs-property">foreachModelList</span>.<span class="hljs-title function_">push</span>(model)<br>    &#125;<br>  &#125;<br><br>  <span class="hljs-title function_">build</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-title class_">Column</span>() &#123;<br>     <span class="hljs-comment">//顶部的三个操作函数</span><br>      <span class="hljs-title class_">Row</span>() &#123;<br>        <span class="hljs-title class_">Button</span>(<span class="hljs-string">&#x27;重新赋值&#x27;</span>).<span class="hljs-title function_">onClick</span>(<span class="hljs-function">(<span class="hljs-params">_</span>) =&gt;</span> &#123;<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">initData</span>()<br>        &#125;)<br>        <span class="hljs-title class_">Button</span>(<span class="hljs-string">&#x27;改变最后一项的值&#x27;</span>).<span class="hljs-title function_">onClick</span>(<span class="hljs-function">(<span class="hljs-params">_</span>) =&gt;</span> &#123;<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">foreachModelList</span>[<span class="hljs-variable language_">this</span>.<span class="hljs-property">foreachModelList</span>.<span class="hljs-property">length</span>-<span class="hljs-number">1</span>].<span class="hljs-property">name</span> = <span class="hljs-string">&#x27;改变后的值&#x27;</span><br>        &#125;)<br>        <span class="hljs-title class_">Button</span>(<span class="hljs-string">&#x27;添加一项&#x27;</span>).<span class="hljs-title function_">onClick</span>(<span class="hljs-function">(<span class="hljs-params">_</span>) =&gt;</span> &#123;<br>          <span class="hljs-keyword">let</span> <span class="hljs-attr">model</span>: <span class="hljs-title class_">ForeachModel</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ForeachModel</span>()<br>          model.<span class="hljs-property">name</span> = <span class="hljs-string">`第 <span class="hljs-subst">$&#123;<span class="hljs-variable language_">this</span>.foreachModelList.length&#125;</span> 项`</span><br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">foreachModelList</span>.<span class="hljs-title function_">push</span>(model)<br>        &#125;)<br><br>      &#125;<br><br>      <span class="hljs-title class_">ForEach</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">foreachModelList</span>, <span class="hljs-function">(<span class="hljs-params">model: ForeachModel</span>) =&gt;</span> &#123;<br>        <br>        <span class="hljs-title class_">Row</span>() &#123;<br>          <span class="hljs-title class_">Text</span>(model.<span class="hljs-property">name</span>)<br>          <span class="hljs-title class_">Checkbox</span>().<span class="hljs-title function_">select</span>(model.<span class="hljs-property">defaultSelect</span>).<span class="hljs-title function_">onChange</span>(<span class="hljs-function">(<span class="hljs-params">checked: <span class="hljs-built_in">boolean</span></span>) =&gt;</span> &#123;<br>            model.<span class="hljs-property">defaultSelect</span> = checked<br>            hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>, <span class="hljs-string">&#x27;ForeachPage&#x27;</span>, <span class="hljs-string">`checked <span class="hljs-subst">$&#123;<span class="hljs-built_in">JSON</span>.stringify(model.name)&#125;</span>`</span>)<br><br>          &#125;)<br>        &#125;<br>      &#125;, <span class="hljs-function">(<span class="hljs-params">item: ForeachModel, index: <span class="hljs-built_in">number</span></span>) =&gt;</span> &#123;<br>        <span class="hljs-keyword">let</span> key = index + <span class="hljs-string">&#x27;__&#x27;</span> + item.<span class="hljs-property">name</span> +<span class="hljs-string">&#x27;__&#x27;</span>+item.<span class="hljs-property">defaultSelect</span>;<br>        <span class="hljs-keyword">return</span> key<br>      &#125;)<br><br>    &#125;<br>    .<span class="hljs-title function_">height</span>(<span class="hljs-string">&#x27;100%&#x27;</span>)<br>    .<span class="hljs-title function_">width</span>(<span class="hljs-string">&#x27;100%&#x27;</span>)<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><img src="/image/HarmonyOS/foreach_render_a.gif" srcset="/img/loading.gif" lazyload alt="ForEach循环渲染_a"><br>gif图中有几个现象:</p>
+<ol>
+<li>当点击<code>添加一项</code>的时候,页面可以刷新,因为<code>@State</code>能观察到数组长度的变化从而刷新页面。</li>
+<li>当<code>添加一项</code>后,点击<code>重新赋值</code>,页面可以刷新,因为数组长度发生了变化,而<code>@State</code>能观察到数组长度的变化从而刷新页面。</li>
+<li>当点击<code>改变最后一项的值</code>时,页面并没有刷新,因为<code>@State</code>观察不到对象内部属性变化</li>
+<li>先点击<code>改变最后一项的值</code>,再点击<code>添加一项</code>时,会发现最后一项内容发生了变化,并且新增了一项。因为数组长度发生变化,页面刷新。刷新时发现ForEach子组件的key发生了变化,重新渲染。</li>
+<li>当点击某项的选择框,改变选中状态后,不管是点击修<code>改变最后一项的值</code>,还是<code>添加一项</code>、<code>重新赋值</code>都不会刷新其选中状态。</li>
+</ol>
+<p>对于第三项,我们只需要使用<code>@Observed</code>和<code>@ObjectLink</code>就可以解决:<br>修改后:</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-meta">@Component</span><br>struct <span class="hljs-title class_">SimpleView</span>&#123;<br>  <span class="hljs-meta">@ObjectLink</span> <span class="hljs-attr">model</span>:<span class="hljs-title class_">ForeachModel</span><br>  <span class="hljs-title function_">build</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-title class_">Row</span>() &#123;<br>      <span class="hljs-title class_">Text</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">model</span>.<span class="hljs-property">name</span>)<br>      <span class="hljs-title class_">Checkbox</span>().<span class="hljs-title function_">select</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">model</span>.<span class="hljs-property">defaultSelect</span>).<span class="hljs-title function_">onChange</span>(<span class="hljs-function">(<span class="hljs-params">checked: <span class="hljs-built_in">boolean</span></span>) =&gt;</span> &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">model</span>.<span class="hljs-property">defaultSelect</span> = checked<br>        hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>, <span class="hljs-string">&#x27;ForeachPage&#x27;</span>, <span class="hljs-string">`checked <span class="hljs-subst">$&#123;<span class="hljs-built_in">JSON</span>.stringify(<span class="hljs-variable language_">this</span>.model.name)&#125;</span>`</span>)<br>      &#125;)<br>    &#125;<br>  &#125;<br>&#125;<br><br><span class="hljs-meta">@Observed</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">ForeachModel</span> &#123;<br>  <span class="hljs-attr">name</span>: <span class="hljs-built_in">string</span> = <span class="hljs-string">&#x27;&#x27;</span><br>  <span class="hljs-attr">defaultSelect</span>: <span class="hljs-built_in">boolean</span> = <span class="hljs-literal">false</span><br>&#125;<br><span class="hljs-comment">//循环渲染</span><br><span class="hljs-title class_">ForEach</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">foreachModelList</span>, <span class="hljs-function">(<span class="hljs-params">model: ForeachModel</span>) =&gt;</span> &#123;<br>    <span class="hljs-title class_">SimpleView</span>(&#123;<span class="hljs-attr">model</span>:model&#125;)<br>&#125;, <span class="hljs-function">(<span class="hljs-params">item: ForeachModel, index: <span class="hljs-built_in">number</span></span>) =&gt;</span> &#123;<br>    <span class="hljs-keyword">let</span> key = index + <span class="hljs-string">&#x27;__&#x27;</span> + item.<span class="hljs-property">name</span> +<span class="hljs-string">&#x27;__&#x27;</span>+item.<span class="hljs-property">defaultSelect</span>;<br>    <span class="hljs-keyword">return</span> key<br>&#125;)<br></code></pre></td></tr></table></figure>
+<p>修改成这种形式之后,点击<code>改变最后一项的值</code>后,发现内容页面刷新了,但需要注意的是,这是因为<code>@ObjectLink</code>观察到了类属性的变化,从而刷新了页面,但ForEach子组件的key并没有发生变化,我们可以通过在键值对生成函数中添加日志来验证。<br>在上面修改后的代码中,点击<code>改变最后一项的值</code>后,再次点击<code>重新赋值</code>,页面并没有刷新为初始状态。原因上面也解释了,因为点击<code>改变最后一项的值</code>后,key并没有发生变化,再次点击<code>重新赋值</code>后,通过函数生成的key和之前一致,所以页面也不会刷新。</p>
+<p>在上面修改后的代码中,上述第五条依然成立：因为点击选择框之后,虽然UI发生了变化,但这种变化是因为点击行为导致的,并不是因为key的改变,也不是因为属性的改变。因此,不管是点击修<code>改变最后一项的值</code>,还是<code>添加一项</code>、<code>重新赋值</code>都不会刷新其选中状态。</p>
+<h3 id="奇怪现象"><a href="#奇怪现象" class="headerlink" title="奇怪现象"></a>奇怪现象</h3><p>这里还有一个奇怪的现象，也可能是 SDK 的 bug 也不一定：<br>我们在页面<code>aboutToAppear</code>这个生命周期函数中调用了一次<code>this.initData()</code>,页面展示出来之后，点击<code>改变最后一项的值</code>表现是正常的。<br>但是如果页面在页面展示出来之后，再点击一次<code>重新赋值</code>，这时候 子组件是重新渲染了一遍，因为看到键值生成函数中有日志打印。但这时候点击<code>改变最后一项的值</code>，页面是没有刷新的。怀疑是因为key 没有改变(重新赋值是加载了同样的数据)，但实际的对象地址是变化了的，但不知道为啥<code>@ObjectLink</code>没有观察到。<br>当我们点击其他按钮，比如增加一项其他操作之后，再点击<code>改变最后一项的值</code>是有刷新的，这时候再点击<code>重新赋值</code>，再点击<code>改变最后一项的值</code>页面是有刷新的。 </p>
+<p>也就是说，当我们两次或者多次对数组赋值，并且多次赋值使得键值对生成函数生成的 key 是一致的话，<code>@ObjectLink</code>和<code>@Observed</code>这两个装饰器会失效。<br>真让人摸不着头脑</p>
+<hr>
+<p>PS：如何知道<code>@ObjectLink</code>有没有生效。可以加个<code>@Watch</code>哇，比如这样：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-meta">@Watch</span>(<span class="hljs-string">&#x27;onForeachModelChange&#x27;</span>)  <span class="hljs-meta">@ObjectLink</span> <span class="hljs-attr">model</span>: <span class="hljs-title class_">ForeachModel</span><br><span class="hljs-title function_">onForeachModelChange</span>(<span class="hljs-params"></span>)&#123;<br>  hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>, <span class="hljs-string">&#x27;ForeachPage&#x27;</span>, <span class="hljs-string">`onForeachModelChange`</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<p>有了解这个奇怪现象细节的朋友可以在评论区留言，或者私信我，感谢您指点迷津</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/HarmonyOS/" class="print-no-link">#HarmonyOS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>鸿蒙--那些年我们踩过的坑(上)</div>
+      <div>https://blog.huangyuanlove.com/2024/11/09/鸿蒙-那些年我们踩过的坑-上/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年11月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/11/11/%E9%B8%BF%E8%92%99-%E9%82%A3%E4%BA%9B%E5%B9%B4%E6%88%91%E4%BB%AC%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91-%E4%B8%8B/" title="鸿蒙-那些年我们踩过的坑-下">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">鸿蒙-那些年我们踩过的坑-下</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/11/06/%E9%B8%BF%E8%92%99-%E5%A6%82%E4%BD%95%E5%8F%91%E5%B8%83%E4%B8%80%E4%B8%AA%E4%B8%89%E6%96%B9%E5%BA%93/" title="鸿蒙--如何发布一个三方库">
+                        <span class="hidden-mobile">鸿蒙--如何发布一个三方库</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'b93d1ee04cbb5e9bad3a9f18cb273671'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

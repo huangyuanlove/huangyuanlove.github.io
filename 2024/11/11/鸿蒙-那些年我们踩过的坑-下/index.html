@@ -1,0 +1,691 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="HarmonyOS,鸿蒙应用开发,plain (literal) objects,class (constructor) objects,CustomDialogController">
+  
+    <meta name="description" content="书接上回，在上一篇文章中介绍了 ForEach循环渲染和自绘制输入框遇到的坑，这里聊一下 字面量对象和类对象 以及 自定义 Dialog 的坑。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="鸿蒙-那些年我们踩过的坑-下">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2024/11/11/%E9%B8%BF%E8%92%99-%E9%82%A3%E4%BA%9B%E5%B9%B4%E6%88%91%E4%BB%AC%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91-%E4%B8%8B/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="书接上回，在上一篇文章中介绍了 ForEach循环渲染和自绘制输入框遇到的坑，这里聊一下 字面量对象和类对象 以及 自定义 Dialog 的坑。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/HarmonyOS/%E5%AD%97%E9%9D%A2%E9%87%8F%E8%AF%AD%E6%B3%95%E5%88%9B%E5%BB%BA%E5%90%AB%E6%9C%89%E6%96%B9%E6%B3%95%E7%9A%84%E5%AF%B9%E8%B1%A11.png">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/HarmonyOS/%E5%AD%97%E9%9D%A2%E9%87%8F%E8%AF%AD%E6%B3%95%E5%88%9B%E5%BB%BA%E5%90%AB%E6%9C%89%E6%96%B9%E6%B3%95%E7%9A%84%E5%AF%B9%E8%B1%A12.png">
+<meta property="article:published_time" content="2024-11-11T07:33:33.000Z">
+<meta property="article:modified_time" content="2024-11-14T02:51:56.267Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="HarmonyOS">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/HarmonyOS/%E5%AD%97%E9%9D%A2%E9%87%8F%E8%AF%AD%E6%B3%95%E5%88%9B%E5%BB%BA%E5%90%AB%E6%9C%89%E6%96%B9%E6%B3%95%E7%9A%84%E5%AF%B9%E8%B1%A11.png">
+  
+  
+  
+  <title>鸿蒙-那些年我们踩过的坑-下 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="鸿蒙-那些年我们踩过的坑-下"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-11-11 15:33" pubdate>
+          2024年11月11日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          11k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">鸿蒙-那些年我们踩过的坑-下</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>书接上回，在上一篇文章中介绍了 ForEach循环渲染和自绘制输入框遇到的坑，这里聊一下 字面量对象和类对象 以及 自定义 Dialog 的坑。</p>
+<span id="more"></span>
+
+
+<p>先从简单的Dialog 开始，这里没有很深入的讲解，只是一些注意点以及官方推荐用法</p>
+<h2 id="CustomDialogController"><a href="#CustomDialogController" class="headerlink" title="CustomDialogController"></a>CustomDialogController</h2><p>先说结论：在使用<code>CustomDialog</code>和<code>CustomDialogController</code>做自定义弹窗时，只能作为被<code>@Component</code>修饰的自定义组件的成员变量，甚至可以写在组件的点击事件中，但不能写到单纯的方法中。因为它需要 UIContext 上下文</p>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p>正常情况：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-meta">@Entry</span><br><span class="hljs-meta">@Component</span><br>struct <span class="hljs-title class_">DialogControllerPage</span> &#123;<br>  <span class="hljs-meta">@State</span> <span class="hljs-attr">message</span>: <span class="hljs-built_in">string</span> = <span class="hljs-string">&#x27;Hello World&#x27;</span>;<br>  <span class="hljs-attr">dialogID</span>: <span class="hljs-built_in">number</span> = <span class="hljs-number">0</span><br>  <span class="hljs-attr">dialogController</span>: <span class="hljs-title class_">CustomDialogController</span> | <span class="hljs-literal">null</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CustomDialogController</span>(&#123;<br>    <span class="hljs-attr">builder</span>: <span class="hljs-title class_">CustomDialogExample</span>(&#123;<br>      <span class="hljs-attr">cancel</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>      &#125;,<br>      <span class="hljs-attr">confirm</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>      &#125;,<br>    &#125;),<br>  &#125;)<br>  <span class="hljs-title function_">build</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-title class_">Column</span>() &#123;<br>      <span class="hljs-title class_">Text</span>(<span class="hljs-string">&#x27;在 Click 事件中定义&#x27;</span>).<span class="hljs-title function_">margin</span>(<span class="hljs-number">10</span>)<br>        .<span class="hljs-title function_">fontSize</span>(<span class="hljs-number">30</span>)<br>        .<span class="hljs-title function_">fontWeight</span>(<span class="hljs-title class_">FontWeight</span>.<span class="hljs-property">Bold</span>)<br>        .<span class="hljs-title function_">onClick</span>(<span class="hljs-function">(<span class="hljs-params">_</span>) =&gt;</span> &#123;<br>          <span class="hljs-keyword">let</span> <span class="hljs-attr">dialogController</span>: <span class="hljs-title class_">CustomDialogController</span> | <span class="hljs-literal">null</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CustomDialogController</span>(&#123;<br>            <span class="hljs-attr">builder</span>: <span class="hljs-title class_">CustomDialogExample</span>(&#123;<br>              <span class="hljs-attr">cancel</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>              &#125;,<br>              <span class="hljs-attr">confirm</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>              &#125;,<br>            &#125;),<br>          &#125;)<br>          dialogController.<span class="hljs-title function_">open</span>()<br>        &#125;)<br>      <br>      <span class="hljs-comment">//在自定义组件中定义</span><br>      <span class="hljs-title class_">CustomDialogView</span>()<br><br>      <span class="hljs-title class_">Text</span>(<span class="hljs-string">&#x27;在页面中定义&#x27;</span>).<span class="hljs-title function_">margin</span>(<span class="hljs-number">10</span>)<br>        .<span class="hljs-title function_">fontSize</span>(<span class="hljs-number">30</span>)<br>        .<span class="hljs-title function_">fontWeight</span>(<span class="hljs-title class_">FontWeight</span>.<span class="hljs-property">Bold</span>)<br>        .<span class="hljs-title function_">onClick</span>(<span class="hljs-function">(<span class="hljs-params">_</span>) =&gt;</span> &#123;<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">dialogController</span>?.<span class="hljs-title function_">open</span>()<br>        &#125;)<br>    &#125;<br>  &#125;<br>&#125;<br><span class="hljs-meta">@Component</span><br>struct <span class="hljs-title class_">CustomDialogView</span>&#123;<br>  <span class="hljs-attr">dialogController</span>: <span class="hljs-title class_">CustomDialogController</span> | <span class="hljs-literal">null</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CustomDialogController</span>(&#123;<br>    <span class="hljs-attr">builder</span>: <span class="hljs-title class_">CustomDialogExample</span>(&#123;<br>      <span class="hljs-attr">cancel</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>      &#125;,<br>      <span class="hljs-attr">confirm</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>      &#125;,<br>    &#125;),<br>  &#125;)<br>  <span class="hljs-title function_">build</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-title class_">Text</span>(<span class="hljs-string">&#x27;在自定义组件中定义&#x27;</span>).<span class="hljs-title function_">margin</span>(<span class="hljs-number">10</span>)<br>      .<span class="hljs-title function_">fontSize</span>(<span class="hljs-number">30</span>)<br>      .<span class="hljs-title function_">fontWeight</span>(<span class="hljs-title class_">FontWeight</span>.<span class="hljs-property">Bold</span>)<br>      .<span class="hljs-title function_">onClick</span>(<span class="hljs-function">(<span class="hljs-params">_</span>) =&gt;</span> &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">dialogController</span>?.<span class="hljs-title function_">open</span>()<br>      &#125;)<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>上面的这三种情况都是可以正常弹出弹窗的，但当我们把<code>CustomDialogController</code>写在普通方法中时</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">showDialog</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">let</span> <span class="hljs-attr">dialogController</span>: <span class="hljs-title class_">CustomDialogController</span> | <span class="hljs-literal">null</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CustomDialogController</span>(&#123;<br>    <span class="hljs-attr">builder</span>: <span class="hljs-title class_">CustomDialogExample</span>(&#123;<br>      <span class="hljs-attr">cancel</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>      &#125;,<br>      <span class="hljs-attr">confirm</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>      &#125;,<br>    &#125;),<br>  &#125;)<br>  dialogController.<span class="hljs-title function_">open</span>()<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<p>这里会报一个错误，应用会崩溃，报错信息挺长的，这里截取了一部分</p>
+<blockquote>
+<p>Pid:25224<br>Uid:20020185<br>Process name:com.huangyuanlove.arkui_demo<br>Process life time:47s<br>Reason:Signal:SIGSEGV(SEGV_MAPERR)@0x00000000000008b0  probably caused by NULL pointer dereference<br>Fault thread info:<br>Tid:25224, Name:love.arkui_demo<br>#00 pc 00000000029cfd70 &#x2F;system&#x2F;lib64&#x2F;platformsdk&#x2F;libace_compatible.z.so(OHOS::Ace::Framework::JSCustomDialogController::JsOpenDialog(OHOS::Ace::Framework::JsiCallbackInfo const&amp;)+8)(1a64ce74d582cc151101042697df670d)<br>#01 pc 00000000009a8cb0 &#x2F;system&#x2F;lib64&#x2F;platformsdk&#x2F;libace_compatible.z.so(panda::Local<a href="panda::JSValueRef">panda::JSValueRef</a> OHOS::Ace::Framework::JsiClass<a href="OHOS::Ace::Framework::JSCustomDialogController">OHOS::Ace::Framework::JSCustomDialogController</a>::InternalJSMemberFunctionCallback<a href="OHOS::Ace::Framework::JSCustomDialogController">OHOS::Ace::Framework::JSCustomDialogController</a>(panda::JsiRuntimeCallInfo*)+2148)(1a64ce74d582cc151101042697df670d)<br>#02 pc 00000000004dc50c &#x2F;system&#x2F;lib64&#x2F;platformsdk&#x2F;libark_jsruntime.so(panda::Callback::RegisterCallback(panda::ecmascript::EcmaRuntimeCallInfo*)+456)(3499a0e0c3b8b8dc50b1a4589295965e)</p>
+</blockquote>
+<p>我想这可能就是为啥需要在<code>@CustomDialog</code>修饰的 struct 中声明一个<code>CustomDialogController</code>变量的原因。</p>
+<h3 id="官方推荐方案"><a href="#官方推荐方案" class="headerlink" title="官方推荐方案"></a>官方推荐方案</h3><p>在官方文档中有一个 <a target="_blank" rel="noopener" href="https://developer.huawei.com/consumer/cn/doc/harmonyos-guides-V5/arkts-uicontext-custom-dialog-V5">不依赖UI组件的全局自定义弹窗 (推荐)</a>。虽然说是<strong>不依赖UI组件</strong>，但实际上还是使用的<code>UIContext</code>这个上下文获取到<code>promptAction</code>，调用<code>promptAction.openCustomDialog</code>方法来实现的弹窗。<br>吐槽归吐槽，先看下用法，看完了再评价也不迟。<br>这里有两种方案，一种是传入<code>ComponentContent</code>对象，这个方案在 <a target="_blank" rel="noopener" href="https://developer.huawei.com/consumer/cn/doc/harmonyos-guides-V5/arkts-uicontext-custom-dialog-V5">不依赖UI组件的全局自定义弹窗 (推荐)</a>这里有详细介绍<br>另外一种方案是传入<code> promptAction.CustomDialogOptions</code>,这种方案是在<a target="_blank" rel="noopener" href="https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/js-apis-promptaction-V5">@ohos.promptAction (弹窗)</a> API 参考中介绍的。</p>
+<h4 id="传入ComponentContent对象"><a href="#传入ComponentContent对象" class="headerlink" title="传入ComponentContent对象"></a>传入<code>ComponentContent</code>对象</h4><p>创建<code>ComponentContent</code>对象需要一个<code>UIContext</code>对象，一个<code>wrapBuilder</code>以及<code>wrapBuilder</code>中需要的参数对象。</p>
+<ul>
+<li>UIContext对象可以在页面中通过<code>this.getUIContext()</code>获取。  </li>
+<li><code>wrapBuilder</code>需要一个全局被@Build修饰的方法。</li>
+</ul>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">function</span>  <span class="hljs-title function_">glaobleConfirmOrCancelDialogBuilder1</span>(<span class="hljs-params">dialogData: DialogData</span>) &#123;<br>  <span class="hljs-title class_">Column</span>() &#123;<br>    <span class="hljs-comment">//这里写弹窗中的布局</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>然后我们可以在某个组件的点击事件中展示弹窗</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript">.<span class="hljs-title function_">onClick</span>(<span class="hljs-function">(<span class="hljs-params">_</span>) =&gt;</span> &#123;<br>  <span class="hljs-keyword">let</span> <span class="hljs-attr">dialogData</span>: <span class="hljs-title class_">DialogData</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DialogData</span>()<br>  dialogData.<span class="hljs-property">title</span> = <span class="hljs-string">&#x27;推荐方案 一&#x27;</span><br>  dialogData.<span class="hljs-property">message</span> = <span class="hljs-string">&#x27;使用  promptAction.openCustomDialog&#x27;</span><br><br><br>  <span class="hljs-keyword">let</span> uiContext = <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">getUIContext</span>();<br>  <span class="hljs-keyword">let</span> promptAction = uiContext.<span class="hljs-title function_">getPromptAction</span>();<br><br>  <span class="hljs-keyword">let</span> contentNode = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ComponentContent</span>(uiContext, <span class="hljs-title function_">wrapBuilder</span>(glaobleConfirmOrCancelDialogBuilder1), dialogData);<br>  dialogData.<span class="hljs-property">onCancel</span> = <span class="hljs-function">() =&gt;</span> &#123;<br>    promptAction.<span class="hljs-title function_">closeCustomDialog</span>(contentNode)<br><br>  &#125;<br>  dialogData.<span class="hljs-property">onConfirm</span> = <span class="hljs-function">() =&gt;</span> &#123;<br>    promptAction.<span class="hljs-title function_">closeCustomDialog</span>(contentNode)<br>  &#125;<br>  <span class="hljs-keyword">try</span> &#123;<br>    promptAction.<span class="hljs-title function_">openCustomDialog</span>(contentNode);<br>  &#125; <span class="hljs-keyword">catch</span> (error) &#123;<br>    <span class="hljs-keyword">let</span> message = (error <span class="hljs-keyword">as</span> <span class="hljs-title class_">BusinessError</span>).<span class="hljs-property">message</span>;<br>    <span class="hljs-keyword">let</span> code = (error <span class="hljs-keyword">as</span> <span class="hljs-title class_">BusinessError</span>).<span class="hljs-property">code</span>;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">`OpenCustomDialog args error code is <span class="hljs-subst">$&#123;code&#125;</span>, message is <span class="hljs-subst">$&#123;message&#125;</span>`</span>);<br>  &#125;;<br>&#125;)<br></code></pre></td></tr></table></figure>
+<p>当然，在调用<code>openCustomDialog</code>还有第二个可选参数<code>promptAction.BaseDialogOptions</code>,相应的介绍在<a target="_blank" rel="noopener" href="https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/js-apis-promptaction-V5#basedialogoptions11">这里</a></p>
+<h4 id="传入CustomDialogOptions"><a href="#传入CustomDialogOptions" class="headerlink" title="传入CustomDialogOptions"></a>传入<code>CustomDialogOptions</code></h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript">.<span class="hljs-title function_">onClick</span>(<span class="hljs-function">(<span class="hljs-params">_</span>) =&gt;</span> &#123;<br>  <span class="hljs-keyword">let</span> <span class="hljs-attr">dialogData</span>: <span class="hljs-title class_">DialogData1</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DialogData1</span>()<br>  dialogData.<span class="hljs-property">title</span> = <span class="hljs-string">&#x27;推荐方案二&#x27;</span><br>  dialogData.<span class="hljs-property">message</span> = <span class="hljs-string">&#x27;使用  promptAction.openCustomDialog&#x27;</span><br>  dialogData.<span class="hljs-property">onCancel</span> = <span class="hljs-function">() =&gt;</span> &#123;<br>    promptAction.<span class="hljs-title function_">closeCustomDialog</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">dialogID</span>)<br>  &#125;<br>  dialogData.<span class="hljs-property">onConfirm</span> = <span class="hljs-function">() =&gt;</span> &#123;<br>    promptAction.<span class="hljs-title function_">closeCustomDialog</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">dialogID</span>)<br>  &#125;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">getUIContext</span>().<span class="hljs-title function_">getPromptAction</span>().<span class="hljs-title function_">openCustomDialog</span>(&#123;<br>    <span class="hljs-attr">builder</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>      <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">confirmOrCancelDialogBuilder1</span>(dialogData)<br>    &#125;,<br><br>  &#125;).<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">dialogID: <span class="hljs-built_in">number</span></span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">dialogID</span> = dialogID<br>  &#125;)<br>&#125;)<br></code></pre></td></tr></table></figure>
+<p>这里展示弹窗的时候会返回一个dialogID，我们在关闭弹窗的时候需要传入这个id。</p>
+<h2 id="字面量对象与类对象"><a href="#字面量对象与类对象" class="headerlink" title="字面量对象与类对象"></a>字面量对象与类对象</h2><p>对应的英文是plain (literal) objects,class (constructor) objects，但是在不知道该怎么优雅的翻译，就先这么叫吧。<br>在 ArkTS 中，创建的每个字面量对象都必须有对应的类型，比如</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">let</span> tmpUser = &#123;<br>  <span class="hljs-attr">name</span>:<span class="hljs-string">&quot;123&quot;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>直接这么写会报错，提示：<strong>Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) <ArkTSCheck></strong><br>也就是说我们必须要先定义一个<code>class</code> 或者 <code>interface</code>,但是这里需要注意一下，我们直接使用字面量语法创建对应的<code>class</code>对象时，要求该<code>class</code>对象中不能声明方法：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">interface</span> <span class="hljs-title class_">UserInterface</span> &#123;<br>  <span class="hljs-attr">name</span>: <span class="hljs-built_in">string</span>;<br>&#125;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">UserWithOutMethod</span>&#123;<br>  <span class="hljs-attr">name</span>:<span class="hljs-built_in">string</span> =<span class="hljs-string">&#x27;&#x27;</span><br>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">UserWithMethod</span>&#123;<br>  <span class="hljs-attr">name</span>:<span class="hljs-built_in">string</span> =<span class="hljs-string">&#x27;&#x27;</span><br>  <span class="hljs-title function_">getInfo</span>(<span class="hljs-params"></span>)&#123;<br>    hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>,<span class="hljs-string">&#x27;UserWithMethod&#x27;</span>,<span class="hljs-string">&#x27;getInfo&#x27;</span>)<br>  &#125;<br>&#125;<br><br><br><span class="hljs-keyword">let</span> <span class="hljs-attr">userInterface</span>: <span class="hljs-title class_">UserInterface</span> = &#123;<br>  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;123&quot;</span><br>&#125;<br><span class="hljs-keyword">let</span> <span class="hljs-attr">userWithOutMethod</span>: <span class="hljs-title class_">UserWithOutMethod</span> = &#123;<br>  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;123&quot;</span><br>&#125;<br><br><span class="hljs-keyword">let</span> <span class="hljs-attr">userWithMethod</span>: <span class="hljs-title class_">UserWithMethod</span> = &#123;<br>  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;123&quot;</span>,<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>userInterface</code> 和 <code>userWithOutMethod</code>都是正常的，但<code>userWithMethod</code>会报错，提示<code>Property &#39;getInfo&#39; is missing in type &#39;&#123; name: string; &#125;&#39; but required in type &#39;UserWithMethod&#39;</code><br><img src="/image/HarmonyOS/%E5%AD%97%E9%9D%A2%E9%87%8F%E8%AF%AD%E6%B3%95%E5%88%9B%E5%BB%BA%E5%90%AB%E6%9C%89%E6%96%B9%E6%B3%95%E7%9A%84%E5%AF%B9%E8%B1%A11.png" srcset="/img/loading.gif" lazyload alt="字面量语法创建含有方法的对象错误信息"><br>即使我们把这个方法补上，也是会提示错误：<code>Object literal must correspond to some explicitly declared class or interface</code><br><img src="/image/HarmonyOS/%E5%AD%97%E9%9D%A2%E9%87%8F%E8%AF%AD%E6%B3%95%E5%88%9B%E5%BB%BA%E5%90%AB%E6%9C%89%E6%96%B9%E6%B3%95%E7%9A%84%E5%AF%B9%E8%B1%A12.png" srcset="/img/loading.gif" lazyload alt="字面量语法创建含有方法的对象错误信息">  </p>
+<p>不过话又说回来，为啥要用字面量的语法创建类对象嘞？用<code>new</code>关键字它不香么？</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">let</span> userWithMethod = <span class="hljs-keyword">new</span> <span class="hljs-title class_">UserWithMethod</span>()<br></code></pre></td></tr></table></figure>
+<h4 id="小坑"><a href="#小坑" class="headerlink" title="小坑"></a>小坑</h4><p>不过对于上面包含方法的类，也有其他方案，比如通过<code>as</code>关键字强转</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">let</span> userStr =  <span class="hljs-string">`&#123;&quot;name&quot;:&quot;123&quot;&#125;`</span><br><span class="hljs-keyword">let</span> userWithMethodJSON = <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">parse</span>(userStr) <span class="hljs-keyword">as</span>  <span class="hljs-title class_">UserWithMethod</span><br>hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>,<span class="hljs-string">&#x27;UseASPage&#x27;</span>,userWithMethodJSON.<span class="hljs-property">name</span>)<br></code></pre></td></tr></table></figure>
+<p>这样的话，我们是可以获取到对象的<code>name</code>属性，也能正常使用，<br>但是，不能调用这个对象的<code>getInfo()</code>方法，会崩溃，报错提示<code>Error message:is not callable</code>.<br>这个也挺好理解：</p>
+<blockquote>
+<p>使用<code>JSON.parse(userStr) as  UserWithMethod</code>这种方式得到的对象实际上是字面量对象，这个对象中并没有<code>getInfo()</code>方法，它的原型链上也没有这个方法，所以就会报错。 </p>
+</blockquote>
+<p>为啥 IDE 不给提示嘞？那就不知道了<br>当然，我们也有方法将字面量对象转为类对象，使得我们可以调用其方法：使用<code>&quot;class-transformer&quot;: &quot;^0.5.1&quot;</code> 这个三方库，github 地址(<a target="_blank" rel="noopener" href="https://github.com/typestack/class-transformer)[https://github.com/typestack/class-transformer],%E4%BD%86%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E6%98%AF%EF%BC%8C%E8%BF%99%E4%B8%AA%E5%BA%93%E4%B8%8D%E6%98%AF%E4%B8%80%E4%B8%AA%E6%A0%87%E5%87%86%E7%9A%84ohpm%E5%BA%93%EF%BC%8C%E8%99%BD%E7%84%B6%E5%AE%83%E5%8F%AF%E4%BB%A5%E5%9C%A8">https://github.com/typestack/class-transformer)[https://github.com/typestack/class-transformer],但要注意的是，这个库不是一个标准的ohpm库，虽然它可以在</a> ArkTS 里面使用。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">import</span> &#123; plainToClass &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;class-transformer&#x27;</span>;<br><span class="hljs-keyword">let</span> userStr = <span class="hljs-string">`&#123;&quot;name&quot;:&quot;123&quot;&#125;`</span><br><span class="hljs-keyword">let</span> userWithMethodJSON = <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">parse</span>(userStr) <span class="hljs-keyword">as</span> <span class="hljs-title class_">UserWithMethod</span><br><span class="hljs-keyword">let</span> tmp = <span class="hljs-title function_">plainToClass</span>(<span class="hljs-title class_">UserWithMethod</span>, userWithMethodJSON)<br>tmp.<span class="hljs-title function_">getInfo</span>()<br></code></pre></td></tr></table></figure>
+<p>这样就正常了。</p>
+<h3 id="另外一个坑"><a href="#另外一个坑" class="headerlink" title="另外一个坑"></a>另外一个坑</h3><p>还记得上一篇中提到的状态管理装饰器 <code>@Observed装饰器和@ObjectLink装饰器：嵌套类对象属性变化</code>么？<br>这里还有一个小坑，使用<code>as强转</code>或者使用<code>plainToClass</code>方法创建的对象的属性发生变化时，是无法被<code>@ObjectLink装饰器</code>观察到的。<br>举个例子，我们有一个嵌套类，使用<code>@Observed</code>装饰</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-meta">@Observed</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">FirstLevel</span> &#123;<br>  <span class="hljs-attr">time</span>: <span class="hljs-built_in">number</span> = <span class="hljs-number">0</span><br>  <span class="hljs-attr">secondLevel</span>: <span class="hljs-title class_">SecondLevel</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">SecondLevel</span>()<br>&#125;<br><br><span class="hljs-meta">@Observed</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">SecondLevel</span> &#123;<br>  <span class="hljs-attr">name</span>: <span class="hljs-built_in">string</span> = <span class="hljs-string">&#x27;&#x27;</span><br>  <span class="hljs-attr">age</span>: <span class="hljs-built_in">number</span> = <span class="hljs-number">0</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>再定义几个赋值的方法</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-meta">@State</span> firstLevel?:<span class="hljs-title class_">FirstLevel</span> = <span class="hljs-literal">undefined</span><br> <span class="hljs-title function_">initWithNew</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">firstLevel</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">FirstLevel</span>()<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">firstLevel</span>.<span class="hljs-property">time</span> = systemDateTime.<span class="hljs-title function_">getTime</span>()<br>  <span class="hljs-keyword">let</span> <span class="hljs-attr">secondLevel</span>:<span class="hljs-title class_">SecondLevel</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">SecondLevel</span>()<br>  secondLevel.<span class="hljs-property">name</span> = <span class="hljs-string">&#x27;new SecondLevel&#x27;</span><br>  secondLevel.<span class="hljs-property">age</span> = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * <span class="hljs-number">100</span>)<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">firstLevel</span>.<span class="hljs-property">secondLevel</span> = secondLevel<br>&#125;<br><br><span class="hljs-title function_">initWithAs</span>(<span class="hljs-params"></span>) &#123;<br><br>  <span class="hljs-keyword">let</span> <span class="hljs-attr">secondLevel</span>:<span class="hljs-title class_">SecondLevel</span> = &#123;<br>    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;as SecondLevel&#x27;</span>,<br>    <span class="hljs-attr">age</span>: <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * <span class="hljs-number">100</span>)<br>  &#125;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">firstLevel</span> = &#123;<br>    <span class="hljs-attr">time</span>:systemDateTime.<span class="hljs-title function_">getTime</span>(),<br>    <span class="hljs-attr">secondLevel</span>:secondLevel<br>  &#125;<br>&#125;<br><span class="hljs-title function_">initWithPlainToText</span>(<span class="hljs-params"></span>)&#123;<br>  <span class="hljs-keyword">let</span> str = <span class="hljs-string">`&#123;&quot;time&quot;:<span class="hljs-subst">$&#123;systemDateTime.getTime()&#125;</span>,&quot;secondLevel&quot;:&#123;&quot;name&quot;:&quot;PlainToText<span class="hljs-subst">$&#123;<span class="hljs-built_in">Math</span>.floor(<span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">100</span>)&#125;</span>&quot;,&quot;age&quot;:<span class="hljs-subst">$&#123;<span class="hljs-built_in">Math</span>.floor(<span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">100</span>)&#125;</span>&#125;&#125;`</span><br>  <span class="hljs-keyword">let</span> <span class="hljs-attr">tmp</span>:<span class="hljs-title class_">FirstLevel</span> = <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">parse</span>(str) <span class="hljs-keyword">as</span> <span class="hljs-title class_">FirstLevel</span><br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">firstLevel</span> = <span class="hljs-title function_">plainToClass</span>(<span class="hljs-title class_">FirstLevel</span>,tmp)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>两个用于展示数据的自定义组件</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><br><span class="hljs-meta">@Component</span><br>struct  <span class="hljs-title class_">ShowFistLevel</span>&#123;<br>  <span class="hljs-meta">@Watch</span>(<span class="hljs-string">&#x27;onFirstLevelChange&#x27;</span>) <span class="hljs-meta">@ObjectLink</span> <span class="hljs-attr">firstLevel</span>:<span class="hljs-title class_">FirstLevel</span><br>  <span class="hljs-title function_">onFirstLevelChange</span>(<span class="hljs-params"></span>)&#123;<br>    hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>, <span class="hljs-string">&#x27;UseASPage&#x27;</span>, <span class="hljs-string">&#x27;onFirstLevelChange&#x27;</span>)<br>  &#125;<br>  <span class="hljs-title function_">build</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-title class_">Column</span>()&#123;<br>      <span class="hljs-title class_">Text</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">firstLevel</span>.<span class="hljs-property">time</span>.<span class="hljs-title function_">toString</span>())<br>      <span class="hljs-title class_">ShowSecondLevel</span>(&#123;<span class="hljs-attr">secondLevel</span>:<span class="hljs-variable language_">this</span>.<span class="hljs-property">firstLevel</span>.<span class="hljs-property">secondLevel</span>&#125;)<br>    &#125;.<span class="hljs-title function_">margin</span>(<span class="hljs-number">15</span>)<br>    .<span class="hljs-title function_">backgroundColor</span>(<span class="hljs-string">&quot;#e7e7e7e7&quot;</span>)<br>  &#125;<br>&#125;<br><br><span class="hljs-meta">@Component</span><br>struct  <span class="hljs-title class_">ShowSecondLevel</span>&#123;<br>  <span class="hljs-meta">@Watch</span>(<span class="hljs-string">&#x27;onSecondLevelChange&#x27;</span>) <span class="hljs-meta">@ObjectLink</span> <span class="hljs-attr">secondLevel</span>:<span class="hljs-title class_">SecondLevel</span><br>  <span class="hljs-title function_">onSecondLevelChange</span>(<span class="hljs-params"></span>)&#123;<br>    hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>, <span class="hljs-string">&#x27;UseASPage&#x27;</span>, <span class="hljs-string">&#x27;onSecondLevelChange&#x27;</span>)<br>  &#125;<br>  <span class="hljs-title function_">build</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-title class_">Column</span>()&#123;<br>      <span class="hljs-title class_">Text</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">secondLevel</span>.<span class="hljs-property">name</span>)<br>      <span class="hljs-title class_">Text</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">secondLevel</span>.<span class="hljs-property">age</span>.<span class="hljs-title function_">toString</span>())<br>    &#125;.<span class="hljs-title function_">margin</span>(<span class="hljs-number">15</span>)<br>    .<span class="hljs-title function_">backgroundColor</span>(<span class="hljs-string">&quot;#e7e7e7e7&quot;</span>)<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这里需要注意的是，渲染嵌套类的组件需要和类对象的层级相同，不然也不会刷新。<br>比如这里<code>FirstLevel</code>类中有<code>SecondLevel</code>类型属性，就需要写成上面这样：拆成两个组件，在<code>ShowFistLevel</code>组件中引用<code>ShowSecondLevel</code>,而不能这样写</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-meta">@Component</span><br>struct  <span class="hljs-title class_">ShowFistLevel</span>&#123;<br>  <span class="hljs-meta">@Watch</span>(<span class="hljs-string">&#x27;onFirstLevelChange&#x27;</span>) <span class="hljs-meta">@ObjectLink</span> <span class="hljs-attr">firstLevel</span>:<span class="hljs-title class_">FirstLevel</span><br>  <span class="hljs-title function_">onFirstLevelChange</span>(<span class="hljs-params"></span>)&#123;<br>    hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>, <span class="hljs-string">&#x27;UseASPage&#x27;</span>, <span class="hljs-string">&#x27;onFirstLevelChange&#x27;</span>)<br>  &#125;<br>  <span class="hljs-title function_">build</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-title class_">Column</span>()&#123;<br>      <span class="hljs-title class_">Text</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">firstLevel</span>.<span class="hljs-property">time</span>.<span class="hljs-title function_">toString</span>())<br>      <span class="hljs-comment">//这里</span><br>      <span class="hljs-title class_">Text</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">firstLevel</span>.<span class="hljs-property">secondLevel</span>.<span class="hljs-property">name</span>)<br>      <span class="hljs-title class_">Text</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">firstLevel</span>.<span class="hljs-property">secondLevel</span>.<span class="hljs-property">age</span>.<span class="hljs-title function_">toString</span>())<br>    &#125;.<span class="hljs-title function_">margin</span>(<span class="hljs-number">15</span>)<br>    .<span class="hljs-title function_">backgroundColor</span>(<span class="hljs-string">&quot;#e7e7e7e7&quot;</span>)<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这样合并成一个组件后，其中的<code>name</code>和<code>age</code>属性发生变化时，<strong>并不能刷新页面</strong></p>
+<p>然后我们写个页面测试一下</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><br><br><span class="hljs-title function_">build</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-title class_">Column</span>() &#123;<br>    <span class="hljs-title class_">Row</span>() &#123;<br>      <span class="hljs-title class_">Button</span>(<span class="hljs-string">&#x27;使用New&#x27;</span>).<span class="hljs-title function_">margin</span>(<span class="hljs-number">10</span>).<span class="hljs-title function_">onClick</span>(<span class="hljs-function">(<span class="hljs-params">_</span>) =&gt;</span> &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">initWithNew</span>()<br>      &#125;)<br>      <span class="hljs-title class_">Button</span>(<span class="hljs-string">&#x27;使用PlainToClass&#x27;</span>).<span class="hljs-title function_">margin</span>(<span class="hljs-number">10</span>).<span class="hljs-title function_">onClick</span>(<span class="hljs-function">(<span class="hljs-params">_</span>) =&gt;</span> &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">initWithPlainToText</span>()<br>      &#125;)<br><br>      <span class="hljs-title class_">Button</span>(<span class="hljs-string">&#x27;使用As&#x27;</span>).<span class="hljs-title function_">margin</span>(<span class="hljs-number">10</span>).<span class="hljs-title function_">onClick</span>(<span class="hljs-function">(<span class="hljs-params">_</span>) =&gt;</span> &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">initWithAs</span>()<br>      &#125;)<br>    &#125;<br><br>    <span class="hljs-title class_">Row</span>() &#123;<br>      <span class="hljs-title class_">Button</span>(<span class="hljs-string">&#x27;修改time属性&#x27;</span>).<span class="hljs-title function_">margin</span>(<span class="hljs-number">10</span>).<span class="hljs-title function_">onClick</span>(<span class="hljs-function">(<span class="hljs-params">_</span>) =&gt;</span> &#123;<br>        <span class="hljs-keyword">if</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">firstLevel</span>)&#123;<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">firstLevel</span>.<span class="hljs-property">time</span> = systemDateTime.<span class="hljs-title function_">getTime</span>()<br>        &#125;<br>      &#125;)<br><br>      <span class="hljs-title class_">Button</span>(<span class="hljs-string">&#x27;修改 name、age 属性&#x27;</span>).<span class="hljs-title function_">margin</span>(<span class="hljs-number">10</span>).<span class="hljs-title function_">onClick</span>(<span class="hljs-function">(<span class="hljs-params">_</span>) =&gt;</span> &#123;<br>        <span class="hljs-keyword">if</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">firstLevel</span>) &#123;<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">firstLevel</span>.<span class="hljs-property">secondLevel</span>.<span class="hljs-property">name</span> = <span class="hljs-string">&#x27;新名字 &#x27;</span> + <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * <span class="hljs-number">10</span>)<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">firstLevel</span>.<span class="hljs-property">secondLevel</span>.<span class="hljs-property">age</span> = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * <span class="hljs-number">100</span>)<br>        &#125;<br>      &#125;)<br>    &#125;<br>    <span class="hljs-keyword">if</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">firstLevel</span>)&#123;<br>      <span class="hljs-title class_">ShowFistLevel</span>(&#123;<span class="hljs-attr">firstLevel</span>:<span class="hljs-variable language_">this</span>.<span class="hljs-property">firstLevel</span>&#125;)<br>    &#125;<br><br>  &#125;<br>  .<span class="hljs-title function_">height</span>(<span class="hljs-string">&#x27;100%&#x27;</span>)<br>  .<span class="hljs-title function_">width</span>(<span class="hljs-string">&#x27;100%&#x27;</span>)<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<p>点击<code>使用New</code>后，再点击修改属性，可以看到页面刷新了<br>这时候点击<code>使用PlainToClass</code>后，页面也刷新了，但这时候点击<code>修改time属性</code>,页面会刷新，但点击<code>修改 name、age 属性</code>，页面是没有刷新的。但我们多次点击<code>使用PlainToClass</code>时，页面是可以刷新的。<br>点击使用<code>使用As</code>后，页面也刷新了，，但这时候点击<code>修改time属性</code>,页面会刷新，但点击<code>修改 name、age 属性</code>，页面是没有刷新的。但我们多次点击<code>使用As</code>时，页面是可以刷新的。</p>
+<p>也就是说我们使用<code>PlainToClass</code>和<code>as</code> 这两种方式创建出来的对象，会使得<code>@Observed装饰器和@ObjectLink装饰器</code>失效。这是开发过程中需要注意的。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>使用<code>CustomDialogController</code>做弹窗展示时，需要在组件中创建<code>CustomDialogController</code>对象，至少在 api12 上是这样的。</li>
+<li>不想使用<code>CustomDialogController</code>的话，可以使用<code>promptAction.openCustomDialog</code>做弹窗展示，当时，它是依赖<code>UIContext</code>这个上下文。注意不要和<code>Context</code>弄混了</li>
+<li>注意字面量对象和类对象。使用<code>as</code>将字面量对象转为类对象时，无法使用类本身的方法，可以使用<strong>class-transformer中的plainToClass</strong>创建类对象，这样可以调用对象的方法</li>
+<li>使用<code>PlainToClass</code>和<code>as</code> 这两种方式创建出来的对象，会使得<code>@Observed装饰器和@ObjectLink装饰器</code>失效。</li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/HarmonyOS/" class="print-no-link">#HarmonyOS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>鸿蒙-那些年我们踩过的坑-下</div>
+      <div>https://blog.huangyuanlove.com/2024/11/11/鸿蒙-那些年我们踩过的坑-下/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年11月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/11/28/%E9%B8%BF%E8%92%99-Canvas-%E5%9B%BE%E7%89%87%E6%BB%91%E5%8A%A8%E9%AA%8C%E8%AF%81/" title="鸿蒙--Canvas 图片滑动验证">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">鸿蒙--Canvas 图片滑动验证</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/11/09/%E9%B8%BF%E8%92%99-%E9%82%A3%E4%BA%9B%E5%B9%B4%E6%88%91%E4%BB%AC%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91-%E4%B8%8A/" title="鸿蒙--那些年我们踩过的坑(上)">
+                        <span class="hidden-mobile">鸿蒙--那些年我们踩过的坑(上)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '8af2a81e6d4ff508607bbe28c519c8eb'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,701 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="HarmonyOS,鸿蒙应用开发,鸿蒙手机应用开发,自定义相机,自定义录像">
+  
+    <meta name="description" content="前言这个就没啥好说的，有需求就要搞定需求，搞不定需求就搞定提出需求的人嘛 大致流程相机开发需要使用真机，模拟器目前还是不支持的。这就劝退了一部分开发者。所需要的调用的接口大部分集中在@kit.CameraKit、@kit.AbilityKit中。保存图片时需要用到@kit.ImageKit、@kit.CoreFileKit、@kit.MediaLibraryKit等接下来看下需要做哪些工作：  获">
+<meta property="og:type" content="article">
+<meta property="og:title" content="鸿蒙-自定义相机拍照">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2024/12/19/%E9%B8%BF%E8%92%99-%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9B%B8%E6%9C%BA%E6%8B%8D%E7%85%A7/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="前言这个就没啥好说的，有需求就要搞定需求，搞不定需求就搞定提出需求的人嘛 大致流程相机开发需要使用真机，模拟器目前还是不支持的。这就劝退了一部分开发者。所需要的调用的接口大部分集中在@kit.CameraKit、@kit.AbilityKit中。保存图片时需要用到@kit.ImageKit、@kit.CoreFileKit、@kit.MediaLibraryKit等接下来看下需要做哪些工作：  获">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-12-19T06:29:17.000Z">
+<meta property="article:modified_time" content="2025-01-08T07:51:05.645Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="HarmonyOS">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>鸿蒙-自定义相机拍照 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="鸿蒙-自定义相机拍照"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-12-19 14:29" pubdate>
+          2024年12月19日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          13k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">鸿蒙-自定义相机拍照</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这个就没啥好说的，有需求就要搞定需求，搞不定需求就搞定提出需求的人嘛</p>
+<h2 id="大致流程"><a href="#大致流程" class="headerlink" title="大致流程"></a>大致流程</h2><p>相机开发需要使用真机，模拟器目前还是不支持的。这就劝退了一部分开发者。<br>所需要的调用的接口大部分集中在<code>@kit.CameraKit</code>、<code>@kit.AbilityKit</code>中。保存图片时需要用到<code>@kit.ImageKit</code>、<code>@kit.CoreFileKit</code>、<code>@kit.MediaLibraryKit</code>等<br>接下来看下需要做哪些工作：</p>
+<ol>
+<li>获取相机权限</li>
+<li>获取可用相机列表<ol>
+<li>可以在这里监听相机状态(USB相机连接、断开连接、关闭、被占用等)</li>
+<li>选择当前使用的相机</li>
+</ol>
+</li>
+<li>创建相机输入流并打开相机<ol>
+<li>可以创建相机输入流</li>
+<li>可以监听预览输出流状态，包括预览流启动、预览流结束、预览流输出错误</li>
+<li>可以获取相机支持的模式列表(NORMAL_PHOTO,NORMAL_VIDEO,SECURE_PHOTO)</li>
+<li>可以获取当前相机设备支持的所有输出流，如预览流、拍照流、录像流等</li>
+</ol>
+</li>
+<li>会话(Session)管理<ol>
+<li>配置相机的输入流和输出流(分辨路等配置)</li>
+<li>添加闪光灯、调整焦距等配置</li>
+<li>会话切换控制:切换拍照或者录像</li>
+<li>交和开启会话，可以开始调用相机相关功能</li>
+</ol>
+</li>
+<li>预览<ol>
+<li>创建Surface用于预览</li>
+<li>将预览输出流通过SurfaceID与Surface关联</li>
+<li>调用Session.start方法开始预览</li>
+</ol>
+</li>
+<li>拍照<ol>
+<li>创建拍照输出流</li>
+<li>设置拍照photoAvailable的回调，并将拍照的buffer保存为图片。</li>
+<li>参数配置(闪光灯、变焦、焦距等)</li>
+<li>触发拍照</li>
+</ol>
+</li>
+</ol>
+<h2 id="开发"><a href="#开发" class="headerlink" title="开发"></a>开发</h2><h3 id="权限处理"><a href="#权限处理" class="headerlink" title="权限处理"></a>权限处理</h3><p>在进入拍照页面之前先申请权限，具体的流程看这里<a target="_blank" rel="noopener" href="https://developer.huawei.com/consumer/cn/doc/harmonyos-guides-V5/request-app-permissions-V5">申请应用权限</a>，本文不再赘述。</p>
+<h3 id="获取可用相机列表"><a href="#获取可用相机列表" class="headerlink" title="获取可用相机列表"></a>获取可用相机列表</h3><p>首先要获取相机管理实例，这里为了代码看起来清晰，将各个步骤写到了单独的方法中。<br>另外多出使用<code>camera.CameraManager</code>实例，因此定义为了全局变量</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><br><span class="hljs-meta">@Entry</span><br><span class="hljs-meta">@Component</span><br>struct <span class="hljs-title class_">TakePhotoPage</span> &#123;<br><br><br>  <span class="hljs-comment">//相机管理</span><br>  <span class="hljs-title function_">getCameraManager</span>(<span class="hljs-attr">context</span>: common.<span class="hljs-property">BaseContext</span>): camera.<span class="hljs-property">CameraManager</span> &#123;<br>    <span class="hljs-keyword">let</span> <span class="hljs-attr">cameraManager</span>: camera.<span class="hljs-property">CameraManager</span> = camera.<span class="hljs-title function_">getCameraManager</span>(context);<br>    <span class="hljs-keyword">return</span> cameraManager;<br>  &#125;<br><br>  <span class="hljs-comment">//获取可用相机列表</span><br>  <span class="hljs-title function_">getCameraDevices</span>(<span class="hljs-attr">cameraManager</span>: camera.<span class="hljs-property">CameraManager</span>): <span class="hljs-title class_">Array</span>&lt;camera.<span class="hljs-property">CameraDevice</span>&gt; &#123;<br>    <span class="hljs-keyword">let</span> <span class="hljs-attr">cameraArray</span>: <span class="hljs-title class_">Array</span>&lt;camera.<span class="hljs-property">CameraDevice</span>&gt; = cameraManager.<span class="hljs-title function_">getSupportedCameras</span>();<br>    <br>    <span class="hljs-keyword">if</span> (cameraArray != <span class="hljs-literal">undefined</span> &amp;&amp; cameraArray.<span class="hljs-property">length</span> &gt; <span class="hljs-number">0</span>) &#123;<br>      <span class="hljs-comment">//在这里可以输出一些相机参数，比如相机位置(前置、后置)、相机类型(广角相机、长焦相机)等信息</span><br>      <span class="hljs-keyword">return</span> cameraArray;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>,<span class="hljs-variable constant_">TAG</span>,<span class="hljs-string">&quot;cameraManager.getSupportedCameras error&quot;</span>);<br>      <span class="hljs-keyword">return</span> [];<br>    &#125;<br>  &#125;<br><br>  <span class="hljs-comment">// 监听相机状态</span><br>  <span class="hljs-title function_">onCameraStatusChange</span>(<span class="hljs-attr">cameraManager</span>: camera.<span class="hljs-property">CameraManager</span>): <span class="hljs-built_in">void</span> &#123;<br>    cameraManager.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;cameraStatus&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">err: BusinessError, cameraStatusInfo: camera.CameraStatusInfo</span>) =&gt;</span> &#123;<br>      <span class="hljs-keyword">if</span> (err !== <span class="hljs-literal">undefined</span> &amp;&amp; err.<span class="hljs-property">code</span> !== <span class="hljs-number">0</span>) &#123;<br>        hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>,<span class="hljs-variable constant_">TAG</span>,<span class="hljs-string">`Callback Error, errorCode: <span class="hljs-subst">$&#123;err.code&#125;</span>`</span>);<br>        <span class="hljs-keyword">return</span>;<br>      &#125;<br>      <span class="hljs-comment">// 如果当通过USB连接相机设备时，回调函数会返回新的相机出现状态</span><br>      <span class="hljs-keyword">if</span> (cameraStatusInfo.<span class="hljs-property">status</span> == camera.<span class="hljs-property">CameraStatus</span>.<span class="hljs-property">CAMERA_STATUS_APPEAR</span>) &#123;<br>        hilog.<span class="hljs-title function_">info</span>(<span class="hljs-number">0x01</span>,<span class="hljs-variable constant_">TAG</span>,<span class="hljs-string">`New Camera device appear.`</span>);<br>      &#125;<br>      <span class="hljs-comment">// 如果当断开相机设备USB连接时，回调函数会返回相机被移除状态</span><br>      <span class="hljs-keyword">if</span> (cameraStatusInfo.<span class="hljs-property">status</span> == camera.<span class="hljs-property">CameraStatus</span>.<span class="hljs-property">CAMERA_STATUS_DISAPPEAR</span>) &#123;<br>        hilog.<span class="hljs-title function_">info</span>(<span class="hljs-number">0x01</span>,<span class="hljs-variable constant_">TAG</span>,<span class="hljs-string">`Camera device has been removed.`</span>);<br>      &#125;<br>      <span class="hljs-comment">// 相机被关闭时，回调函数会返回相机可用状态</span><br>      <span class="hljs-keyword">if</span> (cameraStatusInfo.<span class="hljs-property">status</span> == camera.<span class="hljs-property">CameraStatus</span>.<span class="hljs-property">CAMERA_STATUS_AVAILABLE</span>) &#123;<br>        hilog.<span class="hljs-title function_">info</span>(<span class="hljs-number">0x01</span>,<span class="hljs-variable constant_">TAG</span>,<span class="hljs-string">`Current Camera is available.`</span>);<br>      &#125;<br>      <span class="hljs-comment">// 相机被打开/占用时，回调函数会返回相机不可用状态</span><br>      <span class="hljs-keyword">if</span> (cameraStatusInfo.<span class="hljs-property">status</span> == camera.<span class="hljs-property">CameraStatus</span>.<span class="hljs-property">CAMERA_STATUS_UNAVAILABLE</span>) &#123;<br>        hilog.<span class="hljs-title function_">info</span>(<span class="hljs-number">0x01</span>,<span class="hljs-variable constant_">TAG</span>,<span class="hljs-string">`Current Camera has been occupied.`</span>);<br>      &#125;<br>      hilog.<span class="hljs-title function_">info</span>(<span class="hljs-number">0x01</span>,<span class="hljs-variable constant_">TAG</span>,<span class="hljs-string">`camera: <span class="hljs-subst">$&#123;cameraStatusInfo.camera.cameraId&#125;</span>`</span>);<br>      hilog.<span class="hljs-title function_">info</span>(<span class="hljs-number">0x01</span>,<span class="hljs-variable constant_">TAG</span>,<span class="hljs-string">`status: <span class="hljs-subst">$&#123;cameraStatusInfo.status&#125;</span>`</span>);<br>    &#125;);<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这样我们可以获取到所有可用的相机列表，并且可以根据相机类型、连接类型等过滤掉不适用的相机。<br>在获取到相机列表后，我们默认使用返回列表的第一个相机。  </p>
+<h3 id="创建相机输入流并打开相机"><a href="#创建相机输入流并打开相机" class="headerlink" title="创建相机输入流并打开相机"></a>创建相机输入流并打开相机</h3><p>在这一步我们主要是创建相机的输入流，为后面在<code>XComponent</code>中预览做准备。  </p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-title function_">createInput</span>(): camera.<span class="hljs-property">CameraInput</span> | <span class="hljs-literal">undefined</span> &#123;<br><span class="hljs-comment">// 创建相机输入流</span><br><span class="hljs-keyword">let</span> <span class="hljs-attr">cameraInput</span>: camera.<span class="hljs-property">CameraInput</span> | <span class="hljs-literal">undefined</span> = <span class="hljs-literal">undefined</span>;<br><span class="hljs-keyword">try</span> &#123;<br>    cameraInput = <span class="hljs-variable language_">this</span>.<span class="hljs-property">cameraManager</span>.<span class="hljs-title function_">createCameraInput</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">currentCamera</span>);<br>&#125; <span class="hljs-keyword">catch</span> (error) &#123;<br>    <span class="hljs-keyword">let</span> err = error <span class="hljs-keyword">as</span> <span class="hljs-title class_">BusinessError</span>;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Failed to createCameraInput errorCode = &#x27;</span> + err.<span class="hljs-property">code</span>);<br>&#125;<br><span class="hljs-keyword">if</span> (cameraInput === <span class="hljs-literal">undefined</span>) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;<br>&#125;<br><span class="hljs-comment">// 监听cameraInput错误信息</span><br>cameraInput.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;error&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">currentCamera</span>, <span class="hljs-function">(<span class="hljs-params">error: BusinessError</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">`Camera input error code: <span class="hljs-subst">$&#123;error.code&#125;</span>`</span>);<br>&#125;);<br><br><span class="hljs-keyword">return</span> cameraInput;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>最重要的就一行代码：调用<code>cameraManager.createCameraInput(camera: CameraDevice)</code>创建一个输入流并返回，之后调用返回的输入流的<code>open()</code>方法打开相机，注意该方法是异步的。<br>同样的，我们可以调用<code>cameraManager.getSupportedSceneModes(camera: CameraDevice)</code>来获取相机支持的模式，一般情况下都会支持拍照和录像。<br>之后我们获取设备支持的输出流能力</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-title function_">getSupportedOutputCapability</span>(): camera.<span class="hljs-property">CameraOutputCapability</span> | <span class="hljs-literal">undefined</span> &#123;<br><span class="hljs-comment">// 获取相机设备支持的输出流能力</span><br><span class="hljs-keyword">let</span> <span class="hljs-attr">cameraOutputCapability</span>: camera.<span class="hljs-property">CameraOutputCapability</span> =<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">cameraManager</span>.<span class="hljs-title function_">getSupportedOutputCapability</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">currentCamera</span>, camera.<span class="hljs-property">SceneMode</span>.<span class="hljs-property">NORMAL_PHOTO</span>)<br><br><span class="hljs-keyword">if</span> (!cameraOutputCapability) &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&quot;cameraManager.getSupportedOutputCapability error&quot;</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;<br>&#125;<br><span class="hljs-keyword">return</span> cameraOutputCapability;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>我们拿到<code>cameraOutputCapability</code>之后，可以从该对象的<code>previewProfiles</code>、<code>photoProfiles</code>属性中获取到设备支持的分辨率大小。这里我们直接使用<code>1920*1080</code>的分辨率。<br>需要注意的是 <code>previewProfiles</code>和<code>photoProfiles</code>所支持的分辨率不一定是一致的。预览的话只要宽高比一致，分辨率别差的太离谱就可以。  </p>
+<p>之后我们使用选择好的<code>Profile</code>对象来创建拍照输出流和预览输出流</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">try</span> &#123;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">photoOutput</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">cameraManager</span>.<span class="hljs-title function_">createPhotoOutput</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">currentPhotoProfile</span>);<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">previewOutput</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">cameraManager</span>.<span class="hljs-title function_">createPreviewOutput</span>(previewProfile, <span class="hljs-variable language_">this</span>.<span class="hljs-property">surfaceId</span>);<br>&#125; <span class="hljs-keyword">catch</span> (error) &#123;<br>  <span class="hljs-keyword">let</span> err = error <span class="hljs-keyword">as</span> <span class="hljs-title class_">BusinessError</span>;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Failed to createPhotoOutput errorCode = &#x27;</span> + err.<span class="hljs-property">code</span>);<br>&#125;<br><span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">photoOutput</span> === <span class="hljs-literal">undefined</span>) &#123;<br>  <span class="hljs-keyword">return</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这里需要注意的是，创建预览输出流的时候需要传入 surfaceID，该值来源于组件<code>XComponent</code></p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">private</span> <span class="hljs-attr">mXComponentController</span>: <span class="hljs-title class_">XComponentController</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">XComponentController</span>;<br><span class="hljs-title class_">XComponent</span>(&#123;<br><span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;componentId&#x27;</span>,<br><span class="hljs-attr">type</span>: <span class="hljs-title class_">XComponentType</span>.<span class="hljs-property">SURFACE</span>,<br><span class="hljs-attr">controller</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">mXComponentController</span>,<br>&#125;)<br>.<span class="hljs-title function_">onLoad</span>(<span class="hljs-keyword">async</span> () =&gt; &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">surfaceId</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">mXComponentController</span>.<span class="hljs-title function_">getXComponentSurfaceId</span>();<br>&#125;)<br></code></pre></td></tr></table></figure>
+<p>所以这里我们需要注意一下创建预览输出流的时机</p>
+<h3 id="创建并配置会话"><a href="#创建并配置会话" class="headerlink" title="创建并配置会话"></a>创建并配置会话</h3><p>创建会话也只是一行的就可以搞定，但可能会有异常出现</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-title function_">createSession</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-comment">//创建会话</span><br><br>  <span class="hljs-keyword">try</span> &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">cameraManager</span>.<span class="hljs-title function_">createSession</span>(camera.<span class="hljs-property">SceneMode</span>.<span class="hljs-property">NORMAL_PHOTO</span>) <span class="hljs-keyword">as</span> camera.<span class="hljs-property">PhotoSession</span>;<br>  &#125; <span class="hljs-keyword">catch</span> (error) &#123;<br>    <span class="hljs-keyword">let</span> err = error <span class="hljs-keyword">as</span> <span class="hljs-title class_">BusinessError</span>;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Failed to create the session instance. errorCode = &#x27;</span> + err.<span class="hljs-property">code</span>);<br>  &#125;<br>  <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span> === <span class="hljs-literal">undefined</span>) &#123;<br>    <span class="hljs-keyword">return</span>;<br>  &#125;<br>  <span class="hljs-comment">// 监听session错误信息</span><br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;error&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">error: BusinessError</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">`Capture session error code: <span class="hljs-subst">$&#123;error.code&#125;</span>`</span>);<br>  &#125;);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>配置会话主要是添加相机输入流、预览输出流和拍照输出流，最后提交配置</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><br><span class="hljs-keyword">async</span> <span class="hljs-title function_">configSession</span>(<span class="hljs-params">cameraInput: camera.CameraInput, previewOutput: camera.PreviewOutput</span>) &#123;<br>  <span class="hljs-keyword">if</span> (!<span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>) &#123;<br>    <span class="hljs-keyword">return</span><br>  &#125;<br><br>  <span class="hljs-comment">// 开始配置会话</span><br>  <span class="hljs-keyword">try</span> &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>.<span class="hljs-title function_">beginConfig</span>();<br>  &#125; <span class="hljs-keyword">catch</span> (error) &#123;<br>    <span class="hljs-keyword">let</span> err = error <span class="hljs-keyword">as</span> <span class="hljs-title class_">BusinessError</span>;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Failed to beginConfig. errorCode = &#x27;</span> + err.<span class="hljs-property">code</span>);<br>  &#125;<br><br>  <span class="hljs-comment">// 向会话中添加相机输入流</span><br>  <span class="hljs-keyword">try</span> &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>.<span class="hljs-title function_">addInput</span>(cameraInput);<br>  &#125; <span class="hljs-keyword">catch</span> (error) &#123;<br>    <span class="hljs-keyword">let</span> err = error <span class="hljs-keyword">as</span> <span class="hljs-title class_">BusinessError</span>;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Failed to addInput. errorCode = &#x27;</span> + err.<span class="hljs-property">code</span>);<br>  &#125;<br><br>  <span class="hljs-comment">// 向会话中添加预览输出流</span><br>  <span class="hljs-keyword">try</span> &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>.<span class="hljs-title function_">addOutput</span>(previewOutput);<br>  &#125; <span class="hljs-keyword">catch</span> (error) &#123;<br>    <span class="hljs-keyword">let</span> err = error <span class="hljs-keyword">as</span> <span class="hljs-title class_">BusinessError</span>;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Failed to addOutput(previewOutput). errorCode = &#x27;</span> + err.<span class="hljs-property">code</span>);<br>  &#125;<br><br>  <span class="hljs-comment">// 向会话中添加拍照输出流</span><br>  <span class="hljs-keyword">try</span> &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>.<span class="hljs-title function_">addOutput</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">photoOutput</span>);<br>  &#125; <span class="hljs-keyword">catch</span> (error) &#123;<br>    <span class="hljs-keyword">let</span> err = error <span class="hljs-keyword">as</span> <span class="hljs-title class_">BusinessError</span>;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Failed to addOutput(photoOutput). errorCode = &#x27;</span> + err.<span class="hljs-property">code</span>);<br>  &#125;<br><br>  <span class="hljs-comment">// 提交会话配置</span><br>  <span class="hljs-keyword">await</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>.<span class="hljs-title function_">commitConfig</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="拍照回调和启动会话"><a href="#拍照回调和启动会话" class="headerlink" title="拍照回调和启动会话"></a>拍照回调和启动会话</h3><p>我们先启动会话</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">await</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>.<span class="hljs-title function_">start</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">info</span>(<span class="hljs-string">&#x27;Promise returned to indicate the session start success.&#x27;</span>);<br>      &#125;);<br></code></pre></td></tr></table></figure>
+<p>会话启动之后我们就可以进行拍照了。拍照的话需要调用拍照输出流的<code>capture</code>方法  </p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-title function_">takePhoto</span>(<span class="hljs-params"></span>) &#123;<br><span class="hljs-keyword">if</span> (!<span class="hljs-variable language_">this</span>.<span class="hljs-property">photoOutput</span>) &#123;<br>    <span class="hljs-keyword">return</span><br>&#125;<br><span class="hljs-keyword">let</span> <span class="hljs-attr">photoCaptureSetting</span>: camera.<span class="hljs-property">PhotoCaptureSetting</span> = &#123;<br>    <span class="hljs-attr">quality</span>: camera.<span class="hljs-property">QualityLevel</span>.<span class="hljs-property">QUALITY_LEVEL_HIGH</span>, <span class="hljs-comment">// 设置图片质量高</span><br>    <span class="hljs-attr">rotation</span>: camera.<span class="hljs-property">ImageRotation</span>.<span class="hljs-property">ROTATION_0</span> <span class="hljs-comment">// 设置图片旋转角度0</span><br>&#125;<br><span class="hljs-comment">// 使用当前拍照设置进行拍照</span><br><span class="hljs-variable language_">this</span>.<span class="hljs-property">photoOutput</span>.<span class="hljs-title function_">capture</span>(photoCaptureSetting, <span class="hljs-function">(<span class="hljs-params">err: BusinessError</span>) =&gt;</span> &#123;<br>    <span class="hljs-keyword">if</span> (err) &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">`Failed to capture the photo <span class="hljs-subst">$&#123;err.message&#125;</span>`</span>);<br>    <span class="hljs-keyword">return</span>;<br>    &#125;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">info</span>(<span class="hljs-string">&#x27;Callback invoked to indicate the photo capture request success.&#x27;</span>);<br>&#125;);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>但照片内容确不是在该方法中返回，而是需要我们在拍照输出流中添加<code>photoAvailable</code>事件监听，该监听可以在创建拍照输出流之后就添加</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-title function_">setPhotoOutputCb</span>(): <span class="hljs-built_in">void</span> &#123;<br>    <span class="hljs-keyword">if</span> (!<span class="hljs-variable language_">this</span>.<span class="hljs-property">photoOutput</span>) &#123;<br>      <span class="hljs-keyword">return</span><br>    &#125;<br>    <span class="hljs-comment">//设置回调之后，调用photoOutput的capture方法，就会将拍照的buffer回传到回调中</span><br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">photoOutput</span>.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;photoAvailable&#x27;</span>, (<span class="hljs-attr">errCode</span>: <span class="hljs-title class_">BusinessError</span>, <span class="hljs-attr">photo</span>: camera.<span class="hljs-property">Photo</span>): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> &#123;<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">info</span>(<span class="hljs-string">&#x27;getPhoto start&#x27;</span>);<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">info</span>(<span class="hljs-string">`err: <span class="hljs-subst">$&#123;<span class="hljs-built_in">JSON</span>.stringify(errCode)&#125;</span>`</span>);<br>      <span class="hljs-keyword">if</span> (errCode || photo === <span class="hljs-literal">undefined</span>) &#123;<br>        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;getPhoto failed&#x27;</span>);<br>        <span class="hljs-keyword">return</span>;<br>      &#125;<br>      <span class="hljs-keyword">let</span> imageObj = photo.<span class="hljs-property">main</span>;<br>      imageObj.<span class="hljs-title function_">getComponent</span>(image.<span class="hljs-property">ComponentType</span>.<span class="hljs-property">JPEG</span>, (<span class="hljs-attr">errCode</span>: <span class="hljs-title class_">BusinessError</span>, <span class="hljs-attr">component</span>: image.<span class="hljs-property">Component</span>): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> &#123;<br>        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">info</span>(<span class="hljs-string">&#x27;getComponent start&#x27;</span>);<br>        <span class="hljs-keyword">if</span> (errCode || component === <span class="hljs-literal">undefined</span>) &#123;<br>          <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;getComponent failed&#x27;</span>);<br>          <span class="hljs-keyword">return</span>;<br>        &#125;<br>        <span class="hljs-keyword">let</span> <span class="hljs-attr">buffer</span>: <span class="hljs-title class_">ArrayBuffer</span>;<br>        <span class="hljs-keyword">if</span> (component.<span class="hljs-property">byteBuffer</span>) &#123;<br>          buffer = component.<span class="hljs-property">byteBuffer</span>;<br>          <span class="hljs-keyword">let</span> filePath = <span class="hljs-title function_">getContext</span>().<span class="hljs-property">cacheDir</span> + <span class="hljs-string">&#x27;/&#x27;</span> + systemDateTime.<span class="hljs-title function_">getTime</span>() + <span class="hljs-string">&#x27;.jpg&#x27;</span><br>          <span class="hljs-keyword">let</span> file = fileIo.<span class="hljs-title function_">openSync</span>(filePath, fileIo.<span class="hljs-property">OpenMode</span>.<span class="hljs-property">READ_WRITE</span> | fileIo.<span class="hljs-property">OpenMode</span>.<span class="hljs-property">CREATE</span>)<br>          fileIo.<span class="hljs-title function_">writeSync</span>(file.<span class="hljs-property">fd</span>, buffer)<br>          fileIo.<span class="hljs-title function_">closeSync</span>(file)<br><br>          <span class="hljs-keyword">let</span> fileUrl = fileUri.<span class="hljs-title function_">getUriFromPath</span>(filePath)<br>          promptAction.<span class="hljs-title function_">showToast</span>(&#123;<span class="hljs-attr">message</span>:fileUrl&#125;)<br><br><br>          <span class="hljs-keyword">let</span> <span class="hljs-attr">id</span>: <span class="hljs-built_in">number</span> = <span class="hljs-number">0</span><br>          promptAction.<span class="hljs-title function_">openCustomDialog</span>(&#123;<br>            <span class="hljs-attr">builder</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>              <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">saveImageToAlbumDialog</span>(fileUrl, <span class="hljs-function">() =&gt;</span> &#123;<br>                promptAction.<span class="hljs-title function_">closeCustomDialog</span>(id)<br>              &#125;)<br>            &#125;<br>          &#125;).<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">dialogID</span>) =&gt;</span> &#123;<br>            id = dialogID<br>          &#125;)<br><br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>          <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;byteBuffer is null&#x27;</span>);<br>          <span class="hljs-keyword">return</span>;<br>        &#125;<br>        imageObj.<span class="hljs-title function_">release</span>();<br>      &#125;);<br>    &#125;);<br>  &#125;<br></code></pre></td></tr></table></figure>
+<p>这里就简单写了一下处理：拿到 ArrayBuffer 之后写入沙箱文件，然后在弹窗中展示</p>
+<h3 id="其他配置"><a href="#其他配置" class="headerlink" title="其他配置"></a>其他配置</h3><p>我们创建会话(camera.PhotoSession)之后，可以通过该对象配置闪光灯模式、对焦模式、缩放等</p>
+<h4 id="闪光灯"><a href="#闪光灯" class="headerlink" title="闪光灯"></a>闪光灯</h4><p>首先判断设备是否支持闪光灯，然后再判断支持的闪光灯模式。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-title function_">getSupportFlashMode</span>(<span class="hljs-params"></span>) &#123;<br>   <span class="hljs-variable language_">this</span>.<span class="hljs-property">supportFlashMode</span> = []<br>   <span class="hljs-keyword">if</span> (!<span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>) &#123;<br>     <span class="hljs-keyword">return</span><br>   &#125;<br>   <span class="hljs-comment">// 判断设备是否支持闪光灯</span><br>   <span class="hljs-keyword">let</span> <span class="hljs-attr">flashStatus</span>: <span class="hljs-built_in">boolean</span> = <span class="hljs-literal">false</span>;<br>   <span class="hljs-keyword">try</span> &#123;<br>     flashStatus = <span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>.<span class="hljs-title function_">hasFlash</span>();<br>   &#125; <span class="hljs-keyword">catch</span> (error) &#123;<br>     <span class="hljs-keyword">let</span> err = error <span class="hljs-keyword">as</span> <span class="hljs-title class_">BusinessError</span>;<br>     <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Failed to hasFlash. errorCode = &#x27;</span> + err.<span class="hljs-property">code</span>);<br>   &#125;<br>   <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">info</span>(<span class="hljs-string">&#x27;Returned with the flash light support status:&#x27;</span> + flashStatus);<br><br>   <span class="hljs-keyword">if</span> (flashStatus) &#123;<br>     <span class="hljs-comment">// 判断支持的闪光灯模式</span><br>     <span class="hljs-keyword">try</span> &#123;<br>       <span class="hljs-keyword">let</span> <span class="hljs-attr">status</span>: <span class="hljs-built_in">boolean</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>.<span class="hljs-title function_">isFlashModeSupported</span>(camera.<span class="hljs-property">FlashMode</span>.<span class="hljs-property">FLASH_MODE_CLOSE</span>);<br>       <span class="hljs-keyword">if</span> (status) &#123;<br>         <span class="hljs-variable language_">this</span>.<span class="hljs-property">supportFlashMode</span>.<span class="hljs-title function_">push</span>(camera.<span class="hljs-property">FlashMode</span>.<span class="hljs-property">FLASH_MODE_CLOSE</span>)<br>       &#125;<br>     &#125; <span class="hljs-keyword">catch</span> (error) &#123;<br>       <span class="hljs-keyword">let</span> err = error <span class="hljs-keyword">as</span> <span class="hljs-title class_">BusinessError</span>;<br>       <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Failed to check whether the flash mode is supported. errorCode = &#x27;</span> + err.<span class="hljs-property">code</span>);<br>     &#125;<br><br>     <span class="hljs-keyword">try</span> &#123;<br>       <span class="hljs-keyword">let</span> <span class="hljs-attr">status</span>: <span class="hljs-built_in">boolean</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>.<span class="hljs-title function_">isFlashModeSupported</span>(camera.<span class="hljs-property">FlashMode</span>.<span class="hljs-property">FLASH_MODE_OPEN</span>);<br>       <span class="hljs-keyword">if</span> (status) &#123;<br>         <span class="hljs-variable language_">this</span>.<span class="hljs-property">supportFlashMode</span>.<span class="hljs-title function_">push</span>(camera.<span class="hljs-property">FlashMode</span>.<span class="hljs-property">FLASH_MODE_OPEN</span>)<br>       &#125;<br>     &#125; <span class="hljs-keyword">catch</span> (error) &#123;<br>       <span class="hljs-keyword">let</span> err = error <span class="hljs-keyword">as</span> <span class="hljs-title class_">BusinessError</span>;<br>       <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Failed to check whether the flash mode is supported. errorCode = &#x27;</span> + err.<span class="hljs-property">code</span>);<br>     &#125;<br><br>     <span class="hljs-keyword">try</span> &#123;<br>       <span class="hljs-keyword">let</span> <span class="hljs-attr">status</span>: <span class="hljs-built_in">boolean</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>.<span class="hljs-title function_">isFlashModeSupported</span>(camera.<span class="hljs-property">FlashMode</span>.<span class="hljs-property">FLASH_MODE_AUTO</span>);<br>       <span class="hljs-keyword">if</span> (status) &#123;<br>         <span class="hljs-variable language_">this</span>.<span class="hljs-property">supportFlashMode</span>.<span class="hljs-title function_">push</span>(camera.<span class="hljs-property">FlashMode</span>.<span class="hljs-property">FLASH_MODE_AUTO</span>)<br>       &#125;<br>     &#125; <span class="hljs-keyword">catch</span> (error) &#123;<br>       <span class="hljs-keyword">let</span> err = error <span class="hljs-keyword">as</span> <span class="hljs-title class_">BusinessError</span>;<br>       <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Failed to check whether the flash mode is supported. errorCode = &#x27;</span> + err.<span class="hljs-property">code</span>);<br>     &#125;<br><br>     <span class="hljs-keyword">try</span> &#123;<br>       <span class="hljs-keyword">let</span> <span class="hljs-attr">status</span>: <span class="hljs-built_in">boolean</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>.<span class="hljs-title function_">isFlashModeSupported</span>(camera.<span class="hljs-property">FlashMode</span>.<span class="hljs-property">FLASH_MODE_ALWAYS_OPEN</span>);<br>       <span class="hljs-keyword">if</span> (status) &#123;<br>         <span class="hljs-variable language_">this</span>.<span class="hljs-property">supportFlashMode</span>.<span class="hljs-title function_">push</span>(camera.<span class="hljs-property">FlashMode</span>.<span class="hljs-property">FLASH_MODE_ALWAYS_OPEN</span>)<br>       &#125;<br>     &#125; <span class="hljs-keyword">catch</span> (error) &#123;<br>       <span class="hljs-keyword">let</span> err = error <span class="hljs-keyword">as</span> <span class="hljs-title class_">BusinessError</span>;<br>       <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Failed to check whether the flash mode is supported. errorCode = &#x27;</span> + err.<span class="hljs-property">code</span>);<br>     &#125;<br>   &#125;<br> &#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="连续自动对焦"><a href="#连续自动对焦" class="headerlink" title="连续自动对焦"></a>连续自动对焦</h4><p>也是需要先判断是否支持自动连续对焦，不支持的话只能手动对焦</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-title function_">setAutoContinuousFocus</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">if</span> (!<span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>) &#123;<br>    <span class="hljs-keyword">return</span><br>  &#125;<br>  <span class="hljs-comment">// 判断是否支持连续自动变焦模式</span><br>  <span class="hljs-keyword">let</span> <span class="hljs-attr">focusModeStatus</span>: <span class="hljs-built_in">boolean</span> = <span class="hljs-literal">false</span>;<br>  <span class="hljs-keyword">try</span> &#123;<br>    <span class="hljs-keyword">let</span> <span class="hljs-attr">status</span>: <span class="hljs-built_in">boolean</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>.<span class="hljs-title function_">isFocusModeSupported</span>(camera.<span class="hljs-property">FocusMode</span>.<span class="hljs-property">FOCUS_MODE_CONTINUOUS_AUTO</span>);<br>    focusModeStatus = status;<br>  &#125; <span class="hljs-keyword">catch</span> (error) &#123;<br>    <span class="hljs-keyword">let</span> err = error <span class="hljs-keyword">as</span> <span class="hljs-title class_">BusinessError</span>;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Failed to check whether the focus mode is supported. errorCode = &#x27;</span> + err.<span class="hljs-property">code</span>);<br>  &#125;<br><br>  <span class="hljs-keyword">if</span> (focusModeStatus) &#123;<br>    <span class="hljs-comment">// 设置连续自动变焦模式</span><br>    <span class="hljs-keyword">try</span> &#123;<br>      <span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>.<span class="hljs-title function_">setFocusMode</span>(camera.<span class="hljs-property">FocusMode</span>.<span class="hljs-property">FOCUS_MODE_CONTINUOUS_AUTO</span>);<br>    &#125; <span class="hljs-keyword">catch</span> (error) &#123;<br>      <span class="hljs-keyword">let</span> err = error <span class="hljs-keyword">as</span> <span class="hljs-title class_">BusinessError</span>;<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Failed to set the focus mode. errorCode = &#x27;</span> + err.<span class="hljs-property">code</span>);<br>    &#125;<br>  &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>手动对焦则是获取到用户点击的位置，然后调用<code>this.photoSession.setFocusPoint(point: camera.Point)</code>方法进行对焦</p>
+<h4 id="缩放"><a href="#缩放" class="headerlink" title="缩放"></a>缩放</h4><p>同样的，需要先获取到支持的缩放范围</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-title function_">getZoomRatioRange</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">if</span> (!<span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>) &#123;<br>    <span class="hljs-keyword">return</span><br>  &#125;<br>  <span class="hljs-comment">// 获取相机支持的可变焦距比范围</span><br>  <span class="hljs-keyword">let</span> <span class="hljs-attr">zoomRatioRange</span>: <span class="hljs-title class_">Array</span>&lt;<span class="hljs-built_in">number</span>&gt; = [];<br>  <span class="hljs-keyword">try</span> &#123;<br>    zoomRatioRange = <span class="hljs-variable language_">this</span>.<span class="hljs-property">photoSession</span>.<span class="hljs-title function_">getZoomRatioRange</span>();<br>  &#125; <span class="hljs-keyword">catch</span> (error) &#123;<br>    <span class="hljs-keyword">let</span> err = error <span class="hljs-keyword">as</span> <span class="hljs-title class_">BusinessError</span>;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Failed to get the zoom ratio range. errorCode = &#x27;</span> + err.<span class="hljs-property">code</span>);<br>  &#125;<br>  <span class="hljs-keyword">if</span> (zoomRatioRange.<span class="hljs-property">length</span> &lt;= <span class="hljs-number">0</span>) &#123;<br>    <span class="hljs-keyword">return</span>;<br>  &#125;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">zoomRatioRangeStart</span> = zoomRatioRange[<span class="hljs-number">0</span>]<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">zoomRatioRangeEnd</span> = zoomRatioRange[<span class="hljs-number">1</span>]<br><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>然后调用<code>this.photoSession.setZoomRatio(zoom);</code>设置缩放比</p>
+<h3 id="释放资源"><a href="#释放资源" class="headerlink" title="释放资源"></a>释放资源</h3><p>在拍照结束后需要释放相应的资源</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">await</span> photoSession.<span class="hljs-title function_">stop</span>();<br><br><span class="hljs-comment">// 释放相机输入流</span><br><span class="hljs-keyword">await</span> cameraInput.<span class="hljs-title function_">close</span>();<br><br><span class="hljs-comment">// 释放预览输出流</span><br><span class="hljs-keyword">await</span> previewOutput.<span class="hljs-title function_">release</span>();<br><br><span class="hljs-comment">// 释放拍照输出流</span><br><span class="hljs-keyword">await</span> photoOutput.<span class="hljs-title function_">release</span>();<br><br><span class="hljs-comment">// 释放会话</span><br><span class="hljs-keyword">await</span> photoSession.<span class="hljs-title function_">release</span>();<br><br><span class="hljs-comment">// 会话置空</span><br>photoSession = <span class="hljs-literal">undefined</span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><h4 id="设备旋转"><a href="#设备旋转" class="headerlink" title="设备旋转"></a>设备旋转</h4><p>上面的代码中我们并没有考虑设备旋转问题</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">import</span> &#123; display &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@kit.ArkUI&#x27;</span>;   <br><br><span class="hljs-keyword">let</span> initDisplayRotation = display.<span class="hljs-title function_">getDefaultDisplaySync</span>().<span class="hljs-property">rotation</span>;<br><span class="hljs-keyword">let</span> initPreviewRotation = previewOutput.<span class="hljs-title function_">getPreviewRotation</span>(initDisplayRotation * camera.<span class="hljs-property">ImageRotation</span>.<span class="hljs-property">ROTATION_90</span>);<br>previewOutput.<span class="hljs-title function_">setPreviewRotation</span>(initPreviewRotation, <span class="hljs-literal">false</span>);<br>display.<span class="hljs-title function_">off</span>(<span class="hljs-string">&#x27;change&#x27;</span>);<br>display.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;change&#x27;</span>, <span class="hljs-function">() =&gt;</span> &#123;<br>  initDisplayRotation = display.<span class="hljs-title function_">getDefaultDisplaySync</span>().<span class="hljs-property">rotation</span>;<br>  <span class="hljs-keyword">let</span> imageRotation = initDisplayRotation * camera.<span class="hljs-property">ImageRotation</span>.<span class="hljs-property">ROTATION_90</span>;<br>  <span class="hljs-keyword">let</span> previewRotation = previewOutput.<span class="hljs-title function_">getPreviewRotation</span>(imageRotation);<br>  previewOutput.<span class="hljs-title function_">setPreviewRotation</span>(previewRotation, <span class="hljs-literal">false</span>);<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<h4 id="在-Worker-线程中使用相机"><a href="#在-Worker-线程中使用相机" class="headerlink" title="在 Worker 线程中使用相机"></a>在 Worker 线程中使用相机</h4><p>一般情况下，设备的性能足以支持我们直接使用相机，但如果要追求极致性能，可以将拍照的一系列流程都放在 Worker 线程中完成，通过宿主线程的即时消息通信完成线程间交互</p>
+<hr>
+<p>具体的代码在<a target="_blank" rel="noopener" href="https://github.com/huangyuanlove/HelloArkUI/blob/main/entry/src/main/ets/pages/playground/take_photo/TakePhotoPage.ets">https://github.com/huangyuanlove/HelloArkUI/blob/main/entry/src/main/ets/pages/playground/take_photo&#x2F;TakePhotoPage.ets</a><br>就不再贴一遍了。<br>上面代码中并没有实现切换摄像头、切换闪光灯、切换分辨率功能，只是做了展示。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/HarmonyOS/" class="print-no-link">#HarmonyOS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>鸿蒙-自定义相机拍照</div>
+      <div>https://blog.huangyuanlove.com/2024/12/19/鸿蒙-自定义相机拍照/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年12月19日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/11/28/%E9%B8%BF%E8%92%99-Canvas-%E5%9B%BE%E7%89%87%E6%BB%91%E5%8A%A8%E9%AA%8C%E8%AF%81/" title="鸿蒙--Canvas 图片滑动验证">
+                        <span class="hidden-mobile">鸿蒙--Canvas 图片滑动验证</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'f451dd0e2630d746731a8583d46430df'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

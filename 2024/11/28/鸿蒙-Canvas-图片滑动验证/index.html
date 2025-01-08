@@ -1,0 +1,653 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="HarmonyOS,鸿蒙应用开发,鸿蒙手机应用开发,Canvas,图片滑动验证码">
+  
+    <meta name="description" content="群里有朋友问图片滑块验证码怎么做，就是一张图上扣出来一块，然后拖动这一小块完成拼图。第一个想法就是偷懒一下：直接让设计在图片上抠出来一小块，把这两个图片和抠图的坐标一块下发，用Image或者canvas自己绘制一下，监听一下手指移动，当手指抬起的时候，如果移动的坐标和抠图的坐标误差在指定范围内，就算成功。后来说Android那边是自己处理的，下发整张图片，然后客户端自己抠图，自己处理。Androi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="鸿蒙--Canvas 图片滑动验证">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2024/11/28/%E9%B8%BF%E8%92%99-Canvas-%E5%9B%BE%E7%89%87%E6%BB%91%E5%8A%A8%E9%AA%8C%E8%AF%81/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="群里有朋友问图片滑块验证码怎么做，就是一张图上扣出来一块，然后拖动这一小块完成拼图。第一个想法就是偷懒一下：直接让设计在图片上抠出来一小块，把这两个图片和抠图的坐标一块下发，用Image或者canvas自己绘制一下，监听一下手指移动，当手指抬起的时候，如果移动的坐标和抠图的坐标误差在指定范围内，就算成功。后来说Android那边是自己处理的，下发整张图片，然后客户端自己抠图，自己处理。Androi">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/HarmonyOS/slide_code.gif">
+<meta property="article:published_time" content="2024-11-28T14:55:23.000Z">
+<meta property="article:modified_time" content="2024-12-09T09:39:50.286Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="HarmonyOS">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/HarmonyOS/slide_code.gif">
+  
+  
+  
+  <title>鸿蒙--Canvas 图片滑动验证 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="鸿蒙--Canvas 图片滑动验证"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-11-28 22:55" pubdate>
+          2024年11月28日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.7k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">鸿蒙--Canvas 图片滑动验证</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>群里有朋友问图片滑块验证码怎么做，就是一张图上扣出来一块，然后拖动这一小块完成拼图。<br>第一个想法就是偷懒一下：直接让设计在图片上抠出来一小块，把这两个图片和抠图的坐标一块下发，用Image或者canvas自己绘制一下，监听一下手指移动，当手指抬起的时候，如果移动的坐标和抠图的坐标误差在指定范围内，就算成功。<br>后来说Android那边是自己处理的，下发整张图片，然后客户端自己抠图，自己处理。<br>Android能做的，鸿蒙应该也能做，这时候就应该掏出来Canvas怼一波了</p>
+<span id="more"></span>
+<h2 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h2><p>两个Canvas，一个使用<code>drawImage</code>画整张图片，画出来后，随机两个坐标值使用<code>getImageData</code>获取指定位置的图片内容。然后在这个区域绘制上边框或者填充颜色，告诉用户获取的是这个区域的内容。想上难度的话，不提示这个截取位置也行。<br>在另外一个Canvas上使用<code>putImageData</code>将图片绘制出来，绑定一下移动手势监听，然后不断更新绘制图片的坐标。当抬起手指的时候，对比一下移动的坐标和抠图的坐标，在允许的范围内，判定为成功。<br>结束。打完收工。完结撒花。</p>
+<p><img src="/image/HarmonyOS/slide_code.gif" srcset="/img/loading.gif" lazyload alt="image.png">  </p>
+<h2 id="绘制形状方式详细解释"><a href="#绘制形状方式详细解释" class="headerlink" title="绘制形状方式详细解释"></a>绘制形状方式详细解释</h2><p>先看下面不需要处理抠图的，这个简单点，我们循序渐进。</p>
+<h3 id="定义变量"><a href="#定义变量" class="headerlink" title="定义变量"></a>定义变量</h3><p>两个Canvas，需要两个<code>CanvasRenderingContext2D</code>分别绘制两个Canvas上的内容。<br>一个能接受的误差值。<br>随机出来的抠图的横纵坐标。<br>抠图的大小。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">private</span> <span class="hljs-attr">settings</span>: <span class="hljs-title class_">RenderingContextSettings</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RenderingContextSettings</span>(<span class="hljs-literal">true</span>)<br><span class="hljs-keyword">private</span> <span class="hljs-attr">canvasRendering</span>: <span class="hljs-title class_">CanvasRenderingContext2D</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CanvasRenderingContext2D</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">settings</span>)<br><span class="hljs-keyword">private</span> <span class="hljs-attr">canvasRendering2</span>: <span class="hljs-title class_">CanvasRenderingContext2D</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CanvasRenderingContext2D</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">settings</span>)<br><span class="hljs-comment">//允许的误差</span><br><span class="hljs-keyword">private</span> <span class="hljs-attr">diffInterval</span>: <span class="hljs-built_in">number</span> = <span class="hljs-number">10</span> <br><span class="hljs-comment">//随机抠图的横坐标</span><br><span class="hljs-keyword">private</span> <span class="hljs-attr">clip_start_x</span>: <span class="hljs-built_in">number</span> = <span class="hljs-number">100</span><br><span class="hljs-comment">//随机抠图的纵坐标</span><br><span class="hljs-keyword">private</span> <span class="hljs-attr">clip_start_y</span>: <span class="hljs-built_in">number</span> = <span class="hljs-number">100</span><br><span class="hljs-comment">//抠图的宽度</span><br><span class="hljs-keyword">private</span> clip_image_width = <span class="hljs-number">120</span><br><span class="hljs-comment">//抠图的高度</span><br><span class="hljs-keyword">private</span> clip_image_height = <span class="hljs-number">120</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h3><p>这个没啥好说的，Stack里面摞两个Canvas，底部的Canvas画整个图，上面的Canvas画形状。</p>
+<h3 id="整图Canvas"><a href="#整图Canvas" class="headerlink" title="整图Canvas"></a>整图Canvas</h3><p>这里使用的本地图片，理论上讲，使用网络图片应该也能处理。<br>随机坐标时，注意减去抠图的宽度，否则万一随机出来的坐标在绘制完形状之后超出的图片范围就好玩了。<br>这里随机之后绘制了一个三角形。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-title class_">Canvas</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>).<span class="hljs-title function_">width</span>(<span class="hljs-string">&quot;100%&quot;</span>).<span class="hljs-title function_">height</span>(<span class="hljs-string">&quot;100%&quot;</span>).<span class="hljs-title function_">onReady</span>(<span class="hljs-function">() =&gt;</span> &#123;<br><br>   <span class="hljs-comment">//这里用的本地图片</span><br>   <span class="hljs-keyword">let</span> <span class="hljs-attr">imageBitMap</span>: <span class="hljs-title class_">ImageBitmap</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ImageBitmap</span>(<span class="hljs-string">&quot;pages/playground/cat.webp&quot;</span>)<br>   <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-title function_">drawImage</span>(imageBitMap, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>)<br>   hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>, <span class="hljs-string">&#x27;SlideVerificationView2&#x27;</span>, <span class="hljs-string">&#x27;imageBitMap width --&gt; &#x27;</span> + imageBitMap.<span class="hljs-property">width</span>)<br>   hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>, <span class="hljs-string">&#x27;SlideVerificationView2&#x27;</span>, <span class="hljs-string">&#x27;imageBitMap height --&gt; &#x27;</span> + imageBitMap.<span class="hljs-property">height</span>)<br><br>   <span class="hljs-comment">//随机两个坐标，注意不要超出图片范围</span><br>   <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_x</span> = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * (imageBitMap.<span class="hljs-property">width</span> - <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_width</span>))<br>   <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_y</span> = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * (imageBitMap.<span class="hljs-property">height</span> - <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_height</span>))<br><br>   hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>, <span class="hljs-string">&#x27;SlideVerificationView2&#x27;</span>, <span class="hljs-string">&#x27;clip_start_x --&gt; &#x27;</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_x</span>)<br>   hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>, <span class="hljs-string">&#x27;SlideVerificationView2&#x27;</span>, <span class="hljs-string">&#x27;clip_start_y --&gt; &#x27;</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_y</span>)<br><br>   <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-property">lineWidth</span> = <span class="hljs-number">2</span><br>   <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-property">strokeStyle</span> = <span class="hljs-string">&#x27;#FFFFFF&#x27;</span><br>   <span class="hljs-comment">//在对应的区域绘制标识，这里画了个三角形，想画其他的自己调整就好</span><br>   <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-title function_">moveTo</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_x</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_width</span> / <span class="hljs-number">2</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_y</span>)<br>   <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-title function_">lineTo</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_x</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_width</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_y</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_height</span>)<br>   <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-title function_">lineTo</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_x</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_y</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_height</span>)<br>   <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-title function_">lineTo</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_x</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_width</span> / <span class="hljs-number">2</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_y</span>)<br>   <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-title function_">stroke</span>()<br> &#125;)<br></code></pre></td></tr></table></figure>
+
+<h3 id="需要滑动的形状"><a href="#需要滑动的形状" class="headerlink" title="需要滑动的形状"></a>需要滑动的形状</h3><p>我们拿到了随机的坐标后，在新的Canvas上绘制相同的形状。<br>这里需要监听手指的滑动，我们使用了<code>priorityGesture</code>来绑定<code>PanGesture</code>。注意这里<strong>滑动最小距离为5vp时识别成功</strong>。<br>这里我们限制了只能横向滑动。想加点难度的话，可以在横纵方向上都能滑动。<br>最后在<code>onActionEnd</code>的时候判断一下移动的坐标是否满足条件</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-title class_">Canvas</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering2</span>).<span class="hljs-title function_">width</span>(<span class="hljs-string">&quot;100%&quot;</span>).<span class="hljs-title function_">height</span>(<span class="hljs-string">&quot;100%&quot;</span>).<span class="hljs-title function_">onReady</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>&#125;)<br>  <span class="hljs-comment">//绑定优先识别手势</span><br>  .<span class="hljs-title function_">priorityGesture</span>(<br>    <span class="hljs-comment">//平移手势，滑动最小距离为5vp时识别成功。</span><br>    <span class="hljs-title class_">PanGesture</span>()<br>      .<span class="hljs-title function_">onActionStart</span>(<span class="hljs-function">(<span class="hljs-params">event: GestureEvent</span>) =&gt;</span> &#123;<br>      &#125;)<br>      .<span class="hljs-title function_">onActionUpdate</span>(<span class="hljs-function">(<span class="hljs-params">event: GestureEvent</span>) =&gt;</span> &#123;<br>        <span class="hljs-comment">//重置一下画布</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering2</span>.<span class="hljs-title function_">reset</span>()<br><br>        <span class="hljs-comment">//绘制形状，和整图canvas中的形状、大小一致</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering2</span>.<span class="hljs-title function_">moveTo</span>(event.<span class="hljs-property">offsetX</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_width</span>/<span class="hljs-number">2</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_y</span>)<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering2</span>.<span class="hljs-title function_">lineTo</span>(event.<span class="hljs-property">offsetX</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_width</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_y</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_height</span>)<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering2</span>.<span class="hljs-title function_">lineTo</span>(event.<span class="hljs-property">offsetX</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_y</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_height</span>)<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering2</span>.<span class="hljs-title function_">lineTo</span>(event.<span class="hljs-property">offsetX</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_width</span>/<span class="hljs-number">2</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_y</span>)<br><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering2</span>.<span class="hljs-property">strokeStyle</span> = <span class="hljs-title class_">Color</span>.<span class="hljs-property">Pink</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering2</span>.<span class="hljs-property">lineWidth</span> = <span class="hljs-number">2</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering2</span>.<span class="hljs-title function_">stroke</span>()<br><br>      &#125;)<br>      .<span class="hljs-title function_">onActionEnd</span>(<span class="hljs-function">(<span class="hljs-params">event: GestureEvent</span>) =&gt;</span> &#123;<br>        hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>, <span class="hljs-string">&#x27;SlideVerificationView&#x27;</span>, <span class="hljs-string">`onActionEnd <span class="hljs-subst">$&#123;event.offsetX.toString()&#125;</span>`</span>)<br>        <span class="hljs-comment">//判定是否成功</span><br>        <span class="hljs-keyword">if</span> (<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">abs</span>(event.<span class="hljs-property">offsetX</span> - <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_x</span>) &lt; <span class="hljs-variable language_">this</span>.<span class="hljs-property">diffInterval</span>) &#123;<br>          promptAction.<span class="hljs-title function_">showToast</span>(&#123; <span class="hljs-attr">message</span>: <span class="hljs-string">&#x27;验证成功&#x27;</span> &#125;)<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>          promptAction.<span class="hljs-title function_">showToast</span>(&#123; <span class="hljs-attr">message</span>: <span class="hljs-string">&#x27;验证失败&#x27;</span> &#125;)<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering2</span>.<span class="hljs-title function_">reset</span>()<br>        &#125;<br>      &#125;)<br>  )<br></code></pre></td></tr></table></figure>
+
+<p>这种是最简单的，不需要处理图片，只需要绘制形状就好了</p>
+<h2 id="需要处理图片的方式"><a href="#需要处理图片的方式" class="headerlink" title="需要处理图片的方式"></a>需要处理图片的方式</h2><p>比起上面这种，我们只需要多定义一个ImageData就好了</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">private</span> <span class="hljs-attr">settings</span>: <span class="hljs-title class_">RenderingContextSettings</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RenderingContextSettings</span>(<span class="hljs-literal">true</span>)<br><span class="hljs-keyword">private</span> <span class="hljs-attr">canvasRendering</span>: <span class="hljs-title class_">CanvasRenderingContext2D</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CanvasRenderingContext2D</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">settings</span>)<br><span class="hljs-keyword">private</span> <span class="hljs-attr">canvasRendering2</span>: <span class="hljs-title class_">CanvasRenderingContext2D</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CanvasRenderingContext2D</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">settings</span>)<br><span class="hljs-keyword">private</span> <span class="hljs-attr">diffInterval</span>: <span class="hljs-built_in">number</span> = <span class="hljs-number">10</span><br><span class="hljs-keyword">private</span> <span class="hljs-attr">clip_start_x</span>: <span class="hljs-built_in">number</span> = <span class="hljs-number">100</span><br><span class="hljs-keyword">private</span> <span class="hljs-attr">clip_start_y</span>: <span class="hljs-built_in">number</span> = <span class="hljs-number">100</span><br><span class="hljs-keyword">private</span> clip_image_width = <span class="hljs-number">120</span><br><span class="hljs-keyword">private</span> clip_image_height = <span class="hljs-number">120</span><br><span class="hljs-keyword">private</span> imageData?: <span class="hljs-title class_">ImageData</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="处理抠图"><a href="#处理抠图" class="headerlink" title="处理抠图"></a>处理抠图</h3><p>在绘制整图的Canvas上调用<code>getImageData</code>获取一下抠出来的图片内容就好了。<br>由于ImageData是个正方形，我们这里需要处理成三角形，我没有找到很好的方法，只能对ImageData.data属性进行处理，它是一维数组，保存了相应的颜色数据，数据值范围为0到255。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-title class_">Canvas</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>).<span class="hljs-title function_">width</span>(<span class="hljs-string">&quot;100%&quot;</span>).<span class="hljs-title function_">height</span>(<span class="hljs-string">&quot;100%&quot;</span>).<span class="hljs-title function_">onReady</span>(<span class="hljs-function">() =&gt;</span> &#123;<br><br>  <span class="hljs-keyword">let</span> <span class="hljs-attr">imageBitMap</span>: <span class="hljs-title class_">ImageBitmap</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ImageBitmap</span>(<span class="hljs-string">&quot;pages/playground/cat.webp&quot;</span>)<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-title function_">drawImage</span>(imageBitMap, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>)<br><br>  hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>, <span class="hljs-string">&#x27;SlideVerificationView2&#x27;</span>, <span class="hljs-string">&#x27;imageBitMap width --&gt; &#x27;</span> + imageBitMap.<span class="hljs-property">width</span>)<br>  hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>, <span class="hljs-string">&#x27;SlideVerificationView2&#x27;</span>, <span class="hljs-string">&#x27;imageBitMap height --&gt; &#x27;</span> + imageBitMap.<span class="hljs-property">height</span>)<br><br><br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_x</span> = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * (imageBitMap.<span class="hljs-property">width</span> - <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_width</span>))<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_y</span> = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * (imageBitMap.<span class="hljs-property">height</span> - <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_height</span>))<br><br>  hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>, <span class="hljs-string">&#x27;SlideVerificationView2&#x27;</span>, <span class="hljs-string">&#x27;clip_start_x --&gt; &#x27;</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_x</span>)<br>  hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>, <span class="hljs-string">&#x27;SlideVerificationView2&#x27;</span>, <span class="hljs-string">&#x27;clip_start_y --&gt; &#x27;</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_y</span>)<br><br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">imageData</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-title function_">getImageData</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_x</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_y</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_width</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_height</span>)<br><br>  <span class="hljs-comment">//在对应的区域绘制标识</span><br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-property">lineWidth</span> = <span class="hljs-number">2</span><br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-property">fillStyle</span> = <span class="hljs-string">&#x27;#66FFFFFF&#x27;</span><br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-title function_">moveTo</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_x</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_width</span> / <span class="hljs-number">2</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_y</span>)<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-title function_">lineTo</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_x</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_width</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_y</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_height</span>)<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-title function_">lineTo</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_x</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_y</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_height</span>)<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-title function_">lineTo</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_x</span> + <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_image_width</span> / <span class="hljs-number">2</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_y</span>)<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering</span>.<span class="hljs-title function_">fill</span>()<br><br>  <span class="hljs-comment">//将ImageData处理成三角形</span><br>  <span class="hljs-keyword">if</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">imageData</span>)&#123;<br>    <span class="hljs-keyword">let</span> width = <span class="hljs-variable language_">this</span>.<span class="hljs-property">imageData</span>.<span class="hljs-property">width</span> * <span class="hljs-number">4</span><br>    <span class="hljs-keyword">let</span> height = <span class="hljs-variable language_">this</span>.<span class="hljs-property">imageData</span>.<span class="hljs-property">height</span><br>    <span class="hljs-keyword">let</span> rate = width / height<br>    <span class="hljs-keyword">let</span> widthCenter = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(width / <span class="hljs-number">2</span>)<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; height; i++) &#123;<br>      <span class="hljs-comment">//第几行</span><br><br>      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> j = <span class="hljs-number">0</span>; j &lt; width; j++) &#123;<br>        <span class="hljs-comment">//第几列</span><br>        <span class="hljs-keyword">if</span> (j &lt; widthCenter - rate * i / <span class="hljs-number">2</span>) &#123;<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">imageData</span>.<span class="hljs-property">data</span>[i * width +j] = <span class="hljs-number">0</span><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (j &gt; widthCenter + rate * i / <span class="hljs-number">2</span>) &#123;<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">imageData</span>.<span class="hljs-property">data</span>[i * width +j] = <span class="hljs-number">0</span><br>        &#125;<br><br>      &#125;<br>    &#125;<br>  &#125;<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<h3 id="绘制抠出来的图"><a href="#绘制抠出来的图" class="headerlink" title="绘制抠出来的图"></a>绘制抠出来的图</h3><p>这个就更简单了，相同的绑定手势方法，相同的判定方法。<br>唯一的变化就是在<code>onActionUpdate</code>回调中使用<code>putImageData</code>绘制图片</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-title class_">Canvas</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering2</span>).<span class="hljs-title function_">width</span>(<span class="hljs-string">&quot;100%&quot;</span>).<span class="hljs-title function_">height</span>(<span class="hljs-string">&quot;100%&quot;</span>).<span class="hljs-title function_">onReady</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>  &#125;)<br>    .<span class="hljs-title function_">priorityGesture</span>(<br>      <span class="hljs-title class_">PanGesture</span>()<br>        .<span class="hljs-title function_">onActionStart</span>(<span class="hljs-function">(<span class="hljs-params">event: GestureEvent</span>) =&gt;</span> &#123;<br>        &#125;)<br>        .<span class="hljs-title function_">onActionUpdate</span>(<span class="hljs-function">(<span class="hljs-params">event: GestureEvent</span>) =&gt;</span> &#123;<br>          hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>, <span class="hljs-string">&#x27;SlideVerificationView&#x27;</span>, event.<span class="hljs-property">offsetX</span>.<span class="hljs-title function_">toString</span>())<br>          <br>          <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">imageData</span>) &#123;<br>            <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering2</span>.<span class="hljs-title function_">reset</span>()<br>            <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering2</span>.<span class="hljs-title function_">putImageData</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">imageData</span>, event.<span class="hljs-property">offsetX</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_y</span>)<br>          &#125;<br>        &#125;)<br>        .<span class="hljs-title function_">onActionEnd</span>(<span class="hljs-function">(<span class="hljs-params">event: GestureEvent</span>) =&gt;</span> &#123;<br>          hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x01</span>, <span class="hljs-string">&#x27;SlideVerificationView&#x27;</span>, <span class="hljs-string">`onActionEnd <span class="hljs-subst">$&#123;event.offsetX.toString()&#125;</span>`</span>)<br><br>          <span class="hljs-keyword">if</span> (<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">abs</span>(event.<span class="hljs-property">offsetX</span> - <span class="hljs-variable language_">this</span>.<span class="hljs-property">clip_start_x</span>) &lt; <span class="hljs-variable language_">this</span>.<span class="hljs-property">diffInterval</span>) &#123;<br>            promptAction.<span class="hljs-title function_">showToast</span>(&#123; <span class="hljs-attr">message</span>: <span class="hljs-string">&#x27;验证成功&#x27;</span> &#125;)<br>          &#125; <span class="hljs-keyword">else</span> &#123;<br>            promptAction.<span class="hljs-title function_">showToast</span>(&#123; <span class="hljs-attr">message</span>: <span class="hljs-string">&#x27;验证失败&#x27;</span> &#125;)<br>            <span class="hljs-variable language_">this</span>.<span class="hljs-property">canvasRendering2</span>.<span class="hljs-title function_">reset</span>()<br>          &#125;<br>        &#125;)<br>    )<br></code></pre></td></tr></table></figure>
+
+<p>到此，我们就完成了简单的滑动图片验证的功能</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>整体的流程上面也说过了，这里就不再赘述。<br>我们还可以加大点难度，比如在抠图后不在原图上提示范围，让使用者自己找。<br>比如我们还可以将抠出来的图镜像一下，让使用者自己找。<br>比如我们还可以将抠出来的图隔像素点抽样一下。<br>比如我们还可以将抠出来的图中的像素调整一下颜色。<br>。。。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/HarmonyOS/" class="print-no-link">#HarmonyOS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>鸿蒙--Canvas 图片滑动验证</div>
+      <div>https://blog.huangyuanlove.com/2024/11/28/鸿蒙-Canvas-图片滑动验证/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年11月28日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/12/19/%E9%B8%BF%E8%92%99-%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9B%B8%E6%9C%BA%E6%8B%8D%E7%85%A7/" title="鸿蒙-自定义相机拍照">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">鸿蒙-自定义相机拍照</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/11/11/%E9%B8%BF%E8%92%99-%E9%82%A3%E4%BA%9B%E5%B9%B4%E6%88%91%E4%BB%AC%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91-%E4%B8%8B/" title="鸿蒙-那些年我们踩过的坑-下">
+                        <span class="hidden-mobile">鸿蒙-那些年我们踩过的坑-下</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '232fe158c08ade81846923677cdc5336'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
