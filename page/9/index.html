@@ -215,15 +215,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2018/12/27/Android-O-%E9%80%82%E9%85%8DNotificationChannel/" target="_blank">
-          Android O---适配NotificationChannel
+        <a href="/2019/07/01/Flutter%E4%B8%AD%E7%9A%84provider/" target="_blank">
+          Flutter中的provider
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2018/12/27/Android-O-%E9%80%82%E9%85%8DNotificationChannel/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2019/07/01/Flutter%E4%B8%AD%E7%9A%84provider/" target="_blank">
         <div>
-          继之前跪在Android N的StrictMode上了。现在又跪在的Android O 的NotificationChannel上了 场景如下： 某些场景中需要上传图片，选择图片或者拍照时使用系统的图库会将自己的app置于后台，若选择图片的时间过长，则可能会导致自己的app会杀死。看了一下传承下来的代码，是在这种情况下发送一个前台通知startForeground,使此服务在前台运行。但是会在通知
+          作为一个状态共享的解决方案，不复杂，好理解，代码量不大的情况下，可以方便组合和控制刷新颗粒度 ， 而原 Google 官方仓库的状态管理 flutter-provide 已宣告GG ， provider 成了它的替代品。和scoped_moded比起来，入侵性比较小，也适合比较复杂的应用场景。 具体的代码在 https://github.com/huangyuanlove/test_flutter
         </div>
       </a>
 
@@ -231,8 +231,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2018-12-27 19:47" pubdate>
-              2018年12月27日
+            <time datetime="2019-07-01 11:28" pubdate>
+              2019年07月01日
             </time>
           </div>
         
@@ -242,6 +242,8 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/Android/">#Android</a>
+            
+              <a href="/tags/Flutter/">#Flutter</a>
             
           </div>
         
@@ -255,15 +257,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2018/12/26/Ubuntu%E8%BE%93%E5%85%A5%E5%AF%86%E7%A0%81%E7%99%BB%E9%99%86%E5%90%8E%E5%9B%9E%E5%88%B0%E7%99%BB%E5%BD%95%E7%95%8C%E9%9D%A2/" target="_blank">
-          Ubuntu输入密码登陆后回到登录界面
+        <a href="/2019/06/27/flutter%E8%B7%AF%E7%94%B1%E7%AE%80%E4%BB%8B/" target="_blank">
+          flutter路由简介
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2018/12/26/Ubuntu%E8%BE%93%E5%85%A5%E5%AF%86%E7%A0%81%E7%99%BB%E9%99%86%E5%90%8E%E5%9B%9E%E5%88%B0%E7%99%BB%E5%BD%95%E7%95%8C%E9%9D%A2/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2019/06/27/flutter%E8%B7%AF%E7%94%B1%E7%AE%80%E4%BB%8B/" target="_blank">
         <div>
-          既然推荐更新了，那就更呗，然后更新到了18.04，被小伙伴吐槽不用命令行更新的系统是没有灵魂的。更新之后玩了没几天，昨晚突然间无法登录桌面了。输入密码登录后显示一下桌面背景然后就回到了的登录界面，使用tty登录没问题。这就好办了，盲猜桌面服务挂了。然后猜原因：  .Xauthority权限不对 /tmp权限不对 ubuntu-desktop挂了  盲猜完了，验证一下
+          管理多个页面时有两个核心概念和类：Route和 Navigator。 一个route是一个屏幕或页面的抽象，Navigator是管理route的Widget。Navigator可以通过route入栈和出栈来实现页面之间的跳转。所谓路由管理，就是管理页面之间如何跳转，通常也可被称为导航管理。这和原生开发类似，无论是Android还是iOS，导航管理都会维护一个路由栈，路由入栈(push)操作对应打开
         </div>
       </a>
 
@@ -271,8 +273,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2018-12-26 11:25" pubdate>
-              2018年12月26日
+            <time datetime="2019-06-27 20:13" pubdate>
+              2019年06月27日
             </time>
           </div>
         
@@ -280,6 +282,92 @@
         
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Flutter/">#Flutter</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2019/06/19/Android%E6%8E%A5%E5%85%A5flutter%E5%A4%9A%E6%B8%A0%E9%81%93%E5%BC%95%E8%B5%B7%E7%9A%84%E9%97%AE%E9%A2%98/" target="_blank">
+          Android接入flutter多渠道引起的问题
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2019/06/19/Android%E6%8E%A5%E5%85%A5flutter%E5%A4%9A%E6%B8%A0%E9%81%93%E5%BC%95%E8%B5%B7%E7%9A%84%E9%97%AE%E9%A2%98/" target="_blank">
+        <div>
+          公司已经开始在项目中使用Flutter进行跨平台开发了，并且已经在其中一款应用上线了，过程并没有多曲折，按照官网教程一步步进行，继承、打包、测试、发版。 最近另外一个项目有新的需求，也开始使用Flutter，在集成打包的时候出现了问题： A/flutter: [FATAL:flutter/shell/common/shell.cc(218)] Check failed: vm. Must be a
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2019-06-19 11:02" pubdate>
+              2019年06月19日
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Android/">#Android</a>
+            
+              <a href="/tags/Android%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85/">#Android爬坑之旅</a>
+            
+              <a href="/tags/Flutter/">#Flutter</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2019/05/29/ss%E3%80%81ssr%E5%92%8Cv2ray%E4%BB%A5%E5%8F%8Abbr/" target="_blank">
+          ss、ssr和v2ray以及bbr
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2019/05/29/ss%E3%80%81ssr%E5%92%8Cv2ray%E4%BB%A5%E5%8F%8Abbr/" target="_blank">
+        <div>
+          由于众所周知的原因，为了防止文章被和谐，文中会出现明显(脑残)的解释说明上的错误，懂的自然都懂 使用pip安装ssserve以及对应的配置 使用bbr拥塞控制算法进行加速 使用v2ray脚本安装v2ray
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2019-05-29 10:11" pubdate>
+              2019年05月29日
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E8%BF%90%E7%BB%B4/">#运维</a>
             
               <a href="/tags/linux/">#linux</a>
             
@@ -295,15 +383,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2018/12/22/gradle-android%E6%8F%92%E4%BB%B6/" target="_blank">
-          gradle-android插件
+        <a href="/2019/05/28/JetPack-LiveData-ViewModel-LifeCycle/" target="_blank">
+          JetPack中的LiveData、ViewModel、LifeCycle
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2018/12/22/gradle-android%E6%8F%92%E4%BB%B6/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2019/05/28/JetPack-LiveData-ViewModel-LifeCycle/" target="_blank">
         <div>
-          Android Gradle插件可以分为三类，分别对应Android中的三类工程：  App应用工程，它可以生成一个可运行的apk应用，对应插件id：com.android.application Library库工程，可以生成AAR包给其他工程使用，对用插件id:com.android.library test测试工程，对App工程或者Library库工程进行单元测试，对应插件id：com.an
+          2018年谷歌I&#x2F;O 发布了一系列辅助android开发者的实用工具，合称Jetpack，以帮助开发者构建出色的 Android 应用。这次发布的 Android Jetpack 组件覆盖以下 4 个方面：Architecture、Foundation、Behavior 以及 UI。该系列博客介绍一下Jetpack中常用组件，本篇介绍LiveData、ViewModel、LifeCycl
         </div>
       </a>
 
@@ -311,8 +399,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2018-12-22 11:56" pubdate>
-              2018年12月22日
+            <time datetime="2019-05-28 22:50" pubdate>
+              2019年05月28日
             </time>
           </div>
         
@@ -322,8 +410,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/Android/">#Android</a>
-            
-              <a href="/tags/Gradle/">#Gradle</a>
             
           </div>
         
@@ -337,15 +423,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2018/12/19/gradle-java%E6%8F%92%E4%BB%B6/" target="_blank">
-          gradle-java插件
+        <a href="/2019/05/16/vimtutor/" target="_blank">
+          vimtutor
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2018/12/19/gradle-java%E6%8F%92%E4%BB%B6/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2019/05/16/vimtutor/" target="_blank">
         <div>
-          当我们使用java插件时，只需要在gradle文件中应用apply plugin :&#39;java&#39;一下 就好了，插件中有很多默认的配置，比如源代码位置在src/main/java，src/test/java是单元测试用例的存放目录，src/main/resources是要打包的文件存放目录，比如配置文件和图片等。当然我们也可以改变java插件的默认配置，只需要在build.gradl
+          安装vim后，执行vimtutor就好了。。。  Vim 是一个具有很多命令的功能非常强大的编辑器。限于篇幅，在本教程当中  就不详细介绍了。本教程的设计目标是讲述一些必要的基本命令，而掌握好这  些命令，您就能够很容易地将 Vim 当作一个通用编辑器来使用了。   完成本教程的内容大约需要25-30分钟，取决于您训练的时间。   注意：  每一节的命令操作将会更改本文。推荐您复制本文的一个副本，
         </div>
       </a>
 
@@ -353,8 +439,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2018-12-19 21:23" pubdate>
-              2018年12月19日
+            <time datetime="2019-05-16 10:41" pubdate>
+              2019年05月16日
             </time>
           </div>
         
@@ -363,9 +449,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/Android/">#Android</a>
-            
-              <a href="/tags/Gradle/">#Gradle</a>
+              <a href="/tags/vim/">#vim</a>
             
           </div>
         
@@ -379,15 +463,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2018/12/09/gradle%E6%8F%92%E4%BB%B6/" target="_blank">
-          gradle插件
+        <a href="/2019/05/08/Flutter-BLoC-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" target="_blank">
+          Flutter BLoC 简单使用
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2018/12/09/gradle%E6%8F%92%E4%BB%B6/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2019/05/08/Flutter-BLoC-%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" target="_blank">
         <div>
-          把插件应用到你的项目，插件会扩展项目的功能，帮助你在项目的构建过程中做很多事情。  可以添加任务到你的项目中，帮你完成一些事情，比如测试、编译、打包。 可以添加依赖配置到你的项目中，我们可以通过他们配置我们项目在构建过程中需要的依赖，比如变异的时候依赖第三方库等 可以向项目中现有的对象类型添加新的扩展属性、方法等，让你可以使用他们帮助我们配置、优化构建，比如android&#123;&#125;这
+          Flutter的设计灵感部分来自于React，主要是数据与视图分离，由数据来驱动视图的渲染。而对于我们在实际工程中的应用，就目前状态来讲，只是用来做UI，并没有用Flutter来做多少业务逻辑，涉及到的逻辑也不过是界面之间的数据、状态传递等。但并不排除将来会将重心稍微往Flutter侧偏移。 目前使用StatefulWidget完全可以适应目前的需求。但是需要考虑到后续扩展，需要找一种能够解决状态
         </div>
       </a>
 
@@ -395,8 +479,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2018-12-09 23:20" pubdate>
-              2018年12月09日
+            <time datetime="2019-05-08 14:34" pubdate>
+              2019年05月08日
             </time>
           </div>
         
@@ -407,7 +491,7 @@
             
               <a href="/tags/Android/">#Android</a>
             
-              <a href="/tags/Gradle/">#Gradle</a>
+              <a href="/tags/Flutter/">#Flutter</a>
             
           </div>
         
@@ -421,15 +505,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2018/11/19/gradle%E4%BB%BB%E5%8A%A1/" target="_blank">
-          gradle任务
+        <a href="/2019/04/18/flutter%E6%80%A7%E8%83%BD%E7%93%B6%E9%A2%88/" target="_blank">
+          flutter性能瓶颈
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2018/11/19/gradle%E4%BB%BB%E5%8A%A1/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2019/04/18/flutter%E6%80%A7%E8%83%BD%E7%93%B6%E9%A2%88/" target="_blank">
         <div>
-          参考《Android Gradle 权威指南》第四章Gradle任务，主要介绍任务的创建方式、访问任务、任务分组和描述、&lt;&lt;操作符、任务的执行分析、任务排序、启用和禁用、断言、规则等。
+          跟着视频自己做了一下，https://www.bilibili.com/video/av48772383 我在B站学flutter调优。。。。  如何分析Flutter 对Skia的调用  如何捕捉SK Picture来分析每一条绘图指令  常见Skia函数调用性能瓶颈
         </div>
       </a>
 
@@ -437,8 +521,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2018-11-19 10:56" pubdate>
-              2018年11月19日
+            <time datetime="2019-04-18 19:34" pubdate>
+              2019年04月18日
             </time>
           </div>
         
@@ -449,7 +533,7 @@
             
               <a href="/tags/Android/">#Android</a>
             
-              <a href="/tags/Gradle/">#Gradle</a>
+              <a href="/tags/Flutter/">#Flutter</a>
             
           </div>
         
@@ -463,15 +547,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2018/11/12/%E9%80%82%E9%85%8D%E5%85%A8%E9%9D%A2%E5%B1%8F%E6%89%8B%E6%9C%BA/" target="_blank">
-          适配全面屏手机
+        <a href="/2019/04/17/%E9%80%82%E9%85%8DAndroid%E9%AB%98%E7%89%88%E6%9C%AC%E7%B3%BB%E7%BB%9F%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/" target="_blank">
+          适配Android高版本系统常见问题
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2018/11/12/%E9%80%82%E9%85%8D%E5%85%A8%E9%9D%A2%E5%B1%8F%E6%89%8B%E6%9C%BA/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2019/04/17/%E9%80%82%E9%85%8DAndroid%E9%AB%98%E7%89%88%E6%9C%AC%E7%B3%BB%E7%BB%9F%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/" target="_blank">
         <div>
-          放个图感受一下，上面的图是折叠屏，并非是全面屏，全面屏是手机业界对于超高屏占比手机设计的一个宽泛的定义。全面屏手机屏幕的宽高比例比较特殊，不再是以前的16:9了。比如三星的Galaxy S8屏幕分辨率是：2960×1440，对应的屏幕比例为:18.5:9。VIVO X20手机屏幕分辨率是2160x1080，对应的屏幕比例:18:9。由于全面屏手机的高宽比比之前大，如果不适配的话，Android默认
+          Android P,Q 版本适配常见问题 项目地址 https://github.com/huangyuanlove/AdaptationAndroidP  文件操作 拍照选择图片 存储访问框架(SAF) 通知 权限申请 快捷方式
         </div>
       </a>
 
@@ -479,8 +563,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2018-11-12 20:05" pubdate>
-              2018年11月12日
+            <time datetime="2019-04-17 18:03" pubdate>
+              2019年04月17日
             </time>
           </div>
         
@@ -490,8 +574,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/Android/">#Android</a>
-            
-              <a href="/tags/Android%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85/">#Android爬坑之旅</a>
             
           </div>
         
@@ -505,15 +587,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2018/11/11/gradle%E5%9F%BA%E7%A1%80/" target="_blank">
-          gradle基础
+        <a href="/2019/03/13/flutter-Android%E6%B7%B7%E7%BC%96%E5%8F%8A%E4%BA%92%E7%9B%B8%E8%B0%83%E7%94%A8/" target="_blank">
+          flutter-Android混编及互相调用
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2018/11/11/gradle%E5%9F%BA%E7%A1%80/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2019/03/13/flutter-Android%E6%B7%B7%E7%BC%96%E5%8F%8A%E4%BA%92%E7%9B%B8%E8%B0%83%E7%94%A8/" target="_blank">
         <div>
-          参考自《Android Gradle权威指南》 先来回顾一下groovy的一些基础语法  调用方法的时候，圆括号是可以省略的，比如 12345678def method1(int a, int b)&#123;    println a+b&#125;task invokeMethod &lt;&lt;&#123;	method1(1,2)    method1 1,2&#125;  定义方法时，
+          基本和官网一毛一样。。。。看了官网就不用看这个了，看了也是浪费时间，我也写不出花来
         </div>
       </a>
 
@@ -521,8 +603,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2018-11-11 17:21" pubdate>
-              2018年11月11日
+            <time datetime="2019-03-13 23:50" pubdate>
+              2019年03月13日
             </time>
           </div>
         
@@ -533,87 +615,7 @@
             
               <a href="/tags/Android/">#Android</a>
             
-              <a href="/tags/Gradle/">#Gradle</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2018/11/09/groovy%E8%AF%AD%E6%B3%95%E5%85%A5%E9%97%A8/" target="_blank">
-          groovy语法入门
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2018/11/09/groovy%E8%AF%AD%E6%B3%95%E5%85%A5%E9%97%A8/" target="_blank">
-        <div>
-          看了一些gradle构建脚本的教程，总感觉缺少了点什么，对于某些命令的写法不熟悉甚至看不懂，补一下groovy的基础知识。文章内容参考 http://groovy-lang.org/syntax.html (官网) 和 http://ifeve.com/groovy-syntax (翻译)
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2018-11-09 12:14" pubdate>
-              2018年11月09日
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Gradle/">#Gradle</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2018/10/31/%E5%AF%B9%E5%BA%94%E7%94%A8%E4%B8%ADAlarm%E4%BC%98%E5%8C%96/" target="_blank">
-          对应用中Alarm优化
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2018/10/31/%E5%AF%B9%E5%BA%94%E7%94%A8%E4%B8%ADAlarm%E4%BC%98%E5%8C%96/" target="_blank">
-        <div>
-          起因：华为应用市场反馈Alarm唤醒次数过多，需要优化。未优化之前通过华为的DevEco进行功耗测试，在Mate 9上每小时唤醒71次，在p10上每小时唤醒62，妥妥的手机没办法进入休眠状态，而他们的标准是每个应用每小时唤醒不超过20次。
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2018-10-31 11:00" pubdate>
-              2018年10月31日
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Android/">#Android</a>
+              <a href="/tags/Flutter/">#Flutter</a>
             
           </div>
         
@@ -625,7 +627,7 @@
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/8/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/#board">7</a><a class="page-number" href="/page/8/#board">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/#board">10</a><a class="page-number" href="/page/11/#board">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/#board">17</a><a class="extend next" rel="next" href="/page/10/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/8/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/#board">7</a><a class="page-number" href="/page/8/#board">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/#board">10</a><a class="page-number" href="/page/11/#board">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/#board">18</a><a class="extend next" rel="next" href="/page/10/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 

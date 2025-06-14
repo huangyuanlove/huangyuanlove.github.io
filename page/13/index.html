@@ -215,15 +215,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2017/12/25/Android%E4%B8%AD%E4%BD%BF%E7%94%A8WebSocket/" target="_blank">
-          Android中使用WebSocket
+        <a href="/2018/06/22/Android%E5%A4%9A%E8%BF%9B%E7%A8%8B-%E4%BA%8C/" target="_blank">
+          Android多进程-二
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2017/12/25/Android%E4%B8%AD%E4%BD%BF%E7%94%A8WebSocket/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2018/06/22/Android%E5%A4%9A%E8%BF%9B%E7%A8%8B-%E4%BA%8C/" target="_blank">
         <div>
-          背景：后端逻辑框架调整，将原来的推送和轮询方式改成了使用WebSocket通信。原来的请求方式是由app发起请求，appServer对请求进行分发，中转中继服务器将具体请求下发到对应的物联网服务器，物联网服务器将指令下发到指定的设备。整个流程涉及到很多层http请求，并且每个服务的回调接口还不一致，只能在app发情请求之后，接着去轮询服务器，服务器端去查询设备状态、是否对指令有响应。改版后涉及到对
+          Android中中IPC方式有很多，比如使用Bundle，使用文件共享，使用Messenger，使用AIDL，使用ContentProvider，使用Socket等。前两种方式比较简单，自己玩。下面主要是抄的《Android开发艺术探索》2.4.3章节，看过书的就不用看了。
         </div>
       </a>
 
@@ -231,8 +231,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2017-12-25 16:23" pubdate>
-              2017年12月25日
+            <time datetime="2018-06-22 16:03" pubdate>
+              2018年06月22日
             </time>
           </div>
         
@@ -243,8 +243,6 @@
             
               <a href="/tags/Android/">#Android</a>
             
-              <a href="/tags/WebSocket/">#WebSocket</a>
-            
           </div>
         
       </div>
@@ -257,15 +255,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2017/12/19/%E3%80%8A%E6%88%91%E7%9A%84%E5%AE%89%E5%8D%93%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85%E3%80%8B-%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91-3/" target="_blank">
-          《我的安卓爬坑之旅》-高德地图遇到的坑-3
+        <a href="/2018/06/21/Android%E5%A4%9A%E8%BF%9B%E7%A8%8B-%E4%B8%80/" target="_blank">
+          Android多进程(一)
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2017/12/19/%E3%80%8A%E6%88%91%E7%9A%84%E5%AE%89%E5%8D%93%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85%E3%80%8B-%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91-3/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2018/06/21/Android%E5%A4%9A%E8%BF%9B%E7%A8%8B-%E4%B8%80/" target="_blank">
         <div>
-          这次是逆地理位置编码出现的坑，在提交工单后，官方回复是badcase，已经收录，后续着手优化。SDK版本号：com.amap.api:location:3.6.1、com.amap.api:map3d:4.1.3、com.amap.api:map3d-native:4.1.3、com.amap.api:search:5.5.0。
+          Reference：《Android开发艺术探索》，作者：任玉刚多进程基础以及一些名词
         </div>
       </a>
 
@@ -273,8 +271,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2017-12-19 14:49" pubdate>
-              2017年12月19日
+            <time datetime="2018-06-21 18:02" pubdate>
+              2018年06月21日
             </time>
           </div>
         
@@ -285,7 +283,45 @@
             
               <a href="/tags/Android/">#Android</a>
             
-              <a href="/tags/Android%E7%88%AC%E5%9D%91%E4%B9%8B%E6%97%85/">#Android爬坑之旅</a>
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2018/06/11/Android7-0%E5%88%86%E5%B1%8F%E5%AE%9E%E7%8E%B0/" target="_blank">
+          Android7.0 MultiWindow
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2018/06/11/Android7-0%E5%88%86%E5%B1%8F%E5%AE%9E%E7%8E%B0/" target="_blank">
+        <div>
+          Android7.0推出了多窗口(分屏)模式，允许一个屏幕下显示两个应用，可以一边追剧一边看电子书，不过在小一点的手机屏幕上看起来可能有点鸡肋。但是在TV端(这个屏幕就比较大了，一般都是40寸起步)中，画中画模式可以让我们同时进行多个任务了。
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2018-06-11 15:17" pubdate>
+              2018年06月11日
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Android/">#Android</a>
             
           </div>
         
@@ -299,15 +335,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2017/07/15/flask%E7%AC%94%E8%AE%B0%E4%B8%80(%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8)/" target="_blank">
-          flask笔记一 快速入门
+        <a href="/2018/06/03/%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/" target="_blank">
+          面试总结
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2017/07/15/flask%E7%AC%94%E8%AE%B0%E4%B8%80(%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8)/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2018/06/03/%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/" target="_blank">
         <div>
-          学习python和flask中看过的资料和自己的实践总结Flask英文以下内容来自flask中文
+          最近的面试过程中遇到的面试题，涉及的方面比较广泛，大致分成了一下几个方面：操作系统、Java、Android、计算机网络、其他(kotlin、react、安全之类的)。
         </div>
       </a>
 
@@ -315,8 +351,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2017-07-15 09:55" pubdate>
-              2017年07月15日
+            <time datetime="2018-06-03 14:30" pubdate>
+              2018年06月03日
             </time>
           </div>
         
@@ -325,9 +361,9 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/Python/">#Python</a>
+              <a href="/tags/Android/">#Android</a>
             
-              <a href="/tags/Flask/">#Flask</a>
+              <a href="/tags/%E9%9D%A2%E8%AF%95/">#面试</a>
             
           </div>
         
@@ -341,15 +377,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2017/07/03/TCP%E5%8D%8F%E8%AE%AE%E7%9A%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/" target="_blank">
-          TCP协议的简单理解
+        <a href="/2018/05/24/%E9%A1%B9%E7%9B%AE%E9%87%8D%E6%9E%84%E8%AE%B0%E5%BD%95/" target="_blank">
+          项目重构记录
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2017/07/03/TCP%E5%8D%8F%E8%AE%AE%E7%9A%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2018/05/24/%E9%A1%B9%E7%9B%AE%E9%87%8D%E6%9E%84%E8%AE%B0%E5%BD%95/" target="_blank">
         <div>
-          尽管TCP和UDP都使用相同的网络层(IP)，TCP却向应用层提供与UDP完全不同的服务。TCP提供一种面向连接的、可靠的字节流服务。这里的面向连接是指：两个使用TCP的应用（通常是一个客户一个服务器）在彼此交换数据之前必须先建立一个TCP连接。
+          总结一下在新公司一个月来学到的东西吧。公司的项目采用Native+RN进行开发，前两周简单的了解了一下项目结构，写了一些自动打包的脚本。后两周大致学习了一下RN，然后就是调整项目结构，做重构。
         </div>
       </a>
 
@@ -357,8 +393,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2017-07-03 16:28" pubdate>
-              2017年07月03日
+            <time datetime="2018-05-24 12:11" pubdate>
+              2018年05月24日
             </time>
           </div>
         
@@ -367,7 +403,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/tcp%E5%8D%8F%E8%AE%AE/">#tcp协议</a>
+              <a href="/tags/Android/">#Android</a>
             
           </div>
         
@@ -381,15 +417,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2017/06/28/Jenkins%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/" target="_blank">
-          Jenkins安装与使用
+        <a href="/2018/04/01/%E7%BD%91%E7%AB%99%E5%85%8D%E8%B4%B9%E5%8D%87%E7%BA%A7https/" target="_blank">
+          网站免费升级https
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2017/06/28/Jenkins%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2018/04/01/%E7%BD%91%E7%AB%99%E5%85%8D%E8%B4%B9%E5%8D%87%E7%BA%A7https/" target="_blank">
         <div>
-          公司需求，业务越来越多，服务器越来越多，后台部署项目麻烦的要死，于是上了jenkins这货。关于这货是干嘛的，请移步这里https://jenkins.io/,下载请移步这里https://jenkins.io/download/安装环境：ubuntu 16.04、tomcat7(这个是因为Jenkins是个war包)、maven(这个是因为后台的项目是maven工程)、jdk8(这个是因为需要t
+          昨天跟着酷壳网左耳朵耗子的文章把自己在亚马逊主机上的网站变成https的安全访问了，证书不是自签名的，也不是花钱购买的。据说https的网站在搜索引擎中的rank值会比http的更高一些。升级完成后的浏览器截图如下：下面是这次升级的记录。
         </div>
       </a>
 
@@ -397,8 +433,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2017-06-28 17:30" pubdate>
-              2017年06月28日
+            <time datetime="2018-04-01 12:36" pubdate>
+              2018年04月01日
             </time>
           </div>
         
@@ -407,9 +443,9 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/jenkins/">#jenkins</a>
+              <a href="/tags/%E4%B9%B1%E4%B8%83%E5%85%AB%E7%B3%9F/">#乱七八糟</a>
             
-              <a href="/tags/%E8%BF%90%E7%BB%B4/">#运维</a>
+              <a href="/tags/%E7%BD%91%E7%AB%99https/">#网站https</a>
             
           </div>
         
@@ -423,15 +459,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2017/06/13/elk%E7%AE%80%E5%8D%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA-for-linux/" target="_blank">
-          elk简单环境搭建 for linux
+        <a href="/2018/03/20/Java%E5%B9%B6%E5%8F%91%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5/" target="_blank">
+          Java并发多线程同步
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2017/06/13/elk%E7%AE%80%E5%8D%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA-for-linux/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2018/03/20/Java%E5%B9%B6%E5%8F%91%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5/" target="_blank">
         <div>
-          环境：ubuntu 16.06虚拟机：4核8G内存在官网下载的tag.gz包，官网地址https://www.elastic.co/webinars/introduction-elk-stack安装版本是5.4.1，本文只安装了Elasticsearch、Logstash、Kibana
+          最近遇到了多线程并发同步问题，找到了java.util.concurrent包下的CountDownLatch、CyclicBarrier、Semaphore这三个类。CountDownLatch可以实现类似计数器的功能，例如线程A需要等待B、C、D三个线程执行完成之后才可以执行。CyclicBarrier可以实现让一组(多个)线程等待至某个状态之后再全部同时执行，当所有线程都被释放以后，Cycl
         </div>
       </a>
 
@@ -439,8 +475,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2017-06-13 19:39" pubdate>
-              2017年06月13日
+            <time datetime="2018-03-20 10:43" pubdate>
+              2018年03月20日
             </time>
           </div>
         
@@ -449,9 +485,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/%E8%BF%90%E7%BB%B4/">#运维</a>
-            
-              <a href="/tags/elk/">#elk</a>
+              <a href="/tags/Java/">#Java</a>
             
           </div>
         
@@ -465,15 +499,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2017/05/10/git%E5%B7%A5%E5%85%B7/" target="_blank">
-          git工具
+        <a href="/2018/03/10/Tinker%E5%88%9D%E6%8E%A2/" target="_blank">
+          Tinker初探
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2017/05/10/git%E5%B7%A5%E5%85%B7/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2018/03/10/Tinker%E5%88%9D%E6%8E%A2/" target="_blank">
         <div>
-          公司代码版本管理系统由svn迁到了git，对于AndroidStudio来讲，内置的GUI工具足以应付日常开发，但在请求失败的情况下，对失败原因的提示不够清晰。个人习惯上用命令行，但是对于命令行中比较两个文件差异以及合并来说，个人还是不大习惯，于是就配置成了使用其他软件进行合并。可以使用$ git difftool --tool-help查看对比文件差异支持的软件，用$ git mergetool
+          前两天想试一下热修复的功能，对比各大平台的热修复功能，看到tinker的文档介绍，最终决定先拿Tinker试一下。               Tinker QZone AndFix Robust   类替换 yes yes no no   So替换 yes no no no   资源替换 yes yes no no   全平台支持 yes yes no yes   即时生效 no no yes
         </div>
       </a>
 
@@ -481,8 +515,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2017-05-10 16:51" pubdate>
-              2017年05月10日
+            <time datetime="2018-03-10 12:35" pubdate>
+              2018年03月10日
             </time>
           </div>
         
@@ -491,7 +525,11 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/git/">#git</a>
+              <a href="/tags/Android/">#Android</a>
+            
+              <a href="/tags/%E7%83%AD%E4%BF%AE%E5%A4%8D/">#热修复</a>
+            
+              <a href="/tags/tinker/">#tinker</a>
             
           </div>
         
@@ -505,15 +543,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2017/04/15/%E6%90%AD%E5%BB%BAgit%E6%9C%8D%E5%8A%A1/" target="_blank">
-          搭建git服务
+        <a href="/2018/02/27/LaTeX%E7%AC%94%E8%AE%B0-%E5%85%AD/" target="_blank">
+          LaTeX笔记-六(数学公式)
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2017/04/15/%E6%90%AD%E5%BB%BAgit%E6%9C%8D%E5%8A%A1/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2018/02/27/LaTeX%E7%AC%94%E8%AE%B0-%E5%85%AD/" target="_blank">
         <div>
-          公司的版本控制要从SVN迁移到git，正式的开发环境还没有搭建好，于是自己做了一个简单git服务。环境：本机: win10，服务器：ubuntu 16.04 LTS,ip:192.168.1.103
+          TeX有两种数学公式，一种是夹杂在行文段落中的公式，如$\int f(x) \text{d}x&#x3D;1$,一般称为行内(inline)数学公式，或正文(in-text)数学公式;另一种就是像下面这样单独占据郑航居中展示出来，称为显示数学公式$$\sum_{i&#x3D;0}^N \int_a^bg(t,i)\text{d}$$ 在TeX中，行内公式一般在前后单个美元符号\$…\$表示，显示公
         </div>
       </a>
 
@@ -521,8 +559,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2017-04-15 10:25" pubdate>
-              2017年04月15日
+            <time datetime="2018-02-27 16:17" pubdate>
+              2018年02月27日
             </time>
           </div>
         
@@ -531,9 +569,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/%E8%BF%90%E7%BB%B4/">#运维</a>
-            
-              <a href="/tags/git/">#git</a>
+              <a href="/tags/LaTeX/">#LaTeX</a>
             
           </div>
         
@@ -547,15 +583,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2017/04/07/JVM-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E4%B8%8E%E5%9B%9E%E6%94%B6%E7%AD%96%E7%95%A5/" target="_blank">
-          JVM-内存分配与回收策略
+        <a href="/2018/02/27/LaTeX%E7%AC%94%E8%AE%B0-%E4%BA%94/" target="_blank">
+          LaTeX笔记-五(自动化工具)
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2017/04/07/JVM-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E4%B8%8E%E5%9B%9E%E6%94%B6%E7%AD%96%E7%95%A5/" target="_blank">
+      <a class="index-excerpt index-excerpt__noimg" href="/2018/02/27/LaTeX%E7%AC%94%E8%AE%B0-%E4%BA%94/" target="_blank">
         <div>
-          Java技术体系中所提倡的自动内存管理最终可以归结为自动化的解决了两个问题：给对象分配内存以及回收分配给对象的内存。对象的内存分配，往大方向讲，就是在堆上分配(但也可能经过JIT编译后被拆散为标量类型并间接地栈上分配)，对象主要分配在新生代的Eden区上，如果启动了本地线程分配缓冲，将按线程优先在TLAB上分配。少数情况下也可能会直接分配在老年代中，分配的规则并不是百分百固定的，其细节取决于当
+          记录一下某些自动化的工具，比如添加超链接(hyperref)、索引(makeindex)等
         </div>
       </a>
 
@@ -563,8 +599,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2017-04-07 15:27" pubdate>
-              2017年04月07日
+            <time datetime="2018-02-27 11:09" pubdate>
+              2018年02月27日
             </time>
           </div>
         
@@ -573,47 +609,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/JVM/">#JVM</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2017/03/30/JVM-%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95/" target="_blank">
-          JVM-垃圾收集算法与实现
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2017/03/30/JVM-%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95/" target="_blank">
-        <div>
-          由于垃圾收集算法的实现涉及大量的程序细节，而且各个平台的虚拟机操作内存的方法又各不相同，这里只是介绍几种算法的思想及其发展过程。
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2017-03-30 10:27" pubdate>
-              2017年03月30日
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/JVM/">#JVM</a>
+              <a href="/tags/LaTeX/">#LaTeX</a>
             
           </div>
         
@@ -625,7 +621,7 @@
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/12/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/#board">11</a><a class="page-number" href="/page/12/#board">12</a><span class="page-number current">13</span><a class="page-number" href="/page/14/#board">14</a><a class="page-number" href="/page/15/#board">15</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/#board">17</a><a class="extend next" rel="next" href="/page/14/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/12/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/#board">11</a><a class="page-number" href="/page/12/#board">12</a><span class="page-number current">13</span><a class="page-number" href="/page/14/#board">14</a><a class="page-number" href="/page/15/#board">15</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/#board">18</a><a class="extend next" rel="next" href="/page/14/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 
