@@ -1,0 +1,686 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="HarmonyOS,鸿蒙应用开发,跨平台,flutter,鸿蒙支持flutter,鸿蒙添加flutter模块,路由管理,参数传递">
+  
+    <meta name="description" content="前言我们在前面介绍了如何搭建环境，如何向现有鸿蒙工程中添加 flutter 模块，这篇文章中我们来看一下参数传递问题。我们先看一下有哪些场景  native 打开 flutter 页面 flutter 打开 native 页面 flutter 打开 flutter 页面 native 返回 flutter 页面 flutter 返回 native 页面 flutter 返回 flutter 页面">
+<meta property="og:type" content="article">
+<meta property="og:title" content="鸿蒙-flutter-使用FlutterEntry的路由管理和参数传递_上">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2025/06/04/%E9%B8%BF%E8%92%99-flutter-%E4%BD%BF%E7%94%A8FlutterEntry%E7%9A%84%E8%B7%AF%E7%94%B1%E7%AE%A1%E7%90%86%E5%92%8C%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92_%E4%B8%8A/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="前言我们在前面介绍了如何搭建环境，如何向现有鸿蒙工程中添加 flutter 模块，这篇文章中我们来看一下参数传递问题。我们先看一下有哪些场景  native 打开 flutter 页面 flutter 打开 native 页面 flutter 打开 flutter 页面 native 返回 flutter 页面 flutter 返回 native 页面 flutter 返回 flutter 页面">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/harmony_flutter/harmony_flutter_initial_route.gif">
+<meta property="article:published_time" content="2025-06-04T08:18:01.000Z">
+<meta property="article:modified_time" content="2025-06-16T07:09:50.983Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Flutter">
+<meta property="article:tag" content="HarmonyOS">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/harmony_flutter/harmony_flutter_initial_route.gif">
+  
+  
+  
+  <title>鸿蒙-flutter-使用FlutterEntry的路由管理和参数传递_上 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="鸿蒙-flutter-使用FlutterEntry的路由管理和参数传递_上"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-06-04 16:18" pubdate>
+          2025年6月4日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          13k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">鸿蒙-flutter-使用FlutterEntry的路由管理和参数传递_上</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>我们在前面介绍了如何搭建环境，如何向现有鸿蒙工程中添加 flutter 模块，这篇文章中我们来看一下参数传递问题。<br>我们先看一下有哪些场景</p>
+<ol>
+<li>native 打开 flutter 页面</li>
+<li>flutter 打开 native 页面</li>
+<li>flutter 打开 flutter 页面</li>
+<li>native 返回 flutter 页面</li>
+<li>flutter 返回 native 页面</li>
+<li>flutter 返回 flutter 页面</li>
+</ol>
+<p>一开始考虑的是 flutter 打开 flutter 的时候用 flutter 的路由，不需要 native 参与，比如 FlutterA 跳转到 FlutterB，直接在 flutter 进行跳转。但是也有可能会出现由 nativeA 打开 FlutterB，这时候 FlutterB 返回时需要将数据传给上个页面，如果按照一开始的逻辑，FlutterB 页面就需要判断来源，增加了复杂性。<br>因此，我们决定 flutter 打开 flutter 页需要重新打开一个新的 native 页面，让这个 native 页面加载对应的 flutter 页面。<br>也就是说，一个 native 页面只承载一个FlutterView。<br>这种情况下就需要我们写插件了。</p>
+<h2 id="创建插件"><a href="#创建插件" class="headerlink" title="创建插件"></a>创建插件</h2><p>这里为了简单，我们在<code>my_flutter_module</code>下新建一个<code>plugins</code>文件，将插件工程放在这个文件夹下。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">cd my_flutter_module/plugins/<br>flutter create --org com.huangyuanlove.flutter_router --template=plugin --platforms=ohos flutter_router<br></code></pre></td></tr></table></figure>
+<p>这里我们演示鸿蒙项目下的插件，就没有支持 Android 和 iOS。<br>在 my_flutter_module中引用这个插件,在<code>pubspec.yaml</code>中添加引用</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">dependencies:</span><br>  <span class="hljs-attr">flutter_router:</span> <br>    <span class="hljs-attr">path:</span> <span class="hljs-string">plugins/flutter_router</span><br></code></pre></td></tr></table></figure>
+
+
+<h2 id="路由策略"><a href="#路由策略" class="headerlink" title="路由策略"></a>路由策略</h2><p>这里主要考虑flutter发起路由时的情况：</p>
+<ol>
+<li>flutter 页面路由统一调用插件中的方法进行跳转。</li>
+<li>在 flutter 的 main 函数中注册页面路径相关参数</li>
+<li>跳转时判断目标是 flutter 还是 native，如果是 flutter，则使用 Navigator；如果是 native ，则通过 methodChannel 调用原生打开</li>
+<li>当页面返回时，先判断是否可以由flutter进行pop(flutter打开flutter页面的情况)，可以的话则由flutter进行pop，否则通过methodChannel调用原生进行返回</li>
+</ol>
+<h3 id="native打开flutter"><a href="#native打开flutter" class="headerlink" title="native打开flutter"></a>native打开flutter</h3><p>在前面的章节，我们了解了如何打开flutter页面，但仅仅是打开了默认的页面，并没有打开指定的页面和传入参数，在这一节中，我们来看下如何实现。</p>
+<h3 id="flutter页面注册"><a href="#flutter页面注册" class="headerlink" title="flutter页面注册"></a>flutter页面注册</h3><p>由于我们确定是用路径+参数的形式来确定要打开的页面，因此需要我们先将路径和对应的flutter页面关联起来，并且能创建页面的时候把对应的参数传进去。<br>我们在flutter_router插件中创建一个用来记录路径和页面关系的类<code>router_manager.dart</code>,考虑到创建页面的时候需要传递参数，所以我们可以这么保存</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-keyword">typedef</span> RouteWidgetBuilder = Widget <span class="hljs-built_in">Function</span>(<span class="hljs-built_in">dynamic</span> args);<br><span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, RouteWidgetBuilder&gt; _routerMap = &#123;&#125;;<br><br><span class="hljs-built_in">bool</span> addRouter(<span class="hljs-built_in">String</span> path, RouteWidgetBuilder routerBuilder) &#123;<br>  _routerMap[path] = routerBuilder;<br>  <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="路径和参数获取"><a href="#路径和参数获取" class="headerlink" title="路径和参数获取"></a>路径和参数获取</h3><p>由于没有找到太好的方法来传递参数，暂时先将参数拼接到路径上，因此，我们还需要定义两个方法：从带参数路径中获取路径，从带参数路径中获取参数。<br>比如要打开的全路径为：<code>login?&#123;&quot;name&quot;:&quot;harmonyos&quot;,&quot;age&quot;:3&#125;</code>,我们获取到的路径为<code>login</code>,获取到的参数为<code>&#123;&quot;name&quot;:&quot;harmonyos&quot;,&quot;age&quot;:3&#125;</code>,也就是说路径和参数是用<code>?</code>拼接，并且参数是json字符串，这样方便我们解析。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-built_in">String</span> _getRouterName(<span class="hljs-built_in">String?</span> path) &#123;<br>  <span class="hljs-keyword">if</span> (path == <span class="hljs-keyword">null</span>) &#123;<br>    debugPrint(<span class="hljs-string">&quot;获取路径出错，path 为空&quot;</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;/&quot;</span>;<br>  &#125;<br>  <span class="hljs-keyword">if</span> (path.contains(<span class="hljs-string">&#x27;?&#x27;</span>)) &#123;<br>    <span class="hljs-keyword">var</span> uri = <span class="hljs-built_in">Uri</span>.parse(path);<br>    <span class="hljs-keyword">return</span> uri.path;<br>  &#125; <span class="hljs-keyword">else</span> &#123;<br>    <span class="hljs-keyword">return</span> path;<br>  &#125;<br>&#125;<br><br><span class="hljs-built_in">Object?</span> _getRouteArgs(<span class="hljs-built_in">String?</span> route) &#123;<br>  <span class="hljs-keyword">if</span> (route == <span class="hljs-keyword">null</span>) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;<br>  &#125;<br><br>  <span class="hljs-keyword">if</span> (route.contains(<span class="hljs-string">&#x27;?&#x27;</span>)) &#123;<br>    <span class="hljs-keyword">var</span> uri = <span class="hljs-built_in">Uri</span>.parse(route);<br><br>    <span class="hljs-built_in">String</span> query = uri.query;<br>    <span class="hljs-keyword">try</span> &#123;<br>      query = <span class="hljs-built_in">Uri</span>.decodeFull(query);<br>      <span class="hljs-keyword">return</span> json.decode(query);<br>    &#125; <span class="hljs-keyword">catch</span> (e) &#123;<br>      <span class="hljs-comment">// Map&lt;String, String&gt;</span><br>      <span class="hljs-keyword">return</span> <span class="hljs-built_in">Uri</span>.splitQueryString(query);<br>    &#125;<br>  &#125; <span class="hljs-keyword">else</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<p>我们还需要一个根据路径获取页面的方法</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs dart">Widget getRouterWidget(<span class="hljs-built_in">String</span> path, &#123;<span class="hljs-built_in">Object?</span> params&#125;) &#123;<br>  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> routerName = _getRouterName(path);<br>  <span class="hljs-built_in">Object?</span> pathParam = _getRouteArgs(path);<br>  debugPrint(<br>      <span class="hljs-string">&quot;getRouterWidget path:<span class="hljs-subst">$path</span>, routerName:<span class="hljs-subst">$routerName</span>,pathParam:<span class="hljs-subst">$pathParam</span> ,params:<span class="hljs-subst">$params</span>&quot;</span>);<br>  RouteWidgetBuilder? routerBuilder = _routerMap[routerName];<br>  <span class="hljs-keyword">if</span> (routerBuilder != <span class="hljs-keyword">null</span>) &#123;<br>    <span class="hljs-keyword">return</span> routerBuilder(pathParam ?? params);<br>  &#125;<br>  <span class="hljs-keyword">return</span> Container();<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>到这里我们就已经做好了native打开flutter页面的准备。</p>
+<h3 id="准备目标页面"><a href="#准备目标页面" class="headerlink" title="准备目标页面"></a>准备目标页面</h3><p>这假设我们有一个login页面，</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-comment">//login.dart</span><br><br><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;dart:convert&#x27;</span>;<br><br><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;package:flutter/material.dart&#x27;</span>;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LoginPage</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatefulWidget</span> </span>&#123;<br>  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; args;<br><br>  <span class="hljs-keyword">const</span> LoginPage(<span class="hljs-keyword">this</span>.args, &#123;<span class="hljs-keyword">super</span>.key&#125;);<br>  <span class="hljs-meta">@override</span><br>  State&lt;LoginPage&gt; createState() =&gt; _LoginPageState();<br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">_LoginPageState</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">State</span>&lt;<span class="hljs-title">LoginPage</span>&gt; </span>&#123;<br>  <span class="hljs-meta">@override</span><br>  Widget build(BuildContext context) &#123;<br>    <span class="hljs-keyword">return</span> Scaffold(<br>      appBar: AppBar(title: Text(<span class="hljs-string">&quot;登录页面&quot;</span>),centerTitle: <span class="hljs-keyword">true</span>,),<br>      body: Column(<br>        children: [<br>          <span class="hljs-keyword">const</span> Text(<span class="hljs-string">&quot;登录页面获取到的参数&quot;</span>,<br>              style: TextStyle(fontSize: <span class="hljs-number">16</span>, color: Color(<span class="hljs-number">0xff333333</span>))),<br>          Text(jsonEncode(widget.args)),<br>          Text(<span class="hljs-string">&quot;name:<span class="hljs-subst">$&#123;widget.args[<span class="hljs-string">&#x27;name&#x27;</span>]&#125;</span>&quot;</span>),<br>          Text(<span class="hljs-string">&quot;age:<span class="hljs-subst">$&#123;widget.args[<span class="hljs-string">&#x27;age&#x27;</span>]&#125;</span>&quot;</span>),<br>        ],<br>      ),<br>    );<br>  &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h3 id="flutter中的处理"><a href="#flutter中的处理" class="headerlink" title="flutter中的处理"></a>flutter中的处理</h3><p>然后我们在flutter的main方法中注册，之后获取要打开的路径，获取对应页面和参数，最后展示出来.<br>我们在<code>main.dart</code>中做一下处理</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;dart:ui&#x27;</span>;<br><br><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;package:flutter/material.dart&#x27;</span>;<br><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;package:flutter_router/router_manager.dart&#x27;</span>;<br><br><br><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;login_page.dart&#x27;</span>;<br><br><span class="hljs-keyword">void</span> main() &#123;<br>  initRouter(); <span class="hljs-comment">//注册flutter页面</span><br>  <span class="hljs-keyword">var</span> routerName = PlatformDispatcher.instance.defaultRouteName;<br>  debugPrint(<span class="hljs-string">&quot;获取到需要加载的路径：<span class="hljs-subst">$&#123;routerName&#125;</span>&quot;</span>);<br>  runApp(MyApp(path: routerName));<br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyApp</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatelessWidget</span> </span>&#123;<br>  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> path;<br>  <span class="hljs-keyword">const</span> MyApp(&#123;<span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.path, <span class="hljs-keyword">super</span>.key&#125;);<br><br>  <span class="hljs-comment">// This widget is the root of your application.</span><br>  <span class="hljs-meta">@override</span><br>  Widget build(BuildContext context) &#123;<br>    <span class="hljs-keyword">return</span> MaterialApp(<br>      home: RouterManager.instance.getRouterWidget(path),<br>    );<br><br>  &#125;<br>&#125;<br><span class="hljs-keyword">void</span> initRouter()&#123;<br>  RouterManager.instance.addRouter(<span class="hljs-string">&quot;login&quot;</span>,(args)&#123;<span class="hljs-keyword">return</span> LoginPage(args);&#125;);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="鸿蒙侧的处理"><a href="#鸿蒙侧的处理" class="headerlink" title="鸿蒙侧的处理"></a>鸿蒙侧的处理</h3><p>我们先从原生页面点击按钮之后跳转到flutter的登录页面，并且传递一些参数过去。<br>我这里使用HMRouter这个三方库来做的页面跳转。<br>添加flutter模块还是和前面的讲的一样，没啥太大的区别</p>
+<h4 id="EntryAbility"><a href="#EntryAbility" class="headerlink" title="EntryAbility"></a>EntryAbility</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">import</span> <span class="hljs-title class_">UIAbility</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@ohos.app.ability.UIAbility&#x27;</span>;<br><span class="hljs-keyword">import</span> hilog <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@ohos.hilog&#x27;</span>;<br><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">AbilityConstant</span>, <span class="hljs-title class_">Want</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@kit.AbilityKit&#x27;</span>;<br><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">UIContext</span>, <span class="hljs-variable language_">window</span>, uiObserver <span class="hljs-keyword">as</span> observer &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@kit.ArkUI&#x27;</span>;<br><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">JSON</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@kit.ArkTS&#x27;</span>;<br><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">HMRouterMgr</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@hadss/hmrouter&#x27;</span>;<br><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">ExclusiveAppComponent</span>, <span class="hljs-title class_">FlutterManager</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@ohos/flutter_ohos&#x27;</span>;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EntryAbility</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">UIAbility</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">ExclusiveAppComponent</span>&lt;<span class="hljs-title class_">UIAbility</span>&gt;&#123;<br><br>  <span class="hljs-title function_">detachFromFlutterEngine</span>(): <span class="hljs-built_in">void</span> &#123;<br>  &#125;<br>  <span class="hljs-title function_">getAppComponent</span>(): <span class="hljs-title class_">UIAbility</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>;<br>  &#125;<br>  <span class="hljs-keyword">private</span> <span class="hljs-attr">uiContext</span>: <span class="hljs-title class_">UIContext</span> | <span class="hljs-literal">null</span> = <span class="hljs-literal">null</span>;<br><br>  <span class="hljs-title function_">onCreate</span>(<span class="hljs-attr">want</span>: <span class="hljs-title class_">Want</span>, <span class="hljs-attr">launchParam</span>: <span class="hljs-title class_">AbilityConstant</span>.<span class="hljs-property">LaunchParam</span>): <span class="hljs-built_in">void</span> &#123;<br>    <span class="hljs-title class_">HMRouterMgr</span>.<span class="hljs-title function_">init</span>(&#123;<br>      <span class="hljs-attr">context</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">context</span><br>    &#125;)<br>    <span class="hljs-title class_">FlutterManager</span>.<span class="hljs-title function_">getInstance</span>().<span class="hljs-title function_">pushUIAbility</span>(<span class="hljs-variable language_">this</span>);<br>  &#125;<br><br><br>  <span class="hljs-title function_">onDestroy</span>(): <span class="hljs-built_in">void</span> &#123;<br>    <span class="hljs-title class_">FlutterManager</span>.<span class="hljs-title function_">getInstance</span>().<span class="hljs-title function_">popUIAbility</span>(<span class="hljs-variable language_">this</span>);<br>  &#125;<br><br>  <span class="hljs-title function_">onWindowStageCreate</span>(<span class="hljs-attr">windowStage</span>: <span class="hljs-variable language_">window</span>.<span class="hljs-property">WindowStage</span>): <span class="hljs-built_in">void</span> &#123;<br>    <span class="hljs-title class_">FlutterManager</span>.<span class="hljs-title function_">getInstance</span>().<span class="hljs-title function_">pushWindowStage</span>(<span class="hljs-variable language_">this</span>, windowStage);<br><br>    windowStage.<span class="hljs-title function_">loadContent</span>(<span class="hljs-string">&#x27;pages/Index&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">err</span>) =&gt;</span> &#123;<br>      <span class="hljs-comment">// windowStage.loadContent(&#x27;pages/tel_inquiry_waiting_page/index&#x27;, (err) =&gt; &#123;</span><br>      <span class="hljs-keyword">if</span> (err.<span class="hljs-property">code</span>) &#123;<br>        hilog.<span class="hljs-title function_">error</span>(<span class="hljs-number">0x0000</span>, <span class="hljs-string">&#x27;testTag&#x27;</span>, <span class="hljs-string">&#x27;Failed to load the content. Cause: %&#123;public&#125;s&#x27;</span>, <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">stringify</span>(err) ?? <span class="hljs-string">&#x27;&#x27;</span>);<br>      &#125;<br>    &#125;);<br>  &#125;<br><br>  <span class="hljs-title function_">onWindowStageDestroy</span>(): <span class="hljs-built_in">void</span> &#123;<br>    <span class="hljs-title class_">FlutterManager</span>.<span class="hljs-title function_">getInstance</span>().<span class="hljs-title function_">popWindowStage</span>(<span class="hljs-variable language_">this</span>);<br>    <span class="hljs-comment">// Main window is destroyed, release UI related resources</span><br>    hilog.<span class="hljs-title function_">info</span>(<span class="hljs-number">0x0000</span>, <span class="hljs-string">&#x27;testTag&#x27;</span>, <span class="hljs-string">&#x27;%&#123;public&#125;s&#x27;</span>, <span class="hljs-string">&#x27;Ability onWindowStageDestroy&#x27;</span>);<br>    <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">uiContext</span>) &#123;<br>      observer.<span class="hljs-title function_">off</span>(<span class="hljs-string">&#x27;routerPageUpdate&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">uiContext</span>);<br>    &#125;<br>  &#125;<br><br>&#125;<br><br></code></pre></td></tr></table></figure>
+<h4 id="index-ets"><a href="#index-ets" class="headerlink" title="index.ets"></a>index.ets</h4><p>主页</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">HMDefaultGlobalAnimator</span>, <span class="hljs-title class_">HMNavigation</span>, <span class="hljs-title class_">HMRouterMgr</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@hadss/hmrouter&#x27;</span>;<br><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">AttributeUpdater</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@kit.ArkUI&#x27;</span>;<br><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">FlutterMainPage</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./flutter/FlutterMainPage&#x27;</span>;<br><br><span class="hljs-meta">@Entry</span><br><span class="hljs-meta">@Component</span><br>struct <span class="hljs-title class_">Index</span> &#123;<br><br>  <span class="hljs-attr">modifier</span>: <span class="hljs-title class_">NavModifier</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">NavModifier</span>();<br>  <span class="hljs-title function_">build</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-title class_">Column</span>()&#123;<br>      <span class="hljs-title class_">HMNavigation</span>(&#123;<br>        <span class="hljs-attr">navigationId</span>: <span class="hljs-string">&#x27;mainNavigation&#x27;</span>, <span class="hljs-attr">options</span>: &#123;<br>          <span class="hljs-attr">standardAnimator</span>: <span class="hljs-title class_">HMDefaultGlobalAnimator</span>.<span class="hljs-property">STANDARD_ANIMATOR</span>,<br>          <span class="hljs-attr">dialogAnimator</span>: <span class="hljs-title class_">HMDefaultGlobalAnimator</span>.<span class="hljs-property">DIALOG_ANIMATOR</span>,<br>          <span class="hljs-attr">modifier</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">modifier</span><br>        &#125;<br>      &#125;)&#123;<br>        <span class="hljs-title class_">Column</span>() &#123;<br><br>          <span class="hljs-title class_">FlutterMainPage</span>()<br>        &#125;<br>      &#125;<br>    &#125;<br>  &#125;<br>&#125;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">NavModifier</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">AttributeUpdater</span>&lt;<span class="hljs-title class_">NavigationAttribute</span>&gt; &#123;<br>  <span class="hljs-title function_">initializeModifier</span>(<span class="hljs-attr">instance</span>: <span class="hljs-title class_">NavigationAttribute</span>): <span class="hljs-built_in">void</span> &#123;<br>    instance.<span class="hljs-title function_">mode</span>(<span class="hljs-title class_">NavigationMode</span>.<span class="hljs-property">Stack</span>);<br>    instance.<span class="hljs-title function_">navBarWidth</span>(<span class="hljs-string">&#x27;100%&#x27;</span>);<br>    instance.<span class="hljs-title function_">hideTitleBar</span>(<span class="hljs-literal">true</span>);<br>    instance.<span class="hljs-title function_">hideToolBar</span>(<span class="hljs-literal">true</span>);<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="MyFlutterEntry"><a href="#MyFlutterEntry" class="headerlink" title="MyFlutterEntry"></a>MyFlutterEntry</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><br><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">GeneratedPluginRegistrant</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@ohos/flutter_module&#x27;</span>;<br><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">FlutterEngine</span>, <span class="hljs-title class_">FlutterEntry</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@ohos/flutter_ohos&#x27;</span>;<br><br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MyFlutterEntry</span>  <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">FlutterEntry</span> &#123;<br>  <span class="hljs-title function_">configureFlutterEngine</span>(<span class="hljs-attr">flutterEngine</span>: <span class="hljs-title class_">FlutterEngine</span>): <span class="hljs-built_in">void</span> &#123;<br>    <span class="hljs-variable language_">super</span>.<span class="hljs-title function_">configureFlutterEngine</span>(flutterEngine)<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&quot;MyFlutterEntry configureFlutterEngine&quot;</span>)<br>    <span class="hljs-title class_">GeneratedPluginRegistrant</span>.<span class="hljs-title function_">registerWith</span>(flutterEngine)<br>  &#125;<br>&#125;<br><br><br></code></pre></td></tr></table></figure>
+
+<h4 id="MyFlutterPage"><a href="#MyFlutterPage" class="headerlink" title="MyFlutterPage"></a>MyFlutterPage</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">FlutterManager</span>, <span class="hljs-title class_">FlutterPage</span>, <span class="hljs-title class_">FlutterView</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@ohos/flutter_ohos&#x27;</span><br><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">HMLifecycleState</span>, <span class="hljs-title class_">HMRouter</span>, <span class="hljs-title class_">HMRouterMgr</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@hadss/hmrouter&#x27;</span><br><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">MyFlutterEntry</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./MyFlutterEntry&#x27;</span><br><br><span class="hljs-meta">@HMRouter</span>(&#123; <span class="hljs-attr">pageUrl</span>: <span class="hljs-string">&#x27;pages/flutter/MyFlutterPage&#x27;</span> &#125;)<br><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">export</span> struct <span class="hljs-title class_">MyFlutterPage</span> &#123;<br>  <span class="hljs-keyword">private</span> <span class="hljs-attr">flutterEntry</span>: <span class="hljs-title class_">MyFlutterEntry</span> | <span class="hljs-literal">null</span> = <span class="hljs-literal">null</span>;<br>  <span class="hljs-keyword">private</span> flutterView?: <span class="hljs-title class_">FlutterView</span><br><br>  <span class="hljs-title function_">aboutToAppear</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">let</span> <span class="hljs-attr">param</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt; = <span class="hljs-title class_">HMRouterMgr</span>.<span class="hljs-title function_">getCurrentParam</span>() <span class="hljs-keyword">as</span> <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">`MyFlutterPage params <span class="hljs-subst">$&#123;<span class="hljs-built_in">JSON</span>.stringify(param)&#125;</span>`</span>)<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">flutterEntry</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">MyFlutterEntry</span>(<span class="hljs-title function_">getContext</span>(<span class="hljs-variable language_">this</span>), param)<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">flutterEntry</span>.<span class="hljs-title function_">aboutToAppear</span>()<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">flutterView</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">flutterEntry</span>.<span class="hljs-title function_">getFlutterView</span>()<br>    <span class="hljs-title class_">HMRouterMgr</span>.<span class="hljs-title function_">getCurrentLifecycleOwner</span>()?.<span class="hljs-title function_">addObserver</span>(<span class="hljs-title class_">HMLifecycleState</span>.<span class="hljs-property">onShown</span>, <span class="hljs-function">() =&gt;</span> &#123;<br>      <span class="hljs-variable language_">this</span>.<span class="hljs-property">flutterEntry</span>?.<span class="hljs-title function_">onPageShow</span>()<br>      <span class="hljs-title class_">FlutterManager</span>.<span class="hljs-title function_">getInstance</span>().<span class="hljs-title function_">setUseFullScreen</span>(<span class="hljs-literal">true</span>)<br>    &#125;)<br>    <span class="hljs-title class_">HMRouterMgr</span>.<span class="hljs-title function_">getCurrentLifecycleOwner</span>()?.<span class="hljs-title function_">addObserver</span>(<span class="hljs-title class_">HMLifecycleState</span>.<span class="hljs-property">onHidden</span>, <span class="hljs-function">() =&gt;</span> &#123;<br>      <span class="hljs-variable language_">this</span>.<span class="hljs-property">flutterEntry</span>?.<span class="hljs-title function_">onPageHide</span>()<br>      <span class="hljs-title class_">FlutterManager</span>.<span class="hljs-title function_">getInstance</span>().<span class="hljs-title function_">setUseFullScreen</span>(<span class="hljs-literal">false</span>)<br>    &#125;)<br>    <span class="hljs-title class_">HMRouterMgr</span>.<span class="hljs-title function_">getCurrentLifecycleOwner</span>()?.<span class="hljs-title function_">addObserver</span>(<span class="hljs-title class_">HMLifecycleState</span>.<span class="hljs-property">onBackPressed</span>, (): <span class="hljs-function"><span class="hljs-params">boolean</span> =&gt;</span> &#123;<br>      <span class="hljs-comment">// this.flutterEntry?.onBackPress()</span><br>      <span class="hljs-comment">// (getContext(this) as common.UIAbilityContext).eventHub.emit(&#x27;EVENT_BACK_PRESS&#x27;)</span><br>      <span class="hljs-title class_">HMRouterMgr</span>.<span class="hljs-title function_">pop</span>()<br>      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span><br>    &#125;)<br>  &#125;<br><br>  <span class="hljs-title function_">aboutToDisappear</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">flutterEntry</span>?.<span class="hljs-title function_">aboutToDisappear</span>()<br>  &#125;<br><br>  <span class="hljs-title function_">build</span>(<span class="hljs-params"></span>) &#123;<br><br>      <span class="hljs-title class_">FlutterPage</span>(&#123; <span class="hljs-attr">viewId</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">flutterView</span>?.<span class="hljs-title function_">getId</span>() &#125;).<span class="hljs-title function_">expandSafeArea</span>([<span class="hljs-title class_">SafeAreaType</span>.<span class="hljs-property">SYSTEM</span>], [<span class="hljs-title class_">SafeAreaEdge</span>.<span class="hljs-property">BOTTOM</span>])<br><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="FlutterMainPage"><a href="#FlutterMainPage" class="headerlink" title="FlutterMainPage"></a>FlutterMainPage</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">HMPopInfo</span>, <span class="hljs-title class_">HMRouter</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@hadss/hmrouter&#x27;</span>;<br><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">ActionBar</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../../comm/ActionBar&#x27;</span>;<br><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">FlutterPath</span>, <span class="hljs-title class_">MyFlutterRouter</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./MyFlutterRouter&#x27;</span>;<br><br><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">export</span> struct <span class="hljs-title class_">FlutterMainPage</span> &#123;<br>  <span class="hljs-meta">@State</span> <span class="hljs-attr">message</span>: <span class="hljs-built_in">string</span> = <span class="hljs-string">&#x27;&#x27;</span>;<br>  <span class="hljs-meta">@State</span> <span class="hljs-attr">popResult</span>:<span class="hljs-title class_">Map</span>&lt;<span class="hljs-built_in">string</span>,<span class="hljs-title class_">Object</span>&gt; | <span class="hljs-literal">undefined</span> = <span class="hljs-literal">undefined</span><br>  <span class="hljs-title function_">build</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-title class_">Column</span>() &#123;<br>      <span class="hljs-title class_">ActionBar</span>(&#123;<span class="hljs-attr">title</span>:<span class="hljs-string">&quot;flutter测试页面&quot;</span>&#125;)<br>      <span class="hljs-title class_">Button</span>(<span class="hljs-string">&quot;HMRouter flutter&quot;</span>).<span class="hljs-title function_">onClick</span>(<span class="hljs-function">(<span class="hljs-params">_</span>) =&gt;</span> &#123;<br>        <span class="hljs-title class_">MyFlutterRouter</span>.<span class="hljs-title function_">push</span>(<span class="hljs-title class_">FlutterPath</span>.<span class="hljs-property">LOGIN</span>, &#123; <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;harmonyos&quot;</span>, <span class="hljs-string">&quot;age&quot;</span>: <span class="hljs-number">3</span> &#125;, &#123;<br>          <span class="hljs-attr">onResult</span>: <span class="hljs-function">(<span class="hljs-params">popInfo: HMPopInfo</span>) =&gt;</span> &#123;<br>            <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">`FlutterMainPage.push result <span class="hljs-subst">$&#123;popInfo.result&#125;</span>`</span>)<br>            <span class="hljs-variable language_">this</span>.<span class="hljs-property">popResult</span> = popInfo.<span class="hljs-property">result</span> <span class="hljs-keyword">as</span> <span class="hljs-title class_">Map</span>&lt;<span class="hljs-built_in">string</span>,<span class="hljs-title class_">Object</span>&gt;<br>            <span class="hljs-keyword">if</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">popResult</span>)&#123;<br>              <span class="hljs-variable language_">this</span>.<span class="hljs-property">message</span> = <span class="hljs-string">&quot;&quot;</span><br>              <span class="hljs-variable language_">this</span>.<span class="hljs-property">popResult</span>.<span class="hljs-title function_">forEach</span>(<span class="hljs-function">(<span class="hljs-params">value,key</span>)=&gt;</span>&#123;<br>                <span class="hljs-variable language_">this</span>.<span class="hljs-property">message</span> += <span class="hljs-string">`<span class="hljs-subst">$&#123;key&#125;</span> : <span class="hljs-subst">$&#123;value&#125;</span> \n`</span><br>              &#125;)<br>            &#125;<br>          &#125;,<br>          <span class="hljs-attr">onArrival</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>            <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">`FlutterMainPage.push onArrival `</span>)<br>          &#125;,<br>          <span class="hljs-attr">onLost</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>            <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">`FlutterMainPage.push onLost `</span>)<br>          &#125;<br>        &#125;)<br>      &#125;)<br><br>      <span class="hljs-title class_">Text</span>(<span class="hljs-string">&quot;页面返回携带的参数&quot;</span>)<br>      <span class="hljs-title class_">Text</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">message</span>)<br><br>    &#125;<br>    .<span class="hljs-title function_">height</span>(<span class="hljs-string">&#x27;100%&#x27;</span>)<br>    .<span class="hljs-title function_">width</span>(<span class="hljs-string">&#x27;100%&#x27;</span>)<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="MyFlutterRouter"><a href="#MyFlutterRouter" class="headerlink" title="MyFlutterRouter"></a>MyFlutterRouter</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">HMPopInfo</span>, <span class="hljs-title class_">HMRouterMgr</span>, <span class="hljs-title class_">HMRouterPathCallback</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@hadss/hmrouter&#x27;</span><br><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">JSON</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@kit.ArkTS&#x27;</span><br><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">FlutterAbilityLaunchConfigs</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@ohos/flutter_ohos&#x27;</span><br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">enum</span> <span class="hljs-title class_">FlutterPath</span> &#123;<br>  <span class="hljs-variable constant_">MAIN</span> = <span class="hljs-string">&#x27;main&#x27;</span>,<br>  <span class="hljs-variable constant_">LOGIN</span> = <span class="hljs-string">&#x27;login&#x27;</span>,<br>  <span class="hljs-variable constant_">TEST</span> = <span class="hljs-string">&#x27;test&#x27;</span>,<br>  <span class="hljs-variable constant_">ROOT</span> = <span class="hljs-string">&#x27;/&#x27;</span><br>&#125;<br><br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MyFlutterRouter</span> &#123;<br>  <span class="hljs-keyword">static</span> <span class="hljs-title function_">push</span>(<span class="hljs-params">path: FlutterPath, params: Record&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">Object</span>&gt; | <span class="hljs-literal">undefined</span> = <span class="hljs-literal">undefined</span>,</span><br><span class="hljs-params">    callback?: HMRouterPathCallback</span>) &#123;<br>    <span class="hljs-keyword">let</span> <span class="hljs-attr">target</span>: <span class="hljs-built_in">string</span> = path.<span class="hljs-title function_">toString</span>()<br>    <span class="hljs-keyword">if</span> (params) &#123;<br>      target = <span class="hljs-string">`<span class="hljs-subst">$&#123;target&#125;</span>?<span class="hljs-subst">$&#123;<span class="hljs-built_in">JSON</span>.stringify(params)&#125;</span>`</span><br>    &#125;<br>    <span class="hljs-keyword">let</span> <span class="hljs-attr">routerParams</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt; = &#123;&#125;<br>    routerParams[<span class="hljs-title class_">FlutterAbilityLaunchConfigs</span>.<span class="hljs-property">EXTRA_INITIAL_ROUTE</span>] = target;<br><br>    <span class="hljs-title class_">HMRouterMgr</span>.<span class="hljs-title function_">push</span>(&#123; <span class="hljs-attr">pageUrl</span>: <span class="hljs-string">&#x27;pages/flutter/MyFlutterPage&#x27;</span>, <span class="hljs-attr">param</span>: routerParams &#125;, &#123;<br>      <span class="hljs-attr">onResult</span>: <span class="hljs-function">(<span class="hljs-params">popInfo: HMPopInfo</span>) =&gt;</span> &#123;<br>        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">`获取到页面返回时携带的参数 <span class="hljs-subst">$&#123;<span class="hljs-built_in">JSON</span>.stringify(popInfo.result)&#125;</span>`</span>)<br>        <span class="hljs-keyword">if</span> (callback &amp;&amp; callback.<span class="hljs-property">onResult</span>) &#123;<br>          callback.<span class="hljs-title function_">onResult</span>(popInfo)<br>        &#125;<br>      &#125;,<br>      <span class="hljs-attr">onArrival</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>        <span class="hljs-keyword">if</span> (callback &amp;&amp; callback.<span class="hljs-property">onArrival</span>) &#123;<br>          callback.<span class="hljs-title function_">onArrival</span>()<br>        &#125;<br>      &#125;,<br>      <span class="hljs-attr">onLost</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>        <span class="hljs-keyword">if</span> (callback &amp;&amp; callback.<span class="hljs-property">onLost</span>) &#123;<br>          callback.<span class="hljs-title function_">onLost</span>()<br>        &#125;<br>      &#125;<br>    &#125;)<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h2><p>这样我们就完成了从native侧跳转到指定页面，并且还可以将参数传递过去。<br>这里需要特别注意的是在<code>MyFlutterRouter</code>中，</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">let</span> <span class="hljs-attr">routerParams</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt; = &#123;&#125;<br>routerParams[<span class="hljs-title class_">FlutterAbilityLaunchConfigs</span>.<span class="hljs-property">EXTRA_INITIAL_ROUTE</span>] = target;<br></code></pre></td></tr></table></figure>
+<p>这里的参数key用的是<code>FlutterAbilityLaunchConfigs.EXTRA_INITIAL_ROUTE</code>,值为<code>route</code>。<br>这是因为在<code>FlutterEntry</code>中<code>getInitialRoute</code>方法中，获取初始路径使用的就是这个</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-title function_">getInitialRoute</span>(): <span class="hljs-built_in">string</span> &#123;<br>  <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">parameters</span>![<span class="hljs-title class_">FlutterAbilityLaunchConfigs</span>.<span class="hljs-property">EXTRA_INITIAL_ROUTE</span>]) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">parameters</span>![<span class="hljs-title class_">FlutterAbilityLaunchConfigs</span>.<span class="hljs-property">EXTRA_INITIAL_ROUTE</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">string</span><br>  &#125;<br>  <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>看下效果图：</p>
+<p><img src="/image/harmony_flutter/harmony_flutter_initial_route.gif" srcset="/img/loading.gif" lazyload alt="鸿蒙打开flutter指定页面并且传递参数"></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Flutter/" class="print-no-link">#Flutter</a>
+      
+        <a href="/tags/HarmonyOS/" class="print-no-link">#HarmonyOS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>鸿蒙-flutter-使用FlutterEntry的路由管理和参数传递_上</div>
+      <div>https://blog.huangyuanlove.com/2025/06/04/鸿蒙-flutter-使用FlutterEntry的路由管理和参数传递_上/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年6月4日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/06/08/%E9%B8%BF%E8%92%99-flutter-%E4%BD%BF%E7%94%A8FlutterEntry%E7%9A%84%E8%B7%AF%E7%94%B1%E7%AE%A1%E7%90%86%E5%92%8C%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92-%E4%B8%AD/" title="鸿蒙-flutter-使用FlutterEntry的路由管理和参数传递_中">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">鸿蒙-flutter-使用FlutterEntry的路由管理和参数传递_中</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/05/27/%E9%B8%BF%E8%92%99-flutter-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%92%8C%E7%AC%AC%E4%B8%80%E4%B8%AAHelloWorld/" title="鸿蒙-flutter-环境搭建和第一个HelloWorld">
+                        <span class="hidden-mobile">鸿蒙-flutter-环境搭建和第一个HelloWorld</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'f87a0f35f79fd680a9eeb2ec7985fb89'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,655 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="HarmonyOS,鸿蒙应用开发,跨平台,flutter,鸿蒙支持flutter,鸿蒙添加flutter模块">
+  
+    <meta name="description" content="前言在版本迭代时，有部分新增的功能，需要开发新的业务模块，这里希望使用跨平台框架，实现代码Android、iOS、HarmonyOS 复用。之前的部分业务使用flutter 开发，HarmonyOS 也支持 flutter 的接入，因此，这次依然使用选择使用 flutter。 环境在上一篇中详细介绍了如何安装和配置环境，flutter使用的是3.22.0-ohos的版本，如果需要使用多个flutt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="鸿蒙-flutter-如何向现有鸿蒙项目中添加flutter模块">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2025/04/29/%E9%B8%BF%E8%92%99-flutter-%E5%A6%82%E4%BD%95%E5%90%91%E7%8E%B0%E6%9C%89%E9%B8%BF%E8%92%99%E9%A1%B9%E7%9B%AE%E4%B8%AD%E6%B7%BB%E5%8A%A0flutter%E6%A8%A1%E5%9D%97/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="前言在版本迭代时，有部分新增的功能，需要开发新的业务模块，这里希望使用跨平台框架，实现代码Android、iOS、HarmonyOS 复用。之前的部分业务使用flutter 开发，HarmonyOS 也支持 flutter 的接入，因此，这次依然使用选择使用 flutter。 环境在上一篇中详细介绍了如何安装和配置环境，flutter使用的是3.22.0-ohos的版本，如果需要使用多个flutt">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/harmony_flutter/flutter_entry_demo.gif">
+<meta property="article:published_time" content="2025-04-29T02:37:47.000Z">
+<meta property="article:modified_time" content="2025-06-16T07:09:50.987Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Flutter">
+<meta property="article:tag" content="HarmonyOS">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/harmony_flutter/flutter_entry_demo.gif">
+  
+  
+  
+  <title>鸿蒙-flutter-如何向现有鸿蒙项目中添加flutter模块 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="鸿蒙-flutter-如何向现有鸿蒙项目中添加flutter模块"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-04-29 10:37" pubdate>
+          2025年4月29日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.3k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">鸿蒙-flutter-如何向现有鸿蒙项目中添加flutter模块</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在版本迭代时，有部分新增的功能，需要开发新的业务模块，这里希望使用跨平台框架，实现代码Android、iOS、HarmonyOS 复用。之前的部分业务使用flutter 开发，HarmonyOS 也支持 flutter 的接入，因此，这次依然使用选择使用 flutter。</p>
+<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><p>在上一篇中详细介绍了如何安装和配置环境，flutter使用的是<code>3.22.0-ohos</code>的版本，如果需要使用多个flutter版本的话，可以使用fvm来管理和切换多个版本</p>
+<h2 id="集成"><a href="#集成" class="headerlink" title="集成"></a>集成</h2><h3 id="创建-flutter-模块"><a href="#创建-flutter-模块" class="headerlink" title="创建 flutter 模块"></a>创建 flutter 模块</h3><p>在鸿蒙项目文件夹中创建flutter module</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">为方便代码管理，将flutter代码放到工程目录内统一管理</span><br>cd HarmonyProject<br><span class="hljs-meta prompt_"># </span><span class="language-bash">1.以module形式集成到项目，创建flutter_module</span><br>flutter create -t module my_flutter_module<br><span class="hljs-meta prompt_"># </span><span class="language-bash">2.构建har文件,注意，这里需要限制性一下flutter的构建，否则是没有har文件的</span><br>cd flutter_module<br>flutter build har --release<br></code></pre></td></tr></table></figure>
+<h3 id="引用-flutter"><a href="#引用-flutter" class="headerlink" title="引用 flutter"></a>引用 flutter</h3><p>这里有两种方案，直接应用源码和引用har文件。<br>我们可以在开发阶段引用源码，在测试发版时引用 har 文件。</p>
+<h4 id="引用源码"><a href="#引用源码" class="headerlink" title="引用源码"></a>引用源码</h4><p>修改鸿蒙工程根目录下的<code>oh-package.json5</code>文件并添加对应的依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs json5">&quot;dependencies&quot;:&#123;<br>    &quot;@ohos/flutter_ohos&quot;: &quot;file:./my_flutter_module/.ohos/har/flutter.har&quot;,<br>    &quot;@ohos/flutter_module&quot;: &quot;./my_flutter_module/.ohos/flutter_module&quot;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>修改项目工程下的<code>build-profile.json5</code>文件，添加一个新的module</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-comment">// 以下为新增内容</span><br><span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;flutter_module&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;srcPath&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;./my_flutter_module/.ohos/flutter_module&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;targets&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;default&quot;</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">&quot;applyToProducts&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>        <span class="hljs-string">&quot;default&quot;</span><br>        <span class="hljs-punctuation">]</span><br>    <span class="hljs-punctuation">&#125;</span><br>    <span class="hljs-punctuation">]</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="引用har文件"><a href="#引用har文件" class="headerlink" title="引用har文件"></a>引用har文件</h4><p>在测试发版的时候先将 flutter 模块打成 har 包，复制到鸿蒙项目中，直接引用 har 文件就好。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">2.构建har文件</span><br>cd my_flutter_module<br>flutter build har --release<br></code></pre></td></tr></table></figure>
+<p>我们可以在<code>my_flutter_module/.ohos/har</code>文件夹下看到两个har文件： <code>flutter.har</code>和<code>flutter_module.har</code>。<br>我们可以将这两个文件复制到harmony项目中直接应用。</p>
+<p>这里有个小问题，flutter 项目引入了三方库时，会生成多个 har 文件，在鸿蒙工程内运行时会报错，<br>我们可以添加<code>overrides</code>声明</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-attr">&quot;dependencies&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><br><br><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br><span class="hljs-attr">&quot;overrides&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;@ohos/flutter_ohos&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;file:./har/flutter.har&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;fluttertoast&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;file:har/fluttertoast.har&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;path_provider_ohos&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;file:har/path_provider_ohos.har&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;permission_handler_ohos&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;file:har/permission_handler_ohos.har&quot;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+<p>需要注意的是，在切换引用方式的时候，记得修改工程下的<code>build-profile.json5</code>文件。</p>
+<h2 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h2><p>我们这里使用FlutterEntry来展示flutter相关页面。</p>
+<h3 id="EntryAbility-可以继承-UIAbility"><a href="#EntryAbility-可以继承-UIAbility" class="headerlink" title="EntryAbility 可以继承 UIAbility"></a>EntryAbility 可以继承 UIAbility</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EntryAbility</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">UIAbility</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">ExclusiveAppComponent</span>&lt;<span class="hljs-title class_">UIAbility</span>&gt; &#123;<br><br>  <span class="hljs-title function_">detachFromFlutterEngine</span>(): <span class="hljs-built_in">void</span> &#123;<br>    <span class="hljs-comment">// throw new Error(&#x27;Method not implemented.&#x27;);</span><br>  &#125;<br><br>  <span class="hljs-title function_">getAppComponent</span>(): <span class="hljs-title class_">UIAbility</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>;<br>  &#125;<br><br>  <span class="hljs-title function_">onCreate</span>(<span class="hljs-attr">want</span>: <span class="hljs-title class_">Want</span>, <span class="hljs-attr">launchParam</span>: <span class="hljs-title class_">AbilityConstant</span>.<span class="hljs-property">LaunchParam</span>): <span class="hljs-built_in">void</span> &#123;<br>    <span class="hljs-title class_">FlutterManager</span>.<span class="hljs-title function_">getInstance</span>().<span class="hljs-title function_">pushUIAbility</span>(<span class="hljs-variable language_">this</span>);<br>  &#125;<br><br>  <span class="hljs-title function_">onDestroy</span>(): <span class="hljs-built_in">void</span> | <span class="hljs-title class_">Promise</span>&lt;<span class="hljs-built_in">void</span>&gt; &#123;<br>    <span class="hljs-title class_">FlutterManager</span>.<span class="hljs-title function_">getInstance</span>().<span class="hljs-title function_">popUIAbility</span>(<span class="hljs-variable language_">this</span>);<br>  &#125;<br><br>  <span class="hljs-title function_">onWindowStageCreate</span>(<span class="hljs-attr">windowStage</span>: <span class="hljs-variable language_">window</span>.<span class="hljs-property">WindowStage</span>): <span class="hljs-built_in">void</span> &#123;<br>    windowStage.<span class="hljs-title function_">getMainWindowSync</span>().<span class="hljs-title function_">setWindowLayoutFullScreen</span>(<span class="hljs-literal">true</span>);<br>    <span class="hljs-title class_">FlutterManager</span>.<span class="hljs-title function_">getInstance</span>().<span class="hljs-title function_">pushWindowStage</span>(<span class="hljs-variable language_">this</span>, windowStage);<br>    windowStage.<span class="hljs-title function_">loadContent</span>(<span class="hljs-string">&#x27;pages/Index&#x27;</span>);<br>  &#125;<br><br>  <span class="hljs-title function_">onWindowStageDestroy</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-title class_">FlutterManager</span>.<span class="hljs-title function_">getInstance</span>().<span class="hljs-title function_">popWindowStage</span>(<span class="hljs-variable language_">this</span>);<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="继承-FlutterEntry-并注册插件"><a href="#继承-FlutterEntry-并注册插件" class="headerlink" title="继承 FlutterEntry 并注册插件"></a>继承 FlutterEntry 并注册插件</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MyFlutterEntry</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">FlutterEntry</span> &#123;<br>  <span class="hljs-title function_">configureFlutterEngine</span>(<span class="hljs-attr">flutterEngine</span>: <span class="hljs-title class_">FlutterEngine</span>): <span class="hljs-built_in">void</span> &#123;<br>    <span class="hljs-variable language_">super</span>.<span class="hljs-title function_">configureFlutterEngine</span>(flutterEngine);<br>    <span class="hljs-title class_">GeneratedPluginRegistrant</span>.<span class="hljs-title function_">registerWith</span>(flutterEngine);<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">delegate</span>?.<span class="hljs-title function_">addPlugin</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BatteryPlugin</span>());<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="FlutterEntry-需要和-FlutterView-一起使用"><a href="#FlutterEntry-需要和-FlutterView-一起使用" class="headerlink" title="FlutterEntry 需要和 FlutterView 一起使用"></a>FlutterEntry 需要和 FlutterView 一起使用</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs TypeScript"><span class="hljs-meta">@Entry</span><br><span class="hljs-meta">@Component</span><br>struct <span class="hljs-title class_">Index</span> &#123;<br>  <span class="hljs-keyword">private</span> context = <span class="hljs-title function_">getContext</span>(<span class="hljs-variable language_">this</span>) <span class="hljs-keyword">as</span> common.<span class="hljs-property">UIAbilityContext</span><br>  <span class="hljs-keyword">private</span> <span class="hljs-attr">flutterEntry</span>: <span class="hljs-title class_">FlutterEntry</span> | <span class="hljs-literal">null</span> = <span class="hljs-literal">null</span>;<br>  <span class="hljs-keyword">private</span> flutterView?: <span class="hljs-title class_">FlutterView</span><br><br>  <span class="hljs-title function_">aboutToAppear</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-title class_">Log</span>.<span class="hljs-title function_">d</span>(<span class="hljs-string">&quot;Flutter&quot;</span>, <span class="hljs-string">&quot;Index aboutToAppear===&quot;</span>);<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">flutterEntry</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">MyFlutterEntry</span>(<span class="hljs-title function_">getContext</span>(<span class="hljs-variable language_">this</span>))<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">flutterEntry</span>.<span class="hljs-title function_">aboutToAppear</span>()<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">flutterView</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">flutterEntry</span>.<span class="hljs-title function_">getFlutterView</span>()<br>  &#125;<br><br>  <span class="hljs-title function_">aboutToDisappear</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-title class_">Log</span>.<span class="hljs-title function_">d</span>(<span class="hljs-string">&quot;Flutter&quot;</span>, <span class="hljs-string">&quot;Index aboutToDisappear===&quot;</span>);<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">flutterEntry</span>?.<span class="hljs-title function_">aboutToDisappear</span>()<br>  &#125;<br><br>  <span class="hljs-comment">// Navigation的生命周期是onShown</span><br>  <span class="hljs-title function_">onPageShow</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-title class_">Log</span>.<span class="hljs-title function_">d</span>(<span class="hljs-string">&quot;Flutter&quot;</span>, <span class="hljs-string">&quot;Index onPageShow===&quot;</span>);<br>     <span class="hljs-title class_">FlutterManager</span>.<span class="hljs-title function_">getInstance</span>().<span class="hljs-title function_">setUseFullScreen</span>(<span class="hljs-literal">true</span>)<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">flutterEntry</span>?.<span class="hljs-title function_">onPageShow</span>()<br>  &#125;<br><br>  <span class="hljs-comment">// Navigation的生命周期是onHidden</span><br>  <span class="hljs-title function_">onPageHide</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-title class_">Log</span>.<span class="hljs-title function_">d</span>(<span class="hljs-string">&quot;Flutter&quot;</span>, <span class="hljs-string">&quot;Index onPageHide===&quot;</span>);<br>     <span class="hljs-title class_">FlutterManager</span>.<span class="hljs-title function_">getInstance</span>().<span class="hljs-title function_">setUseFullScreen</span>(<span class="hljs-literal">false</span>)<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">flutterEntry</span>?.<span class="hljs-title function_">onPageHide</span>()<br>  &#125;<br><br>  <span class="hljs-title function_">build</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-title class_">Stack</span>() &#123;<br>      <span class="hljs-title class_">FlutterPage</span>(&#123; <span class="hljs-attr">viewId</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">flutterView</span>?.<span class="hljs-title function_">getId</span>() &#125;)<br>  &#125;<br><br>  <span class="hljs-title function_">onBackPress</span>(): <span class="hljs-built_in">boolean</span> &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">context</span>.<span class="hljs-property">eventHub</span>.<span class="hljs-title function_">emit</span>(<span class="hljs-string">&#x27;EVENT_BACK_PRESS&#x27;</span>)<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h2><p>运行后我们使用router跳转到这个页面，发现是可以加载出来的，点击页面按钮行为也是正常的。</p>
+<p><img src="/image/harmony_flutter/flutter_entry_demo.gif" srcset="/img/loading.gif" lazyload alt="flutter entry示例"></p>
+<h2 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h2><p>接下来我们继续看下路由管理以及参数传递问题</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Flutter/" class="print-no-link">#Flutter</a>
+      
+        <a href="/tags/HarmonyOS/" class="print-no-link">#HarmonyOS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>鸿蒙-flutter-如何向现有鸿蒙项目中添加flutter模块</div>
+      <div>https://blog.huangyuanlove.com/2025/04/29/鸿蒙-flutter-如何向现有鸿蒙项目中添加flutter模块/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年4月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/05/06/%E9%B8%BF%E8%92%99-%E5%8D%A1%E8%AF%81%E8%AF%86%E5%88%AB/" title="鸿蒙-卡证识别">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">鸿蒙-卡证识别</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/04/20/%E9%B8%BF%E8%92%99-%E4%BD%BF%E7%94%A8Charles%E6%8A%93%E5%8C%85/" title="鸿蒙-使用Charles抓包">
+                        <span class="hidden-mobile">鸿蒙-使用Charles抓包</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '2c442c0cef96493aa583fc11725f7130'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
