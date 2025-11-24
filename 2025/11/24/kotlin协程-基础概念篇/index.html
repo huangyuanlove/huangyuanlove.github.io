@@ -1,0 +1,879 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="协程基本概念,协程的构造,函数的挂起,协程的上下文,协程的拦截器">
+  
+    <meta name="description" content="种一颗树的最好时机是十年前，其次是现在。学习也一样。跟着霍老师的《深入理解 Kotlin 携程》学习一下协程。 协程是什么当我们说到协程的时候，总会提到它是轻量级的用户态线程，能够挂起和恢复，也就是允许函数在执行过程中主动让出控制权，并在之后从断点继续执行。从这里我们可以看出协程的一些特点：用户态控制： 协程的调度完全由程序自身（开发者）控制，而非操作系统内核，因此切换开销远小于线程。协作式调度：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kotlin协程-基础概念篇">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2025/11/24/kotlin%E5%8D%8F%E7%A8%8B-%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E7%AF%87/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="种一颗树的最好时机是十年前，其次是现在。学习也一样。跟着霍老师的《深入理解 Kotlin 携程》学习一下协程。 协程是什么当我们说到协程的时候，总会提到它是轻量级的用户态线程，能够挂起和恢复，也就是允许函数在执行过程中主动让出控制权，并在之后从断点继续执行。从这里我们可以看出协程的一些特点：用户态控制： 协程的调度完全由程序自身（开发者）控制，而非操作系统内核，因此切换开销远小于线程。协作式调度：">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-11-24T03:05:35.000Z">
+<meta property="article:modified_time" content="2025-11-24T03:09:11.162Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="Kotlin">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>kotlin协程-基础概念篇 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.5","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="kotlin协程-基础概念篇"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-11-24 11:05" pubdate>
+          2025年11月24日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.8k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">kotlin协程-基础概念篇</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>种一颗树的最好时机是十年前，其次是现在。<br>学习也一样。<br>跟着霍老师的《深入理解 Kotlin 携程》学习一下协程。</p>
+<h2 id="协程是什么"><a href="#协程是什么" class="headerlink" title="协程是什么"></a>协程是什么</h2><p>当我们说到协程的时候，总会提到它是轻量级的用户态线程，能够<strong>挂起</strong>和<strong>恢复</strong>，也就是允许函数在执行过程中主动让出控制权，并在之后从断点继续执行。<br>从这里我们可以看出协程的一些特点：<br><strong>用户态控制：</strong> 协程的调度完全由程序自身（开发者）控制，而非操作系统内核，因此切换开销远小于线程。<br><strong>协作式调度：</strong> 协程通过显式的挂起（如 yield、await）和恢复操作交出执行权，同一时间只有一个协程在运行，不存在线程的抢占式调度冲突。<br><strong>状态保存：</strong> 协程挂起时会保存自身的执行上下文（如局部变量、程序计数器等），恢复时可从挂起点继续执行，无需重新初始化。</p>
+<h2 id="为什么要有协程"><a href="#为什么要有协程" class="headerlink" title="为什么要有协程"></a>为什么要有协程</h2><p>其实这个问题和协程解决了什么问题是一样的，个人粗浅的简介，协程解决了如下两个大方面的问题：</p>
+<h3 id="异步编程的复杂性"><a href="#异步编程的复杂性" class="headerlink" title="异步编程的复杂性"></a>异步编程的复杂性</h3><p>这里复杂性是指我们写代码的复杂性和代码阅读的困难性。<br>当我们进行网络请求或者其他 IO 密集型的任务(文件读写、数据库操作)时，通常情况不会 <strong>傻傻地</strong>等待任务结束，浪费 cpu 资源，传统的解决方案就是回调函数(callback)，但这导致了著名的“回调地狱”（Callback Hell），代码嵌套深，难以阅读和维护。<br>但协程通过“同步的方式写异步的代码”，解决了这个问题。代码看起来是顺序执行的，但实际上是异步非阻塞的。<br>举个例子</p>
+<figure class="highlight plaintext"><figcaption><span>传统回调方式（伪代码）</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs javascript//">httpRequest.get(&quot;url&quot;, function(response) &#123;<br>    response.on(&quot;data&quot;, function(data) &#123;<br>        // 处理数据，如果再嵌套其他异步操作...<br>    &#125;);<br>&#125;);<br><br>// 使用 Async/Await（假设语法上允许这么写，只是做个示例）<br>async function fetchData() &#123;<br>    let response = await httpRequest.get(&quot;url&quot;); // 挂起，等待结果，但不阻塞线程<br>    let data = await response.json(); // 再次挂起等待<br>    return process(data);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="轻量级并发"><a href="#轻量级并发" class="headerlink" title="轻量级并发"></a>轻量级并发</h3><p>那么它<code>轻</code>在哪？</p>
+<h4 id="核心比喻：公司与员工"><a href="#核心比喻：公司与员工" class="headerlink" title="核心比喻：公司与员工"></a>核心比喻：公司与员工</h4><ul>
+<li><strong>进程</strong>：一个<strong>公司</strong>。拥有独立的办公场地、仓库、资金（对应：独立的内存空间、系统资源）。</li>
+<li><strong>线程</strong>：公司的<strong>正式员工</strong>。<ul>
+<li>每个员工的招聘和解雇（创建和销毁）需要经过 HR 和行政的复杂流程，成本高（系统调用，内核介入）。</li>
+<li>员工之间的工作切换（上下文切换）需要开会、交接任务，也很耗时（内核态切换，保存大量寄存器状态）。</li>
+<li>员工数量太多时，管理开销会变得巨大（系统调度器负载过重）。</li>
+</ul>
+</li>
+<li><strong>协程</strong>：公司为了完成一个特定项目而<strong>临时组建的“团队”或“工作小组”</strong>。<ul>
+<li><strong>创建和解散</strong>：经理一句话就能组建或解散，完全在公司内部完成，成本极低（用户态创建，无需内核参与）。</li>
+<li><strong>工作切换</strong>：小组内的工作交接非常简单。比如，A 说“我做到这里，先等你把数据给我”，然后 B 就开始做。交接只在小组内部记录一下，不需要惊动全公司（用户态切换，保存少量上下文）。</li>
+<li><strong>数量</strong>：一个公司可以轻松拥有成千上万个这样的临时小组，而正式员工的数量可能只有几百个。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="“轻量”的具体体现（技术层面）"><a href="#“轻量”的具体体现（技术层面）" class="headerlink" title="“轻量”的具体体现（技术层面）"></a>“轻量”的具体体现（技术层面）</h4><p>基于上面的比喻，我们来看具体“轻”在哪儿：</p>
+<h5 id="1-创建和销毁的成本：极低"><a href="#1-创建和销毁的成本：极低" class="headerlink" title="1. 创建和销毁的成本：极低"></a>1. 创建和销毁的成本：极低</h5><table>
+<thead>
+<tr>
+<th align="left">维度</th>
+<th align="left">线程</th>
+<th align="left">协程</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>操作者</strong></td>
+<td align="left"><strong>操作系统内核</strong></td>
+<td align="left"><strong>用户程序&#x2F;运行时库</strong></td>
+</tr>
+<tr>
+<td align="left"><strong>系统调用</strong></td>
+<td align="left">需要（如 <code>clone</code>, <code>pthread_create</code>）</td>
+<td align="left"><strong>不需要</strong></td>
+</tr>
+<tr>
+<td align="left"><strong>内存分配</strong></td>
+<td align="left">需要为栈、线程控制块等在内核&#x2F;用户空间分配内存（通常为 <strong>MB 级别</strong>，如 Linux 默认 8MB）</td>
+<td align="left">通常在堆上预分配或动态分配一小块内存（通常为 <strong>KB 级别</strong>，如 2KB）</td>
+</tr>
+<tr>
+<td align="left"><strong>速度</strong></td>
+<td align="left">慢（毫秒级，ms）</td>
+<td align="left"><strong>极快</strong>（纳秒级，ns，通常比线程快 100-1000 倍）</td>
+</tr>
+</tbody></table>
+<p><strong>结论</strong>：你可以轻松创建<strong>数万甚至数十万个协程</strong>，而创建同样数量的线程会直接耗尽你机器的内存和 CPU 资源。</p>
+<h5 id="2-上下文切换的开销：极低"><a href="#2-上下文切换的开销：极低" class="headerlink" title="2. 上下文切换的开销：极低"></a>2. 上下文切换的开销：极低</h5><p>这是协程性能优势最关键的一点。</p>
+<table>
+<thead>
+<tr>
+<th align="left">维度</th>
+<th align="left">线程切换</th>
+<th align="left">协程切换</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>切换者</strong></td>
+<td align="left"><strong>操作系统内核</strong>（调度器）</td>
+<td align="left"><strong>用户程序&#x2F;运行时库</strong>（协程调度器）</td>
+</tr>
+<tr>
+<td align="left"><strong>模式切换</strong></td>
+<td align="left">需要从<strong>用户态</strong>切换到<strong>内核态</strong>，再切回用户态。这个操作本身就有 CPU 开销。</td>
+<td align="left"><strong>完全在用户态</strong>完成，没有模式切换的开销。</td>
+</tr>
+<tr>
+<td align="left"><strong>保存的上下文</strong></td>
+<td align="left"><strong>非常多</strong>。包括：通用寄存器、浮点寄存器、状态寄存器、栈指针、程序计数器、内存映射信息等。需要保存整个 CPU 现场。</td>
+<td align="left"><strong>非常少</strong>。通常<strong>只保存必要的寄存器</strong>（如程序计数器、栈指针）和少量局部变量。</td>
+</tr>
+<tr>
+<td align="left"><strong>缓存影响</strong></td>
+<td align="left">可能很大。线程被切换到不同 CPU 核心时，CPU 缓存（L1&#x2F;L2&#x2F;L3）可能失效，导致性能下降。</td>
+<td align="left">很小。协程通常在同一个线程内切换，对 CPU 缓存友好。</td>
+</tr>
+</tbody></table>
+<p><strong>结论</strong>：协程的切换就像是自己收拾一下桌面，准备做另一件事；而线程切换就像是整个公司开会，宣布换一个项目组来用这个办公室。</p>
+<h5 id="3-栈内存管理：灵活且节省"><a href="#3-栈内存管理：灵活且节省" class="headerlink" title="3. 栈内存管理：灵活且节省"></a>3. 栈内存管理：灵活且节省</h5><ul>
+<li><strong>线程</strong>：每个线程都有自己<strong>固定大小</strong>的栈内存（如 8MB）。这块内存在线程创建时就被保留，即使线程只用了很少的栈空间（比如几十 KB），这 8MB 也被占着。</li>
+<li><strong>协程</strong>：协程的栈通常是<strong>动态增长</strong>的，或者是<strong>在堆上分配的一小块内存</strong>。开始时可能只有 2KB，如果不够用，可以再申请。这使得数千个协程的总内存占用远小于同样数量的线程。</li>
+</ul>
+<h5 id="4-调度方式：协作式-vs-抢占式"><a href="#4-调度方式：协作式-vs-抢占式" class="headerlink" title="4. 调度方式：协作式 vs 抢占式"></a>4. 调度方式：协作式 vs 抢占式</h5><ul>
+<li><strong>线程（抢占式）</strong>：操作系统调度器会在任何时候（通过时钟中断）强制暂停当前线程，切换到另一个线程。这保证了“公平”，但增加了不确定性，并且切换时机不可预测。</li>
+<li><strong>协程（协作式）</strong>：协程<strong>主动</strong>通过 <code>yield</code>、<code>await</code> 等关键字<strong>自愿</strong>交出执行权。调度器只在协程挂起时才会进行切换。<ul>
+<li><strong>“轻”在哪里？</strong>：<ol>
+<li><strong>无需复杂的同步原语</strong>：因为切换点是明确的，所以在协程内部，非挂起点的代码段是“原子性”的，不需要加锁来保护。这简化了编程，也避免了锁的开销。</li>
+<li><strong>切换时机可控</strong>：调度器只在协程“愿意”的时候才工作，没有强制中断带来的额外上下文保存开销。</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="总结表格"><a href="#总结表格" class="headerlink" title="总结表格"></a>总结表格</h4><table>
+<thead>
+<tr>
+<th align="left">特性</th>
+<th align="left">线程</th>
+<th align="left">协程</th>
+<th align="left">“轻”在何处</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>创建&#x2F;销毁</strong></td>
+<td align="left">重量级，需内核介入</td>
+<td align="left"><strong>轻量级，用户态完成</strong></td>
+<td align="left">无系统调用，内存占用小，速度快</td>
+</tr>
+<tr>
+<td align="left"><strong>上下文切换</strong></td>
+<td align="left">重量级，需陷入内核</td>
+<td align="left"><strong>轻量级，完全在用户态</strong></td>
+<td align="left">无模式切换，保存的上下文极少</td>
+</tr>
+<tr>
+<td align="left"><strong>栈内存</strong></td>
+<td align="left">固定大小（MB 级）</td>
+<td align="left"><strong>动态&#x2F;小块堆内存（KB 级）</strong></td>
+<td align="left">内存利用率高，总占用小</td>
+</tr>
+<tr>
+<td align="left"><strong>调度</strong></td>
+<td align="left">抢占式，由内核强制</td>
+<td align="left"><strong>协作式，由协程主动让出</strong></td>
+<td align="left">切换时机明确，无需锁，开销可控</td>
+</tr>
+<tr>
+<td align="left"><strong>数量级</strong></td>
+<td align="left">成百上千</td>
+<td align="left"><strong>成千上万</strong></td>
+<td align="left">资源开销小，可创建数量多</td>
+</tr>
+</tbody></table>
+<h4 id="小提醒"><a href="#小提醒" class="headerlink" title="小提醒"></a>小提醒</h4><p>虽然经常听到“协程是轻量级的线程”这个说法，虽然直观，但容易引起误解。更准确的理解是：</p>
+<p><strong>协程是运行在线程之上的、由用户程序控制的、更高级的并发抽象。一个线程可以同时运行多个协程，由协程调度器负责在它们之间进行高效的、用户态的切换。</strong></p>
+<p>它的“轻”，归根结底是因为它将调度的权力从操作系统内核（重量级）夺回，交给了用户程序的运行时（轻量级），从而避免了所有与内核交互带来的巨大开销。</p>
+<h2 id="协程分类"><a href="#协程分类" class="headerlink" title="协程分类"></a>协程分类</h2><p>这个对于应用开发者来讲并不重要，了解一下就好</p>
+<h3 id="按调用栈分类"><a href="#按调用栈分类" class="headerlink" title="按调用栈分类"></a>按调用栈分类</h3><p>这个分类关注的是协程在执行过程中如何管理其栈内存，它直接决定了协程的通用性和实现复杂度。</p>
+<h4 id="栈式协程"><a href="#栈式协程" class="headerlink" title="栈式协程"></a>栈式协程</h4><p>有的也叫<strong>有栈协程</strong></p>
+<ul>
+<li><strong>核心特征</strong>：拥有<strong>独立的调用栈</strong>，类似于线程。</li>
+<li><strong>工作方式</strong>：当一个栈式协程挂起时，它会将其完整的调用栈（包括嵌套调用的函数链）保存起来。恢复时，整个调用栈被还原，可以从最内层的函数继续执行。</li>
+<li><strong>能力</strong>：非常强大。可以在任意深度的函数调用中挂起。</li>
+<li><strong>比喻</strong>：就像用录像机完整地录下了一部话剧的整个排练现场（包括所有演员的位置和状态），随时可以按播放键从中断处继续排练。</li>
+<li><strong>优点</strong>：<ul>
+<li><strong>使用方便</strong>：程序员无需关心当前执行点在哪一层函数，可以任意进行函数调用，并在任何地方挂起。</li>
+<li><strong>功能强大</strong>：支持通用的、任意嵌套的挂起操作。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：<ul>
+<li><strong>内存开销大</strong>：每个协程都需要预分配一块足够大的栈内存以防溢出，即使它大部分时间只使用很少的栈空间。当协程数量极多时，总内存消耗可观。</li>
+<li><strong>实现复杂</strong>：需要管理栈内存的分配、增长和切换。</li>
+</ul>
+</li>
+</ul>
+<h4 id="无栈协程"><a href="#无栈协程" class="headerlink" title="无栈协程"></a>无栈协程</h4><ul>
+<li><strong>核心特征</strong>：<strong>没有独立的调用栈</strong>。其状态通过<strong>状态机</strong>在堆上显式地存储。</li>
+<li><strong>工作方式</strong>：编译器会将一个可挂起的函数（如 <code>async</code> 函数）编译成一个状态机。挂起时，只保存必要的局部变量（通常是 <code>await</code> 表达式之前的那些）和当前状态机的状态（如 <code>label</code>），而不是整个调用栈。恢复时，根据保存的状态跳转到对应的 <code>label</code> 继续执行。</li>
+<li><strong>能力</strong>：挂起点是受限的，通常只能在协程体顶层函数中显式地使用 <code>await</code> 或 <code>yield</code> 挂起。你不能在一个未被声明为 <code>async</code> 的深层函数内部随意挂起。</li>
+<li><strong>比喻</strong>：就像一本<strong>选择你自己的冒险</strong>书。你不需要记住所有页面的状态，只需要一个书签（当前状态）和记录下你之前做过的几个关键选择（局部变量）。翻到指定页码，根据选择继续故事。</li>
+<li><strong>优点</strong>：<ul>
+<li><strong>极其轻量</strong>：内存开销极小，通常只有一个对象的大小，创建和切换开销极低。</li>
+<li><strong>实现简单</strong>：无需复杂的栈管理逻辑，非常适合在语言库层面实现。</li>
+<li><strong>与异步 IO 天然契合</strong>：其“传染性”（async&#x2F;await 语法）迫使程序员显式标记挂起点，使得代码的异步流程非常清晰。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：<ul>
+<li><strong>使用受限</strong>：不能在任意函数调用中挂起，所有可能挂起的调用链都必须被标记为 <code>async</code> 并使用 <code>await</code>。这被称为“颜色问题”。</li>
+<li><strong>传染性</strong>：一旦一个函数内部需要挂起，它自身也必须被标记为 <code>async</code>，这会影响到它的所有调用者。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="按调度方式分类"><a href="#按调度方式分类" class="headerlink" title="按调度方式分类"></a>按调度方式分类</h3><p>这个分类关注的是由谁来决定何时挂起当前协程并切换到另一个。</p>
+<h4 id="1-对称协程"><a href="#1-对称协程" class="headerlink" title="1. 对称协程"></a>1. 对称协程</h4><ul>
+<li><strong>核心特征</strong>：<strong>所有协程是平等的</strong>。任何一个协程都可以主动将执行权<strong>直接</strong>交给另一个指定的协程。</li>
+<li><strong>工作方式</strong>：协程 A 通过一个类似 <code>transfer(B)</code> 的操作，直接切换到协程 B。调度逻辑分散在每个协程中。</li>
+<li><strong>比喻</strong>：在一个<strong>圆桌会议</strong>上，任何一个人发言完毕后，可以指定下一位发言人。</li>
+<li><strong>优点</strong>：<ul>
+<li><strong>灵活</strong>：可以实现非常复杂的控制流。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：<ul>
+<li><strong>控制流复杂</strong>：由于调度权分散，程序的控制流可能会变得难以理解和维护，容易形成“意大利面条式”的代码。</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-非对称协程"><a href="#2-非对称协程" class="headerlink" title="2. 非对称协程"></a>2. 非对称协程</h4><ul>
+<li><strong>核心特征</strong>：<strong>协程之间存在调用关系</strong>，类似于函数调用。提供了两个核心原语：<code>yield</code>（挂起）和 <code>resume</code>（恢复）。</li>
+<li><strong>工作方式</strong>：协程 B 由协程 A（或主程序）<code>resume</code> 启动。当 B 执行 <code>yield</code> 时，它不会指定切换给谁，而是<strong>无条件地将控制权返还给恢复它的那个协程 A</strong>。</li>
+<li><strong>关系</strong>：这建立了一种<strong>半对称的调用者-被调用者关系</strong>。<code>yield</code> 和 <code>resume</code> 是配对的。</li>
+<li><strong>比喻</strong>：<strong>老板与员工</strong>。老板（调用者）让员工（协程）去完成一项任务（<code>resume</code>）。员工在过程中可以多次回来向老板汇报进度并等待下一步指示（<code>yield</code>），但员工不能直接把任务甩给另一个同事。</li>
+<li><strong>优点</strong>：<ul>
+<li><strong>控制流清晰</strong>：结构类似于函数调用，非常易于理解和推理。生产者-消费者模型用非对称协程实现起来非常直观。</li>
+<li><strong>主流选择</strong>：更符合大多数编程场景的直觉。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：<ul>
+<li>灵活性不如对称协程。</li>
+</ul>
+</li>
+</ul>
+<h3 id="分类总结与现实世界的映射"><a href="#分类总结与现实世界的映射" class="headerlink" title="分类总结与现实世界的映射"></a>分类总结与现实世界的映射</h3><table>
+<thead>
+<tr>
+<th align="left">分类维度</th>
+<th align="left">类型</th>
+<th align="left">核心特征</th>
+<th align="left">典型代表</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>调用栈</strong></td>
+<td align="left"><strong>栈式协程</strong></td>
+<td align="left">有独立栈，可在任意函数深度挂起</td>
+<td align="left"><strong>Go (Goroutine)</strong>, C++20</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"><strong>无栈协程</strong></td>
+<td align="left">通过状态机实现，挂起点受限</td>
+<td align="left"><strong>JS&#x2F;Python&#x2F;C# (async&#x2F;await)</strong>, Rust</td>
+</tr>
+<tr>
+<td align="left"><strong>调度方式</strong></td>
+<td align="left"><strong>对称协程</strong></td>
+<td align="left">协程间直接、平等地切换</td>
+<td align="left">早期 Lua</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left"><strong>非对称协程</strong></td>
+<td align="left">通过 <code>yield/resume</code> 与调用者交互</td>
+<td align="left"><strong>大多数现代语言</strong> (Python 生成器, JS async&#x2F;await, Kotlin)</td>
+</tr>
+</tbody></table>
+<p><strong>重要提示</strong>：这两种分类是正交的。一个协程系统可以是：</p>
+<ul>
+<li><strong>栈式 + 非对称</strong>：如 <strong>Go</strong>（Goroutine 的调度是 Go 运行时负责的，但对程序员呈现的 <code>channel</code> 通信模型更像非对称）。</li>
+<li><strong>无栈 + 非对称</strong>：如 <strong>JavaScript、Python、C#</strong> 的 <code>async/await</code>。这是目前最流行的组合，因为它实现了轻量级和清晰控制流的平衡。</li>
+<li><strong>栈式 + 对称</strong>：一些研究性的或特定领域的协程实现。</li>
+</ul>
+<hr>
+<p>以上就是我们需要关注的协程概念了，下一篇我们来看下协程的基础设施</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+        <a href="/tags/Kotlin/" class="print-no-link">#Kotlin</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>kotlin协程-基础概念篇</div>
+      <div>https://blog.huangyuanlove.com/2025/11/24/kotlin协程-基础概念篇/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年11月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/11/24/kotlin%E5%8D%8F%E7%A8%8B-%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E7%AF%87-%E5%8D%8F%E7%A8%8B%E5%88%9B%E5%BB%BA%E4%B8%8E%E5%90%AF%E5%8A%A8%EF%BC%9ASafeContinuation/" title="kotlin协程-基础设施篇-协程创建与启动：SafeContinuation">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">kotlin协程-基础设施篇-协程创建与启动：SafeContinuation</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/11/24/%E9%B8%BF%E8%92%99-%E4%BB%93%E9%A2%89-%E4%BD%BF%E7%94%A8%E4%BB%93%E9%A2%89%E8%AF%AD%E8%A8%80%E5%BC%80%E5%8F%91%E9%B8%BF%E8%92%99%E5%BA%94%E7%94%A8-%E5%88%9D%E7%AA%A5%E9%97%A8%E5%BE%84/" title="鸿蒙-仓颉-使用仓颉语言开发鸿蒙应用-初窥门径">
+                        <span class="hidden-mobile">鸿蒙-仓颉-使用仓颉语言开发鸿蒙应用-初窥门径</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'd9778c504889ac3d82156de2da9cd392'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
