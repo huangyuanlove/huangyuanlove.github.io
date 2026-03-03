@@ -1,0 +1,662 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="google-site-verification" content="sN-U8EgoXewPlh3UWGcOJtMmFSSK_agi4Tqd8PyZ4nM" />
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="协程基本概念,协程的构造,函数的挂起,协程的上下文,协程的拦截器">
+  
+    <meta name="description" content="种一颗树的最好时机是十年前，其次是现在。学习也一样。跟着霍老师的《深入理解 Kotlin 携程》学习一下协程。 直奔主题，认识 ChannelChannel 实际上就是一个并发安全的队列，它可以用来连接协程，实现不同协程的通信 123456789101112131415161718suspend fun main() &amp;#123;    val channel &#x3D; Channel&lt;Int&amp;g">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kotlin协程-热数据通道Channel">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2025/12/06/kotlin%E5%8D%8F%E7%A8%8B-%E7%83%AD%E6%95%B0%E6%8D%AE%E9%80%9A%E9%81%93Channel/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="种一颗树的最好时机是十年前，其次是现在。学习也一样。跟着霍老师的《深入理解 Kotlin 携程》学习一下协程。 直奔主题，认识 ChannelChannel 实际上就是一个并发安全的队列，它可以用来连接协程，实现不同协程的通信 123456789101112131415161718suspend fun main() &amp;#123;    val channel &#x3D; Channel&lt;Int&amp;g">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-12-06T13:07:48.000Z">
+<meta property="article:modified_time" content="2025-12-25T13:05:23.255Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="Kotlin">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>kotlin协程-热数据通道Channel - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"gtag":null,"woyaola":null,"cnzz":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="kotlin协程-热数据通道Channel"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-12-06 21:07" pubdate>
+          2025年12月6日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.7k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">kotlin协程-热数据通道Channel</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>种一颗树的最好时机是十年前，其次是现在。<br>学习也一样。<br>跟着霍老师的《深入理解 Kotlin 携程》学习一下协程。</p>
+<h2 id="直奔主题，认识-Channel"><a href="#直奔主题，认识-Channel" class="headerlink" title="直奔主题，认识 Channel"></a>直奔主题，认识 Channel</h2><p>Channel 实际上就是一个并发安全的队列，它可以用来连接协程，实现不同协程的通信</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">suspend</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    <span class="hljs-keyword">val</span> channel = Channel&lt;<span class="hljs-built_in">Int</span>&gt;()<br>    <span class="hljs-keyword">val</span> producer = GlobalScope.launch &#123;<br>        <span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span><br>        <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>            delay(<span class="hljs-number">1000</span>)<br>            channel.send(i++)<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">val</span> consumer = GlobalScope.launch &#123;<br>        <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>            <span class="hljs-keyword">val</span> element = channel.receive()<br>            println(element)<br>        &#125;<br>    &#125;<br>    producer.join()<br>    consumer.join()<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>上述的代码中构造了两个协程 producer 和 consumer，我么呢没有为它们明确制定调度器，所以他们的调度器都是默认的。其中 producer 中每隔 1 秒向 Channel 发送一个整数，而 consumer 中一致在读取 channel 来获取数据并打印，显然发送端比接收端更慢，在没有可以读取的值时，receive 是挂起的，直到有新元素到达，这么看来 receive 一定是一个挂起函数，那么 send 呢？</p>
+<h2 id="Channel-的容量"><a href="#Channel-的容量" class="headerlink" title="Channel 的容量"></a>Channel 的容量</h2><p>我们查看 send 方法的声明，发现它也是挂起函数。那么发送端为什么要挂起？上面也提到，Channel 实际上就是一个队列，队列中一定存在缓冲区，一旦这个缓冲区满了，一直没有人调用 receive 并取走元素，send 就要挂起，等待接收者取走元素后再写入 Channel。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-type">&lt;E&gt;</span> <span class="hljs-title">Channel</span><span class="hljs-params">(capacity: <span class="hljs-type">Int</span> = RENDEZVOUS)</span></span>: Channel&lt;E&gt; =<br>    <span class="hljs-keyword">when</span> (capacity) &#123;<br>        RENDEZVOUS -&gt; RendezvousChannel()<br>        UNLIMITED -&gt; LinkedListChannel()<br>        CONFLATED -&gt; ConflatedChannel()<br>        BUFFERED -&gt; ArrayChannel(CHANNEL_DEFAULT_CAPACITY)<br>        <span class="hljs-keyword">else</span> -&gt; ArrayChannel(capacity)<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们构造 Cahnnel 的时候调用了一个名为 Channle 的函数，但它不是 Channel 的构造函数。在 Kotlin 中，经常定义一个顶级函数来伪装成同名类型的构造器，这本质上是工厂函数。这里有一个 Int 类型的 capacity 参数，默认值为 RENDEZVOUS。<br>这时候如果不调用 receive，send 就会一直挂起等待。</p>
+<p><code>UNLIMITED</code>比较好理解，没有限制，来者不拒。<br><code>CONFLATED</code>这个名字可能有迷惑性，字面意思是合并，但实际上这个函数的效果是只保留最后一个元素，也就是说缓冲区只有一个元素大小，每次有新元素到来，都会覆盖掉旧元素。<br><code>BUFFERED</code>效果类似于 ArrayBlockingQueue，接收一个值作为缓冲区容量大小。</p>
+<h3 id="迭代-Channel"><a href="#迭代-Channel" class="headerlink" title="迭代 Channel"></a>迭代 Channel</h3><p>我们在发送和读取的时候写了一个<code>while(true)</code>的死循环，因为需要不断地进行读写操作。这里我们可以直接获取一个 Channel 的 Iterator</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">val</span> consumer = GlobalScope.launch &#123;<br>    <span class="hljs-keyword">val</span> iter = channel.iterator()<br>    <span class="hljs-keyword">while</span> (iter.hasNext()) &#123;<br>        <span class="hljs-keyword">val</span> element = iter.next()<br>        println(element)<br>        delay(<span class="hljs-number">1000</span>)<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>其中 iter.hasNext()是挂起函数，在判断是否有下一个元素的时候就需要去 Channel 中读取元素了。当然也可以<code>for ... in ..</code>:</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">val</span> consumer = GlobalScope.launch &#123;<br>    <span class="hljs-keyword">for</span>(element <span class="hljs-keyword">in</span> channel) &#123;<br>        println(element)<br>        delay(<span class="hljs-number">1000</span>)<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="produce-和-actor"><a href="#produce-和-actor" class="headerlink" title="produce 和 actor"></a>produce 和 actor</h3><p>来看两个便捷的构造生产者和消费这的 api，我们可以通过<code>produce</code>来启动移动生产者协程，并返回一个<code>ReceiveChannel</code>,其他协程就可以通过这个 channel 来获取数据了。<br>同样的，我们可以通过<code>actor</code>来启动消费者协程，并返回一个<code>SendChannel</code>,其他协程就可以通过这个 channel 来发送数据了。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">val</span> receiveChannel : ReceiveChannel&lt;<span class="hljs-built_in">Int</span>&gt; = GlobalScope.produce&#123;<br>    repeat(<span class="hljs-number">100</span>)&#123;<br><br>        delay(<span class="hljs-number">100</span>)<br>        send(it)<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">val</span> sendChannel : SendChannel&lt;<span class="hljs-built_in">Int</span>&gt; = GlobalScope.actor &#123;<br>    <span class="hljs-keyword">while</span>(<span class="hljs-literal">true</span>)&#123;<br>        <span class="hljs-keyword">val</span> element = receive()<br>        println(element)<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h2 id="Channel-的关闭"><a href="#Channel-的关闭" class="headerlink" title="Channel 的关闭"></a>Channel 的关闭</h2><p>以上面的<code>produce</code>方法为例,我们可以看到最终返回的是一个<code>ProducerCoroutine</code>,它的定义如下：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">private</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ProducerCoroutine</span>&lt;<span class="hljs-type">E</span>&gt;</span>(<br>    parentContext: CoroutineContext, channel: Channel&lt;E&gt;<br>) : ChannelCoroutine&lt;E&gt;(parentContext, channel, <span class="hljs-literal">true</span>, active = <span class="hljs-literal">true</span>), ProducerScope&lt;E&gt; &#123;<br>    <span class="hljs-keyword">override</span> <span class="hljs-keyword">val</span> isActive: <span class="hljs-built_in">Boolean</span><br>        <span class="hljs-keyword">get</span>() = <span class="hljs-keyword">super</span>.isActive<br><br>    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onCompleted</span><span class="hljs-params">(value: <span class="hljs-type">Unit</span>)</span></span> &#123;<br>        _channel.close()<br>    &#125;<br><br>    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onCancelled</span><span class="hljs-params">(cause: <span class="hljs-type">Throwable</span>, handled: <span class="hljs-type">Boolean</span>)</span></span> &#123;<br>        <span class="hljs-keyword">val</span> processed = _channel.close(cause)<br>        <span class="hljs-keyword">if</span> (!processed &amp;&amp; !handled) handleCoroutineException(context, cause)<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>我们发现在它的<code>完成</code>和<code>取消</code>方法中都会调用<code>_channel.close</code>的方法。也正是这样，Channel 才被称为热数据流。这里有一点需要注意：对千一个<code>Channe</code>如果我们调用了它的<code>close</code>方法，它会<strong>立即停止接收</strong>新元素，也就是说这时候它的<code>isClosedForSend</code>会立即返回<code>true</code>,而由<code>Channel缓冲区</code>的存在， 这时候可能还有一些元素没有被处理完，因此要等所有的元素都被读取之后<code>isClosedForReceive</code>才会返回<code>true</code>.</p>
+<h2 id="BroadcastChannel"><a href="#BroadcastChannel" class="headerlink" title="BroadcastChannel"></a>BroadcastChannel</h2><p>在实际环境中，经常会出现一个发送对应多个接收的情况。这里我们就需要 BroadcastChannel 了。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">val</span> broadcastChannel =  BroadcastChannel&lt;<span class="hljs-built_in">Int</span>&gt;(Channel.BUFFERED)<br><br><span class="hljs-keyword">val</span> producer = GlobalScope.launch &#123;<br>    List(<span class="hljs-number">3</span>)&#123;<br>        delay(<span class="hljs-number">1000</span>)<br>        broadcastChannel.send(it)<br>    &#125;<br>&#125;<br>List(<span class="hljs-number">3</span>)&#123;<br>    index -&gt;<br>    GlobalScope.launch &#123;<br>        <span class="hljs-keyword">val</span> receiveChannel = broadcastChannel.openSubscription()<br>        <span class="hljs-keyword">for</span>(i <span class="hljs-keyword">in</span> receiveChannel)&#123;<br>            println(<span class="hljs-string">&quot;[#<span class="hljs-variable">$index</span>] received <span class="hljs-variable">$i</span>&quot;</span>)<br>        &#125;<br>    &#125;<br>&#125;.joinAll()<br></code></pre></td></tr></table></figure>
+
+<p>这里有个细节需要注意一下，如果把发送端的<code>dealy(100)</code>去掉，可能会出现部分元素收不到或者完全收不到的情况，这是因为<code>BroadcastChannel</code>在发送的时候没有订阅者，这条消息就被丢弃了。<br>我们也可以通过普通的 Channel 进行转换：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">val</span> channel = Channel&lt;<span class="hljs-built_in">Int</span>&gt;()<br>channel.broadcast(<span class="hljs-number">3</span>)<br></code></pre></td></tr></table></figure>
+
+<p>这里需要注意一下，<strong>BroadcastChannel</strong>被标记为过时了，可以使用<code>SharedFlow</code>和<code>StateFlow</code>代替。<code>channel.broadcast()</code>方法也被标记为过时，也是使用<code>SharedFlow</code>来代替</p>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Android/" class="print-no-link">#Android</a>
+      
+        <a href="/tags/Kotlin/" class="print-no-link">#Kotlin</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>kotlin协程-热数据通道Channel</div>
+      <div>https://blog.huangyuanlove.com/2025/12/06/kotlin协程-热数据通道Channel/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年12月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/12/28/kotlin%E5%8D%8F%E7%A8%8B-%E5%86%B7%E6%95%B0%E6%8D%AE%E6%B5%81Flow/" title="kotlin协程-冷数据流Flow">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">kotlin协程-冷数据流Flow</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/12/03/kotlin%E5%8D%8F%E7%A8%8B-%E5%9C%A8Android%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/" title="kotlin协程-在Android中的应用">
+                        <span class="hidden-mobile">kotlin协程-在Android中的应用</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'cd5efb76e62b7240c03eb2d8d849fec9'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

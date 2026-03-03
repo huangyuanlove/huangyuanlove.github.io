@@ -1,0 +1,747 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/4216225?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="google-site-verification" content="sN-U8EgoXewPlh3UWGcOJtMmFSSK_agi4Tqd8PyZ4nM" />
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="HuangYuan_xuan">
+  <meta name="keywords" content="HarmonyOS,下拉刷新,上拉加载更多,pullToRefresh,priorityGesture,PanGesture">
+  
+    <meta name="description" content="前言上一篇介绍了如何使用自带的 Refresh 来实现下拉刷新和添加一个额外的 ListItem 来实现上拉加载功能。这一篇我们来看下不使用这这两种方式，还能如何实现。 大致思路 在Stack组件中放置三个子组件，自定义的下拉刷新组件、List组件、加载更多组件。 下拉刷新和上拉加载更多组件通过 position 和translate属性控制位置。并且将父组件 Stack 的clip属性设置为 t">
+<meta property="og:type" content="article">
+<meta property="og:title" content="鸿蒙-写一个带有header和footer的下拉刷新,上拉加载更多的控件吧-自定义">
+<meta property="og:url" content="https://blog.huangyuanlove.com/2026/01/21/%E9%B8%BF%E8%92%99-%E5%86%99%E4%B8%80%E4%B8%AA%E5%B8%A6%E6%9C%89header%E5%92%8Cfooter%E7%9A%84%E4%B8%8B%E6%8B%89%E5%88%B7%E6%96%B0-%E4%B8%8A%E6%8B%89%E5%8A%A0%E8%BD%BD%E6%9B%B4%E5%A4%9A%E7%9A%84%E6%8E%A7%E4%BB%B6%E5%90%A7-%E8%87%AA%E5%AE%9A%E4%B9%89/index.html">
+<meta property="og:site_name" content="放码过来">
+<meta property="og:description" content="前言上一篇介绍了如何使用自带的 Refresh 来实现下拉刷新和添加一个额外的 ListItem 来实现上拉加载功能。这一篇我们来看下不使用这这两种方式，还能如何实现。 大致思路 在Stack组件中放置三个子组件，自定义的下拉刷新组件、List组件、加载更多组件。 下拉刷新和上拉加载更多组件通过 position 和translate属性控制位置。并且将父组件 Stack 的clip属性设置为 t">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/HarmonyOS/pull_to_refresh.gif">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/HarmonyOS/pull_up_load_more.gif">
+<meta property="og:image" content="https://blog.huangyuanlove.com/image/HarmonyOS/pull_refresh_and_load_more_page.png">
+<meta property="article:published_time" content="2026-01-21T00:56:08.000Z">
+<meta property="article:modified_time" content="2026-01-22T14:16:46.497Z">
+<meta property="article:author" content="HuangYuan_xuan">
+<meta property="article:tag" content="HarmonyOS">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.huangyuanlove.com/image/HarmonyOS/pull_to_refresh.gif">
+  
+  
+  
+  <title>鸿蒙-写一个带有header和footer的下拉刷新,上拉加载更多的控件吧-自定义 - 放码过来</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.huangyuanlove.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":100,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":"7a06626d17ff9ce19e18d0f08e94d8ba","google":"UA-123314537-1","tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"gtag":null,"woyaola":null,"cnzz":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="放码过来" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>放码过来</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/" target="_self">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="鸿蒙-写一个带有header和footer的下拉刷新,上拉加载更多的控件吧-自定义"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-01-21 08:56" pubdate>
+          2026年1月21日 早上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.6k 字
+        
+      </span>
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">鸿蒙-写一个带有header和footer的下拉刷新,上拉加载更多的控件吧-自定义</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>上一篇介绍了如何使用自带的 Refresh 来实现下拉刷新和添加一个额外的 ListItem 来实现上拉加载功能。这一篇我们来看下不使用这这两种方式，还能如何实现。</p>
+<h2 id="大致思路"><a href="#大致思路" class="headerlink" title="大致思路"></a>大致思路</h2><ol>
+<li>在Stack组件中放置三个子组件，自定义的下拉刷新组件、List组件、加载更多组件。</li>
+<li>下拉刷新和上拉加载更多组件通过 position 和translate属性控制位置。并且将父组件 Stack 的clip属性设置为 true，以裁剪掉超出范围的部分。</li>
+<li>并在 Stack 中通过priorityGesture绑定优先识别手势PanGesture，在上下滑动的过程中判断子组件 List 的位置，以判断</li>
+<li>根据滑动的方向和距离，做出不同的效果来提示用户</li>
+<li>注意处理各种状态，比如刷新、加载更多过程中不能再次刷新、加载更多等</li>
+</ol>
+<p>先看效果：<br><img src="/image/HarmonyOS/pull_to_refresh.gif" srcset="/img/loading.gif" lazyload alt="下拉刷新"><br><img src="/image/HarmonyOS/pull_up_load_more.gif" srcset="/img/loading.gif" lazyload alt="上拉加载更多"></p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><h3 id="整体布局"><a href="#整体布局" class="headerlink" title="整体布局"></a>整体布局</h3><p>先看下页面整体的布局<br><img src="/image/HarmonyOS/pull_refresh_and_load_more_page.png" srcset="/img/loading.gif" lazyload alt="pull_refresh_and_load_more_page.png"><br>整个页面，除去顶部的<code>ActionBar</code>,只看剩下的刷新相关的布局，类似下面这种</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-title class_">Stack</span>() &#123;<br>    <span class="hljs-title class_">Stack</span>(&#123; <span class="hljs-attr">alignContent</span>: <span class="hljs-title class_">Alignment</span>.<span class="hljs-property">Top</span> &#125;) &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">header</span>()<br>    &#125;.<span class="hljs-title function_">translate</span>(&#123;<br>        <span class="hljs-attr">y</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerTransitionY</span><br>    &#125;).<span class="hljs-title function_">height</span>(<span class="hljs-string">&#x27;100%&#x27;</span>)<br><br><br>    <span class="hljs-title class_">Stack</span>(&#123; <span class="hljs-attr">alignContent</span>: <span class="hljs-title class_">Alignment</span>.<span class="hljs-property">Bottom</span> &#125;) &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">footer</span>()<br>    &#125;.<span class="hljs-title function_">translate</span>(&#123;<br>        <span class="hljs-attr">y</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">footerTransitionY</span><br>    &#125;).<span class="hljs-title function_">height</span>(<span class="hljs-string">&#x27;100%&#x27;</span>)<br><br>    <span class="hljs-title class_">List</span>(&#123; <span class="hljs-attr">space</span>: <span class="hljs-number">20</span>, <span class="hljs-attr">scroller</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">scroller</span> &#125;)<br>    .<span class="hljs-title function_">edgeEffect</span>(<span class="hljs-title class_">EdgeEffect</span>.<span class="hljs-property">None</span>)<br>    .<span class="hljs-title function_">translate</span>(&#123;<br>        <span class="hljs-attr">y</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerTransitionY</span> || <span class="hljs-variable language_">this</span>.<span class="hljs-property">footerTransitionY</span><br>    &#125;)<br><br>&#125;.<span class="hljs-title function_">layoutWeight</span>(<span class="hljs-number">1</span>).<span class="hljs-title function_">clip</span>(<span class="hljs-literal">true</span>)<br></code></pre></td></tr></table></figure>
+
+<p>顶部的Stack高度设置为 100%，通过<code>alignContent: Alignment.Top</code>属性将子组件<code>this.header()</code>放在最上面。对于<code>this.footer()</code>也是同样的处理。注意这里设置的<code>translate</code>和<code>List</code>组件的<code>translate</code>。因为 List 要和 header、footer 同时滑动。</p>
+<h3 id="header"><a href="#header" class="headerlink" title="header"></a>header</h3><p>但这样还不够，初始状态下我们需要将 header 向上平移它本身的高度。footer 也需要向下平移它本身的高度，将 header 和 footer 隐藏起来。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-meta">@LocalBuilder</span><br><span class="hljs-title function_">header</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-title class_">Column</span>() &#123;<br>    <span class="hljs-title class_">Row</span>() &#123;<br>      <span class="hljs-title class_">Image</span>($r(<span class="hljs-string">&#x27;app.media.tab_guide_unselect&#x27;</span>)).<span class="hljs-title function_">width</span>(<span class="hljs-number">20</span>).<span class="hljs-title function_">height</span>(<span class="hljs-number">20</span>).<span class="hljs-title function_">rotate</span>(&#123;<br>        <span class="hljs-attr">centerX</span>: <span class="hljs-string">&quot;50%&quot;</span>,<br>        <span class="hljs-attr">centerY</span>: <span class="hljs-string">&quot;50%&quot;</span>,<br>        <span class="hljs-attr">angle</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerImageRotate</span><br>      &#125;)<br>      <span class="hljs-title class_">Blank</span>().<span class="hljs-title function_">width</span>(<span class="hljs-number">10</span>).<span class="hljs-title function_">height</span>(<span class="hljs-number">0</span>)<br>      <span class="hljs-title class_">Text</span>(<span class="hljs-string">`<span class="hljs-subst">$&#123;<span class="hljs-variable language_">this</span>.headerText&#125;</span> <span class="hljs-subst">$&#123;<span class="hljs-variable language_">this</span>.getLastRefreshTime()&#125;</span>`</span>)<br>    &#125;.<span class="hljs-title function_">width</span>(<span class="hljs-string">&quot;100%&quot;</span>).<span class="hljs-title function_">alignItems</span>(<span class="hljs-title class_">VerticalAlign</span>.<span class="hljs-property">Center</span>).<span class="hljs-title function_">justifyContent</span>(<span class="hljs-title class_">FlexAlign</span>.<span class="hljs-property">Center</span>)<br><br>  &#125;<br>  .<span class="hljs-title function_">width</span>(<span class="hljs-string">&quot;100%&quot;</span>)<br>  .<span class="hljs-title function_">alignItems</span>(<span class="hljs-title class_">HorizontalAlign</span>.<span class="hljs-property">Center</span>)<br>  .<span class="hljs-title function_">justifyContent</span>(<span class="hljs-title class_">FlexAlign</span>.<span class="hljs-property">Center</span>)<br>  .<span class="hljs-title function_">height</span>(<span class="hljs-number">60</span>)<br>  .<span class="hljs-title function_">backgroundColor</span>(<span class="hljs-title class_">Color</span>.<span class="hljs-property">Red</span>)<br>  .<span class="hljs-title function_">onAreaChange</span>(<span class="hljs-function">(<span class="hljs-params">_, newValue</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerMaxTransition</span> = newValue.<span class="hljs-property">height</span> <span class="hljs-keyword">as</span> <span class="hljs-built_in">number</span><br>  &#125;)<br>  .<span class="hljs-title function_">position</span>(&#123; <span class="hljs-attr">top</span>: -<span class="hljs-variable language_">this</span>.<span class="hljs-property">headerMaxTransition</span> &#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>对于 header，放了一个图片随着滑动进行旋转。<br>并且定义了一个<code>headerMaxTransition</code>来记录 header 的高度，方便我们后面操作。<br>随后通过position将 header 移动到绘制区域之外。</p>
+<h3 id="footer"><a href="#footer" class="headerlink" title="footer"></a>footer</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-meta">@LocalBuilder</span><br><span class="hljs-title function_">footer</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-title class_">Column</span>() &#123;<br>    <span class="hljs-title class_">Text</span>(<span class="hljs-string">`<span class="hljs-subst">$&#123;<span class="hljs-variable language_">this</span>.footerText&#125;</span> <span class="hljs-subst">$&#123;<span class="hljs-variable language_">this</span>.getLastLoadMoreTime()&#125;</span>`</span>).<span class="hljs-title function_">height</span>(<span class="hljs-number">60</span>).<span class="hljs-title function_">backgroundColor</span>(<span class="hljs-title class_">Color</span>.<span class="hljs-property">Green</span>)<br>  &#125;.<span class="hljs-title function_">width</span>(<span class="hljs-string">&quot;100%&quot;</span>).<span class="hljs-title function_">onAreaChange</span>(<span class="hljs-function">(<span class="hljs-params">_, newValue</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">footerMaxTransition</span> = newValue.<span class="hljs-property">height</span> <span class="hljs-keyword">as</span> <span class="hljs-built_in">number</span><br>  &#125;).<span class="hljs-title function_">position</span>(&#123; <span class="hljs-attr">bottom</span>: -<span class="hljs-variable language_">this</span>.<span class="hljs-property">footerMaxTransition</span> &#125;).<span class="hljs-title function_">backgroundColor</span>(<span class="hljs-title class_">Color</span>.<span class="hljs-property">Orange</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>对于 footer，也是同样的操作，<code>footerMaxTransition</code>记录footer 的高度，同样通过position将 footer 移动到绘制区域之外</p>
+<h3 id="滑动"><a href="#滑动" class="headerlink" title="滑动"></a>滑动</h3><p>我们对最外层的 Stack 的添加有限识别手势来识别垂直方向的滑动</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs typescript">.<span class="hljs-title function_">priorityGesture</span>(<br>    <span class="hljs-title class_">PanGesture</span>(&#123; <span class="hljs-attr">direction</span>: <span class="hljs-title class_">PanDirection</span>.<span class="hljs-property">Vertical</span> &#125;)<br>        .<span class="hljs-title function_">onActionStart</span>(<span class="hljs-function">(<span class="hljs-params">event: GestureEvent</span>) =&gt;</span> &#123;&#125;<br>        .<span class="hljs-title function_">onActionUpdate</span>(<span class="hljs-function">(<span class="hljs-params">event: GestureEvent</span>) =&gt;</span> &#123;&#125;<br>        .<span class="hljs-title function_">onActionEnd</span>(<span class="hljs-function">(<span class="hljs-params">event: GestureEvent</span>) =&gt;</span> &#123;&#125;<br>        .<span class="hljs-title function_">onActionCancel</span>(<span class="hljs-function">() =&gt;</span> &#123;&#125;<br>)<br></code></pre></td></tr></table></figure>
+
+<p>这样我就可以优先于子控件 List 来响应上下滑动事件了。<br>我们在onActionStart回调中记录按下的位置；在onActionUpdate处理并分发滑动事件，也就是判断应该滑动哪个组件；在onActionEnd中判断是否需要刷新等操作</p>
+<h4 id="onActionStart"><a href="#onActionStart" class="headerlink" title="onActionStart"></a>onActionStart</h4><p>我们在事件开始的时候记录一下按下的位置</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs typescript">.<span class="hljs-title function_">onActionStart</span>(<span class="hljs-function">(<span class="hljs-params">event: GestureEvent</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">lastScroll</span> = event.<span class="hljs-property">offsetY</span><br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<h4 id="onActionUpdate"><a href="#onActionUpdate" class="headerlink" title="onActionUpdate"></a>onActionUpdate</h4><p>先计算一下滑动的距离，然后将滑动的速度分发到<code>List</code>组件</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs typescript">.<span class="hljs-title function_">onActionUpdate</span>(<span class="hljs-function">(<span class="hljs-params">event: GestureEvent</span>) =&gt;</span> &#123;<br>    <span class="hljs-keyword">let</span> diff = event.<span class="hljs-property">offsetY</span> - <span class="hljs-variable language_">this</span>.<span class="hljs-property">lastScroll</span><br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">lastScroll</span> = event.<span class="hljs-property">offsetY</span><br>    <span class="hljs-keyword">if</span> (diff) &#123;<br>    <span class="hljs-keyword">if</span> (event.<span class="hljs-property">velocity</span>) &#123;<br>        <span class="hljs-keyword">if</span> (diff &gt; <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-variable language_">this</span>.<span class="hljs-property">scroller</span>.<span class="hljs-title function_">fling</span>(event.<span class="hljs-property">velocity</span>)<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-variable language_">this</span>.<span class="hljs-property">scroller</span>.<span class="hljs-title function_">fling</span>(-event.<span class="hljs-property">velocity</span>)<br>        &#125;<br><br>    &#125;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">handleScroll</span>(diff)<br>    &#125;<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>这里调用的<code>scroller.fling</code>方法,其中参数<code>velocity</code>值设置为<strong>0</strong>，视为<strong>异常值</strong>，本次滚动不生效。如果值为<strong>正数</strong>，则向<strong>顶部</strong>滚动；如果值为<strong>负数</strong>，则向<strong>底部</strong>滚动。<br>下面看下处理滑动的<code>handleScroll</code>方法</p>
+<h4 id="handleScroll"><a href="#handleScroll" class="headerlink" title="handleScroll"></a>handleScroll</h4><p>先分类总结一下各种情况</p>
+<ol>
+<li><p>向上滑动</p>
+<ul>
+<li><p>列表在最底部</p>
+<ul>
+<li>footer 的偏移距离已经超过了它本身的高度<ul>
+<li>这时候<code>footer</code>已经完全漏出来了。这时候我们可以将阻尼系数写小一些，也就是手指滑动 10单位，控件移动2 或者3 单位；</li>
+<li>需要标记松手后需要执行加载更多操作，也就是在onActionEnd方法中处理</li>
+<li>需要将提示文案修改为<code>松开后加载更多</code></li>
+</ul>
+</li>
+<li>footer的偏移距离没有超过它本身高度<ul>
+<li>这时候<code>footer</code>已经漏出来一部分，这时候我们可以将阻尼系数稍微调大一些， 也就是手指滑动 10单位，控件移动5 或者6 单位；</li>
+<li>这时候如果松手，则需要将组件偏移距离取消</li>
+<li>取消松手时加载更多标记</li>
+<li>需要将提示文案修改为<code>上拉加载更多</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>列表不在最底部</p>
+<ul>
+<li>header 有偏移<ul>
+<li>将 header 向上平移</li>
+<li>将 header 中的图片反向旋转</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>header 没有偏移</p>
+<ul>
+<li>将滑动分发到 List 组件</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>向下滑动</p>
+</li>
+</ol>
+<ul>
+<li>列表在最顶部<ul>
+<li>header 偏移距离超过它本身高度<ul>
+<li>header 偏移距离不变</li>
+<li>图片继续随手指滑动而旋转</li>
+<li>标记松开手时处理刷新</li>
+<li>提示文案修改为<code>松开后刷新</code></li>
+</ul>
+</li>
+<li>header 偏移距离没有超过它本身高度<ul>
+<li>文案修改为<code>下拉刷新</code></li>
+<li>取消松开手时的刷新标记</li>
+<li>松手时将组件偏移距离取消</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>列表不在最顶部<ul>
+<li>footer 有偏移距离<ul>
+<li>将 footer 向下偏移</li>
+</ul>
+</li>
+<li>footer 没有偏移距离<ul>
+<li>将滑动分发到 List</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>大致就这些情况，我们来看下具体实现</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-title function_">handleScroll</span>(<span class="hljs-params">offset: <span class="hljs-built_in">number</span></span>) &#123;<br>  <span class="hljs-keyword">if</span> (offset &lt; <span class="hljs-number">0</span>) &#123;<br>    <span class="hljs-comment">//向上滑动</span><br>    <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">scroller</span>.<span class="hljs-title function_">isAtEnd</span>()) &#123;<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">`列表在底部，继续上拉`</span>)<br>      <span class="hljs-comment">//列表滑动到底部，继续上拉，</span><br>      <span class="hljs-keyword">if</span> (<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">abs</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">footerTransitionY</span>) &gt; <span class="hljs-variable language_">this</span>.<span class="hljs-property">footerMaxTransition</span>) &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">footerTransitionY</span> += (offset * <span class="hljs-number">0.2</span>)<br>        <span class="hljs-keyword">if</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">currentState</span> != <span class="hljs-title class_">State</span>.<span class="hljs-property">Loading</span>)&#123;<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">footerText</span> = <span class="hljs-string">&#x27;松开后加载更多&#x27;</span><br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">needLoadMoreOnDidScroll</span> = <span class="hljs-literal">true</span><br>        &#125;<br><br>      &#125; <span class="hljs-keyword">else</span> &#123;<br><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">footerTransitionY</span> += (offset * <span class="hljs-number">0.3</span>)<br>        <span class="hljs-keyword">if</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">currentState</span> != <span class="hljs-title class_">State</span>.<span class="hljs-property">Loading</span>)&#123;<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">footerText</span> = <span class="hljs-string">&#x27;上拉加载更多&#x27;</span><br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">needLoadMoreOnDidScroll</span> = <span class="hljs-literal">false</span><br>        &#125;<br><br>      &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">`列表不在底部，继续上拉`</span>)<br>      <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">headerTransitionY</span> &gt; <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerTransitionY</span> += (offset * <span class="hljs-number">0.3</span>)<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerImageRotate</span> -= (offset * <span class="hljs-number">1.5</span>)<br>      &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerTransitionY</span> = <span class="hljs-number">0</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">scroller</span>.<span class="hljs-title function_">scrollBy</span>(<span class="hljs-number">0</span>, -offset)<br>      &#125;<br><br>    &#125;<br>  &#125; <span class="hljs-keyword">else</span> &#123;<br>    <span class="hljs-comment">//向下滑动</span><br>    <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">scroller</span>.<span class="hljs-title function_">currentOffset</span>().<span class="hljs-property">yOffset</span> == <span class="hljs-number">0</span>) &#123;<br>      <span class="hljs-comment">//列表滑动到顶部，继续下拉需要去处理刷新</span><br>      <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerTransitionY</span> += (offset * <span class="hljs-number">0.3</span>)<br>      <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerImageRotate</span> += (offset * <span class="hljs-number">1.5</span>)<br>      <span class="hljs-keyword">if</span> (<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">abs</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">headerTransitionY</span>) &gt;= <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerMaxTransition</span>) &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerTransitionY</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerMaxTransition</span><br>        <span class="hljs-keyword">if</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">currentState</span> != <span class="hljs-title class_">State</span>.<span class="hljs-property">Loading</span>)&#123;<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerText</span> = <span class="hljs-string">&#x27;松开后刷新&#x27;</span><br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">needRefreshOnDidScroll</span> = <span class="hljs-literal">true</span><br>        &#125;<br><br>      &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">if</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">currentState</span> != <span class="hljs-title class_">State</span>.<span class="hljs-property">Loading</span>)&#123;<br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerText</span> = <span class="hljs-string">&#x27;下拉刷新&#x27;</span><br>          <span class="hljs-variable language_">this</span>.<span class="hljs-property">needRefreshOnDidScroll</span> = <span class="hljs-literal">false</span><br>        &#125;<br><br>      &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">footerTransitionY</span> &gt; <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">footerTransitionY</span> -= (offset * <span class="hljs-number">0.3</span>)<br>      &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">footerTransitionY</span> = <span class="hljs-number">0</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">scroller</span>.<span class="hljs-title function_">scrollBy</span>(<span class="hljs-number">0</span>, -offset)<br>      &#125;<br><br><br>    &#125;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="onActionEnd"><a href="#onActionEnd" class="headerlink" title="onActionEnd"></a>onActionEnd</h4><p>在滑动事件结束的时候，需要处理的事情有如下几个：<br>如果不需要刷新，则取消掉 header 的偏移。<br>如果需要刷新，则在刷新完成后取消掉 header 的偏移。<br>如果不需要加载更多，则取消掉 footer 的偏移。<br>如果需要加载更多，则将 footer 的偏移设置为它本的高度，加载完成后取消掉偏移<br>在取消偏移量的时候，为了能有更好的体验，可以使用动画做平滑过渡</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><code class="hljs typescript">.<span class="hljs-title function_">onActionEnd</span>(<span class="hljs-function">(<span class="hljs-params">event: GestureEvent</span>) =&gt;</span> &#123;<br>    <span class="hljs-keyword">if</span> (event.<span class="hljs-property">velocityY</span>) &#123;<br>        <span class="hljs-comment">//先处理快速滑动</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">scroller</span>.<span class="hljs-title function_">fling</span>(event.<span class="hljs-property">velocityY</span>)<br>    &#125;<br>    <span class="hljs-comment">//需要刷新 并且 当前不在加载中章台</span><br>    <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">needRefreshOnDidScroll</span> &amp;&amp; <span class="hljs-variable language_">this</span>.<span class="hljs-property">currentState</span> != <span class="hljs-title class_">State</span>.<span class="hljs-property">Loading</span>) &#123;<br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">currentState</span> = <span class="hljs-title class_">State</span>.<span class="hljs-property">Loading</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerText</span> = <span class="hljs-string">&#x27;刷新中&#x27;</span><br>        <span class="hljs-variable language_">this</span>.<span class="hljs-property">needRefreshOnDidScroll</span> = <span class="hljs-literal">false</span><br>        <span class="hljs-comment">//模拟网络延时</span><br>        <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>            <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerText</span> = <span class="hljs-string">&#x27;刷新成功&#x27;</span><br>            <span class="hljs-variable language_">this</span>.<span class="hljs-property">currentState</span> = <span class="hljs-title class_">State</span>.<span class="hljs-property">Idle</span><br>            <span class="hljs-variable language_">this</span>.<span class="hljs-property">lastRefreshTime</span> = systemDateTime.<span class="hljs-title function_">getTime</span>()<br>            <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>                <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerTransitionY</span> = -<span class="hljs-variable language_">this</span>.<span class="hljs-property">headerMaxTransition</span><br>                <span class="hljs-comment">//500毫秒的动画，平滑的取消偏移量</span><br>                <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">getUIContext</span>().<span class="hljs-title function_">animateTo</span>(&#123;<br>                  <span class="hljs-attr">duration</span>: <span class="hljs-number">500</span>,<br>                  <span class="hljs-attr">curve</span>: <span class="hljs-title class_">Curve</span>.<span class="hljs-property">EaseOut</span>,<br>                  <span class="hljs-attr">iterations</span>: <span class="hljs-number">1</span>,<br>                  <span class="hljs-attr">playMode</span>: <span class="hljs-title class_">PlayMode</span>.<span class="hljs-property">Normal</span>,<br>                  <span class="hljs-attr">onFinish</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>                    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;刷新后恢复 play end&#x27;</span>);<br>                  &#125;<br>                &#125;, <span class="hljs-function">() =&gt;</span> &#123;<br>                  <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerTransitionY</span> = <span class="hljs-number">0</span><br>                &#125;)<br><br>              &#125;, <span class="hljs-number">1000</span>)<br>            &#125;, <span class="hljs-number">2000</span>)<br>          &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-comment">// 这里对应着header 没有完全漏出，松手后平滑的取消偏移量</span><br>            <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">resetHeaderTransition</span>()<br>          &#125;<br><br>          <span class="hljs-comment">//需要加载更多 且 当前不是在加载中</span><br>          <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">needLoadMoreOnDidScroll</span>  &amp;&amp; <span class="hljs-variable language_">this</span>.<span class="hljs-property">currentState</span> != <span class="hljs-title class_">State</span>.<span class="hljs-property">Loading</span>) &#123;<br>            <span class="hljs-variable language_">this</span>.<span class="hljs-property">currentState</span> = <span class="hljs-title class_">State</span>.<span class="hljs-property">Loading</span><br>            <span class="hljs-comment">//使用动画平滑的设置 footer 的偏移量为刚好完全露出它本身</span><br>            <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">getUIContext</span>().<span class="hljs-title function_">animateTo</span>(&#123;<br>              <span class="hljs-attr">duration</span>: <span class="hljs-number">500</span>,<br>              <span class="hljs-attr">curve</span>: <span class="hljs-title class_">Curve</span>.<span class="hljs-property">EaseOut</span>,<br>              <span class="hljs-attr">iterations</span>: <span class="hljs-number">1</span>,<br>              <span class="hljs-attr">playMode</span>: <span class="hljs-title class_">PlayMode</span>.<span class="hljs-property">Normal</span>,<br>              <span class="hljs-attr">onFinish</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>                <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;加载更多时刚好漏出完整的 footer&#x27;</span>);<br>              &#125;<br>            &#125;, <span class="hljs-function">() =&gt;</span> &#123;<br>              <span class="hljs-variable language_">this</span>.<span class="hljs-property">footerTransitionY</span> = -<span class="hljs-variable language_">this</span>.<span class="hljs-property">footerMaxTransition</span><br><br>            &#125;)<br><br><br>            <span class="hljs-variable language_">this</span>.<span class="hljs-property">footerText</span> = <span class="hljs-string">&#x27;加载中&#x27;</span><br>            <span class="hljs-variable language_">this</span>.<span class="hljs-property">needLoadMoreOnDidScroll</span> = <span class="hljs-literal">false</span><br>            <span class="hljs-comment">// 模拟加载更多网络延时</span><br>            <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>              <span class="hljs-variable language_">this</span>.<span class="hljs-property">footerText</span> = <span class="hljs-string">&#x27;加载成功&#x27;</span><br>              <span class="hljs-variable language_">this</span>.<span class="hljs-property">currentState</span> = <span class="hljs-title class_">State</span>.<span class="hljs-property">Idle</span><br>              <span class="hljs-variable language_">this</span>.<span class="hljs-property">lastLoadMoreTime</span> = systemDateTime.<span class="hljs-title function_">getTime</span>()<br>            <span class="hljs-comment">//</span><br>              <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>                 <span class="hljs-comment">//500毫秒的动画，平滑的取消偏移量</span><br>                <span class="hljs-variable language_">this</span>.<span class="hljs-property">footerTransitionY</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">footerMaxTransition</span><br>                <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">getUIContext</span>().<span class="hljs-title function_">animateTo</span>(&#123;<br>                  <span class="hljs-attr">duration</span>: <span class="hljs-number">500</span>,<br>                  <span class="hljs-attr">curve</span>: <span class="hljs-title class_">Curve</span>.<span class="hljs-property">EaseOut</span>,<br>                  <span class="hljs-attr">iterations</span>: <span class="hljs-number">1</span>,<br>                  <span class="hljs-attr">playMode</span>: <span class="hljs-title class_">PlayMode</span>.<span class="hljs-property">Normal</span>,<br>                  <span class="hljs-attr">onFinish</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>                    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;加载更多后恢复 play end&#x27;</span>);<br>                    <span class="hljs-variable language_">this</span>.<span class="hljs-property">footerText</span> = <span class="hljs-string">&#x27;上拉加载更多&#x27;</span><br>                  &#125;<br>                &#125;, <span class="hljs-function">() =&gt;</span> &#123;<br>                  <span class="hljs-variable language_">this</span>.<span class="hljs-property">footerTransitionY</span> = <span class="hljs-number">0</span><br><br>                &#125;)<br>              &#125;, <span class="hljs-number">1000</span>)<br>            &#125;, <span class="hljs-number">2000</span>)<br>          &#125; <span class="hljs-keyword">else</span> &#123;<br>             <span class="hljs-comment">// 这里对应着footer 没有完全漏出，松手后平滑的取消偏移量</span><br>            <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">resetFooterTransition</span>()<br>          &#125;<br><br>        &#125;)<br></code></pre></td></tr></table></figure>
+
+<p>下面是两个取消偏移量的动画</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-title function_">resetHeaderTransition</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">getUIContext</span>().<span class="hljs-title function_">animateTo</span>(&#123;<br>    <span class="hljs-attr">duration</span>: <span class="hljs-number">500</span>,<br>    <span class="hljs-attr">curve</span>: <span class="hljs-title class_">Curve</span>.<span class="hljs-property">EaseOut</span>,<br>    <span class="hljs-attr">iterations</span>: <span class="hljs-number">1</span>,<br>    <span class="hljs-attr">playMode</span>: <span class="hljs-title class_">PlayMode</span>.<span class="hljs-property">Normal</span>,<br>    <span class="hljs-attr">onFinish</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;刷新后恢复 play end&#x27;</span>);<br>    &#125;<br>  &#125;, <span class="hljs-function">() =&gt;</span> &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">headerTransitionY</span> = <span class="hljs-number">0</span><br>  &#125;)<br><br>&#125;<br><br><span class="hljs-title function_">resetFooterTransition</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">getUIContext</span>().<span class="hljs-title function_">animateTo</span>(&#123;<br>    <span class="hljs-attr">duration</span>: <span class="hljs-number">500</span>,<br>    <span class="hljs-attr">curve</span>: <span class="hljs-title class_">Curve</span>.<span class="hljs-property">EaseOut</span>,<br>    <span class="hljs-attr">iterations</span>: <span class="hljs-number">1</span>,<br>    <span class="hljs-attr">playMode</span>: <span class="hljs-title class_">PlayMode</span>.<span class="hljs-property">Normal</span>,<br>    <span class="hljs-attr">onFinish</span>: <span class="hljs-function">() =&gt;</span> &#123;<br>      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;刷新后恢复 play end&#x27;</span>);<br>    &#125;<br>  &#125;, <span class="hljs-function">() =&gt;</span> &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">footerTransitionY</span> = <span class="hljs-number">0</span><br>  &#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这样我们就粗暴的实现了上拉加载更多和下拉刷新的组件。这里只是给出大致的思路，还有很多细节没有考虑：</p>
+<ul>
+<li>比如嵌套滑动的情况</li>
+<li>比如List内容不满一屏幕的情况等等</li>
+</ul>
+<hr>
+<p>以上</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/HarmonyOS/" class="print-no-link">#HarmonyOS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>鸿蒙-写一个带有header和footer的下拉刷新,上拉加载更多的控件吧-自定义</div>
+      <div>https://blog.huangyuanlove.com/2026/01/21/鸿蒙-写一个带有header和footer的下拉刷新-上拉加载更多的控件吧-自定义/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>HuangYuan_xuan</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年1月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              BY HUANG兄
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/02/09/%E9%B8%BF%E8%92%99-%E6%B7%B1%E8%89%B2%E6%A8%A1%E5%BC%8F%E9%80%82%E9%85%8D/" title="鸿蒙-深色模式适配">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">鸿蒙-深色模式适配</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/01/20/%E9%B8%BF%E8%92%99-%E5%86%99%E4%B8%80%E4%B8%AA%E5%B8%A6%E6%9C%89header%E5%92%8Cfooter%E7%9A%84%E4%B8%8B%E6%8B%89%E5%88%B7%E6%96%B0-%E4%B8%8A%E6%8B%89%E5%8A%A0%E8%BD%BD%E6%9B%B4%E5%A4%9A%E7%9A%84%E6%8E%A7%E4%BB%B6%E5%90%A7/" title="鸿蒙-写一个带有header和footer的下拉刷新,上拉加载更多的控件吧-Refresh组件">
+                        <span class="hidden-mobile">鸿蒙-写一个带有header和footer的下拉刷新,上拉加载更多的控件吧-Refresh组件</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"76c9d0ecf028751aa0d2","clientSecret":"392bc0405dfbdf4928343edef0ef46007f02c7e4","repo":"huangyuanlove.github.io","owner":"huangyuanlove","admin":["huangyuanlove"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'b3cf87ff6b1cd10c010f813f6fa68479'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
